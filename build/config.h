@@ -76,7 +76,6 @@
 /* Version number of package */
 #define VERSION "1.0"
 
-#define HAVE_ADDR_INFO_STRUCT
 /* Define to the type of a signed integer type of width exactly 64 bits if
    such a type exists and the standard includes do not define it. */
 /* #undef int64_t */

@@ -6,7 +6,7 @@ AC_INIT([unp], [1.0], [BUG-REPORT-ADDRESS])
 AC_CONFIG_SRCDIR([src/1.c])
 AC_CONFIG_HEADERS([config.h])
 
-AM_INIT_AUTOMAKE([0.5 foreign])
+AM_INIT_AUTOMAKE([subdir-objects])
 # Checks for programs.
 AC_PROG_CC
 
