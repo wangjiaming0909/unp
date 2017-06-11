@@ -1,7 +1,7 @@
 #ifndef _UNP_H
 #define _UNP_H
 
-//#include "../config.h"
+#include "../config.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -173,7 +173,7 @@ typedef void Sigfunc(int);
 #define max(a,b) ((a) > (b) ? (a) : (b))
 
 #ifndef HAVE_ADDR_INFO_STRUCT
-//#include "../lib/addrinfo.h"
+#include "../lib/addrinfo.h"
 #endif
 
 #ifndef HAVE_IF_NAMEINDEX_STRUCT
