@@ -2,10 +2,11 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT(1.c)
-AC_CONFIG_SRCDIR([unp.h])
-#AC_CONFIG_HEADERS([config.h])
+AC_INIT([unp], [1.0], [BUG-REPORT-ADDRESS])
+AC_CONFIG_SRCDIR([src/1.c])
+AC_CONFIG_HEADERS([config.h])
 
+AM_INIT_AUTOMAKE([0.5 foreign])
 # Checks for programs.
 AC_PROG_CC
 
@@ -20,5 +21,5 @@ AC_TYPE_INT64_T
 # Checks for library functions.
 
 AC_CONFIG_FILES([Makefile])
-AM_INIT_AUTOMAKE(hello, 1.0)
 AC_OUTPUT
+

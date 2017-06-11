@@ -1,3 +1,4 @@
 AUTOMAKE_OPTIONS=foreign
-bin_PROGRAMS=hello
-hello_SOURCES=1.c
+bin_PROGRAMS=unp
+unp_SOURCES=1.c
+
