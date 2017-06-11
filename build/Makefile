@@ -76,7 +76,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = hello$(EXEEXT)
+bin_PROGRAMS = unp$(EXEEXT)
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) \
@@ -93,9 +93,9 @@ CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
-am_hello_OBJECTS = 1.$(OBJEXT)
-hello_OBJECTS = $(am_hello_OBJECTS)
-hello_LDADD = $(LDADD)
+am_unp_OBJECTS = 1.$(OBJEXT)
+unp_OBJECTS = $(am_unp_OBJECTS)
+unp_LDADD = $(LDADD)
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -124,8 +124,8 @@ AM_V_CCLD = $(am__v_CCLD_$(V))
 am__v_CCLD_ = $(am__v_CCLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(hello_SOURCES)
-DIST_SOURCES = $(hello_SOURCES)
+SOURCES = $(unp_SOURCES)
+DIST_SOURCES = $(unp_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -214,7 +214,7 @@ PATH_SEPARATOR = :
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = 
-VERSION = 0.5
+VERSION = 1.0
 abs_builddir = /root/unp/unp/build
 abs_srcdir = /root/unp/unp/build/..
 abs_top_builddir = /root/unp/unp/build
@@ -258,7 +258,7 @@ top_build_prefix =
 top_builddir = .
 top_srcdir = ..
 AUTOMAKE_OPTIONS = foreign
-hello_SOURCES = 1.c
+unp_SOURCES = 1.c
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -356,9 +356,9 @@ uninstall-binPROGRAMS:
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 
-hello$(EXEEXT): $(hello_OBJECTS) $(hello_DEPENDENCIES) $(EXTRA_hello_DEPENDENCIES) 
-	@rm -f hello$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(hello_OBJECTS) $(hello_LDADD) $(LIBS)
+unp$(EXEEXT): $(unp_OBJECTS) $(unp_DEPENDENCIES) $(EXTRA_unp_DEPENDENCIES) 
+	@rm -f unp$(EXEEXT)
+	$(AM_V_CCLD)$(LINK) $(unp_OBJECTS) $(unp_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)

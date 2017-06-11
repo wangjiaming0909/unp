@@ -1,7 +1,7 @@
 #ifndef _UNP_H
 #define _UNP_H
 
-#include "../config.h"
+#include "./build/config.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -132,7 +132,7 @@ struct unp_in_pktinfo{
 #endif
 
 #define LISTENQ 1024
-#define AMXLINE 4096
+#define MAXLINE 4096
 #define BUFSIZE 8192
 #define SERV_PORT 9877
 #define SERVOIRT_STR "9877"
@@ -183,9 +183,4 @@ struct if_nameindex{
 };
 #endif
 
-#ifndef HAVE_TIMESPEC_STRUCT
-struct timespec{
-	time_t 	tv_sec;
-	long 	tv_nsec;
-};
 #endif
