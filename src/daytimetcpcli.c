@@ -1,5 +1,6 @@
 #include "unp.h"
 
+//193.228.143.22 ntp server ip
 int main(int argc, char **argv){
 
     int     sockfd, n;
