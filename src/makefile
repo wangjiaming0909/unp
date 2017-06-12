@@ -3,7 +3,7 @@ objects = $(patsubst %.c,%.o,$(wildcard *.c))
 
 
 
-$(target):$(objects)
+$(target):$(objects) *.h
 	@echo linking...
 	gcc $^ -o $@
 	@echo ok...
@@ -11,7 +11,7 @@ $(target):$(objects)
 
 $(objects):%.o:%.c
 	@echo compiling...
-	gcc -c $^ -o $@ -g
+	gcc -c $< -o $@ -g
 	
 
 clean:FORCE
