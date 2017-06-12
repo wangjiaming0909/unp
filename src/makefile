@@ -1,11 +1,18 @@
-target = unp
-objects = build/$(patsubst %.c,%.o,$(wildcard *.c))
+target = build/unp
+objects = $(patsubst %.c,%.o,$(wildcard *.c))
+
+
 
 $(target):$(objects)
+	@echo linking...
 	gcc $^ -o $@
+	@echo ok...
+	rm  $(objects)
 
-$(objects):*.c *.h
-	gcc -c $< -o $@ -g
+$(objects):%.o:%.c
+	@echo compiling...
+	gcc -c $^ -o $@ -g
+	
 
 clean:FORCE
 	$(RM) $(target) $(objects)
