@@ -26,13 +26,13 @@ ssize_t readn(int fd, void *vptr, size_t n){
 	nleft = n;
 	while(nleft > 0){
 		if((nread = read(fd, ptr, nleft)) < 0){
-			if(errno == EINTR)
+			if(errno == EINTR)/*EINTR, the call was interrupted by a signal before any data was read*/
 				nread = 0;
 			else
 				return -1;
 		}else if(nread == 0)
 			break;
-		nletf -= nread;
+		nleft -= nread;
 		ptr += nread;
 	}
 	return n - nleft;
