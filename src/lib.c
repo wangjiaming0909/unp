@@ -19,14 +19,15 @@ size_t readline(int filedes, void *buff, size_t maxlen);
 * * */
 ssize_t readn(int fd, void *vptr, size_t n){
     size_t      nleft;
-    ssize_t     nread;
+    ssize_t     nread;	
 	char	 	*ptr;
 	
 	ptr = vptr;
 	nleft = n;
 	while(nleft > 0){
 		if((nread = read(fd, ptr, nleft)) < 0){
-			if(errno == EINTR)/*EINTR, the call was interrupted by a signal before any data was read*/
+			if(errno == EINTR)/*EINTR, the call was interrupted by \
+			a signal before any data was read*/
 				nread = 0;
 			else
 				return -1;
@@ -39,5 +40,6 @@ ssize_t readn(int fd, void *vptr, size_t n){
 }
 
 ssize_t writen(int filedes, const void *buff, size_t nbytes){
+	size_t
 	
 }
