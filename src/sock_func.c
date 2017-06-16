@@ -16,7 +16,7 @@ char *sock_ntop_host(const struct sockaddr *sockaddr, socklen_t addrlen, void *p
 void sock_set_port(const struct sockaddr *sockaddr, socklen_t addrlen, int port);
 void sock_set_wild(struct sockaddr *sockaddr, socklen_t addrlen);
 
-char sock_ntop(const struct sockaddr *sa, socklen_t salen){
+char *sock_ntop(const struct sockaddr *sa, socklen_t salen){
     char portstr[8];
     static char str[128];
 
@@ -31,6 +31,8 @@ char sock_ntop(const struct sockaddr *sa, socklen_t salen){
             }
             return str;
         }
+        default:
+            return NULL;
     
     }
 }
