@@ -23,6 +23,7 @@ int readn_readline(){
 }
 
 int inet_pton_loose(){
+    int fd;
     return 0;
 }
 //
