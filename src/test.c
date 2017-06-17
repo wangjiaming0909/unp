@@ -21,6 +21,25 @@ int readn_readline(){
     return 0;
 }
 
+int test_addr_cast_func(){
+    const char      *paddr = "123.123.123.12";
+    int             addr_int, ret;
+    struct in_addr  addr;
+    //inet_aton
+    ret = inet_aton(paddr, &addr);
+    if(ret != 1){
+        err_quit("inet_pton error:%s\n", strerror(errno));
+    }
+    addr_int = (int)addr.s_addr;
+    printf("ipv4地址对应的int为:%d\n", addr_int);
+    return 0;
+   
+
+    
+}
+//第三章习题3.3
+//inet_pton()
+//
 int inet_pton_loose(){
     int fd;
     return 0;
@@ -30,6 +49,7 @@ int inet_pton_loose(){
 
 int main(){
     // readn_readline();
+    test_addr_cast_func();
     return 0;
 
 }
