@@ -1,7 +1,8 @@
 #include "unp.h"
 #include "headers.h"
 #include <stdarg.h>
-int main(){
+
+int readn_readline(){
     int fd;
     ssize_t n;
     char *buf = (char *)malloc(64);
@@ -18,6 +19,12 @@ int main(){
     printf("%s\n", buf);
     if(buf != NULL)
         free(buf);
+    return 0;
+}
+
+//
+int main(){
+    // readn_readline();
     return 0;
 
 }
