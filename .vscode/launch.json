@@ -7,7 +7,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceRoot}/src/build/unp",
-            "args": ["193.228.143.22"],
+            //"args": ["193.228.143.22"],
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}/src/build",
             "environment": [],

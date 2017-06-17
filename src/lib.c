@@ -92,4 +92,51 @@ ssize_t readline1(int fd, void *vptr/*out*/, size_t maxlen){
 }
 
 /*--------------------readline------------------------------------*/
+
+//第三章习题3.3
+//inet_pton()
+//when family is AF_INET, and strptr is a ipv4 address, return ipv4 address mapped with ipv4
+int inet_pton_loose(int family, const char *strptr/*in*/, void *addrptr/*out*/){
+    int ret1, ret2;
+	struct in_addr inaddr;
+
+    if(AF_INET == family){//ipv4
+    	int *addrptrptr = addrptr;
+        if((ret1 = inet_pton(family, strptr/*in*/, addrptrptr)) == 0){//invalid ipv4 addr
+			err_msg("ipv4, invalid ipv4 address");
+			if((ret2 = inet_aton(strptr, &inaddr/*out*/)) != 1){//invoke inet_aton
+				err_msg("inet_aton error: %s", strerror(errno));
+				return 0;
+			}
+			*addrptrptr = inaddr.s_addr;
+		}else if(ret1 == -1){//error
+			err_msg("inet_pton error: %s", strerror(errno));
+			return -1;
+		}
+		
+    }else if(AF_INET6 == family){//ipv6
+		unsigned char *u6addr = addrptr;
+		bzero(u6addr, 16);
+
+		if((ret1 = inet_pton(AF_INET6, strptr, u6addr)) == 0){//invalid ipv6 addr
+			err_msg("invalid ipv6 address..");
+			if((ret2 = inet_aton(strptr, &inaddr/*out*/)) == 0){//invalid ip address
+				err_msg("invalid ip address: %s", strerror(errno));
+				return 0;
+			}else if(ret2 == 1){
+				short int *p1 = u6addr + 10;
+				*p1 = -1;
+				int *p = u6addr + 12;
+				*p = inaddr.s_addr;
+			}else
+				err_msg("inet_aton error: %s", strerror(errno));
+				
+		}else if(ret1 == -1){//error
+			err_msg("inet_pton error: %s", strerror(errno));
+			return -1;
+		}
+    }
+    return 0;
+}
+
 #endif
