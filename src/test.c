@@ -22,7 +22,12 @@ int readn_readline(){
     return 0;
 }
 
+int inet_pton_loose(){
+    return 0;
+}
 //
+
+
 int main(){
     // readn_readline();
     return 0;
