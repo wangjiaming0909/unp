@@ -1,10 +1,5 @@
-/*************************************************************************
-	> File Name: sock_func.c
-	> Author: www
-	> Mail: 
-	> Created Time: Fri 16 Jun 2017 11:09:31 AM CST
- ************************************************************************/
-//协议无关的函数
+#ifndef _SOCK_FUNC_C_
+#define _SOCK_FUNC_C_
 #include "unp.h"
 
 char *sock_ntop(const struct sockaddr* sa, socklen_t salen);
@@ -36,3 +31,4 @@ char *sock_ntop(const struct sockaddr *sa, socklen_t salen){
     
     }
 }
+#endif

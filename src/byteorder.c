@@ -2,7 +2,7 @@
 
 
 int
-main(){
+main04(){
     union{
         short   s;
         char    c[sizeof(short)];

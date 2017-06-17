@@ -1,5 +1,7 @@
-#include "unp.h"
+#ifndef _ERROR_C_
+#define _ERROR_C_
 
+#include "unp.h"
 #include <stdarg.h>
 #include <syslog.h>
 
@@ -7,8 +9,7 @@ int daemon_proc;
 
 static void err_doit(int, int, const char *, va_list);
 
-void
-err_ret(const char *fmt, ...){
+void err_ret(const char *fmt, ...){
     va_list ap;
 
     /*
@@ -40,8 +41,7 @@ void err_dump(const char *fmt, ...){
     exit(1);
 }
 
-void
-err_msg(const char *fmt, ...){
+void err_msg(const char *fmt, ...){
     va_list ap;
     va_start(ap, fmt);
     err_doit(0, LOG_INFO, fmt, ap);
@@ -49,8 +49,7 @@ err_msg(const char *fmt, ...){
     return ;
 }
 
-void 
-err_quit(const char *fmt, ...){
+void err_quit(const char *fmt, ...){
     va_list ap;
     va_start(ap, fmt);
     err_doit(0, LOG_ERR, fmt, ap);
@@ -87,3 +86,4 @@ err_doit(int errnoflag, int level, const char *fmt, va_list ap){
 }
 
 
+#endif

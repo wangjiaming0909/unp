@@ -3,6 +3,7 @@
         "cstdint": "cpp",
         "cstdlib": "cpp",
         "limits": "cpp",
-        "cstdio": "cpp"
+        "cstdio": "cpp",
+        "cstdarg": "cpp"
     }
 }
