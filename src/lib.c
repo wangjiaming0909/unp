@@ -64,7 +64,9 @@ ssize_t writen(int filedes, const void *buff, size_t nbytes){
 	return nbytes;
 }
 
-ssize_t readline(int fd, void *vptr/*out*/, size_t maxlen){
+/*-------------------------------readline---------------------------------*/
+//Painfully slow version 
+ssize_t readline1(int fd, void *vptr/*out*/, size_t maxlen){
 	ssize_t 	n, rc;
 	char 		c, *ptr;
 
@@ -88,4 +90,6 @@ ssize_t readline(int fd, void *vptr/*out*/, size_t maxlen){
 	*ptr = 0;
 	return n;
 }
+
+/*--------------------readline------------------------------------*/
 #endif
