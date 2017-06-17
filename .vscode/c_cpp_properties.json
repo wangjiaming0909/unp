@@ -1,0 +1,28 @@
+{
+    "configurations": [
+       
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceRoot}",
+                "/usr/include/x86_64-linux-gnu/c++/6.2.0",
+                "/usr/include/c++/6.2.0",
+                "/usr/local/include",
+                "/usr/include/x86_64-linux-gnu",
+                "/usr/include"
+            ],
+            "defines": [],
+            "browse": {
+                "path": [
+                    "/usr/include/x86_64-linux-gnu/c++/6.2.0",
+                    "/usr/include/c++/6.2.0",
+                    "/usr/local/include",
+                    "/usr/include/x86_64-linux-gnu",
+                    "/usr/include"
+                ],
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            }
+        }
+    ]
+}
