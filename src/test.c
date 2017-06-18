@@ -88,11 +88,29 @@ int test_addr_cast_func(){
 
 }
 
+int initclient(){
+    int sockfd, ret;
+    struct sockaddr_in sock_addr;
+    int addrptr;
+    ret = inet_pton(AF_INET, "139.224.239.147", &addrptr);
+    sock_addr.sin_addr.s_addr = addrptr; 
+    sock_addr.sin_family = AF_INET;
+    sock_addr.sin_port = htons(22);
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+    if((ret = connect(sockfd, (struct sockaddr *)&sock_addr, sizeof(struct sockaddr))) != 0){
+        err_msg("error connect:%s", strerror(errno));
+        return -1;
+    }
+    printf("connect success..\n");
+    return 0;
+}
 
 
 int main(){
     // readn_readline();
-    test_addr_cast_func();
+    //test_addr_cast_func();
+    initclient();
     return 0;
 
 }
