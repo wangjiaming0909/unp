@@ -108,7 +108,7 @@ int initclient(){
 }
 
 
-int main(){
+int maintest(){
     // readn_readline();
     //test_addr_cast_func();
     initclient();
