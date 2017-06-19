@@ -103,6 +103,7 @@ int initclient(){
         return -1;
     }
     printf("connect success..\n");
+    close(sockfd);
     return 0;
 }
 
