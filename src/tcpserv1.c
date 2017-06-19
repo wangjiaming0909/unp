@@ -2,6 +2,7 @@
 
 
 void str_echo(int sockfd){
+    err_msg("calling str_echo..: %s", strerror(errno));
     ssize_t n;
     char    buf[MAXLINE];
 again:
