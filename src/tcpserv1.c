@@ -1,6 +1,18 @@
 #include "unp.h"
 
 
+void str_echo(int sockfd){
+    ssize_t n;
+    char    buf[MAXLINE];
+again:
+    while((n = readline(sockfd, buf, MAXLINE))> 0)
+        writen(sockfd, buf, n);
+    if(n < 0 && errno == EINTR)
+        goto again;
+    else if(n < 0)
+        err_sys("str_echo: read error");
+}
+
 int main(int argc, char *argv[]){
     int         listenfd, connfd, ret;
     pid_t       child_pid;
@@ -16,7 +28,7 @@ int main(int argc, char *argv[]){
     }
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    servaddr.sin_port = htons(SERV_PORT);
+    servaddr.sin_port = htons(1001);
 
     if((ret = bind(listenfd, (struct sockaddr*)&servaddr, sizeof(servaddr))) < 0){
         err_msg("bind error:%s", strerror(errno));
@@ -34,7 +46,8 @@ int main(int argc, char *argv[]){
         }
         if((child_pid = fork()) == 0){
             close(listenfd);
-            err_msg("child process called..");
+            //err_msg("child process called..");
+            str_echo(connfd);
             close(connfd);
             exit(0);
         }
