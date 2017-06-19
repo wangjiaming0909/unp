@@ -14,10 +14,10 @@ main(int argc, char **argv){
     servaddr.sin_family = AF_INET;
 
     //servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    ret = inet_pton(AF_INET, "139.224.239.147", &addr_int);
+    ret = inet_pton(AF_INET, "127.0.0.1", &addr_int);
     servaddr.sin_addr.s_addr = addr_int;
     
-    servaddr.sin_port = htons(13);
+    servaddr.sin_port = htons(1013);
 
     bind(listenfd, (SA *)&servaddr, sizeof(servaddr));
 
@@ -32,6 +32,6 @@ main(int argc, char **argv){
 
         close(connfd);
     }
-
+    return 0;
 }
 
