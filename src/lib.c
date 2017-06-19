@@ -125,9 +125,11 @@ int inet_pton_loose(int family, const char *strptr/*in*/, void *addrptr/*out*/){
 				err_msg("invalid ip address: %s", strerror(errno));
 				return 0;
 			}else if(ret2 == 1){
-				short int *p1 = u6addr + 10;
+				short int *p1;
+				p1 = u6addr + 10;
 				*p1 = -1;
-				int *p = u6addr + 12;
+				int *p;
+				p = u6addr + 12;
 				*p = inaddr.s_addr;
 			}else
 				err_msg("inet_aton error: %s", strerror(errno));
