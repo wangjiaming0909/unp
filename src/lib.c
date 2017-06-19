@@ -2,6 +2,7 @@
 #define _LIB_C_
 #include "unp.h"
 
+
 ssize_t readn(int filedes, void *buff, size_t nbytes);
 ssize_t writen(int filedes, const void *buff, size_t nbytes);
 ssize_t readline(int filedes, void *buff, size_t maxlen);
@@ -139,7 +140,7 @@ int inet_pton_loose(int family, const char *strptr/*in*/, void *addrptr/*out*/){
     return 0;
 }
 
-//return ss_family
+//return ss_family, can call this function in a child process
 int sockfd_to_family(int sockfd){
 	struct sockaddr_storage 	ss;
 	socklen_t					len;
