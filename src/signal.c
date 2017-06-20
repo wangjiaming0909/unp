@@ -19,3 +19,13 @@ Sigfunc *signal(int signo, Sigfunc *func){
         return SIG_ERR;
     return oact.sa_handler;//返回旧信号处理程序函数指针
 }
+
+//SIG_CHLD信号的处理函数
+void sig_chld(int signo){
+    pid_t   pid;//子进程pid
+    int     stat;//子进程退出状态
+
+    pid = wait(&stat);
+    err_msg("child %d terminated", pid);
+    return ;
+}

@@ -1,5 +1,6 @@
 #include "unp.h"
 
+void sig_chld(int);
 
 void str_echo(int sockfd){
     err_msg("calling str_echo..: %s", strerror(errno));
@@ -45,6 +46,7 @@ int main(int argc, char *argv[]){
             err_msg("accept error:%s", strerror(errno));
             exit(-1);
         }
+        signal(SIGCHLD, sig_chld);
         if((child_pid = fork()) == 0){
             close(listenfd);
             //err_msg("child process called..");
