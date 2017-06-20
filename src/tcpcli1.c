@@ -11,7 +11,7 @@ void str_cli(FILE *fp, int sockfd){
     }
 }
 
-int main(int argc, char **argv){
+int maintcpcli1(int argc, char **argv){
     int sockfd;
     struct sockaddr_in servaddr;
 

@@ -28,7 +28,7 @@ ssize_t readline(int fd, void *vptr/*out*/, size_t maxlen){
 	ptr = vptr;
 	for(n = 1; n < maxlen; n++){
 	again:
-		if((rc = my_read(fd, &c)) == 1){
+		if((rc = my_read(fd, &c)) == 1){//read one byte a time
 			*ptr++ = c;
 			//*ptr = c;ptr++;
 			if(c == '\n')
@@ -36,7 +36,7 @@ ssize_t readline(int fd, void *vptr/*out*/, size_t maxlen){
 		}else if(rc == 0){
 			*ptr = 0;
 			return n-1;
-		}else{
+		}else{//error
 			if(errno == EINTR)
 				goto again;
 			return -1;

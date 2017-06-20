@@ -1,7 +1,14 @@
 {
     "version": "0.2.0",
     "configurations": [
-    
+
+        {
+            "type": "gdb",
+            "request": "launch",
+            "name": "Launch Program",
+            "target": "${workspaceRoot}/src/build/unp",
+            "cwd": "${workspaceRoot}/src/build"
+        },
         {
             "name": "(gdb) Launch",
             "type": "cppdbg",
@@ -11,7 +18,7 @@
             "stopAtEntry": false,
             "cwd": "${workspaceRoot}/src/build",
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
                 {
