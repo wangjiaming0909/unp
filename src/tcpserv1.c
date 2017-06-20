@@ -15,7 +15,7 @@ again:
         err_sys("str_echo: read error");
 }
 
-int maintcpserv(int argc, char *argv[]){
+int main(int argc, char *argv[]){
     int         listenfd, connfd, ret;
     pid_t       child_pid;
     socklen_t   clilen;
