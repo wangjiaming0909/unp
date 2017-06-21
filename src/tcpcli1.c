@@ -25,7 +25,7 @@ int maintcpcli01(int argc, char **argv){
     exit(0);
 }
 
-int maintcpcli2(int argc, char **argv){
+int main(int argc, char **argv){
     int i, sockfd[5];
     struct sockaddr_in servaddr;
 
