@@ -15,6 +15,14 @@ again:
         err_sys("str_echo: read error");
 }
 
+
+/*
+    改进版服务器程序可以解决一下三个问题
+    1， 当fork子进程时，捕获SIGCHLD信号
+    2， 捕获信号好后，处理被中断的系统调用， 父进程正阻塞在accept调用时，接收到SIGCHLD信号，
+        accept被中断，因此在处理SIGCHLD信号时，需要给sigaction函数提供SA_RESART标志：act.sa_flags |= SA_RESTART
+    3， 使用waitpid避免产生僵尸进程
+*/
 int maintcpserv(int argc, char *argv[]){
     int         listenfd, connfd, ret;
     pid_t       child_pid;
@@ -58,3 +66,14 @@ int maintcpserv(int argc, char *argv[]){
     }
     return 0;
 }
+
+/*
+    当终止子进程时：
+        子进程阻塞与read函数，
+        此时kill子进程，关闭所有打开的描述符，向客户端发送一个FIN，进入FIN_WAIT1
+        客户端回复一个ACK，客户端进入CLOSE_WAIT， 服务端进入FIN_WAIT2；
+        父进程接收到SIGCHLD信号，回收子进程；
+        客户端继续向该子进程发送数据，调用write函数，服务端接收到数据，由于之前的套接字已经终止，返回一个RST
+        由于子进程发送了FIN，因此客户端认为服务端不会再给自己发送数据，因此read直接返回0， 表示EOF，
+
+*/

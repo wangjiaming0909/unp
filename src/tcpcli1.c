@@ -6,11 +6,11 @@ void str_cli(FILE *fp, int sockfd){
 
         writen(sockfd, sendline, strlen(sendline));
         if(readline(sockfd, recvline, MAXLINE) == 0)
-            err_quit("str_cli: server terminated prematurely");
+            err_quit("str_cli: server terminated prematurely: %s", strerror(errno));
         fputs(recvline, stdout);
     }
 }
-int maintcpcli01(int argc, char **argv){
+int main(int argc, char **argv){
     int sockfd;    struct sockaddr_in servaddr;
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -25,7 +25,7 @@ int maintcpcli01(int argc, char **argv){
     exit(0);
 }
 
-int main(int argc, char **argv){
+int maintcpcli05(int argc, char **argv){
     int i, sockfd[5];
     struct sockaddr_in servaddr;
 

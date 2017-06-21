@@ -36,7 +36,7 @@ void sig_chld01(int signo){
     return ;
 }
 
-//SIG_CHLD信号处理函数
+//SIG_CHLD信号处理函数， 立即返回不阻塞
 /*改进： 不使用wait， 使用waitpid函数*/
 void sig_chld(int signo){
     pid_t   pid;
