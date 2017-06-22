@@ -36,7 +36,7 @@ ssize_t readline(int fd, void *vptr/*out*/, size_t maxlen){
 		}else if(rc == 0){
 			*ptr = 0;
 			return n-1;
-		}else{//error
+		}else{//error被信号中断
 			if(errno == EINTR)
 				goto again;
 			return -1;

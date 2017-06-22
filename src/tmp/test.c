@@ -8,4 +8,8 @@ int main(){
             printf("%s", buf);
     }
     return 0;
+
+    struct timeval time;
+    time.tv_usec
+    
 }

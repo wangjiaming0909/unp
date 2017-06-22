@@ -9,7 +9,7 @@ void str_echo(int sockfd){
 again:
     while((n = readline(sockfd, buf, MAXLINE))> 0)
         writen(sockfd, buf, n);
-    if(n < 0 && errno == EINTR)
+    if(n < 0 && errno == EINTR)//被信号中断
         goto again;
     else if(n < 0)
         err_sys("str_echo: read error");
@@ -69,7 +69,7 @@ int maintcpserv(int argc, char *argv[]){
 
 /*
     当终止子进程时：
-        子进程阻塞与read函数，
+        子进程阻塞于read函数，
         此时kill子进程，关闭所有打开的描述符，向客户端发送一个FIN，进入FIN_WAIT1
         客户端回复一个ACK，客户端进入CLOSE_WAIT， 服务端进入FIN_WAIT2；
         父进程接收到SIGCHLD信号，回收子进程；
