@@ -84,7 +84,7 @@ void str_cli(FILE *fp, int sockfd){
     }
 }
 
-int maintcpcli3(int argc, char **argv){
+int main(int argc, char **argv){
     int sockfd;    struct sockaddr_in servaddr;
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -99,6 +99,7 @@ int maintcpcli3(int argc, char **argv){
     exit(0);
 }
 
+//连续建立多条连接
 int maintcpcli05(int argc, char **argv){
     int i, sockfd[5];
     struct sockaddr_in servaddr;

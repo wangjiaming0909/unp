@@ -74,7 +74,7 @@ int maintcpserv(int argc, char *argv[]){
     2, client[FD_SETSIZE], 初始化为-1， 使用其第一个可用项记录新到达的连接的描述符
     3, select
 */
-int main(int argc, char** argv){
+int maintcpserv3(int argc, char** argv){
     int                 i, maxi, maxfd, listenfd,connfd, sockfd;
     int                 nready, client[FD_SETSIZE];
     ssize_t             n, ret;
