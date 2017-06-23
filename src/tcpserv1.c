@@ -67,6 +67,95 @@ int maintcpserv(int argc, char *argv[]){
     return 0;
 }
 
+
+/*
+    改进服务端程序
+    1, 单进程接受连接请求，不调用fork，不需要捕捉SIGCHLD信号
+    2, client[FD_SETSIZE], 初始化为-1， 使用其第一个可用项记录新到达的连接的描述符
+    3, select
+*/
+int main(int argc, char** argv){
+    int                 i, maxi, maxfd, listenfd,connfd, sockfd;
+    int                 nready, client[FD_SETSIZE];
+    ssize_t             n, ret;
+    fd_set              rset, allset;
+    char                buf[MAXLINE];
+    socklen_t           clilen;
+    struct sockaddr_in  cliaddr, servaddr;
+
+    if((listenfd = socket(AF_INET, SOCK_STREAM, 0)) < 0)
+        err_quit("socket error: %s", strerror(errno));
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    servaddr.sin_family = AF_INET;
+    servaddr.sin_port = htons(1001);
+
+    if((ret = bind(listenfd, (SA*)&servaddr, sizeof(servaddr))) < 0)
+        err_quit("bind error: %s", strerror(errno));
+    if((ret = listen(listenfd, LISTENQ)) < 0)
+        err_quit("listen error: %s", strerror(errno));
+    
+    maxfd = listenfd;
+    FD_SET(listenfd, &rset);
+
+    //初始化client数组
+    for(i = 0; i < FD_SETSIZE; i++)
+        client[i] = -1;
+    
+    maxi = -1;//max index in client[] array
+    FD_ZERO(&allset);//allset用于记录所有服务器需要select的描述符
+    FD_SET(listenfd, &allset);
+
+    for(;;){
+        rset = allset;
+        if((nready = select(maxfd + 1, &rset, NULL, NULL, NULL)) <= 0)
+            err_quit("select error:%s", strerror(errno));
+        
+        if(FD_ISSET(listenfd, &rset)){//listenfd套接字可读
+            clilen = sizeof(cliaddr);
+            if((connfd = accept(listenfd, (SA*)&cliaddr, &clilen)) < 0)
+                err_quit("accept error: %s", strerror(errno));
+            
+            //处理新到的描述符：
+            for(i = 0; i < FD_SETSIZE; i++){
+                if(client[i] < 0){//client数组中第一个可用项记录新到达的描述符
+                    client[i] = connfd;
+                    break;
+                }  
+            }
+            if(i == FD_SETSIZE)
+                err_quit("too many clients");
+            //新到达一个描述符，需要加入allset中
+            FD_SET(connfd, &allset);
+            //调整maxfd
+            maxfd = max(connfd, maxfd);
+            if(i > maxi)
+                maxi = i;
+            
+            if(--nready <= 0)//no more readable descriptors
+                continue;
+        }
+
+        for(i = 0; i < maxi; i++){//check all clients for data
+            if((sockfd = client[i]) < 0)
+                continue;
+            if(FD_ISSET(sockfd, &rset)){
+                if((n = read(sockfd, buf, MAXLINE)) == 0){
+                    close(sockfd);
+                    FD_CLR(sockfd, &allset);
+                    client[i] = -1;
+                }else  
+                    writen(sockfd, buf, n);
+                if(--nready <= 0)
+                    break;
+            }
+        }
+        
+    }
+
+
+}
+
 /*
     当终止子进程时：
         子进程阻塞于read函数，
