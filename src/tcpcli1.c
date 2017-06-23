@@ -63,11 +63,11 @@ void str_cli(FILE *fp, int sockfd){
         maxfdp1 = max(sockfd, fileno(fp)) + 1;
         select(maxfdp1, &readset, NULL, NULL, NULL);
         
-        if(FD_ISSET(sockfd, &readset)){
-            if((n = read(sockfd, (void *)buf, MAXLINE)) == 0){//EOF
-                if(stdineof == 1)
+        if(FD_ISSET(sockfd, &readset)){//接受了TCP连接的FIN也会导致sockfd可读
+            if((n = read(sockfd, (void *)buf, MAXLINE)) == 0){//服务器端发来EOF
+                if(stdineof == 1)//客户端先发送的EOF
                     return ;
-                else
+                else//客户端没有发送EOF， 但是接收到了服务端发来的EOF，说明服务器子进程已经提前终止，提前发来了FIN
                     err_quit("str_cli: server terminated prematurely");
             }
             write(fileno(fp), buf, n);
