@@ -11,7 +11,7 @@ void str_cli01(FILE *fp, int sockfd){
     }
 }
 
-void str_cli(FILE *fp, int sockfd){
+void str_cli02(FILE *fp, int sockfd){
     int             maxfdp1;
     fd_set          readset;
     int             ttyiofd, ret;
@@ -47,6 +47,41 @@ void str_cli(FILE *fp, int sockfd){
         // }
     }
     
+}
+
+void str_cli(FILE *fp, int sockfd){
+    int     stdineof, maxfdp1, n;
+    fd_set  readset;
+    char    buf[MAXLINE];
+    
+    stdineof = 0;
+    FD_ZERO(&readset);
+    for(; ; ){
+        if(stdineof == 0)//检测该值，若为1， 就不需要再select终端的写入
+            FD_SET(fileno(fp), &readset);
+        FD_SET(sockfd, &readset);
+        maxfdp1 = max(sockfd, fileno(fp)) + 1;
+        select(maxfdp1, &readset, NULL, NULL, NULL);
+        
+        if(FD_ISSET(sockfd, &readset)){
+            if((n = read(sockfd, (void *)buf, MAXLINE)) == 0){//EOF
+                if(stdineof == 1)
+                    return ;
+                else
+                    err_quit("str_cli: server terminated prematurely");
+            }
+            write(fileno(fp), buf, n);
+        }
+        if(FD_ISSET(fileno(fp), &readset)){
+            if((n = read(fileno(fp), buf, MAXLINE)) == 0){//read返回0， 表示从终端读到EOF， zero indicates end of file
+                stdineof = 1;//该值置1表示客户端关闭终端的写入
+                shutdown(sockfd, SHUT_WR);//发送FIN，关闭写端
+                FD_CLR(fileno(fp), &readset);
+                continue;//继续调用select， 等待
+            }
+            writen(sockfd, buf, n);
+        }
+    }
 }
 
 int main(int argc, char **argv){
