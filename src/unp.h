@@ -21,6 +21,7 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <sys/un.h>
+#include <unistd.h>
 
 #ifdef HAVE_SYS_SELECT_H
 #include <sys/select.h>
