@@ -84,7 +84,7 @@ void str_cli(FILE *fp, int sockfd){
     }
 }
 
-int maintcpcli09(int argc, char **argv){
+int main(int argc, char **argv){
     int sockfd;    struct sockaddr_in servaddr;
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);

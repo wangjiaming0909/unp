@@ -137,7 +137,7 @@ int maintcpserv3(int argc, char** argv){
                 continue;
         }
 
-        for(i = 0; i < maxi; i++){//check all clients for data
+        for(i = 0; i <= maxi; i++){//check all clients for data
             if((sockfd = client[i]) < 0)
                 continue;
             if(FD_ISSET(sockfd, &rset)){
@@ -163,7 +163,7 @@ int maintcpserv3(int argc, char** argv){
 
 
 */
-int main(int argc, char **argv){
+int maintcpserv09(int argc, char **argv){
     int                 listenfd, connfd, sockfd, i, n, maxi;
     int                 nready;
     char                buf[MAXLINE];
@@ -209,7 +209,7 @@ int main(int argc, char **argv){
                 continue;
         }
 
-        for(i = 1; i < maxi; i++){//check all clients for data
+        for(i = 1; i <= maxi; i++){//check all clients for data
             if((sockfd = client[i].fd) < 0)
                 continue;
             if(client[i].revents & (POLLRDNORM | POLLERR)){
