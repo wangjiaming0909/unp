@@ -100,7 +100,7 @@ int mainasdasd(int argc, char **argv){
 }
 
 //连续建立多条连接
-int main(int argc, char **argv){
+int mainasdasdazxc(int argc, char **argv){
     int i, sockfd[5];
     struct sockaddr_in servaddr;
 
