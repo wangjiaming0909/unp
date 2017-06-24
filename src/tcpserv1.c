@@ -163,7 +163,7 @@ int maintcpserv3(int argc, char** argv){
 
 
 */
-int main(int argc, char **argv){
+int mainasasd(int argc, char **argv){
     int                 listenfd, connfd, sockfd, i, n, maxi;
     int                 nready;
     char                buf[MAXLINE];
