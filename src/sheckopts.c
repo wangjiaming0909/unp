@@ -93,11 +93,11 @@ int main(int argc, char **argv){
                 case IPPROTO_TCP:
                     fd = socket(AF_INET, SOCK_STREAM, 0);
                     break;
-#ifdef IPV6
+//#ifdef IPV6
                 case IPPROTO_IPV6:
                     fd = socket(AF_INET6, SOCK_STREAM, 0);
                     break;
-#endif
+//#endif
 #ifdef IPPROTO_SCTP
                 case IPPROTO_SCTP:
                     fd = socket(AF_INET, SOCK_SEQPACKET, IPPROTO_SCTP);
@@ -125,4 +125,14 @@ sock_str_flag(union val *ptr, int len){
 	else
 		snprintf(strres, sizeof(strres), "%s", (ptr->i_val == 0) ? "off" : "on");
 	return strres;
+}
+
+static char *sock_str_int(union val*ptr, int len){
+	return NULL;
+}
+static char *sock_str_linger(union val*ptr, int len){
+	return NULL;
+}
+static char *sock_str_timeval(union val*ptr, int len){
+	return NULL;
 }

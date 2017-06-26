@@ -1,11 +1,11 @@
 #ifndef _LIB_C_
 #define _LIB_C_
 #include "unp.h"
+#include "headers.h"
 
-
-ssize_t readn(int filedes, void *buff, size_t nbytes);
-ssize_t writen(int filedes, const void *buff, size_t nbytes);
-ssize_t readline(int filedes, void *buff, size_t maxlen);
+//ssize_t readn(int filedes, void *buff, size_t nbytes);
+//ssize_t writen(int filedes, const void *buff, size_t nbytes);
+//ssize_t readline(int filedes, void *buff, size_t maxlen);
 /*
 * ssize_t的宏定义:
 * #ifndef __ssize_t_defined

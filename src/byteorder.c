@@ -1,5 +1,5 @@
 #include "unp.h"
-
+#include "headers.h"
 
 int
 main04(){
@@ -22,6 +22,6 @@ main04(){
         else
             printf("unknow\n");
     }else
-        printf("sizeof(short) = %d\n", sizeof(short));
+        printf("sizeof(short) = %ld\n", sizeof(short));
     exit(0);
 }

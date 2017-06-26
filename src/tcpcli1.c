@@ -1,4 +1,5 @@
 #include "unp.h"
+#include "headers.h"
 
 void str_cli01(FILE *fp, int sockfd){
     char sendline[MAXLINE], recvline[MAXLINE];
@@ -17,7 +18,7 @@ void str_cli02(FILE *fp, int sockfd){
     int             ttyiofd, ret;
     char sendline[MAXLINE], recvline[MAXLINE];
 
-    ttyiofd = fileno(fp);
+    ttyiofd = fileno(fp);//将FILE指针转换为fd
     for(;;){
         FD_ZERO(&readset);
         FD_SET(sockfd, &readset);
@@ -34,7 +35,7 @@ void str_cli02(FILE *fp, int sockfd){
             if(FD_ISSET(ttyiofd, &readset)){//终端准备好读
                 if(fgets(sendline, MAXLINE, fp) == NULL)
                     return;
-                writen(sockfd, MAXLINE, fp);  
+                writen(sockfd, sendline, MAXLINE);//ssize_t write(int fd, const void *buf, size_t count);
                 // if((fgets(sendline, MAXLINE, fp)) != NULL){
                 //     writen(sockfd, sendline, strlen(sendline));
                 // }else{//键入ctrl + D, fgets返回NULL，直接返回

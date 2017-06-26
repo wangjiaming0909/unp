@@ -10,5 +10,7 @@ void err_ret(const char *fmt, ...);
 void err_dump(const char *fmt, ...);
 void err_msg(const char *fmt, ...);
 void err_quit(const char *fmt, ...);
+void err_sys(const char *fmt, ...);
+int inet_pton_loose(int family, const char *strptr/*in*/, void *addrptr/*out*/);
 
 #endif
