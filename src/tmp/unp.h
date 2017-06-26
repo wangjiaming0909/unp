@@ -1,7 +1,7 @@
 #ifndef _UNP_H
 #define _UNP_H
 
-#include "config.h"
+//#include "config.h"
 
 #include <sys/types.h>
 #include <sys/socket.h>

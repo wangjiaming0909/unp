@@ -1,15 +1,24 @@
-#include "unp.h"
+#include <stdio.h>
 
 int main(){
     
-    char buf[MAXLINE];
-    while(1){
-        if(fgets(buf, MAXLINE, stdout) != NULL)
-            printf("%s", buf);
-    }
-    return 0;
+	typedef union{
+		char c[10];
+//		int i;
+	}u1;
 
-    struct timeval time;
-    time.tv_usec
+	printf("sizeof(u1) : %ld", sizeof(u1));
+
+
+
+//    char buf[MAXLINE];
+//    while(1){
+//        if(fgets(buf, MAXLINE, stdout) != NULL)
+//            printf("%s", buf);
+//    }
+//    return 0;
+
+//    struct timeval time;
+//    time.tv_usec
     
 }

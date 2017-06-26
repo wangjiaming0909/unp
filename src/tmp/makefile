@@ -1,4 +1,4 @@
-target = build/unp
+target = tmp
 objects = $(patsubst %.c,%.o,$(wildcard *.c))
 
 

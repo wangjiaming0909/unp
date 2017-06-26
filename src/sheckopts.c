@@ -128,11 +128,23 @@ sock_str_flag(union val *ptr, int len){
 }
 
 static char *sock_str_int(union val*ptr, int len){
-	return NULL;
+	if(len != sizeof(int))
+		snprintf(strres, sizeof(strres), "size (%d) not sizeof(long)", len);
+	else
+		snprintf(strres, sizeof(strres), "%ld", (ptr->l_val));
+	return strres;
 }
 static char *sock_str_linger(union val*ptr, int len){
-	return NULL;
+	if(len != sizeof(struct linger))
+		snprintf(strres, sizeof(strres), "size (%d) not sizeof(struct linger)", len);
+	else
+		snprintf(strres, sizeof(strres), "%d, %d", ptr->linger_val.l_linger, ptr->linger_val.l_onoff);
+	return strres;
 }
 static char *sock_str_timeval(union val*ptr, int len){
-	return NULL;
+	if(len != sizeof(struct timeval))
+		snprintf(strres, sizeof(strres), "size (%d) not sizeof(struct timeval)", len);
+	else
+		snprintf(strres, sizeof(strres), "%ld, %ld", ptr->timeval_val.tv_sec, ptr->timeval_val.tv_usec);
+	return strres;
 }
