@@ -1,7 +1,7 @@
 target = build/unp
 objects = $(patsubst %.c,%.o,$(wildcard *.c))
 
-
+all:$(target)
 
 $(target):$(objects) *.h
 	@echo linking...

@@ -1,6 +1,6 @@
 #include "unp.h"
 #include <netinet/tcp.h>
-
+#include "headers.h"
 
 union val{
     int             i_val;
@@ -9,6 +9,7 @@ union val{
     struct timeval  timeval_val;
 }val;
 
+static char strres[128];
 static char *sock_str_flag(union val*, int);
 static char *sock_str_int(union val*, int);
 static char *sock_str_linger(union val*, int);
@@ -16,7 +17,7 @@ static char *sock_str_timeval(union val*, int);
 
 struct sock_opts{
     const char  *opt_str;
-    int         pot_level;
+    int         opt_level;
     int         opt_name;
     char*       (*opt_val_str)(union val*, int);
 }sock_opts[] = {
@@ -53,10 +54,26 @@ struct sock_opts{
     {"IPV6_V6ONLY",     IPPROTO_IPV6, IPV6_V6ONLY,  sock_str_flag},
     {"TCP_MAXSEG",      IPPROTO_TCP, TCP_MAXSEG,    sock_str_int},
     {"TCP_NODELAY",     IPPROTO_TCP, TCP_NODELAY,   sock_str_flag},
+#ifdef SCTP_AUTOCLOSE
     {"SCTP_AUTOCLOSE",  IPPROTO_SCTP, SCTP_AUTOCLOSE, sock_str_int},
+#else
+	{"SCTP_AUTOCLOSE", 0,							0,									NULL},
+#endif
+#ifdef SCTP_MAX_BURST
     {"SCTP_MAXBURST",   IPPROTO_SCTP, SCTP_MAX_BURST, sock_str_int},
+#else
+	{"SCTP_MAXBURST", 0,								0,									NULL},
+#endif
+#ifdef SCTP_MAXSEG
     {"SCTP_MAXSEG",     IPPROTO_SCTP, SCTP_MAXSEG,  sock_str_int},
+#else
+	{"SCTP_MAXSEG", 		0,								0,									NULL},
+#endif
+#ifdef SCTP_NODELAY
     {"SCTP_NODELAY",    IPPROTO_SCTP, SCTP_NODELAY, sock_str_flag},
+#else
+	{"SCTP_NODELAY",		0,								0,									NULL},
+#endif
     {"NULL",            0,          0,              NULL}
 };
 
@@ -70,7 +87,7 @@ int main(int argc, char **argv){
         if(ptr->opt_val_str == NULL)
             printf("(undefined)\n");
         else{
-            witch(ptr->opt_level){
+            switch(ptr->opt_level){
                 case SOL_SOCKET:
                 case IPPROTO_IP:
                 case IPPROTO_TCP:
@@ -90,7 +107,7 @@ int main(int argc, char **argv){
                     err_quit("Can't create fd for level %s", ptr->opt_level);
             }
             len = sizeof(val);
-            if(getsockopt(fd, ptr->level, ptr->opt_name, &val, &len) == _1){
+            if(getsockopt(fd, ptr->opt_level, ptr->opt_name, &val, &len) == -1){
                 err_ret("getsockopt error");
             }else{
                 printf("default = %s\n", (*ptr->opt_val_str)(&val, len));
@@ -99,4 +116,13 @@ int main(int argc, char **argv){
         }
     }
     exit(0);
+}
+
+static char *
+sock_str_flag(union val *ptr, int len){
+	if(len != sizeof(int))
+		snprintf(strres, sizeof(strres), "size (%d) not sizeof(int)", len);
+	else
+		snprintf(strres, sizeof(strres), "%s", (ptr->i_val == 0) ? "off" : "on");
+	return strres;
 }
