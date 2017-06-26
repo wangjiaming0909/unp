@@ -1,7 +1,7 @@
 target = build/cpp
 objects = $(patsubst %.cc,%.o,$(wildcard *.cc))
 
-
+all:$(target)
 
 $(target):$(objects) *.h
 	@echo linking...
