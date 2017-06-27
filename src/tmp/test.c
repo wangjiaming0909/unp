@@ -3,8 +3,8 @@
 int main(){
     
 	typedef union{
-		char c[10];
-//		int i;
+		char c[13];
+		int i;
 	}u1;
 
 	printf("sizeof(u1) : %ld", sizeof(u1));
