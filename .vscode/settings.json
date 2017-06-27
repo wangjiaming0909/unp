@@ -4,6 +4,8 @@
         "cstdlib": "cpp",
         "limits": "cpp",
         "cstdio": "cpp",
-        "cstdarg": "cpp"
+        "cstdarg": "cpp",
+        "ostream": "cpp",
+        "iostream": "cpp"
     }
 }
