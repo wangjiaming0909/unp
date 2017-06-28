@@ -43,7 +43,7 @@ int swapref(int &a, int &b){
 	return a + b;
 }
 
-int main01(){
+int main(){
 	// int  buf[32] = {2};
 
 	// *(buf + 1) = 12;
@@ -73,8 +73,19 @@ int main01(){
 //	};
 //
 //	s s1 = {1,2};
-	char *p = "asd";
-	*p = 'b';//段错误
-	cout << p << endl;
-    return 0;
+//	char *p = "asd";
+//	*p = 'b';//段错误
+//	cout << p << endl;
+	const double dd = 1.23;
+	const double &d = 1.2 + 2.4;//右值表达式也可以
+	const double &d1 = a;//可修改的左值, 类型不匹配也可以
+	const double &d3 = 1;//不可修改的右值可以
+	const double &dd1 = dd;//const 左值也可以
+	int &d2 = a;
+//	int &d4 = 1;//不可以修改的右值不可以
+//	int &d5 = 1 + 2;//不可以
+
+	int &&d6 = 1+2;//右值
+	cout << d << endl;
+	return 0;
 }

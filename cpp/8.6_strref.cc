@@ -21,7 +21,7 @@ void display(const free_throws &ft);
 void set_pc(free_throws &ft);
 free_throws& accumulate(free_throws &target, const free_throws &source);
 
-int main(){
+int main02(){
 	free_throws one = {"Ifelsa Branch", 13, 14};
 	free_throws two = {"Andro knott", 7, 9};
 	free_throws three = {"minnie Nax", 10, 16};
@@ -38,10 +38,10 @@ int main(){
 	display(accumulate(term, two));
 	accumulate(accumulate(term, three), four);
 	display(term);
-	dup = accumulate(term, five);
+//	dup = accumulate(term, five);
 	std::cout << "Displaying term: \n";
 	display(term);
-	accumulate(dup, five) = four;
+//	accumulate(dup, five) = four;
 	display(four);
 	display(dup);
 }
