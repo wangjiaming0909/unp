@@ -43,7 +43,7 @@ int swapref(int &a, int &b){
 	return a + b;
 }
 
-int main(){
+int main01(){
 	// int  buf[32] = {2};
 
 	// *(buf + 1) = 12;
