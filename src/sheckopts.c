@@ -77,7 +77,7 @@ struct sock_opts{
     {"NULL",            0,          0,              NULL}
 };
 
-int main(int argc, char **argv){
+int mainopts(int argc, char **argv){
     int                 fd;
     socklen_t           len;
     struct sock_opts    *ptr;
