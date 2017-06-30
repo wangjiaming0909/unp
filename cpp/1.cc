@@ -2,6 +2,10 @@
 #include <climits>
 using namespace std;
 
+static long abc1 = 10;
+long abc2 = 12;
+char ch;
+
 int sum_arr(int arr[], int n){
 	cout << "123" <<endl;
 	// cout <<"sizeof arr[]:" <<  sizeof(arr) << endl << n << endl;//8

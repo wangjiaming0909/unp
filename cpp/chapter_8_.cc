@@ -3,6 +3,12 @@
 using namespace std;
 
 static int a = 1;
+//将abc2定义的文件编译成.o文件, 并链接到a.out中,
+//abc2定义为外部链接的静态存储连续性变量, 因此, 可被链接到执行程序中
+extern long abc2;
+static long abc1 = 13;
+//char ch;
+
 template <typename T>
 void iquote(T  t){
 	cout << "$" << t << "$" << endl;
@@ -37,11 +43,14 @@ int main(){
 	//cout.setf(ios::fixed);
 	//cout.precision(2);
 
+
 	cout << average(3.0, 6.0) << endl;
 	printex("asdad", 1);
 	printex("qweq", 1);
 	printex("zxc", 1);
 
+	cout << abc2 << endl;
+	cout <<abc1 << endl;
 	return 0;
 }
 

@@ -11,7 +11,7 @@ $(target):$(objects) *.h
 
 $(objects):%.o:%.cc
 	@echo compiling...
-	g++ -c $< -o $@ -g 
+	g++ -c  -Og $< -o $@ -g 
 	
 
 clean:FORCE
