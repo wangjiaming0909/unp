@@ -9,6 +9,7 @@
 #include <string>
 #include <fstream>
 
+using namespace std;
 struct free_throws{
 	std::string name;
 	int made;
@@ -21,6 +22,15 @@ void display(const free_throws &ft);
 void set_pc(free_throws &ft);
 free_throws& accumulate(free_throws &target, const free_throws &source);
 
+//新类型的函数定义:
+//1, auto, ->double  后置返回类型
+//auto是一个占位符, 表示后置返回类型提供的类型
+//2, decltype(x + y)
+template<typename T1, typename T2>
+auto gt(T1 x, T2 y) ->decltype(x + y){
+	return x + y;
+}
+
 int main02(){
 	free_throws one = {"Ifelsa Branch", 13, 14};
 	free_throws two = {"Andro knott", 7, 9};
@@ -28,6 +38,8 @@ int main02(){
 	free_throws four = {"Whihy Looper", 5, 9};
 	free_throws five = {"Throwgoods", 6, 14};
 	free_throws term = {"Long long", 0, 0};
+	int a = 12, b = 13;
+	cout << gt(a, b) << endl;;
 
 	free_throws dup;
 

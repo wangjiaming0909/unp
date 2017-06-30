@@ -1,4 +1,5 @@
 #include <iostream>
+#include <climits>
 using namespace std;
 
 int sum_arr(int arr[], int n){
@@ -43,7 +44,7 @@ int swapref(int &a, int &b){
 	return a + b;
 }
 
-int main(){
+int main01(){
 	// int  buf[32] = {2};
 
 	// *(buf + 1) = 12;
@@ -87,5 +88,16 @@ int main(){
 
 	int &&d6 = 1+2;//右值
 	cout << d << endl;
+
+//	wcha
+	wchar_t ch2 = L'q';
+	cout << "wchat_t的大小为:" << sizeof(ch2) << endl;
+	char16_t ch1 = u'q';
+	char32_t ch3 = U'w';
+	int abc(13);
+//	int abcd{14.0};
+	double abcd2{1};
+	cout << "char16_t size: " << sizeof(ch1) << endl;
+	cout << "char32_t size: " << sizeof(ch3) << endl;
 	return 0;
 }
