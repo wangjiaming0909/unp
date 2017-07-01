@@ -49,9 +49,9 @@ struct sock_opts{
     
     {"IP_TOS",          IPPROTO_IP, IP_TOS,         sock_str_int},
     {"IP_TTL",          IPPROTO_IP, IP_TTL,         sock_str_int},
-    {"IPV6_DONTFRAG",   IPPROTO_IPV6, IPV6_DONTFRAG, sock_str_flag},
-    {"IPV6_UNICAST_HOPS", IPPROTO_IPV6, IPV6_UNICAST_HOPS, sock_str_int},
-    {"IPV6_V6ONLY",     IPPROTO_IPV6, IPV6_V6ONLY,  sock_str_flag},
+//    {"IPV6_DONTFRAG",   IPPROTO_IPV6, IPV6_DONTFRAG, sock_str_flag},
+//    {"IPV6_UNICAST_HOPS", IPPROTO_IPV6, IPV6_UNICAST_HOPS, sock_str_int},
+//    {"IPV6_V6ONLY",     IPPROTO_IPV6, IPV6_V6ONLY,  sock_str_flag},
     {"TCP_MAXSEG",      IPPROTO_TCP, TCP_MAXSEG,    sock_str_int},
     {"TCP_NODELAY",     IPPROTO_TCP, TCP_NODELAY,   sock_str_flag},
 #ifdef SCTP_AUTOCLOSE
