@@ -29,7 +29,8 @@ main03(int argc, char **argv){
 
         ticks = time(NULL);
         snprintf(buff, sizeof(buff), "%.24s\r\n", ctime(&ticks));
-        write(connfd, buff, strlen(buff));
+        if(write(connfd, buff, strlen(buff)) < 0)
+        	err_quit("error write");
 
         close(connfd);
     }

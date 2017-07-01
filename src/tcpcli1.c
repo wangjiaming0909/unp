@@ -71,7 +71,8 @@ void str_cli(FILE *fp, int sockfd){
                 else//客户端没有发送EOF， 但是接收到了服务端发来的EOF，说明服务器子进程已经提前终止，提前发来了FIN
                     err_quit("str_cli: server terminated prematurely");
             }
-            write(fileno(fp), buf, n);
+            if(write(fileno(fp), buf, n) < 0)
+            	err_quit("error write");
         }
         if(FD_ISSET(fileno(fp), &readset)){
             if((n = read(fileno(fp), buf, MAXLINE)) == 0){//read返回0， 表示从终端读到EOF， zero indicates end of file

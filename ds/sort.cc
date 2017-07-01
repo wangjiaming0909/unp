@@ -30,13 +30,21 @@ void bubblesort1(T *a, int n){
 
 
 //能及时终止的冒泡排序
+//	int buf[14] = {94,12,53,23,23,6,2,623,68,9,3,2,1243,23};
 template <class T>
 void bubblesort(T *a, int n){
-    bool swapped = false;
-    for(int i = n; i > 1 && swapped == false; i--){
+    bool swapped = true;
+    for(int i = n; i > 1 && swapped == true; i--){
+		swapped = false;
         for(int j = 0; j< i - 1; j++){
-            swap(a[j], a[j+1]);
-            swapped = true;
+        	if(a[j] > a[j+1]){
+        		swap(a[j], a[j+1]);
+        	    for(int l = 0; l < n; l++){
+        			cout << a[l] << ",";
+        		}
+        	    cout << endl;
+        		swapped = true;
+        	}
         }
     }
 }
@@ -79,12 +87,36 @@ void selectionsort(T *a, int n){
 	}
 }
 
+//插入
+template <class T>
+void insert(T *a, int n, const T&x){
+	int i;
+	for(i = n-1; i >= 0 && x < a[i]; i--)
+		a[i+1] = a[i];
+	a[i+1] = x;
+
+	for(int l = 0; l < 14; l++){
+		cout << a[l] << ",";
+	}
+    cout << endl;
+}
+
+//插入排序
+template <class T>
+void insertsort(T *a, int n){
+	for(int i = 1; i< n; i++){
+		T t = a[i];
+		insert(a, i, t);
+
+	}
+}
 
 int main(){
 	int buf[14] = {94,12,53,23,23,6,2,623,68,9,3,2,1243,23};
 //	bubble(buf, 14);
 //	selectionsort(buf, 14);
-    bubblesort(buf, 14);
+//    bubblesort(buf, 14);
+	insertsort(buf, 14);
     for(int i = 0; i < 14; i++){
 		cout << buf[i] << ",";
 	}
