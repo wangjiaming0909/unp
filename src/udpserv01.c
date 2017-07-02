@@ -10,7 +10,7 @@ void dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen){
 		len = clilen;
 		if((n = recvfrom(sockfd, mesg, MAXLINE, 0, pcliaddr, &len)) < 0)
 			err_quit("recvfrom error");
-		if((n = sendto(sockfd, mesg, MAXLINE, 0, pcliaddr, len)) < 0)
+		if((n = sendto(sockfd, mesg, n, 0, pcliaddr, len)) < 0)
 			err_quit("sendto error");
 	}
 }

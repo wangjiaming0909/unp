@@ -111,7 +111,7 @@ void insertsort(T *a, int n){
 	}
 }
 
-int main(){
+int main01(){
 	int buf[14] = {94,12,53,23,23,6,2,623,68,9,3,2,1243,23};
 //	bubble(buf, 14);
 //	selectionsort(buf, 14);
