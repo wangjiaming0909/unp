@@ -15,7 +15,7 @@ void dg_echo(int sockfd, SA *pcliaddr, socklen_t clilen){
 	}
 }
 
-int main(int argc, char **argv){
+int main001(int argc, char **argv){
 	int 							sockfd;
 	struct sockaddr_in 	servaddr, cliaddr;
 
