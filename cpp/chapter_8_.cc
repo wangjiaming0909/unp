@@ -32,6 +32,12 @@ inline void printex(const char *p, int n){
 		a ++;
 	}
 }
+
+
+static void printf(char *format, ...){
+	cout << format << "123"<< endl;
+}
+
 int main(){
 
 	int a = 1;
@@ -51,6 +57,14 @@ int main(){
 
 	cout << abc2 << endl;
 	cout <<abc1 << endl;
+	printf("asd");
+
+	//初始化动态内存的数组,结构
+	struct where{
+		int x; int y; double z;
+	};
+	where *one = new where{1,2,3.1};
+	int * ar = new int[4]{2,3,4,1};
 	return 0;
 }
 

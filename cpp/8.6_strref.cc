@@ -31,6 +31,7 @@ auto gt(T1 x, T2 y) ->decltype(x + y){
 	return x + y;
 }
 
+
 int main02(){
 	free_throws one = {"Ifelsa Branch", 13, 14};
 	free_throws two = {"Andro knott", 7, 9};
