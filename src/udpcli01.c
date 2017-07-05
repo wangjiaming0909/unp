@@ -15,7 +15,7 @@ void dg_cli(FILE *fp, int sockfd, SA *pservaddr, socklen_t servlen){
 	}
 }
 
-int main(int argc, char **argv){
+int mainududpcli(int argc, char **argv){
 
 	int sockfd, ret;
 	struct sockaddr_in servaddr;
