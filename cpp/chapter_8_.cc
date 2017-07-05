@@ -38,7 +38,7 @@ static void printf(char *format, ...){
 	cout << format << "123"<< endl;
 }
 
-int main(){
+int maincha(){
 
 	int a = 1;
 	double b = 2.0000;
