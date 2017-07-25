@@ -11,7 +11,7 @@ $(target):$(objects) *.h
 
 $(objects):%.o:%.cc
 	@echo compiling...
-	g++ -c  -Og $< -o $@ -g 
+	g++ -std=c++11 -c  -Og $< -o $@ -g 
 	
 
 clean:FORCE

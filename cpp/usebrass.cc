@@ -4,7 +4,7 @@
 const int CLIENTS = 4;
 using namespace std;
 
-int main(){
+int mainuser(){
 	AcctABC*		p_client[CLIENTS];
 	string				temp;
 	long				tempnum;
