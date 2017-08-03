@@ -47,24 +47,34 @@ arrayList<T>::arrayList(int initialCapacity){
 
 template <class T>
 arrayList<T>::arrayList(const arrayList<T>& thelist){
-    
-
+    arrayLength = thelist.arrayLength;
+    listSize = thelist.listSize;
+    element = new T[arrayLength];
+    std::copy(thelist.element, thelist.element + listSize, element);
 }
 
 template <class T>
 void arrayList<T>::checkIndex(int theIndex) const{
-    
+    if(theIndex < 0 || theIndex >= this->listSize){
+        std::ostringstream s;
+        s << "index = " << theIndex << "size = " << listSize;
+        throw s.str();
+    }    
 }
 
 template <class T>
 T& arrayList<T>::get(int theIndex)const{
-    
+    checkIndex(theIndex);
+    return element[theIndex];
 }
 
 template <class T>
 int arrayList<T>::indexOf(const T&theElement)const {
-   
-    return 0; 
+    int theIndex = std::find(this->element, this->element + this->listSize, theElement) - element;
+    if(theIndex == listSize)
+        return -1;
+    else
+        return theIndex;
 }
 
 template <class T>
