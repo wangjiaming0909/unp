@@ -35,7 +35,7 @@ void printarray(T *arr, int n){
     std::cout << std::endl;
 }
 
-int main(){
+int maintest(){
     int x = 2;
     int buf[4] = {5,2,4,5};
     int a[9] = {3, 2,6,5,9,4,7,1,8};
