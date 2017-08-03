@@ -9,6 +9,7 @@
 #define _ARRAYLIST_H
 #include "linearlist.h"
 #include <sstream>
+#include <algorithm>
 template <class T>
 class arrayList : public LinearList<T>{
 public:
