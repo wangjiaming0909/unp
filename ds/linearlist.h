@@ -28,7 +28,7 @@ void changeLength1D(T*&a, int oldLength, int newLength){
         throw "new length must be >= 0";
     T* temp = new T[newLength];
     int number = std::min(oldLength, newLength);
-    copy(a, a + number, temp);
+    std::copy(a, a + number, temp);
     delete [] a;
     a = temp;
 }

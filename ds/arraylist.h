@@ -10,8 +10,15 @@
 #include "linearlist.h"
 #include <sstream>
 #include <algorithm>
+#include <iterator>
+template <class T>
+class Iiterator;
+
 template <class T>
 class arrayList : public LinearList<T>{
+public:
+    typedef Iiterator<T> iterator;
+    
 public:
     arrayList(int initialCapacity = 10);
     arrayList(const arrayList<T> &);
@@ -25,7 +32,11 @@ public:
     void insert(int theIndex, const T& theElement);
     void output(std::ostream &out)const;
     int capacity()const {return arrayLength;}
-   
+
+
+    iterator begin() {return iterator(element);}
+    iterator end() {return iterator(element + listSize);}
+
 protected:
     void checkIndex(int theIndex) const;
     T* element;
@@ -80,17 +91,35 @@ int arrayList<T>::indexOf(const T&theElement)const {
 
 template <class T>
 void arrayList<T>::erase(int theIndex){
-    
+   checkIndex(theIndex);
+    std::copy(element + theIndex + 1, element + listSize, element + theIndex);
+    element[--listSize].~T();
 }
 
 template <class T>
 void arrayList<T>::insert(int theIndex, const T& theElement){
+    //检查是否是无效index
+    if(theIndex < 0 || theIndex > listSize){
+        std::ostringstream s;
+        s << "index = " << theIndex << " size = " << listSize;
+        throw s.str();
+    }
+    //valid index
+    //check the array for full, for full, expand the size of array
+    if(this->listSize == arrayLength){
+        changeLength1D(element, arrayLength, 2 * arrayLength);
+        arrayLength *= 2;
+    }
+    //move elements after theIndex one step after
+    std::copy_backward(element + theIndex, element + listSize, element + listSize + 1);
 
+    element[theIndex] = theElement;
+    listSize ++;
 }
 
 template <class T>
 void arrayList<T>::output(std::ostream& out)const{
-    
+    std::copy(element, element + listSize, std::ostream_iterator<T>(out, " "));
 }
 
 template <class T>
@@ -98,4 +127,24 @@ std::ostream& operator<<(std::ostream& out, const arrayList<T>& x){
     x.output(out);
     return out;
 }
+
+template <class T>
+class Iiterator{
+public:
+    typedef std::bidirectional_iterator_tag         iterator_category;
+    typedef T                                       value_type;
+    typedef std:: ptrdiff_t                         difference_type;
+    typedef T*                                      pointer;
+    typedef T&                                      reference;
+    
+
+    Iiterator(T* theposition = 0){position = theposition;}
+
+    T& operator*()const {return *position;}
+    T* operator->(){return &*position;}
+protected:
+    T* position;
+
+};
+
 #endif
