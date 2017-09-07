@@ -5,13 +5,13 @@ all:$(target)
 
 $(target):$(objects) *.h
 	@echo linking...
-	g++ $^ -o $@
+	g++ -O1 $^ -o $@
 	@echo ok...
 	rm  $(objects)
 
 $(objects):%.o:%.cc
-	@echo compiling...
-	g++ -std=c++11 -c  -Og $< -o $@ -g 
+#	@echo compiling...
+	g++ -std=c++11 -c -O1  $< -o $@ -g 
 	
 
 clean:FORCE

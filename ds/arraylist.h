@@ -30,7 +30,7 @@ public:
     int indexOf(const T& theElement)const;
     void erase(int theIndex);
     void insert(int theIndex, const T& theElement);
-    void output(std::ostream &out)const;
+//    void output(std::ostream &out)const;
     int capacity()const {return arrayLength;}
 
 
@@ -117,6 +117,7 @@ void arrayList<T>::insert(int theIndex, const T& theElement){
     listSize ++;
 }
 
+/*
 template <class T>
 void arrayList<T>::output(std::ostream& out)const{
     std::copy(element, element + listSize, std::ostream_iterator<T>(out, " "));
@@ -127,7 +128,7 @@ std::ostream& operator<<(std::ostream& out, const arrayList<T>& x){
     x.output(out);
     return out;
 }
-
+*/
 template <class T>
 class Iiterator{
 public:
