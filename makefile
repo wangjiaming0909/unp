@@ -1,19 +1,24 @@
-target = build/unp
-objects = $(patsubst %.c,%.o,$(wildcard *.c))
+target = ./a.out
+objects = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+LIB =  #-lpthread
+INCLUDE = ./include/#/boost_1_65_1/
 
 all:$(target)
 
-$(target):$(objects) *.h
+$(target):$(objects) 
 	@echo linking...
-	gcc $^ -o $@
+#	g++ -O1 $^ -L. -la -o $@ 
+	g++  $^ -o $@  $(LIB)
 	@echo ok...
-	rm  $(objects)
 
-$(objects):%.o:%.c
-	@echo compiling...
-	gcc -c -Og $< -o $@ -g 
+$(objects):%.o:%.cpp
+# @echo compiling...
+	@rm -f *.out
+	g++ -Wall -Wextra -std=c++11 -c -O0  $< -o $@ -g2 -ggdb -Wfatal-errors
 	
 
 clean:FORCE
-	$(RM) $(target) $(objects)
+	rm -f *.o 
+	rm -f *.out
+	@echo ok..
 FORCE:

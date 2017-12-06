@@ -4,23 +4,22 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceRoot}",
-                "/usr/include/x86_64-linux-gnu/c++/6.2.0",
-                "/usr/include/c++/6.2.0",
-                "/usr/local/include",
+                "${workspaceRoot}/include/",
+                "/usr/include/c++/5/",
+                "/usr/include/",
+                "/usr/include/x86_64-linux-gnu/c++/5/",
                 "/usr/include/x86_64-linux-gnu",
-                "/usr/include"
+                "/usr/include/linux"
             ],
-            "defines": [],
             "browse": {
                 "path": [
-                    "/usr/include/x86_64-linux-gnu/c++/6.2.0",
-                    "/usr/include/c++/6.2.0",
-                    "/usr/local/include",
-                    "/usr/include/x86_64-linux-gnu",
-                    "/usr/include"
+                    "${workspaceRoot}/include/",
+                    "/usr/include/c++/5/",
+                    "${workspaceRoot}",
+                    "/usr/include/",
+                    "/usr/include/x86_64-linux-gnu/c++/5/"
                 ],
-                "limitSymbolsToIncludedHeaders": true,
-                "databaseFilename": ""
+                "limitSymbolsToIncludedHeaders": true
             },
             "intelliSenseMode": "clang-x64"
         }
