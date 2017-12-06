@@ -1,6 +1,5 @@
 {
     "configurations": [
-       
         {
             "name": "Linux",
             "includePath": [
@@ -22,7 +21,9 @@
                 ],
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
-            }
+            },
+            "intelliSenseMode": "clang-x64"
         }
-    ]
+    ],
+    "version": 3
 }
