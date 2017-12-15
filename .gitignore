@@ -1,3 +1,4 @@
 ./*.out \
 *.o \
 .vscode/ \
+update_to_pi.sh

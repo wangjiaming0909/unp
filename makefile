@@ -1,31 +1,29 @@
 CC = g++
 FLAGS = -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors
-SOURCES = main.cpp \
-		  tcpserv.cpp \
-		  lib/str_echo.cpp 
 HEADERS = include/unp.h \
 		  include/config.h \
 		  include/headers.h
-OBJECTS = main.o \
-		  tcpserv.o \
-		  str_echo.o
+SOURCES = tcpserv.cpp \
+		  lib/str_echo.cpp \
+		  daytimetcpcli.cpp \
+		  daytimetcpserv.cpp
+OBJECTS = tcpserv.o \
+		  str_echo.o \
+		  daytimetcpcli.o \
+		  daytimetcpserv.o 
 TARGET = a.out
 LIBS = 
 
 all: $(TARGET)
 
-$(target):$(objects) 
-	@echo linking...
-#	g++ -O1 $^ -L. -la -o $@ 
-	g++  $^ -o $@  $(LIB)
-	@echo ok...
-	@mv *.o build/
+$(TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) -o $(TARGET)
 
 $(OBJECTS):$(SOURCES) $(HEADERS)
 	$(CC) $(FLAGS) $(SOURCES) 
 
 clean:FORCE
-	rm -f build/*.o 
+	rm -f *.o 
 	rm -f *.out
 	@echo ok..
 FORCE:

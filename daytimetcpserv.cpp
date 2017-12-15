@@ -9,7 +9,7 @@
 #include "unp.h"
 using namespace std;
 
-int main(){
+int main_daytimetcpserv(){
     int                  listenfd, connfd, ret;
     socklen_t            len;
     struct sockaddr_in   servaddr, cliaddr;
