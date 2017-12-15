@@ -3,7 +3,7 @@
 using namespace std;
 
 
-int main(){
+int main_main(){
 
     
     cout << 123 << endl;
