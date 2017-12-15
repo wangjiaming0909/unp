@@ -10,6 +10,7 @@ $(target):$(objects)
 #	g++ -O1 $^ -L. -la -o $@ 
 	g++  $^ -o $@  $(LIB)
 	@echo ok...
+	@mv *.o build/
 
 $(objects):%.o:%.cpp
 # @echo compiling...
@@ -18,7 +19,7 @@ $(objects):%.o:%.cpp
 	
 
 clean:FORCE
-	rm -f *.o 
+	rm -f build/*.o 
 	rm -f *.out
 	@echo ok..
 FORCE:

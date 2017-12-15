@@ -6,18 +6,14 @@
                 "${workspaceRoot}",
                 "${workspaceRoot}/include/",
                 "/usr/include/c++/5/",
-                "/usr/include/",
-                "/usr/include/x86_64-linux-gnu/c++/5/",
-                "/usr/include/x86_64-linux-gnu",
-                "/usr/include/linux"
+                "/usr/include/netinet/"
             ],
             "browse": {
                 "path": [
                     "${workspaceRoot}/include/",
                     "/usr/include/c++/5/",
                     "${workspaceRoot}",
-                    "/usr/include/",
-                    "/usr/include/x86_64-linux-gnu/c++/5/"
+                    "/usr/include/netinet/"
                 ],
                 "limitSymbolsToIncludedHeaders": true
             },

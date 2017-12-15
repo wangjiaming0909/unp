@@ -58,7 +58,6 @@
         "numeric": "cpp"
     },
     "git.ignoreLimitWarning": true,
-    "vim.disableAnnoyingNeovimMessage": true,
     "window.zoomLevel": 1,
     "git.enableSmartCommit": true,
     "editor.fontSize": 16,
@@ -71,29 +70,19 @@
         "comments": true,
         "strings": true
     },
-    // "editor.formatOnType": true,
     "files.autoSave": "onFocusChange",
     "editor.wordWrap": "on",
-    // "workbench.colorTheme": "Monokai",
-    // "window.openFilesInNewWindow": "on",
-    // "window.openFoldersInNewWindow": "on",
     "window.restoreFullscreen": true,
     "window.menuBarVisibility": "toggle",
     "zenMode.hideStatusBar": false,
     "zenMode.restore": true,
-    //debug
     "debug.inlineValues": true,
     "editor.smoothScrolling": true,
     "editor.minimap.enabled": true,
-    // "editor.formatOnPaste": true,
-    // "editor.formatOnSave": true,
     "editor.cursorBlinking": "solid",
     "editor.mouseWheelZoom": true,
     "editor.fontLigatures": true,
     "editor.showFoldingControls": "always",
-    // "editor.fontFamily": "Ubuntu Italic"
-    // "editor.fontFamily": "Tlwg Typo Regular"
-    // "editor.fontFamily": "Times Ne  w Roman"
     "terminal.integrated.rightClickCopyPaste": true,
     "terminal.integrated.fontFamily": "'Droid Sans Mono', 'Courier New', monospace, 'Droid Sans Fallback'",
     "terminal.integrated.cursorBlinking": true,
@@ -124,6 +113,5 @@
     // },
     "workbench.colorTheme": "Monokai",
     "explorer.confirmDragAndDrop": false,
-    "workbench.activityBar.visible": false,
-    "workbench.panel.location": "bottom"
+    "workbench.activityBar.visible": false
 }
