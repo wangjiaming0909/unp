@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <cstring>
 #include "unp.h"
+#include <unistd.h>
 using namespace std;
 
 int main_daytimetcpserv(){
@@ -24,7 +25,6 @@ int main_daytimetcpserv(){
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
     servaddr.sin_port = htons(9999);
-    servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     ret = bind(listenfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
     if(ret != 0){
@@ -46,6 +46,7 @@ int main_daytimetcpserv(){
                 inet_ntop(AF_INET, &cliaddr.sin_addr, buf, sizeof(buf)) <<
                 ", port " << ntohs(cliaddr.sin_port) << endl;
 //        ticks = time(NULL);
+        close(connfd);
 
     }
     cout << 123 << endl;

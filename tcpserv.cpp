@@ -10,7 +10,8 @@
 using namespace std;
 
 void str_echo(int);
-int main(){
+
+int mainserc(){
     int         listenfd, connfd, ret;
     pid_t       child_pid;
     socklen_t   clilen;

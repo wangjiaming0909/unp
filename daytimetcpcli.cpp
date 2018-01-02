@@ -8,7 +8,7 @@
 
 using namespace std;
 
-int main02(){
+int maindaytime(){
 //    event_base *base = event_base_new();
     sockaddr_in     servaddr;
     int             sockfd, n;
@@ -20,8 +20,8 @@ int main02(){
     }
     bzero(&servaddr, sizeof(servaddr));
     servaddr.sin_family = AF_INET;
-    servaddr.sin_port = htobe16(80);
-    n = inet_pton(AF_INET, "192.168.0.21", &servaddr.sin_addr);
+    servaddr.sin_port = htobe16(9999);
+    n = inet_pton(AF_INET, "192.168.0.3", &servaddr.sin_addr);
     if(n == -1){
         cout << "inet_pton error.." << endl;
         cout << strerror(errno) << endl;
@@ -32,6 +32,7 @@ int main02(){
     if(n == -1){
         cout << "connect error" << endl;
         cout << strerror(errno) << endl;
+        sleep(2);
 //        exit(-1);
     }else break;
     }

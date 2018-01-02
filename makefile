@@ -6,11 +6,13 @@ HEADERS = include/unp.h \
 SOURCES = tcpserv.cpp \
 		  lib/str_echo.cpp \
 		  daytimetcpcli.cpp \
-		  daytimetcpserv.cpp
+		  daytimetcpserv.cpp \
+		  tcpcli01.cpp
 OBJECTS = tcpserv.o \
 		  str_echo.o \
 		  daytimetcpcli.o \
-		  daytimetcpserv.o 
+		  daytimetcpserv.o \
+		  tcpcli01.o
 TARGET = a.out
 LIBS = 
 
