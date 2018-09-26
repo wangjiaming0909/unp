@@ -9,13 +9,15 @@ int main(int argc, char** argv){
 }
 
 int print_Argc_Argv(int argc, char** argv){
+    using namespace std;
    if(argc == 0){
-       std::cout << "no parameters" << std::endl;
+       cout << "no parameters" << endl;
        return 0;
    } 
    for(int i = 0; i < argc; i++){
         try{
-            std::cout << *(argv + i) << std:: endl;
+            cout << "argc: " << argc << endl;
+            cout << *(argv + i) << " ";
         }
         catch(std::exception e){
             std::cout << "exception catched" << std::endl; 
@@ -23,6 +25,6 @@ int print_Argc_Argv(int argc, char** argv){
             return -1;
         }
    }
+   cout << endl;
    return 0;
-
 }
