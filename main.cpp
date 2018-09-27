@@ -1,15 +1,12 @@
 #include <iostream>
 #include <exception>
-#include <boost/timer.hpp>
+#include <boost/assert.hpp>
 
 int print_Argc_Argv(int argc, char** argv);
 
 int main(int argc, char** argv){
     using namespace std;
-    using namespace boost;
     print_Argc_Argv(argc, argv);
-    timer t;
-    cout << t.elapsed_max() << endl;;
     return 0;
 }
 
@@ -23,6 +20,7 @@ int print_Argc_Argv(int argc, char** argv){
     cout << "argc: " << argc << endl;
     for(int i = 0; i < argc; i++){
         try{
+            BOOST_ASSERT(argv + i != NULL && "argc is matching the number of argv");
             cout << *(argv + i) << " ";
         }
         catch(std::exception e){
