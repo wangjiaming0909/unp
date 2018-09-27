@@ -1,22 +1,28 @@
 #include <iostream>
 #include <exception>
+#include <boost/timer.hpp>
 
 int print_Argc_Argv(int argc, char** argv);
 
 int main(int argc, char** argv){
+    using namespace std;
+    using namespace boost;
     print_Argc_Argv(argc, argv);
+    timer t;
+    cout << t.elapsed_max() << endl;;
     return 0;
 }
 
 int print_Argc_Argv(int argc, char** argv){
     using namespace std;
-   if(argc == 0){
-       cout << "no parameters" << endl;
-       return 0;
-   } 
-   for(int i = 0; i < argc; i++){
+    if(argc == 0){
+        cout << "no parameters" << endl;
+        return 0;
+    } 
+
+    cout << "argc: " << argc << endl;
+    for(int i = 0; i < argc; i++){
         try{
-            cout << "argc: " << argc << endl;
             cout << *(argv + i) << " ";
         }
         catch(std::exception e){
