@@ -6,7 +6,7 @@ SOURCES = main.cpp
 OBJECTS = main.o
 TARGET = a.out
 LIBS = 
-INCLUDES = /boost_1_68_0
+INCLUDES = /boost_1_65_1
 
 all: $(TARGET)
 
