@@ -1,3 +1,2 @@
 ./
-*.out 
-objects/*.o 
+build/**

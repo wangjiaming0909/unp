@@ -1,24 +1,35 @@
 CC = g++
 FLAGS = -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors
-HEADERS = include/unp.h
+#HEADERS = include/unp.h
 
-SOURCES = main.cpp
-OBJECTS = main.o
-TARGET = a.out
+SOURCEDIR = ./server
+BUILDDIR = ./build
+OBJDIR = $(BUILDDIR)/obj
+
+MKDIR = mkdir -p
+RM = rm -rf
+
+SOURCES=$(shell find $(SOURCEDIR) -type f -name '*.cpp')
+OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES) )
+
+
+TARGET = $(BUILDDIR)/a.out
 LIBS = 
-INCLUDES = /boost_1_65_1
+INCLUDES = /boost_1_68_0
+LDFLAGS = 
 
-all: $(TARGET)
+all: $(BUILDDIR) $(TARGET)
+
+$(BUILDDIR):
+	$(MKDIR) $@
 
 $(TARGET): $(OBJECTS)
-	$(CC) objects/$(OBJECTS) -o $(TARGET)
+	$(CC) $(OBJECTS) -o $@ 
 
-$(OBJECTS):$(SOURCES) $(HEADERS)
-	$(CC) $(FLAGS) $(SOURCES) -I $(INCLUDES)
-	mv ./*.o ./objects/
+$(OBJECTS): $(OBJDIR)/%.o : $(SOURCEDIR)/%.cpp
+	@$(MKDIR) $(dir $@)
+	$(CC) $(FLAGS) $< -o $@ -I $(INCLUDES)
 
 clean:FORCE
-	rm -f ./objects/*.o 
-	rm -f *.out
-	@echo ok..
+	$(RM) $(OBJECTS) $(TARGET)
 FORCE:
