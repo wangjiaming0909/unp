@@ -7,9 +7,14 @@
 
 #ifndef _CLIENT_H
 #define _CLIENT_H
+
+namespace client{
+
 class Client{
 public:
     Client();
     ~Client();
 };
 #endif
+
+}

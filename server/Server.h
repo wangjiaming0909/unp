@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 #include "Client.h"
-#include "ServerConfig.h"
+#include "config/ServerConfig.h"
 #include <netinet/in.h>// for sockaddr_in
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -18,6 +18,10 @@
 #include <string.h>
 #include <errno.h>
 
+namespace server{
+
+using namespace config;
+using namespace client;
 class Server{
 public:
     Server(const ServerConfig* config);
@@ -43,3 +47,5 @@ public:
     uint16_t                m_port;//listen port
 };
 #endif
+
+}

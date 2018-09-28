@@ -20,6 +20,23 @@ LDFLAGS =
 
 all: $(BUILDDIR) $(TARGET)
 
+TEST_DIR = ./tests
+TEST_OBJ_DIR = $(TEST_DIR)
+TEST_SOURCE = $(shell find $(TEST_DIR) -type f -name '*.cpp')
+TEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp, $(TEST_OBJ_DIR)/%.o, $(TEST_SOURCE) )
+TEST_TARGET = $(TEST_DIR)/test.out
+TEST_USED_SOURCE = $(filter-out main.cpp, $(SOURCES))
+TEST_USED_OBJECTS = $(filter-out ./build/obj/main.o, $(OBJECTS))
+
+test: $(TEST_TARGET)
+
+
+$(TEST_TARGET): $(TEST_USED_OBJECTS) $(TEST_OBJS)
+	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -o $@ 
+
+$(TEST_OBJS):$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp 
+	$(CC) $(FLAGS) $< -o $@ -I $(INCLUDES)
+
 $(BUILDDIR):
 	$(MKDIR) $@
 
@@ -32,4 +49,5 @@ $(OBJECTS): $(OBJDIR)/%.o : $(SOURCEDIR)/%.cpp
 
 clean:FORCE
 	$(RM) $(OBJECTS) $(TARGET)
+	$(RM) $(TEST_OBJS) $(TEST_TARGET)
 FORCE:

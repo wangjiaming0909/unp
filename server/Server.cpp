@@ -5,6 +5,7 @@
 	> Created Time: Fri 28 Sep 2018 09:08:21 AM CST
  ************************************************************************/
 #include "Server.h"
+using namespace server;
 
 Server::Server(const ServerConfig* config)
     : m_config(config){

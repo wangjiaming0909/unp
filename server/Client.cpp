@@ -6,7 +6,7 @@
  ************************************************************************/
 
 #include "Client.h"
-
+using namespace client;
 Client::Client(){
 
 }

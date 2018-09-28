@@ -4,6 +4,9 @@
         "*.proj": "msbuild",
         "*.json": "json",
         "cerrno": "cpp",
-        "exception": "cpp"
+        "exception": "cpp",
+        "iosfwd": "cpp",
+        "*.tcc": "cpp",
+        "new": "cpp"
     }
 }
