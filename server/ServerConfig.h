@@ -7,11 +7,23 @@
 
 #ifndef _CONFIG_H
 #define _CONFIG_H
+#include "ServerConfig.h"
+#include <netinet/in.h>// for uint16_t
+#include <string>
 
-class Config{
+class ServerConfig{
 public:
-    Config();
-    ~Config();
+    ServerConfig();
+	ServerConfig(std::string configFilePath);
+    ~ServerConfig();
+public:
+	uint16_t getPort();
+
+private:
+	bool parseConfigFile();
+
+private:
+	std::string 		m_configFilePath;
 };
 
 #endif

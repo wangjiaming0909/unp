@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 #include "Client.h"
-#include "Config.h"
+#include "ServerConfig.h"
 #include <netinet/in.h>// for sockaddr_in
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -20,7 +20,7 @@
 
 class Server{
 public:
-    Server(const Config* config);
+    Server(const ServerConfig* config);
     ~Server();
 
 public:
@@ -32,7 +32,7 @@ private:
     std::string             m_ipAddress;//
     std::vector<Client*>    m_clients;
     size_t                  m_numOfClients = 0;
-    Config const            *m_config;
+    ServerConfig const      *m_config;
     int                     m_listenfd = 0;
     int                     connfd = 0;
 
@@ -40,6 +40,6 @@ private:
 public:
     struct sockaddr_in      m_childAddr;
     struct sockaddr_in      m_serverAddr;
-    std::string             m_port;//listen port
+    uint16_t                m_port;//listen port
 };
 #endif
