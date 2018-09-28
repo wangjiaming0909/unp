@@ -14,15 +14,16 @@
 #include <map>
 #include <fstream>
 #include <iostream>
+#include <cstdlib>
 #include "json11.hpp"
 
 namespace config{
 
-#define DEFAULT_CONFIG_JSON_FILE_PATH "./server_conf.json"
+#define DEFAULT_CONFIG_JSON_FILE_NAME "./server_conf.json"
 
 class ServerConfig{
 public:
-	ServerConfig(std::string configFilePath = DEFAULT_CONFIG_JSON_FILE_PATH);
+	ServerConfig(std::string configFileName = DEFAULT_CONFIG_JSON_FILE_NAME);
     ~ServerConfig();
 public:
 	
@@ -30,6 +31,7 @@ public:
 private:
 	bool parseConfigFile();
 	bool readConfigFile();
+	void getPwd();
 
 private:
 	std::map<std::string, std::string> 	m_options_map;

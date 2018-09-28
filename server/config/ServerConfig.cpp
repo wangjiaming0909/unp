@@ -7,8 +7,8 @@
 #include "ServerConfig.h"
 using namespace config;
 
-ServerConfig::ServerConfig(std::string configFilePath)
-	: m_configFilePath(configFilePath){
+ServerConfig::ServerConfig(std::string configFileName)
+	: m_configFilePath(configFileName){
 	m_read_config_file_ok = readConfigFile();
 }
 
@@ -36,4 +36,8 @@ bool ServerConfig::readConfigFile(){
 	if(buffer != NULL)
 		delete buffer;
 	return true;
+}
+
+void ServerConfig::getPwd(){
+
 }
