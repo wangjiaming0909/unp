@@ -36,7 +36,9 @@ bool ServerConfig::readConfigFile(){
 	memset(buffer, 0, size_of_buffer);
 	ifs.read(buffer, size_of_buffer);
 	if(!ifs){//read error
+        std::cout << *m_configFilePath << std::endl;
 		std::cout << "ifs read error" << std::endl;
+        std::cout << strerror(errno) << std::endl;
 		return false;
 	}
 	m_options_str = new std::string(buffer);
@@ -58,7 +60,10 @@ void ServerConfig::setConfigFullPath(const char* configFileName){
 		throw;
 	}
 	char dash = '/';
-	cwd = strcat(cwd, &dash);
+    std::cout << " before add dash " << cwd << std::endl;
+	cwd = strncat(cwd, &dash, 1);
+    std::cout << " add dash " << cwd << std::endl;
 	cwd = strcat(cwd, configFileName);
+    std::cout << " add filename " << cwd << std::endl;
 	m_configFilePath = new std::string(cwd);
 }
