@@ -3,13 +3,15 @@
 #include <boost/assert.hpp>
 #include <cstdlib>
 #include <fstream>
-#include "config"
+#include "config/ServerConfig.h"
 
 int print_Argc_Argv(int argc, char** argv);
 
 int main(int argc, char** argv){
     using namespace std;
-
+    using namespace config;
+    ServerConfig cfg;
+    cout << "read status: " << cfg.getReadConfigFileStatus() << endl;
     print_Argc_Argv(argc, argv);
     return 0;
 }

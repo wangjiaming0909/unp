@@ -24,24 +24,19 @@ bool ServerConfig::parseConfigFile(){
 
 bool ServerConfig::readConfigFile(){
 	std::ifstream ifs;
-	try{
-		ifs.open(*m_configFilePath);
-	}
-	catch(std::exception e){
-		std::cout << e.what() << std::endl;
-		std::cout << strerror(errno) << std::endl;
-	}
+	ifs.open(*m_configFilePath);
 	size_t size_of_buffer = 512;
 	char* buffer = new char[size_of_buffer];
 	memset(buffer, 0, size_of_buffer);
 	ifs.read(buffer, size_of_buffer);
-	if(!ifs){//read error
-        //std::cout << *m_configFilePath << std::endl;
-        CONSOLE_LOG(*m_configFilePath);
-		std::cout << "ifs read error" << std::endl;
+    if(ifs.eof()){
+        //read over
+        ifs.close();
+    }else if (!ifs){ //read error
         CONSOLE_LOG( " errno: " << strerror(errno));
 		return false;
-	}
+    }
+	CONSOLE_LOG(buffer);
 	m_options_str = new std::string(buffer);
 	if(buffer != NULL)
 		delete buffer;
@@ -61,10 +56,7 @@ void ServerConfig::setConfigFullPath(const char* configFileName){
 		throw;
 	}
 	char dash = '/';
-    std::cout << " before add dash " << cwd << std::endl;
 	cwd = strncat(cwd, &dash, 1);
-    std::cout << " add dash " << cwd << std::endl;
 	cwd = strcat(cwd, configFileName);
-    std::cout << " add filename " << cwd << std::endl;
 	m_configFilePath = new std::string(cwd);
 }
