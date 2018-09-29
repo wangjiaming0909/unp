@@ -2,16 +2,15 @@
 #include <exception>
 #include <boost/assert.hpp>
 #include <cstdlib>
+#include <fstream>
+#include "config"
 
 int print_Argc_Argv(int argc, char** argv);
 
 int main(int argc, char** argv){
     using namespace std;
+
     print_Argc_Argv(argc, argv);
-#ifdef POSIX
-    cout << "defined POSIX" << endl;
-#endif
-    // cout << _pgmptr << endl;
     return 0;
 }
 

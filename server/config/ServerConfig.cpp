@@ -36,9 +36,10 @@ bool ServerConfig::readConfigFile(){
 	memset(buffer, 0, size_of_buffer);
 	ifs.read(buffer, size_of_buffer);
 	if(!ifs){//read error
-        std::cout << *m_configFilePath << std::endl;
+        //std::cout << *m_configFilePath << std::endl;
+        CONSOLE_LOG(*m_configFilePath);
 		std::cout << "ifs read error" << std::endl;
-        std::cout << strerror(errno) << std::endl;
+        CONSOLE_LOG( " errno: " << strerror(errno));
 		return false;
 	}
 	m_options_str = new std::string(buffer);

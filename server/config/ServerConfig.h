@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <exception>
 
+#define CONSOLE_LOG(message) std::cout << message << std::endl;
 namespace config{
 
 #define DEFAULT_CONFIG_JSON_FILE_NAME "server_conf.json"
