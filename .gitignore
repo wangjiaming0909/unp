@@ -1,4 +1,4 @@
 ./
 build/**
-test/*.o\
-test/*.out
+tests/*.o\
+tests/*.out
