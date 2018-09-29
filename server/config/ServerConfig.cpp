@@ -16,24 +16,24 @@ ServerConfig::ServerConfig(std::string configFileName){
 ServerConfig::~ServerConfig(){
 	if(m_options_str != NULL)
 		delete m_options_str;
-    if(m_configFilePath != NULL){
-        delete m_configFilePath;
-    }
 }
 
 bool ServerConfig::parseConfigFile(){
-	std::string err;
+	using namespace std;
+	string err;
 	json11::Json cfgJson = json11::Json::parse(m_options_str->c_str(), err);
 	auto maps = cfgJson.object_items();
-	// for(
-	// 	m_options_map.insert(maps.)
-	// }
+	for(auto aPair : maps){
+		string second = aPair.second.is_string() ? aPair.second.dump() : ""; 
+		m_options_map.insert(
+			OptionValidator::validateAndReturn(make_pair(aPair.first, second)));
+	}
 	return true;
 }
 
 bool ServerConfig::readConfigFile(){
 	std::ifstream ifs;
-	ifs.open(*m_configFilePath);
+	ifs.open(m_configFilePath);
 	size_t size_of_buffer = 512;
 	char* buffer = new char[size_of_buffer];
 	memset(buffer, 0, size_of_buffer);
@@ -52,7 +52,7 @@ bool ServerConfig::readConfigFile(){
 }
 
 void ServerConfig::setConfigFullPath(std::string& configFileName){
-    char *cwd = new char[_PC_NAME_MAX];
+    char *cwd;
 	try{
 		cwd = get_current_dir_name();
 	}catch(std::exception e){
@@ -65,11 +65,23 @@ void ServerConfig::setConfigFullPath(std::string& configFileName){
 	}
 	char dash = '/';
 	cwd = strncat(cwd, &dash, 1);
-    std::string *temp = new std::string(cwd);
-    if(cwd != NULL)
-    {
-        delete cwd;
-    }
-    *temp = *temp + configFileName;
+    std::string temp = cwd;
+    temp = temp + configFileName;
     m_configFilePath = temp;
+}
+
+std::string ServerConfig::operator[](const std::string& key){
+	if(m_options_map.count(key) == 0){
+		CONSOLE_LOG("No this option");
+	}
+	return m_options_map[key];
+}
+
+std::string ServerConfig::operator[](const std::string& key)const{
+	return (*this)[key];
+}
+
+std::string ServerConfig::operator[](const char* key){
+	std::string key_str = key;
+	return this->operator[](key);
 }

@@ -29,14 +29,17 @@ public:
 
 public:
     bool initialize();
-    bool start();
-    bool stop();
+    void start();
+    void stop();
+
+private:
+    void bind();
 
 private:
     std::string             m_ipAddress;//
     std::vector<Client*>    m_clients;
     size_t                  m_numOfClients = 0;
-    ServerConfig const      *m_config;
+    const ServerConfig      *m_config;
     int                     m_listenfd = 0;
     int                     connfd = 0;
 

@@ -10,20 +10,23 @@ using namespace server;
 Server::Server(const ServerConfig* config)
     : m_config(config){
     initialize();
+    this->bind();
 }
+
+
 Server::~Server(){
 
 }
 
-bool Server::start(){
-    return true;
+void Server::start(){
+    
 }
-bool Server::stop(){
-    return true;
-}
-bool Server::initialize(){
-    // m_port = m_config->getPort();
 
+void Server::stop(){
+
+}
+
+bool Server::initialize(){
     m_listenfd = socket(AF_INET, SOCK_STREAM, 0);
     if(m_listenfd == -1){
         std::cout << "error socket ..." << std::endl;
@@ -32,6 +35,20 @@ bool Server::initialize(){
     }
     bzero(&m_serverAddr, sizeof(m_serverAddr));   
     m_serverAddr.sin_family = AF_INET;
-    // m_serverAddr.sin_port = htons()
+    std::string portStr = (*m_config)["port"];
+    int port_int = atoi(portStr.c_str());
+    m_serverAddr.sin_port = htons(uint16_t(port_int));
     return true;
+}
+
+void Server::bind(){
+    int ret = ::bind(
+        m_listenfd, 
+        (sockaddr*)&m_serverAddr, 
+        sizeof(m_serverAddr));
+    if(ret == -1){
+        CONSOLE_LOG("error bind");
+        CONSOLE_LOG(strerror(errno));
+        exit(-1);
+    }
 }

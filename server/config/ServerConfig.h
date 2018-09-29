@@ -18,6 +18,8 @@
 #include "json11.hpp"
 #include <unistd.h>
 #include <exception>
+#include <utility>
+#include "optionValidator.h"
 
 #define CONSOLE_LOG(message) std::cout << message << std::endl;
 namespace config{
@@ -29,6 +31,9 @@ public:
 	ServerConfig(std::string configFileName = DEFAULT_CONFIG_JSON_FILE_NAME);
     ~ServerConfig();
 public:
+	std::string operator[](const std::string& key);
+	std::string operator[](const std::string& key)const;
+	std::string operator[](const char*);
 	
 
 private:
@@ -38,7 +43,7 @@ private:
 
 private:
 	std::map<std::string, std::string> 	m_options_map;
-	std::string* 						m_configFilePath;
+	std::string 						m_configFilePath;
 	std::string*						m_options_str;
 
 private:
