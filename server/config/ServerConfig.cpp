@@ -22,7 +22,12 @@ ServerConfig::~ServerConfig(){
 }
 
 bool ServerConfig::parseConfigFile(){
-	json11::Json jsonParser();
+	std::string err;
+	json11::Json cfgJson = json11::Json::parse(m_options_str->c_str(), err);
+	auto maps = cfgJson.object_items();
+	// for(
+	// 	m_options_map.insert(maps.)
+	// }
 	return true;
 }
 
