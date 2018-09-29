@@ -17,10 +17,11 @@
 #include <cstdlib>
 #include "json11.hpp"
 #include <unistd.h>
+#include <exception>
 
 namespace config{
 
-#define DEFAULT_CONFIG_JSON_FILE_NAME "./server_conf.json"
+#define DEFAULT_CONFIG_JSON_FILE_NAME "server_conf.json"
 
 class ServerConfig{
 public:
@@ -32,11 +33,11 @@ public:
 private:
 	bool parseConfigFile();
 	bool readConfigFile();
-	void getPwd();
+	void setConfigFullPath(const char* configFileName);
 
 private:
 	std::map<std::string, std::string> 	m_options_map;
-	std::string 						m_configFilePath;
+	std::string* 						m_configFilePath;
 	std::string*						m_options_str;
 
 private:
