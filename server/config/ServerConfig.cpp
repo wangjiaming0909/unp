@@ -39,5 +39,5 @@ bool ServerConfig::readConfigFile(){
 }
 
 void ServerConfig::getPwd(){
-
+    char *cwd = new char[1];
 }

@@ -16,6 +16,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "json11.hpp"
+#include <unistd.h>
 
 namespace config{
 
