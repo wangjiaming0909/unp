@@ -34,7 +34,7 @@ public:
 private:
 	bool parseConfigFile();
 	bool readConfigFile();
-	void setConfigFullPath(const char* configFileName);
+    void setConfigFullPath(std::string& configFileName);
 
 private:
 	std::map<std::string, std::string> 	m_options_map;

@@ -8,13 +8,17 @@
 using namespace config;
 
 ServerConfig::ServerConfig(std::string configFileName){
-	setConfigFullPath(configFileName.c_str());
+	setConfigFullPath(configFileName);
 	m_read_config_file_ok = readConfigFile();
+    parseConfigFile();
 }
 
 ServerConfig::~ServerConfig(){
 	if(m_options_str != NULL)
 		delete m_options_str;
+    if(m_configFilePath != NULL){
+        delete m_configFilePath;
+    }
 }
 
 bool ServerConfig::parseConfigFile(){
@@ -30,20 +34,19 @@ bool ServerConfig::readConfigFile(){
 	memset(buffer, 0, size_of_buffer);
 	ifs.read(buffer, size_of_buffer);
     if(ifs.eof()){
-        //read over
         ifs.close();
     }else if (!ifs){ //read error
         CONSOLE_LOG( " errno: " << strerror(errno));
 		return false;
     }
-	CONSOLE_LOG(buffer);
+	//CONSOLE_LOG(buffer);
 	m_options_str = new std::string(buffer);
 	if(buffer != NULL)
 		delete buffer;
 	return true;
 }
 
-void ServerConfig::setConfigFullPath(const char* configFileName){
+void ServerConfig::setConfigFullPath(std::string& configFileName){
     char *cwd = new char[_PC_NAME_MAX];
 	try{
 		cwd = get_current_dir_name();
@@ -51,12 +54,17 @@ void ServerConfig::setConfigFullPath(const char* configFileName){
 		std::cout << strerror(errno) << std::endl;
 		throw;
 	}
-	if(long(strlen(cwd) + strlen(configFileName)) > pathconf(cwd, _PC_NAME_MAX)){
+	if(long(strlen(cwd) + configFileName.size()) > pathconf(cwd, _PC_NAME_MAX)){
 		std::cout << "error file name too long" << std::endl;
 		throw;
 	}
 	char dash = '/';
 	cwd = strncat(cwd, &dash, 1);
-	cwd = strcat(cwd, configFileName);
-	m_configFilePath = new std::string(cwd);
+    std::string *temp = new std::string(cwd);
+    if(cwd != NULL)
+    {
+        delete cwd;
+    }
+    *temp = *temp + configFileName;
+    m_configFilePath = temp;
 }
