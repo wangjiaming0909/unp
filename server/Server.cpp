@@ -35,8 +35,8 @@ bool Server::initialize(){
     }
     bzero(&m_serverAddr, sizeof(m_serverAddr));   
     m_serverAddr.sin_family = AF_INET;
-    std::string portStr = (*m_config)["port"];
-    int port_int = atoi(portStr.c_str());
+    string portStr = (*m_config)["port"];
+    int port_int = atoi(portStr.ptr());
     m_serverAddr.sin_port = htons(uint16_t(port_int));
     return true;
 }

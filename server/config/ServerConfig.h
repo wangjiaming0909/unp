@@ -20,31 +20,33 @@
 #include <exception>
 #include <utility>
 #include "optionValidator.h"
+#include "../util/XString.h"
 
 #define CONSOLE_LOG(message) std::cout << message << std::endl;
 namespace config{
+using namespace util;
 
 #define DEFAULT_CONFIG_JSON_FILE_NAME "server_conf.json"
 
 class ServerConfig{
 public:
-	ServerConfig(std::string configFileName = DEFAULT_CONFIG_JSON_FILE_NAME);
+	ServerConfig(string configFileName = DEFAULT_CONFIG_JSON_FILE_NAME);
     ~ServerConfig();
 public:
-	std::string operator[](const std::string& key);
-	std::string operator[](const std::string& key)const;
-	std::string operator[](const char*);
+	string operator[](const char*) const;
+	string operator[](const string& key)const;
 	
 
 private:
+	string operator[](const string& key);
 	bool parseConfigFile();
 	bool readConfigFile();
-    void setConfigFullPath(std::string& configFileName);
+    void setConfigFullPath(string& configFileName);
 
 private:
-	std::map<std::string, std::string> 	m_options_map;
-	std::string 						m_configFilePath;
-	std::string*						m_options_str;
+	std::map<string, string>		 	m_options_map;
+	string 								m_configFilePath;
+	string*								m_options_str;
 
 private:
 	bool 								m_read_config_file_ok;

@@ -17,11 +17,14 @@
 #include <iostream>
 #include <string.h>
 #include <errno.h>
+#include "util/XString.h"
 
 namespace server{
 
 using namespace config;
 using namespace client;
+using namespace util;
+
 class Server{
 public:
     Server(const ServerConfig* config);
@@ -36,7 +39,7 @@ private:
     void bind();
 
 private:
-    std::string             m_ipAddress;//
+    string                  m_ipAddress;//
     std::vector<Client*>    m_clients;
     size_t                  m_numOfClients = 0;
     const ServerConfig      *m_config;
