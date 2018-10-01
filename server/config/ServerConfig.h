@@ -12,7 +12,6 @@
 #include <string>
 #include <string.h>
 #include <map>
-#include <fstream>
 #include <iostream>
 #include <cstdlib>
 #include "json11.hpp"
@@ -21,6 +20,8 @@
 #include <utility>
 #include "optionValidator.h"
 #include "../util/XString.h"
+#include <errno.h>
+#include "../util/FileUtil.h"
 
 #define CONSOLE_LOG(message) std::cout << message << std::endl;
 namespace config{

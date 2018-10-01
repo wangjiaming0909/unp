@@ -3,8 +3,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <assert.h>
+#include <cassert>
 #include <sys/stat.h>
+#include <cstdlib>
 
 util::FileUtil::FileUtil(const util::string& fileName)
     : m_fd(::open(fileName.ptr(), O_RDONLY | O_CLOEXEC)),
@@ -19,15 +20,15 @@ util::FileUtil::~FileUtil(){
         ::close(m_fd);
 }
 
-int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
-    assert(str_ptr != NULL);
+bool util::FileUtil::fd_is_valid(util::string* str_ptr)const {
     int err = m_err;
     int fileSize = 0;
     if(m_fd >= 0){
         str_ptr->clear();
         struct stat statbuf;
         if(::fstat(m_fd, &statbuf) == 0){
-            if(fileSize = statbuf.st_size){// ** file size unit is byte
+            fileSize = static_cast<int>(statbuf.st_size);
+            if(fileSize){// ** file size unit is byte
                 if(S_ISREG(statbuf.st_mode)){// **normal file
                     if(statbuf.st_size > kBufferSize){
                         exit(-1);
@@ -38,11 +39,21 @@ int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
             }
         }
     }
+    return true;
+}
+
+int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
+    assert(str_ptr != NULL);
+    int err = m_err;
+    if(!fd_is_valid(str_ptr)){
+        CONSOLE_LOG("fd is not valid")
+        exit(-1);
+    }
     while(str_ptr->size() < maxSize){
         int toRead = std::min(maxSize - str_ptr->size(), 64*1024);
-        ssize_t n = ::read(m_fd, m_buf, toRead);
+        ssize_t n = ::read(m_fd, m_buf, static_cast<size_t>(toRead));
         if(n > 0)
-            ;// str_ptr->append(m_buf, n);
+            str_ptr->append(m_buf, n);//? no need to cast
         else{
             if(n < 0)
                 err = errno;
@@ -53,5 +64,5 @@ int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
 }
 
 int util::FileUtil::readIn(int* size){//? in and out (size)
-
+    return m_err;
 }

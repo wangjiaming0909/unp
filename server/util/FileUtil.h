@@ -1,6 +1,7 @@
 #ifndef _FILEUTIL_H_
 #define _FILEUTIL_H_
 #include "XString.h"
+#include <errno.h>
 
 namespace util{
 
@@ -18,6 +19,9 @@ public:
 
 public:
     static const int kBufferSize = 64*1024;
+
+private:
+    bool fd_is_valid(util::string* str_ptr) const;
 private:
     int     m_fd;
     int     m_err;
