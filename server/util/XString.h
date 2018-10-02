@@ -18,21 +18,25 @@ namespace util{
 class string{
 public:
     string(){
-        reAllocate(64);
+        m_capacity = 64 + 64/2;
+        m_ptr = new char[m_capacity];
+        m_length = 0;
     }
     string(size_t size){
-        reAllocate(size);
+        m_ptr = new char[size + size/2];
+        m_length = 0;
+        m_capacity = size + size/2;
     }
     string(const char *ptr) {
         this->m_length = strlen(ptr);//TODO: thread safty
-        string(this->m_length);
+        m_capacity = m_length + m_length/2;
+        m_ptr = new char[m_capacity];
         memcpy(m_ptr, ptr, m_length);
     }
     string(const char *ptr, size_t size) {
-        //memory maybe not enough
-        if(size > m_capacity){
-            reAllocate(size);
-        }
+        this->m_length = size;
+        m_capacity = size + size/2;
+        m_ptr = new char[m_capacity];
         ::memcpy(m_ptr, ptr, size);
     }
     string(const unsigned char* str){
@@ -40,9 +44,10 @@ public:
     }
     string(const string& s){
         this->m_capacity = s.m_capacity;
+        m_ptr = new char[m_capacity];
         this->m_length = s.m_length;
         //deep copy
-        string(s.ptr(), s.m_length);
+        memcpy(m_ptr, s.m_ptr, s.m_length);
     }
     string(const std::string& s) {
         const char* ptr = s.c_str();
@@ -67,13 +72,19 @@ private:
             m_ptr = new char[64];
         }
         else{
-            string tmp = *this;//save the content of this
-            if(!empty())
+            if(empty()){//m_length == 0
                 delete []m_ptr;
-            m_ptr = new char[size + size/2];
-            memset(m_ptr, 0, size + size/2);
-            this->m_capacity = static_cast<int>(size) + size/2;
-            memcpy(m_ptr, tmp.m_ptr, tmp.m_length);//only copy the previous value in this
+                m_ptr = new char[size + size/2];
+                memset(m_ptr, 0, size + size/2);
+                this->m_capacity = static_cast<int>(size) + size/2;
+            }else{
+                string tmp = *this;//save the content of this
+                delete []m_ptr;
+                m_ptr = new char[size + size/2];
+                memset(m_ptr, 0, size + size/2);
+                this->m_capacity = static_cast<int>(size) + size/2;
+                memcpy(m_ptr, tmp.m_ptr, tmp.m_length);//only copy the previous value into this
+            }
         }
     }
 
@@ -82,7 +93,7 @@ public:
     string& append(string& str){
         int size = this->size() + str.size();
         //after append size is big than capacity
-        if(size > this->m_capacity){
+        if(size > static_cast<int>(this->m_capacity)){
             size_t tmpSize = m_length;
             reAllocate(size);//allocate size + size / 2 bytes
             memcpy(m_ptr + tmpSize, str.m_ptr, str.m_length);
@@ -95,7 +106,7 @@ public:
 //        memcpy(ptr + m_length, str.ptr(), static_cast<size_t>(str.m_length));
 //        this->m_ptr = ptr;
 //        this->m_length = size;
-//        return *this;
+       return *this;
     }
     string& append(const char*ptr){
         string tmp = ptr;

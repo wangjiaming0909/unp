@@ -3,20 +3,27 @@
 #include "../server/util/XString.h"
 #include <iostream>
 #include <cassert>
+#include <iomanip>
 // using namespace boost;
-#define CONSOLE_LOG(message) std::cout << message << std::endl
+#ifndef CONSOLE_LOG 
+#define CONSOLE_LOG(message) std::cout << message
+#endif
 
+#ifndef ASSERT_OK
+#define ASSERT_OK std::cout << std::left << "--" << std::setw(50) << __func__ << std::right << std::setw(4) << "OK" << std::endl
+#endif
 
 void test_string_empty_string(){
-    CONSOLE_LOG(__func__);
+    // CONSOLE_LOG(__func__);
     util::string s;
     assert(s.empty());
     assert(s.size() == 0);
     assert(s.capacity() == 64 + 64/2);
+    ASSERT_OK;
 }
 
 void test_string_initialize_from_char_star(){
-    CONSOLE_LOG(__func__);
+    // CONSOLE_LOG(__func__);
     util::string s = "123";
     assert(!s.empty());
     assert(s.size() == 3);
@@ -25,14 +32,28 @@ void test_string_initialize_from_char_star(){
     assert(*ptr == '1');
     assert(*(ptr+1) == '2');
     assert(*(ptr+2) == '3');
+    ASSERT_OK;
 }
 
 void test_string_copy_constructor(){
-    CONSOLE_LOG(__func__);
-    util::string s;
+    // CONSOLE_LOG(__func__);
+    util::string s = "123";
     util::string s2 = s;
-    assert(s2.ptr() != s.ptr());
-    // assert()
+    assert(s2.ptr() != s.ptr());//new string should not be in the same memory
+    assert(s2.size() == s.size());
+    assert(s2.capacity() == s.capacity());
+    const char* p1 = s.ptr();
+    const char* p2 = s2.ptr();
+    assert(*p1 == *p2);
+    assert(*(p1+1) == *(p2+1));
+    assert(*(p1+2) == *(p2+2));
+    ASSERT_OK;
+}
+
+void string_initialize_with_size(){
+    util::string s(10);
+
+    ASSERT_OK;
 }
 
 
@@ -41,7 +62,7 @@ int main()
     CONSOLE_LOG("test XString");
     test_string_empty_string();
     test_string_initialize_from_char_star();
-    // test_string_copy_constructor();
+    test_string_copy_constructor();
     return 0;
 }
 
