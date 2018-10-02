@@ -113,7 +113,7 @@ public:
     const char* ptr() const {return m_ptr;}
     size_t size() const {return m_length;}
     bool empty() const {
-        return (m_length == 0) && (m_ptr == nullptr);
+        return (m_length == 0);
     }
     const char* begin() const {return m_ptr;}
     const char* end() const {return m_ptr + m_length;}
