@@ -41,11 +41,11 @@ public:
 private:
 	string operator[](const string& key);
 	bool parseConfigFile();
-	bool readConfigFile();
+    int readConfigFile();
     void setConfigFullPath(string& configFileName);
 
 private:
-	std::map<string, string>		 	m_options_map;
+    std::map<string, string>		 	m_options_map;
 	string 								m_configFilePath;
 	string*								m_options_str;
 

@@ -9,47 +9,70 @@ using namespace config;
 
 ServerConfig::ServerConfig(string configFileName){
 	setConfigFullPath(configFileName);
-	m_read_config_file_ok = readConfigFile();
+    m_read_config_file_ok = !readConfigFile();
+	if(!m_read_config_file_ok)
+		exit(-1);
     parseConfigFile();
 }
 
 ServerConfig::~ServerConfig(){
     if(m_options_str != nullptr)
 		delete m_options_str;
+//    for(auto &option : m_options_map) {
+//        if(option.first != nullptr){
+//            delete option.first;
+//        }
+//        if(option.second != nullptr){
+//            delete option.second;
+//            option.second = nullptr;
+//        }
+//    }
 }
 
 bool ServerConfig::parseConfigFile(){
 	std::string err;
 	json11::Json cfgJson = json11::Json::parse(m_options_str->as_std_string(), err);
 	auto maps = cfgJson.object_items();
+//    string *first = new string();
+//    string *second = new string();
+    string first, second;
 	for(auto aPair : maps){
-		string second = aPair.second.is_string() ? aPair.second.dump() : ""; 
-		m_options_map.insert(
-			OptionValidator::validateAndReturn(std::make_pair(string(aPair.first), second)));
+        first.clear(); second.clear();
+        auto s = aPair.second.is_string() ? aPair.second.dump() : "";
+        first.append(aPair.first);//memcopy
+        second.append(s);//memcopy
+        // m_options_map.insert(std::pair<string, string>(first, second));
+//       m_options_map[first] = second;
+//		m_options_map.insert(
+//            OptionValidator::validateAndReturn(new std::make_pair(first, second)));
 	}
 	return true;
 }
 
-bool ServerConfig::readConfigFile(){
+int ServerConfig::readConfigFile(){
 //	std::ifstream ifs;
 //	ifs.open(m_configFilePath.as_std_string());
     FileUtil fileUtil(m_configFilePath);
-	size_t size_of_buffer = 512;
-	char* buffer = new char[size_of_buffer];
-	memset(buffer, 0, size_of_buffer);
+    size_t size_of_buffer = 512;
+    this->m_options_str = new string(size_of_buffer);
+    int err = fileUtil.readToString(static_cast<int>(size_of_buffer), m_options_str);
+    return err;
+//    fileUtil.readToString(
+//	char* buffer = new char[size_of_buffer];
+//	memset(buffer, 0, size_of_buffer);
 //	ifs.read(buffer, size_of_buffer);
-    fileUtil.readIn(size_of_buffer);
-    if(ifs.eof()){
-        ifs.close();
-    }else if (!ifs){ //read error
-        CONSOLE_LOG( " errno: " << strerror(errno));
-		return false;
-    }
+//    fileUtil.readIn(&size_of_buffer);
+//    buffer = fileUtil.buffer();
+//    if(ifs.eof()){
+//        ifs.close();
+//    }else if (!ifs){ //read error
+//        CONSOLE_LOG( " errno: " << strerror(errno));
+//		return false;
+//    }
 	//CONSOLE_LOG(buffer);
-	m_options_str = new string(buffer);
-    if(buffer != nullptr)
-        delete[] buffer;
-	return true;
+//    m_options_str = new string(fileUtil.buffer());
+//    if(buffer != nullptr)
+//        delete[] buffer;
 }
 
 void ServerConfig::setConfigFullPath(string& configFileName){

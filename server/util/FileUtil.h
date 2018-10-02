@@ -14,7 +14,7 @@ public:
     // **return errno
     int readToString(int maxSize, string* str_ptr);
     // **read to the m_buf
-    int readIn(int* size);
+    int readIn(size_t* size);
     const char* buffer() const {return m_buf;}
 
 public:

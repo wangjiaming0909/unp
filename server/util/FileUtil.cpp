@@ -50,7 +50,7 @@ int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
         exit(-1);
     }
     while(str_ptr->size() < maxSize){
-        int toRead = std::min(maxSize - str_ptr->size(), 64*1024);
+        int toRead = std::min(maxSize - static_cast<int>(str_ptr->size()), 64*1024);
         ssize_t n = ::read(m_fd, m_buf, static_cast<size_t>(toRead));
         if(n > 0)
             str_ptr->append(m_buf, n);//? no need to cast
@@ -63,6 +63,7 @@ int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
     return err;
 }
 
-int util::FileUtil::readIn(int* size){//? in and out (size)
+int util::FileUtil::readIn(size_t* size){//? in and out (size)
+    size = nullptr;
     return m_err;
 }
