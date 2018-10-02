@@ -55,7 +55,7 @@ public:
     ~string(){
         //TODO: thread safty
         if(!empty())
-            delete m_ptr;
+            delete [] m_ptr;
         m_ptr = nullptr;
     }
 
@@ -63,17 +63,17 @@ private:
     void reAllocate(size_t size){
         if(size == 0){
             m_length = 0;
-            m_capacity = 64;
+            m_capacity = 64 + 64/2;//empty string's capacity should be this value
             m_ptr = new char[64];
         }
         else{
-            string tmp = *this;
+            string tmp = *this;//save the content of this
             if(!empty())
-                delete m_ptr;
+                delete []m_ptr;
             m_ptr = new char[size + size/2];
-            memset(m_ptr, 0, size);
+            memset(m_ptr, 0, size + size/2);
             this->m_capacity = static_cast<int>(size) + size/2;
-            memcmp(m_ptr, tmp.m_ptr, tmp.m_length);
+            memcmp(m_ptr, tmp.m_ptr, tmp.m_length);//only copy the previous value in this
         }
     }
 
@@ -113,7 +113,7 @@ public:
     const char* ptr() const {return m_ptr;}
     size_t size() const {return m_length;}
     bool empty() const {
-        return (m_length == 0) && (*m_ptr == '\0');
+        return (m_length == 0) && (m_ptr == nullptr);
     }
     const char* begin() const {return m_ptr;}
     const char* end() const {return m_ptr + m_length;}

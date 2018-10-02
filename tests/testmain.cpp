@@ -12,16 +12,22 @@ using namespace config;
 
 BOOST_AUTO_TEST_CASE(test_XString_Constructor_with_no_parameters){
     util::string s;
-    BOOST_TEST(s.empty());
-    BOOST_TEST(s.capacity() == (64 + 64/2));
+    BOOST_TEST(s.empty());//the new string should be empty
+    BOOST_TEST(s.capacity() == (64 + 64/2));//the new string's capacity should be this value
+}
+
+BOOST_AUTO_TEST_CASE(test_XString_copy_structor){
+    const char* ptr = "123";
 }
 
 BOOST_AUTO_TEST_CASE(test_XString_char_ptr_constructor){
    const char* ptr = "123";
-   util::string s = ptr;
-   BOOST_TEST(s.ptr() != ptr);
+   util::string s = ptr;//constructor with const char* parameter
+   BOOST_TEST(s.ptr() != ptr);//the memory should be reallocated
    const char* p1 = s.ptr();
-//    BOOST_TEST()
+   BOOST_TEST(*p1 == '1');//exam the content in the string
+   BOOST_TEST(*(p1+1) == '2');
+   BOOST_TEST(*(p1+2) == '3');
 }
 
 
