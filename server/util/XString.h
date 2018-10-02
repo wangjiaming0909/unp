@@ -73,7 +73,7 @@ private:
             m_ptr = new char[size + size/2];
             memset(m_ptr, 0, size + size/2);
             this->m_capacity = static_cast<int>(size) + size/2;
-            memcmp(m_ptr, tmp.m_ptr, tmp.m_length);//only copy the previous value in this
+            memcpy(m_ptr, tmp.m_ptr, tmp.m_length);//only copy the previous value in this
         }
     }
 

@@ -20,7 +20,7 @@ void test_string_initialize_from_char_star(){
     util::string s = "123";
     assert(!s.empty());
     assert(s.size() == 3);
-    assert(s.capacity() == 64 + 64/2);
+    assert(s.capacity() == 3 + 3/2);
     const char* ptr = s.ptr();
     assert(*ptr == '1');
     assert(*(ptr+1) == '2');
