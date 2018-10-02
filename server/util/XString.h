@@ -26,7 +26,7 @@ public:
     string(const char *ptr) {
         this->m_length = strlen(ptr);//TODO: thread safty
         string(this->m_length);
-        memcmp(m_ptr, ptr, m_length);
+        memcpy(m_ptr, ptr, m_length);
     }
     string(const char *ptr, size_t size) {
         //memory maybe not enough
@@ -85,7 +85,7 @@ public:
         if(size > this->m_capacity){
             size_t tmpSize = m_length;
             reAllocate(size);//allocate size + size / 2 bytes
-            memcmp(m_ptr + tmpSize, str.m_ptr, str.m_length);
+            memcpy(m_ptr + tmpSize, str.m_ptr, str.m_length);
         }
 
         //TODO thread safty
