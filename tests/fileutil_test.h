@@ -10,6 +10,7 @@ class FILEUTIL_TEST
 public:
     FILEUTIL_TEST();
     static void test(){
+        CONSOLE_LOG(typeid(test).name() << "---");
         FILEUTIL_TEST test;
         test.read_to_string();
     }
