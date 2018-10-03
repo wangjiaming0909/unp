@@ -6,7 +6,10 @@
  ************************************************************************/
 
 #include "server_conf_test.h"
+#include "../server/config/ServerConfig.h"
 
 void TEST::SERVER_CONFIG_TEST::test_constructor(){
-   ASSERT_OK; 
+    config::ServerConfig config;
+    assert(config.getReadConfigFileStatus() == true);
+    ASSERT_OK; 
 }

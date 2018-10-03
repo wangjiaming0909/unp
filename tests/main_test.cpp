@@ -5,12 +5,14 @@
 #include "tests_macros.h"
 #include "string_tests.h"
 #include "fileutil_test.h"
+#include "server_conf_test.h"
 
 int main()
 {
     using namespace TEST;
     XSTRING_TEST::test();
     FILEUTIL_TEST::test();
+    SERVER_CONFIG_TEST::test();
     return 0;
 }
 
