@@ -23,9 +23,9 @@ public:
 private:
     bool fd_is_valid(util::string* str_ptr) const;
 private:
-    int     m_fd;
-    int     m_err;
-    char    m_buf[kBufferSize];
+    int     		m_fd;
+    int     		m_err;
+    char    	m_buf[kBufferSize];
 };
 
 }

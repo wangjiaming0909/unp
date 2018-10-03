@@ -47,6 +47,9 @@ $(OBJECTS): $(OBJDIR)/%.o : $(SOURCEDIR)/%.cpp
 	@$(MKDIR) $(dir $@)
 	$(CC) $(FLAGS) $< -o $@ -I $(INCLUDES)
 
+testclean:FORCE
+	$(RM) $(TEST_OBJS) $(TEST_TARGET)
+
 clean:FORCE
 	$(RM) $(OBJECTS) $(TARGET)
 	$(RM) $(TEST_OBJS) $(TEST_TARGET)

@@ -2,3 +2,7 @@ server
 server/config
 server/util
 /boost_1_68_0
+tests
+include
+olds
+olds/lib

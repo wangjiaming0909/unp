@@ -1,3 +1,12 @@
+include/config.h
+include/headers.h
+include/unp.h
+olds/daytimetcpcli.cpp
+olds/daytimetcpserv.cpp
+olds/lib/str_echo.cpp
+olds/tcpcli01.cpp
+olds/tcpserv.cpp
+olds/unp.h
 server/Client.cpp
 server/Client.h
 server/Server.cpp
@@ -12,5 +21,10 @@ server/main.cpp
 server/util/FileUtil.cpp
 server/util/FileUtil.h
 server/util/XString.h
-server_conf.json
-tests/testmain.cpp
+tests/fileutil_test.cpp
+tests/fileutil_test.h
+tests/main_test.cpp
+tests/server_conf.json
+tests/string_tests.cpp
+tests/string_tests.h
+tests/tests_macros.h

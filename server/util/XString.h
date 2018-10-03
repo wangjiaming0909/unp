@@ -20,10 +20,12 @@ public:
     string(){
         m_capacity = 64 + 64/2;
         m_ptr = new char[m_capacity];
+        memset(m_ptr, 0, m_capacity);
         m_length = 0;
     }
     string(size_t size){
         m_ptr = new char[size + size/2];
+        memset(m_ptr, 0, size);
         m_length = 0;
         m_capacity = size + size/2;
     }
@@ -31,12 +33,14 @@ public:
         this->m_length = strlen(ptr);//TODO: thread safty
         m_capacity = m_length + m_length/2;
         m_ptr = new char[m_capacity];
+        memset(m_ptr, 0, m_capacity);
         memcpy(m_ptr, ptr, m_length);
     }
     string(const char *ptr, size_t size) {
         this->m_length = size;
         m_capacity = size + size/2;
         m_ptr = new char[m_capacity];
+        memset(m_ptr, 0, m_capacity);
         ::memcpy(m_ptr, ptr, size);
     }
     string(const unsigned char* str){
@@ -45,17 +49,26 @@ public:
     string(const string& s){
         this->m_capacity = s.m_capacity;
         m_ptr = new char[m_capacity];
+        memset(m_ptr, 0, m_capacity);
         this->m_length = s.m_length;
         //deep copy
         memcpy(m_ptr, s.m_ptr, s.m_length);
     }
     string(const std::string& s) {
         const char* ptr = s.c_str();
-        string(ptr, s.length());
+        m_length = s.length();
+        m_capacity = m_length + m_length/2;
+        m_ptr = new char[m_capacity];
+        memset(m_ptr, 0, m_capacity);
+        memcpy(m_ptr, ptr, m_length);
     }
     string(const sso_string& s){
         const char* ptr = s.c_str();
-        string(ptr, s.length());
+        m_length = s.length();
+        m_capacity = m_length + m_length/2;
+        m_ptr = new char[m_capacity];
+        memset(m_ptr, 0, m_capacity);
+        memcpy(m_ptr, ptr, m_length);
     }
     ~string(){
         //TODO: thread safty
@@ -76,14 +89,15 @@ private:
                 delete []m_ptr;
                 m_ptr = new char[size + size/2];
                 memset(m_ptr, 0, size + size/2);
-                this->m_capacity = static_cast<int>(size) + size/2;
+                this->m_capacity = size + size/2;
             }else{
                 string tmp = *this;//save the content of this
                 delete []m_ptr;
                 m_ptr = new char[size + size/2];
                 memset(m_ptr, 0, size + size/2);
-                this->m_capacity = static_cast<int>(size) + size/2;
+                this->m_capacity = size + size/2;
                 memcpy(m_ptr, tmp.m_ptr, tmp.m_length);//only copy the previous value into this
+                m_length = tmp.m_length;
             }
         }
     }
@@ -91,28 +105,24 @@ private:
 public:
     //the old memory is not my concern, it will managed by outside
     string& append(string& str){
-        int size = this->size() + str.size();
+        size_t size = this->size() + str.size();
         //after append size is big than capacity
-        if(size > static_cast<int>(this->m_capacity)){
+        if(size > this->m_capacity){//reallocate
             size_t tmpSize = m_length;
             reAllocate(size);//allocate size + size / 2 bytes
             memcpy(m_ptr + tmpSize, str.m_ptr, str.m_length);
+            m_length += str.m_length;
+        }else{//no need to reallocate
+            memcpy(m_ptr+m_length, str.ptr(), str.size());
+            m_length = size;
         }
-
-        //TODO thread safty
-//        int size = this->size() + str.size();
-//        char *ptr = new char[static_cast<size_t>(size)];//this memory will managed by myself
-//        memcpy(ptr, m_ptr, static_cast<size_t>(m_length));
-//        memcpy(ptr + m_length, str.ptr(), static_cast<size_t>(str.m_length));
-//        this->m_ptr = ptr;
-//        this->m_length = size;
        return *this;
     }
     string& append(const char*ptr){
         string tmp = ptr;
         return append(tmp);
     }
-    string& append(const char* ptr, int len){
+    string& append(const char* ptr, size_t len){
         string tmp(ptr, len);
         return append(tmp);
     }
@@ -127,7 +137,7 @@ public:
         return (m_length == 0);
     }
     const char* begin() const {return m_ptr;}
-    const char* end() const {return m_ptr + m_length;}
+    const char* end() const {return m_ptr + m_length - 1;}
     size_t capacity() const{return this->m_capacity;}
     void clear() {
         memset(m_ptr, 0, m_length);
