@@ -104,7 +104,7 @@ private:
 
 public:
     //the old memory is not my concern, it will managed by outside
-    string& append(string& str){
+    string& append(const string& str){
         size_t size = this->size() + str.size();
         //after append size is big than capacity
         if(size > this->m_capacity){//reallocate

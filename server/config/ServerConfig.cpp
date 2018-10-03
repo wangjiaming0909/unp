@@ -7,7 +7,11 @@
 #include "ServerConfig.h"
 using namespace config;
 
-ServerConfig::ServerConfig(string configFileName){
+ServerConfig::ServerConfig(){
+	ServerConfig(DEFAULT_CONFIG_JSON_FILE_NAME);
+}
+
+ServerConfig::ServerConfig(const string& configFileName){
 	setConfigFullPath(configFileName);
     m_read_config_file_ok = !readConfigFile();
 	if(!m_read_config_file_ok)
@@ -75,7 +79,7 @@ int ServerConfig::readConfigFile(){
 //        delete[] buffer;
 }
 
-void ServerConfig::setConfigFullPath(string& configFileName){
+void ServerConfig::setConfigFullPath(const string& configFileName){
     char *cwd;
 	try{
 		cwd = get_current_dir_name();

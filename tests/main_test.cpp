@@ -10,8 +10,8 @@
 int main()
 {
     using namespace TEST;
-    XSTRING_TEST::test();
-    FILEUTIL_TEST::test();
+//    XSTRING_TEST::test();
+//    FILEUTIL_TEST::test();
     SERVER_CONFIG_TEST::test();
     return 0;
 }

@@ -9,7 +9,6 @@
 #define _CONFIG_H
 #include "ServerConfig.h"
 #include <netinet/in.h>// for uint16_t
-#include <string>
 #include <string.h>
 #include <map>
 #include <iostream>
@@ -31,7 +30,8 @@ using namespace util;
 
 class ServerConfig{
 public:
-	ServerConfig(string configFileName = DEFAULT_CONFIG_JSON_FILE_NAME);
+	ServerConfig();
+	ServerConfig(const string& configFileName);
     ~ServerConfig();
 public:
 	string operator[](const char*) const;
@@ -42,7 +42,7 @@ private:
 	string operator[](const string& key);
 	bool parseConfigFile();
     int readConfigFile();
-    void setConfigFullPath(string& configFileName);
+    void setConfigFullPath(const string& configFileName);
 
 private:
     std::map<string, string>		 	m_options_map;

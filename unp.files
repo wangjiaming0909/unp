@@ -25,6 +25,8 @@ tests/fileutil_test.cpp
 tests/fileutil_test.h
 tests/main_test.cpp
 tests/server_conf.json
+tests/server_conf_test.cpp
+tests/server_conf_test.h
 tests/string_tests.cpp
 tests/string_tests.h
 tests/tests_macros.h

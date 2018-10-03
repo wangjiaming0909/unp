@@ -14,10 +14,9 @@ namespace TEST{
 class SERVER_CONFIG_TEST{
 public:
     static void test(){
-        CONSOLE_LOG(typeid(test).name() << "---");
         SERVER_CONFIG_TEST test;
+        CONSOLE_LOG(typeid(test).name() << "---");
         test.test_constructor();
-        
     }
 public:
     void test_constructor();
