@@ -156,10 +156,10 @@ public:
 //    }
     bool operator!= (const string& s)const{return !(*this == s);}
     sso_string as_sso_string() const{
-        return sso_string(m_ptr, static_cast<size_t>(m_length));
+        return sso_string(m_ptr, m_length);
     }
     std::string as_std_string() const {
-        return std::string(m_ptr, static_cast<size_t>(m_length));
+        return std::string(m_ptr, m_length);
     }
 #define STRING_BINARY_PREDICATE(cmp,auxcmp)                                         \
     bool operator cmp (const string& x) const {                                \

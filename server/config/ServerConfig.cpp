@@ -7,11 +7,12 @@
 #include "ServerConfig.h"
 using namespace config;
 
-ServerConfig::ServerConfig(){
-	ServerConfig(DEFAULT_CONFIG_JSON_FILE_NAME);
+ServerConfig::ServerConfig() 
+	: ServerConfig(DEFAULT_CONFIG_JSON_FILE_NAME){
 }
 
 ServerConfig::ServerConfig(const string& configFileName){
+	m_options_str = nullptr;
 	setConfigFullPath(configFileName);
     m_read_config_file_ok = !readConfigFile();
 	if(!m_read_config_file_ok)
@@ -35,7 +36,8 @@ ServerConfig::~ServerConfig(){
 
 bool ServerConfig::parseConfigFile(){
 	std::string err;
-	json11::Json cfgJson = json11::Json::parse(m_options_str->as_std_string(), err);
+	std::string tmp_str = m_options_str->as_std_string();
+	json11::Json cfgJson = json11::Json::parse(tmp_str, err);
 	auto maps = cfgJson.object_items();
 //    string *first = new string();
 //    string *second = new string();
@@ -45,6 +47,8 @@ bool ServerConfig::parseConfigFile(){
         auto s = aPair.second.is_string() ? aPair.second.dump() : "";
         first.append(aPair.first);//memcopy
         second.append(s);//memcopy
+		m_options_map.insert(OptionValidator::validateAndReturn(
+			std::pair<string, string>(first, second)));
         // m_options_map.insert(std::pair<string, string>(first, second));
 //       m_options_map[first] = second;
 //		m_options_map.insert(
@@ -91,11 +95,15 @@ void ServerConfig::setConfigFullPath(const string& configFileName){
 		std::cout << "error file name too long" << std::endl;
 		throw;
 	}
-	char dash = '/';
-	cwd = strncat(cwd, &dash, 1);
-    std::string temp = cwd;
-    m_configFilePath = temp;
-    m_configFilePath.append(configFileName);
+	string dash = "/";
+	string tmp = cwd;
+	m_configFilePath = tmp;
+	m_configFilePath.append(dash);
+	m_configFilePath.append(configFileName);
+	// cwd = strncat(cwd, &dash, 1);
+    // std::string temp = cwd;
+    // m_configFilePath = temp;
+    // m_configFilePath.append(configFileName);
 }
 
 string ServerConfig::operator[](const string& key){

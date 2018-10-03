@@ -9,6 +9,7 @@
 #define _SERVER_CONF_TEST_H
 #include "./tests_macros.h"
 #include <typeinfo>
+#include "../server/config/ServerConfig.h"
 
 namespace TEST{
 class SERVER_CONFIG_TEST{
@@ -17,9 +18,11 @@ public:
         SERVER_CONFIG_TEST test;
         CONSOLE_LOG(typeid(test).name() << "---");
         test.test_constructor();
+        test.test_options();
     }
 public:
     void test_constructor();
+    void test_options();
 };
 }
 #endif
