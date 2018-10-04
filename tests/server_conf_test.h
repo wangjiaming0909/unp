@@ -16,6 +16,7 @@ class SERVER_CONFIG_TEST{
 public:
     SERVER_CONFIG_TEST(){
         m_config_ptr = new config::ServerConfig();
+        // auto a = new config::ServerConfig();
     }
     static void test(){
         SERVER_CONFIG_TEST test;

@@ -6,6 +6,7 @@
 #include "string_tests.h"
 #include "fileutil_test.h"
 #include "server_conf_test.h"
+#include "server_test.h"
 
 int main()
 {
@@ -13,6 +14,7 @@ int main()
     XSTRING_TEST::test();
     FILEUTIL_TEST::test();
     SERVER_CONFIG_TEST::test();
+    SERVER_TEST::test();
     return 0;
 }
 

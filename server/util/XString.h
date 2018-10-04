@@ -24,10 +24,10 @@ public:
         m_length = 0;
     }
     string(size_t size){
-        m_ptr = new char[size + size/2];
-        memset(m_ptr, 0, size);
-        m_length = 0;
         m_capacity = size + size/2;
+        m_ptr = new char[m_capacity];
+        memset(m_ptr, 0, m_capacity);
+        m_length = 0;
     }
     string(const char *ptr) {
         this->m_length = strlen(ptr);//TODO: thread safty
@@ -83,20 +83,21 @@ private:
         if(size == 0){
             m_length = 0;
             m_capacity = 64 + 64/2;//empty string's capacity should be this value
-            m_ptr = new char[64];
+            m_ptr = new char[m_capacity];
+            memset(m_ptr, 0, m_capacity);
         }
         else{
             if(empty()){//m_length == 0
                 delete []m_ptr;
-                m_ptr = new char[size + size/2];
-                memset(m_ptr, 0, size + size/2);
-                this->m_capacity = size + size/2;
+                m_capacity = size + size/2;
+                m_ptr = new char[m_capacity];
+                memset(m_ptr, 0, m_capacity);
             }else{
                 string tmp = *this;//save the content of this
                 delete []m_ptr;
-                m_ptr = new char[size + size/2];
-                memset(m_ptr, 0, size + size/2);
-                this->m_capacity = size + size/2;
+                m_capacity = size + size/2;
+                m_ptr = new char[m_capacity];
+                memset(m_ptr, 0, m_capacity);
                 memcpy(m_ptr, tmp.m_ptr, tmp.m_length);//only copy the previous value into this
                 m_length = tmp.m_length;
             }

@@ -31,10 +31,15 @@ public:
     ~Server();
 
 public:
-    bool initialize();
+    void initialize();
     void start();
     void stop();
 
+    //status
+public:
+    bool initialized = false;
+    bool binded = false;
+    bool started = false;
 private:
     void bind();
 
@@ -46,8 +51,7 @@ private:
     int                     	m_listenfd = 0;
     int                     	m_connfd = 0;
 
-//address
-public:
+private:
     struct sockaddr_in      	m_childAddr;
     struct sockaddr_in      	m_serverAddr;
     uint16_t                	m_port;//listen port

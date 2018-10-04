@@ -11,8 +11,10 @@ util::FileUtil::FileUtil(const util::string& fileName)
     : m_fd(::open(fileName.ptr(), O_RDONLY | O_CLOEXEC)),
     m_err(0){
     memset(m_buf, 0, kBufferSize);
-    if(m_fd < 0)
+    if(m_fd < 0){
         m_err = errno;
+        CONSOLE_LOG(strerror(errno));
+    }
 }
 
 util::FileUtil::~FileUtil(){
