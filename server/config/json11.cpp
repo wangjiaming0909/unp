@@ -686,6 +686,7 @@ struct JsonParser final {
                     return fail("expected ':' in object, got " + esc(ch));
 
                 data[std::move(key)] = parse_json(depth + 1);
+                // data[key] = parse_json(depth + 1);
                 if (failed)
                     return Json();
 

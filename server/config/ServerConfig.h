@@ -34,12 +34,12 @@ public:
 	ServerConfig(const string& configFileName);
     ~ServerConfig();
 public:
-	string operator[](const char*) const;
+//	string operator[](const char*) const;
 	string operator[](const string& key)const;
+    string operator[](const string& key);
 	
 
 private:
-	string operator[](const string& key);
 	bool parseConfigFile();
     int readConfigFile();
     void setConfigFullPath(const string& configFileName);

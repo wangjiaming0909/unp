@@ -1,5 +1,5 @@
 CC = g++
-FLAGS = -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors
+FLAGS = -Wall -Wextra -std=c++11 -c -O0 -g0 -ggdb -Wfatal-errors
 #HEADERS = include/unp.h
 
 SOURCEDIR = ./server

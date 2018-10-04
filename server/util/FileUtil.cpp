@@ -39,7 +39,7 @@ bool util::FileUtil::fd_is_valid(util::string* str_ptr)const {
             }
         }
     }
-    return true;
+    return err == 0;
 }
 
 int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
@@ -49,7 +49,7 @@ int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
         CONSOLE_LOG("fd is not valid")
         exit(-1);
     }
-    while(str_ptr->size() < maxSize){
+    while(str_ptr->size() < static_cast<size_t>(maxSize)){
         int toRead = std::min(maxSize - static_cast<int>(str_ptr->size()), 64*1024);
         ssize_t n = ::read(m_fd, m_buf, static_cast<size_t>(toRead));
         if(n > 0)
@@ -63,7 +63,7 @@ int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
     return err;
 }
 
-int util::FileUtil::readIn(size_t* size){//? in and out (size)
-    size = nullptr;
-    return m_err;
-}
+// int util::FileUtil::readIn(size_t* size){//? in and out (size)
+//     size = nullptr;
+//     return true;
+// }

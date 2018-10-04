@@ -36,7 +36,7 @@ ServerConfig::~ServerConfig(){
 
 bool ServerConfig::parseConfigFile(){
 	std::string err;
-	std::string tmp_str = m_options_str->as_std_string();
+	const std::string tmp_str = m_options_str->as_std_string();
 	json11::Json cfgJson = json11::Json::parse(tmp_str, err);
 	auto maps = cfgJson.object_items();
 //    string *first = new string();
@@ -54,7 +54,7 @@ bool ServerConfig::parseConfigFile(){
 //		m_options_map.insert(
 //            OptionValidator::validateAndReturn(new std::make_pair(first, second)));
 	}
-	return true;
+    return err.empty();
 }
 
 int ServerConfig::readConfigFile(){
@@ -84,13 +84,8 @@ int ServerConfig::readConfigFile(){
 }
 
 void ServerConfig::setConfigFullPath(const string& configFileName){
-    char *cwd;
-	try{
-		cwd = get_current_dir_name();
-	}catch(std::exception e){
-		std::cout << strerror(errno) << std::endl;
-		throw;
-	}
+    char *cwd = nullptr;
+    cwd = get_current_dir_name();
 	if(long(strlen(cwd) + configFileName.size()) > pathconf(cwd, _PC_NAME_MAX)){
 		std::cout << "error file name too long" << std::endl;
 		throw;
@@ -117,6 +112,6 @@ string ServerConfig::operator[](const string& key)const{
 	return (*this)[key];
 }
 
-string ServerConfig::operator[](const char* key) const{
-	return this->operator[](key);
-}
+//string ServerConfig::operator[](const char* key) const{
+//	return this->operator[](key);
+//}

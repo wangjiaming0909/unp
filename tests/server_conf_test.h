@@ -14,6 +14,7 @@
 namespace TEST{
 class SERVER_CONFIG_TEST{
 public:
+    SERVER_CONFIG_TEST();
     static void test(){
         SERVER_CONFIG_TEST test;
         CONSOLE_LOG(typeid(test).name() << "---");
@@ -23,6 +24,9 @@ public:
 public:
     void test_constructor();
     void test_options();
+
+private:
+    config::ServerConfig* m_config_ptr;
 };
 }
 #endif

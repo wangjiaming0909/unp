@@ -1,4 +1,4 @@
 {
     "port": "9999",
-    "number_of_clients": "1024"
+    "clients": "1024"
 }
