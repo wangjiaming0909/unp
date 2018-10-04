@@ -32,6 +32,7 @@ public:
     string(const char *ptr) {
         this->m_length = strlen(ptr);//TODO: thread safty
         m_capacity = m_length + m_length/2;
+        m_capacity = (m_capacity == 0 ? (64+64/2) : m_capacity);
         m_ptr = new char[m_capacity];
         memset(m_ptr, 0, m_capacity);
         memcpy(m_ptr, ptr, m_length);
