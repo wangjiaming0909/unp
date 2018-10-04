@@ -13,6 +13,7 @@ public:
         CONSOLE_LOG(typeid(test).name() << "---");
         test.string_empty_string();
         test.string_initialize_from_char_star();
+        test.string_initialize_with_empty_char();
         test.string_copy_constructor();
         test.string_initialize_with_size();
         test.string_initialize_with_char_and_size();
@@ -32,6 +33,7 @@ public:
     void string_copy_constructor();
     void string_initialize_with_size();
     void string_initialize_with_char_and_size();
+    void string_initialize_with_empty_char();
     void string_initialize_from_unsigned_char_star();
     void string_initialize_from_std_string();
     void string_append_char_star_need_to_reallocate_memory();

@@ -63,6 +63,17 @@ void XSTRING_TEST::string_initialize_with_char_and_size(){
     ASSERT_OK;
 }
 
+void XSTRING_TEST::string_initialize_with_empty_char()
+{
+    const char* ptr = "";
+    util::string s = ptr;
+    assert(s.size() == 0);
+    assert(s.capacity() > 0);
+    const char* p = s.ptr();
+    assert(*p == '\0');
+    ASSERT_OK;
+}
+
 void XSTRING_TEST::string_initialize_from_unsigned_char_star(){
     // const char* signed_ptr = "1234";
     // const unsigned char* signed_ptr = static_cast<unsigned char*>(signed_ptr);
