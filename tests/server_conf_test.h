@@ -14,16 +14,20 @@
 namespace TEST{
 class SERVER_CONFIG_TEST{
 public:
-    SERVER_CONFIG_TEST();
+    SERVER_CONFIG_TEST(){
+        m_config_ptr = new config::ServerConfig();
+    }
     static void test(){
         SERVER_CONFIG_TEST test;
         CONSOLE_LOG(typeid(test).name() << "---");
         test.test_constructor();
         test.test_options();
+        test.test_if_no_this_option();
     }
 public:
     void test_constructor();
     void test_options();
+    void test_if_no_this_option();
 
 private:
     config::ServerConfig* m_config_ptr;

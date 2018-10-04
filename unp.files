@@ -13,6 +13,8 @@ server/Server.cpp
 server/Server.h
 server/config/ServerConfig.cpp
 server/config/ServerConfig.h
+server/config/configoption.cpp
+server/config/configoption.h
 server/config/json11.cpp
 server/config/json11.hpp
 server/config/optionValidator.cpp

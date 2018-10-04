@@ -22,25 +22,14 @@ ServerConfig::ServerConfig(const string& configFileName){
 
 ServerConfig::~ServerConfig(){
     if(m_options_str != nullptr)
-		delete m_options_str;
-//    for(auto &option : m_options_map) {
-//        if(option.first != nullptr){
-//            delete option.first;
-//        }
-//        if(option.second != nullptr){
-//            delete option.second;
-//            option.second = nullptr;
-//        }
-//    }
+        delete m_options_str;
 }
 
 bool ServerConfig::parseConfigFile(){
 	std::string err;
 	const std::string tmp_str = m_options_str->as_std_string();
 	json11::Json cfgJson = json11::Json::parse(tmp_str, err);
-	auto maps = cfgJson.object_items();
-//    string *first = new string();
-//    string *second = new string();
+    auto maps = cfgJson.object_items();
     string first, second;
 	for(auto aPair : maps){
         first.clear(); second.clear();
@@ -49,38 +38,16 @@ bool ServerConfig::parseConfigFile(){
         second.append(s);//memcopy
 		m_options_map.insert(OptionValidator::validateAndReturn(
 			std::pair<string, string>(first, second)));
-        // m_options_map.insert(std::pair<string, string>(first, second));
-//       m_options_map[first] = second;
-//		m_options_map.insert(
-//            OptionValidator::validateAndReturn(new std::make_pair(first, second)));
 	}
     return err.empty();
 }
 
 int ServerConfig::readConfigFile(){
-//	std::ifstream ifs;
-//	ifs.open(m_configFilePath.as_std_string());
     FileUtil fileUtil(m_configFilePath);
     size_t size_of_buffer = 512;
     this->m_options_str = new string(size_of_buffer);
     int err = fileUtil.readToString(static_cast<int>(size_of_buffer), m_options_str);
     return err;
-//    fileUtil.readToString(
-//	char* buffer = new char[size_of_buffer];
-//	memset(buffer, 0, size_of_buffer);
-//	ifs.read(buffer, size_of_buffer);
-//    fileUtil.readIn(&size_of_buffer);
-//    buffer = fileUtil.buffer();
-//    if(ifs.eof()){
-//        ifs.close();
-//    }else if (!ifs){ //read error
-//        CONSOLE_LOG( " errno: " << strerror(errno));
-//		return false;
-//    }
-	//CONSOLE_LOG(buffer);
-//    m_options_str = new string(fileUtil.buffer());
-//    if(buffer != nullptr)
-//        delete[] buffer;
 }
 
 void ServerConfig::setConfigFullPath(const string& configFileName){
@@ -95,22 +62,19 @@ void ServerConfig::setConfigFullPath(const string& configFileName){
 	m_configFilePath = tmp;
 	m_configFilePath.append(dash);
 	m_configFilePath.append(configFileName);
-	// cwd = strncat(cwd, &dash, 1);
-    // std::string temp = cwd;
-    // m_configFilePath = temp;
-    // m_configFilePath.append(configFileName);
 }
 
 string ServerConfig::operator[](const string& key){
-	if(m_options_map.count(key) == 0){
-		CONSOLE_LOG("No this option");
-	}
-	return m_options_map[key];
+    if(m_options_map.count(key) == 0){
+        CONSOLE_LOG("No this option");
+    }
+    return m_options_map[key];
 }
 
-string ServerConfig::operator[](const string& key)const{
-	return (*this)[key];
-}
+//string ServerConfig::operator[](const string& key)const{
+//    return m_options_map[;
+//    return (*this)[key];
+//}
 
 //string ServerConfig::operator[](const char* key) const{
 //	return this->operator[](key);

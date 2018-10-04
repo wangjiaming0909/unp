@@ -7,19 +7,20 @@
 #include "Server.h"
 using namespace server;
 
-Server::Server(const ServerConfig* config)
+Server::Server(ServerConfig* config)
     : m_config(config){
     initialize();
-    this->bind();
+    bind();
 }
 
-
 Server::~Server(){
-
+    close(m_connfd);
+    close(m_listenfd);
 }
 
 void Server::start(){
-    
+
+    // ::listen(m_listenfd, )
 }
 
 void Server::stop(){
@@ -29,8 +30,8 @@ void Server::stop(){
 bool Server::initialize(){
     m_listenfd = socket(AF_INET, SOCK_STREAM, 0);
     if(m_listenfd == -1){
-        std::cout << "error socket ..." << std::endl;
-        std::cout << strerror(errno) << std::endl;
+        CONSOLE_LOG("error socket ...");
+        CONSOLE_LOG(strerror(errno));
         return false;    
     }
     bzero(&m_serverAddr, sizeof(m_serverAddr));   

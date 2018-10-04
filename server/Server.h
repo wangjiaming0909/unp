@@ -27,7 +27,7 @@ using namespace util;
 
 class Server{
 public:
-    Server(const ServerConfig* config);
+    Server(ServerConfig* config);
     ~Server();
 
 public:
@@ -39,18 +39,18 @@ private:
     void bind();
 
 private:
-    string                  m_ipAddress;//
-    std::vector<Client*>    m_clients;
-    size_t                  m_numOfClients = 0;
-    const ServerConfig      *m_config;
-    int                     m_listenfd = 0;
-    int                     connfd = 0;
+    string                  	m_ipAddress;//
+    std::vector<Client*>        m_clients;
+    size_t                  	m_numOfClients = 0;
+    ServerConfig      		    *m_config;
+    int                     	m_listenfd = 0;
+    int                     	m_connfd = 0;
 
 //address
 public:
-    struct sockaddr_in      m_childAddr;
-    struct sockaddr_in      m_serverAddr;
-    uint16_t                m_port;//listen port
+    struct sockaddr_in      	m_childAddr;
+    struct sockaddr_in      	m_serverAddr;
+    uint16_t                	m_port;//listen port
 };
 #endif
 
