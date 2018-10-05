@@ -5,6 +5,7 @@
 #include <ext/vstring_fwd.h>
 #include <string.h>
 #include <iostream>
+#include <cstdlib>
 
 typedef __gnu_cxx::__sso_string sso_string;
 
@@ -115,6 +116,9 @@ private:
     }
 
 public:
+    const char* c_str(){
+        return as_std_string().c_str();
+    }
     //the old memory is not my concern, it will managed by outside
     string& append(const string& str){
         size_t size = this->size() + str.size();
@@ -173,6 +177,23 @@ public:
     std::string as_std_string() const {
         return std::string(m_ptr, m_length);
     }
+
+    explicit operator int()const{
+        char *ptr = nullptr;
+        if(*m_ptr == '\"'){
+            ptr = new char[this->m_length - 1];//! need a '\0'
+            memset(ptr, 0, m_length - 1);
+            memcpy(ptr, m_ptr+1, m_length-2);
+        }else{
+            ptr = new char[m_length + 1];//! need a '\0'
+            memset(ptr, 0, m_length + 1);
+            memcpy(ptr, m_ptr, m_length);
+        }
+        int value = ::atoi(ptr);
+        delete ptr;
+        return value;
+    }
+
 #define STRING_BINARY_PREDICATE(cmp,auxcmp)                                         \
     bool operator cmp (const string& x) const {                                \
         int r = memcmp(m_ptr, x.m_ptr, m_length < x.m_length ? m_length : x.m_length);    \

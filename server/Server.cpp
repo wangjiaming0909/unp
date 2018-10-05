@@ -14,9 +14,14 @@ Server::Server(ServerConfig* config)
     }
     initialize();
     bind();
+    m_clients.push_back(new Client());
 }
 
 Server::~Server(){
+    for(Client* client_ptr : m_clients){
+        if(client_ptr != nullptr)
+            delete client_ptr;
+    }
     close(m_connfd);
     close(m_listenfd);
 }
@@ -28,10 +33,26 @@ void Server::start(){
     int backlog_int = ::atoi(backlog.ptr());
     ::listen(m_listenfd, backlog_int);
     started = true;
+    m_server_status = SERVER_STATUS::Started;
+    //accept
+    m_connfd = ::accept(m_listenfd,
+                        reinterpret_cast<sockaddr*>(&m_clients[0]->m_addr),
+                        &(m_clients[0]->m_sock_len));
+    if(m_connfd >= 0)//! won't get here because it will stuck at accept
+        m_server_status = SERVER_STATUS::Waiting_for_accept;
 }
 
 void Server::stop(){
+    if(m_connfd != 0)
+        close(m_connfd);
+    if(m_listenfd != 0)
+        close(m_listenfd);
+    m_server_status = SERVER_STATUS::Closed;
+}
 
+SERVER_STATUS Server::get_status() const
+{
+    return m_server_status;
 }
 
 void Server::initialize(){
@@ -46,15 +67,16 @@ void Server::initialize(){
     string portStr = (*m_config)["port"];
     if(portStr == "")
         CONSOLE_LOG("config file error, no PORT specified");
-    int port_int = atoi(portStr.ptr());
-    m_serverAddr.sin_port = htons(uint16_t(port_int));
+    // m_serverAddr.sin_port = htons(uint16_t(port_int));
+    m_serverAddr.sin_port = int(portStr);
     initialized = true;
+    m_server_status = SERVER_STATUS::Initialized;
 }
 
 void Server::bind(){
     int ret = ::bind(
         m_listenfd,
-        (sockaddr*)&m_serverAddr,
+        reinterpret_cast<sockaddr*>(&m_serverAddr),
         sizeof(m_serverAddr));
     if(ret == -1){
         CONSOLE_LOG("error bind");
@@ -62,4 +84,5 @@ void Server::bind(){
         return;
     }
     binded = true;
+    m_server_status = SERVER_STATUS::Binded;
 }

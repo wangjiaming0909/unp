@@ -1,12 +1,3 @@
-include/config.h
-include/headers.h
-include/unp.h
-olds/daytimetcpcli.cpp
-olds/daytimetcpserv.cpp
-olds/lib/str_echo.cpp
-olds/tcpcli01.cpp
-olds/tcpserv.cpp
-olds/unp.h
 server/Client.cpp
 server/Client.h
 server/Server.cpp
@@ -20,9 +11,11 @@ server/config/json11.hpp
 server/config/optionValidator.cpp
 server/config/optionValidator.h
 server/main.cpp
+server/server_status.h
 server/util/FileUtil.cpp
 server/util/FileUtil.h
 server/util/XString.h
+server_conf.json
 tests/fileutil_test.cpp
 tests/fileutil_test.h
 tests/main_test.cpp

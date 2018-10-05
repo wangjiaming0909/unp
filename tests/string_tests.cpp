@@ -1,6 +1,7 @@
 
 #include "string_tests.h"
 #include "../server/util/XString.h"
+#include <cstdlib>
 using namespace TEST;
 
 
@@ -235,6 +236,15 @@ void XSTRING_TEST::string_test_one_very_strange_issue()
     assert(*(ptr+3) == '4');
     assert(*(ptr+4) == '5');
     assert(*(ptr+5) == '6');
+    ASSERT_OK;
+}
+
+void XSTRING_TEST::string_to_c_str()
+{
+    util::string str = "1234";
+//    const char* p = str.c_str();
+    int value = int(str);
+    assert( value == 1234);
     ASSERT_OK;
 }
 

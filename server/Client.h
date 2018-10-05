@@ -7,13 +7,22 @@
 
 #ifndef _CLIENT_H
 #define _CLIENT_H
+#include <netinet/in.h>
 
+namespace server {
+class Server;
+}
 namespace client{
 
 class Client{
+    friend class server::Server;
 public:
     Client();
     ~Client();
+
+private:
+    sockaddr_in 	m_addr;
+    socklen_t		m_sock_len;
 };
 #endif
 

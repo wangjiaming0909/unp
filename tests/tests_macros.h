@@ -10,6 +10,7 @@
 #define CONSOLE_LOG(message) std::cout << message << std::endl;
 #endif
 
+
 #ifndef ASSERT_OK
 #define ASSERT_OK std::cout << std::left << "--" << std::setw(60) << std::setfill('-')<< __func__ << std::right << std::setw(4) << "OK" << std::endl;
 #endif

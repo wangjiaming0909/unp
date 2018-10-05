@@ -28,7 +28,9 @@ public:
         test.string_operator_braket();
         test.string_operator_equal();
         test.string_test_one_very_strange_issue();
+        test.string_to_c_str();
     }
+
 public:
     void string_empty_string();
     void string_initialize_from_char_star();
@@ -47,6 +49,7 @@ public:
     void string_operator_braket();
     void string_operator_equal();
     void string_test_one_very_strange_issue();//take me a lot of time
+    void string_to_c_str();
 };
 }
 #endif // _XSTRING_TESTS_H_

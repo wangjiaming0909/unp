@@ -5,6 +5,12 @@ TEST::SERVER_TEST::SERVER_TEST()
 {
 }
 
+TEST::SERVER_TEST::~SERVER_TEST()
+{
+    if(m_server_ptr != nullptr)
+        delete m_server_ptr;
+}
+
 void TEST::SERVER_TEST::if_non_valid_config_file_passed_in()
 {
     config::ServerConfig* config_ptr = nullptr;
@@ -29,13 +35,22 @@ void TEST::SERVER_TEST::should_initialized_well()
     assert(m_server_ptr->initialized == true);
     assert(m_server_ptr->binded ==true);
     assert(m_server_ptr->started == false);
+    assert(m_server_ptr->get_status() == SERVER_STATUS::Binded);
     ASSERT_OK;
 }
 
 void TEST::SERVER_TEST::should_be_started()
 {
-    // m_server_ptr->start();
+//    m_server_ptr->start();
     assert(m_server_ptr->started == true);
+    assert(m_server_ptr->get_status() == SERVER_STATUS::Started);
+    ASSERT_OK;
+}
+
+void TEST::SERVER_TEST::should_be_stoped()
+{
+    m_server_ptr->stop();
+    assert(m_server_ptr->get_status() == SERVER_STATUS::Closed);
     ASSERT_OK;
 }
 

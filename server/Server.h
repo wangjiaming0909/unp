@@ -18,6 +18,7 @@
 #include <string.h>
 #include <errno.h>
 #include "util/XString.h"
+#include "server_status.h"
 
 namespace server{
 
@@ -35,27 +36,29 @@ public:
     void start();
     void stop();
 
-    //status
 public:
     bool initialized = false;
     bool binded = false;
     bool started = false;
+    SERVER_STATUS get_status() const;
+
 private:
     void bind();
 
 private:
-    string                  	m_ipAddress;//
+    string                  		m_ipAddress;//
     std::vector<Client*>        m_clients;
-    size_t                  	m_numOfClients = 0;
+    size_t                  		m_numOfClients = 0;
     ServerConfig      		    *m_config;
-    int                     	m_listenfd = 0;
-    int                     	m_connfd = 0;
+    int                     			m_listenfd = 0;
+    int                     			m_connfd = 0;
+    SERVER_STATUS            m_server_status;
 
 private:
     struct sockaddr_in      	m_childAddr;
     struct sockaddr_in      	m_serverAddr;
     uint16_t                	m_port;//listen port
 };
-#endif
-
 }
+
+#endif
