@@ -115,7 +115,24 @@ void XSTRING_TEST::string_append_char_star_need_to_reallocate_memory(){
     assert(*(ptr+6) == '3');
     assert(*(ptr+7) == '4');
     assert(&tmp == &s);//return value is the same as the original object
+    ASSERT_OK;
+}
 
+void XSTRING_TEST::string_append_char_star_need_to_reallocate_memory_again(){
+    util::string s = "1234";//size == 4, capacity == 6
+    util::string& tmp = s.append("1234");//need to reallocate memory
+    assert(s.size() == 8);
+    assert(s.capacity() == 8 + 8/2);
+    const char* ptr = s.ptr();
+    assert(*(ptr) == '1');
+    assert(*(ptr+1) == '2');
+    assert(*(ptr+2) == '3');
+    assert(*(ptr+3) == '4');
+    assert(*(ptr+4) == '1');
+    assert(*(ptr+5) == '2');
+    assert(*(ptr+6) == '3');
+    assert(*(ptr+7) == '4');
+    assert(&tmp == &s);//return value is the same as the original object
     ASSERT_OK;
 }
 

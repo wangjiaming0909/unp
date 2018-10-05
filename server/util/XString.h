@@ -94,7 +94,7 @@ private:
                 memset(m_ptr, 0, m_capacity);
             }else{
                 string tmp = *this;//save the content of this
-                delete []m_ptr;
+                // delete []m_ptr;
                 m_capacity = size + size/2;
                 m_ptr = new char[m_capacity];
                 memset(m_ptr, 0, m_capacity);
@@ -110,7 +110,7 @@ public:
         size_t size = this->size() + str.size();
         //after append size is big than capacity
         if(size > this->m_capacity){//reallocate
-            size_t tmpSize = m_length;
+            size_t tmpSize = m_length;//! no need of this tmpSize
             reAllocate(size);//allocate size + size / 2 bytes
             memcpy(m_ptr + tmpSize, str.m_ptr, str.m_length);
             m_length += str.m_length;

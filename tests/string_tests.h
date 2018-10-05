@@ -20,6 +20,7 @@ public:
         test.string_initialize_from_unsigned_char_star();
         test.string_initialize_from_std_string();
         test.string_append_char_star_need_to_reallocate_memory();
+        test.string_append_char_star_need_to_reallocate_memory_again();
         test.string_append_char_star_no_need_to_reallocate_memory();
         test.string_append_std_string();
         test.string_append_char_star_len();
@@ -37,6 +38,7 @@ public:
     void string_initialize_from_unsigned_char_star();
     void string_initialize_from_std_string();
     void string_append_char_star_need_to_reallocate_memory();
+    void string_append_char_star_need_to_reallocate_memory_again();
     void string_append_char_star_no_need_to_reallocate_memory();
     void string_append_std_string();
     void string_append_char_star_len();

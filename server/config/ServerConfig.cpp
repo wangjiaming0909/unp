@@ -15,8 +15,9 @@ ServerConfig::ServerConfig(const string& configFileName){
 	m_options_str = nullptr;
 	setConfigFullPath(configFileName);
     m_read_config_file_ok = !readConfigFile();
-	if(!m_read_config_file_ok)
-		exit(-1);
+	if(!m_read_config_file_ok){
+		CONSOLE_LOG("fd is not ready");
+	}
     parseConfigFile();
 }
 
