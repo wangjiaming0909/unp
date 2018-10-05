@@ -222,6 +222,22 @@ void XSTRING_TEST::string_operator_equal()
     ASSERT_OK;
 }
 
+void XSTRING_TEST::string_test_one_very_strange_issue()
+{
+    util::string str;
+    str = "123";
+    str.append("456");
+    assert(str.size() == 6);
+    const char* ptr = str.ptr();
+    assert(*(ptr) == '1');
+    assert(*(ptr+1) == '2');
+    assert(*(ptr+2) == '3');
+    assert(*(ptr+3) == '4');
+    assert(*(ptr+4) == '5');
+    assert(*(ptr+5) == '6');
+    ASSERT_OK;
+}
+
 
 
 

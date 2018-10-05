@@ -37,14 +37,14 @@ public:
         memset(m_ptr, 0, m_capacity);
         memcpy(m_ptr, ptr, m_length);
     }
-    string(const char *ptr, size_t size) {
+    explicit string(const char *ptr, size_t size) {
         this->m_length = size;
         m_capacity = size + size/2;
         m_ptr = new char[m_capacity];
         memset(m_ptr, 0, m_capacity);
         ::memcpy(m_ptr, ptr, size);
     }
-    string(const unsigned char* str){
+    explicit string(const unsigned char* str){
         string(reinterpret_cast<const char*>(str));
     }
     string(const string& s){
@@ -78,6 +78,16 @@ public:
         m_ptr = nullptr;
     }
 
+    string& operator=(const string& s){
+        if(m_capacity < s.m_length){
+            reAllocate(s.m_length);
+        }
+        memset(m_ptr, 0, m_capacity);
+        memcpy(m_ptr, s.m_ptr, s.m_length);
+        m_length = s.m_length;
+        return *this;
+    }
+
 private:
     void reAllocate(size_t size){
         if(size == 0){
@@ -94,7 +104,7 @@ private:
                 memset(m_ptr, 0, m_capacity);
             }else{
                 string tmp = *this;//save the content of this
-                // delete []m_ptr;
+                delete []m_ptr;//! memory leak
                 m_capacity = size + size/2;
                 m_ptr = new char[m_capacity];
                 memset(m_ptr, 0, m_capacity);
@@ -121,7 +131,7 @@ public:
        return *this;
     }
     string& append(const char*ptr){
-        string tmp = ptr;
+        string tmp(ptr);
         return append(tmp);
     }
     string& append(const char* ptr, size_t len){
@@ -129,7 +139,7 @@ public:
         return append(tmp);
     }
     string& append(const std::string& str){
-        string tmp = str;
+        string tmp(str);
         return append(tmp);
     }
 

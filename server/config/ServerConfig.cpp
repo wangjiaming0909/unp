@@ -12,7 +12,7 @@ ServerConfig::ServerConfig()
 }
 
 ServerConfig::ServerConfig(const string& configFileName){
-	m_options_str = nullptr;
+	setConfigFullPath(configFileName);
 	setConfigFullPath(configFileName);
     m_read_config_file_ok = !readConfigFile();
 	if(!m_read_config_file_ok){
@@ -24,6 +24,8 @@ ServerConfig::ServerConfig(const string& configFileName){
 ServerConfig::~ServerConfig(){
     if(m_options_str != nullptr)
         delete m_options_str;
+	if(m_configFilePath != nullptr)
+		delete m_configFilePath;
 }
 
 bool ServerConfig::parseConfigFile(){
@@ -44,7 +46,7 @@ bool ServerConfig::parseConfigFile(){
 }
 
 int ServerConfig::readConfigFile(){
-    FileUtil fileUtil(m_configFilePath);
+    FileUtil fileUtil(*m_configFilePath);
     size_t size_of_buffer = 512;
     this->m_options_str = new string(size_of_buffer);
     int err = fileUtil.readToString(static_cast<int>(size_of_buffer), m_options_str);
@@ -60,9 +62,9 @@ void ServerConfig::setConfigFullPath(const string& configFileName){
 	}
 	string dash = "/";
 	string tmp = cwd;
-	m_configFilePath = tmp;
-	m_configFilePath.append(dash);
-	m_configFilePath.append(configFileName);
+	m_configFilePath = new util::string(cwd);
+	m_configFilePath->append(dash);
+	m_configFilePath->append(configFileName);
 }
 
 string ServerConfig::operator[](const string& key){

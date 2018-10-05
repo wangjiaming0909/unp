@@ -46,8 +46,8 @@ private:
 private:
 	// std::map<ConfigOption, ConfigOption> m_options_map2;
     std::map<string, string>		 	m_options_map;
-	string 								m_configFilePath;
-	string*								m_options_str;
+    string* 							m_configFilePath = nullptr;
+    string*								m_options_str = nullptr;
 
 private:
 	bool 								m_read_config_file_ok;

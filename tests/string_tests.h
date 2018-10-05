@@ -27,6 +27,7 @@ public:
         test.string_begin_and_end();
         test.string_operator_braket();
         test.string_operator_equal();
+        test.string_test_one_very_strange_issue();
     }
 public:
     void string_empty_string();
@@ -45,6 +46,7 @@ public:
     void string_begin_and_end();
     void string_operator_braket();
     void string_operator_equal();
+    void string_test_one_very_strange_issue();//take me a lot of time
 };
 }
 #endif // _XSTRING_TESTS_H_

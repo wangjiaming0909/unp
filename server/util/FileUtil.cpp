@@ -49,7 +49,8 @@ int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
     int err = m_err;
     if(!fd_is_valid(str_ptr)){
         CONSOLE_LOG("fd is not valid")
-        exit(-1);
+        // exit(-1);
+        return -1;
     }
     while(str_ptr->size() < static_cast<size_t>(maxSize)){
         int toRead = std::min(maxSize - static_cast<int>(str_ptr->size()), 64*1024);
