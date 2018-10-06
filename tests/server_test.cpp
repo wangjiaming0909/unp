@@ -41,7 +41,7 @@ void TEST::SERVER_TEST::should_initialized_well()
 
 void TEST::SERVER_TEST::should_be_started()
 {
-//    m_server_ptr->start();
+    m_server_ptr->start();
     assert(m_server_ptr->started == true);
     assert(m_server_ptr->get_status() == SERVER_STATUS::Started);
     ASSERT_OK;
