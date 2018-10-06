@@ -6,3 +6,4 @@ tests
 include
 olds
 olds/lib
+server/pthread

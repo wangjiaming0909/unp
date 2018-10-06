@@ -12,6 +12,8 @@ server/config/json11.hpp
 server/config/optionValidator.cpp
 server/config/optionValidator.h
 server/main.cpp
+server/pthread/pthread_pool.cpp
+server/pthread/pthread_pool.h
 server/server_status.h
 server/socketops.h
 server/util/FileUtil.cpp
