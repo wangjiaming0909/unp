@@ -45,7 +45,7 @@ bool util::FileUtil::fd_is_valid(util::string* str_ptr)const {
 }
 
 int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
-    assert(str_ptr != NULL);
+    assert(str_ptr != nullptr);
     int err = m_err;
     if(!fd_is_valid(str_ptr)){
         CONSOLE_LOG("fd is not valid")

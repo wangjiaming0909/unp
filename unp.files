@@ -2,6 +2,7 @@ server/Client.cpp
 server/Client.h
 server/Server.cpp
 server/Server.h
+server/SocketOps.cpp
 server/config/ServerConfig.cpp
 server/config/ServerConfig.h
 server/config/configoption.cpp
@@ -12,6 +13,7 @@ server/config/optionValidator.cpp
 server/config/optionValidator.h
 server/main.cpp
 server/server_status.h
+server/socketops.h
 server/util/FileUtil.cpp
 server/util/FileUtil.h
 server/util/XString.h

@@ -68,7 +68,7 @@ void Server::initialize(){
     if(portStr == "")
         CONSOLE_LOG("config file error, no PORT specified");
     // m_serverAddr.sin_port = htons(uint16_t(port_int));
-    m_serverAddr.sin_port = int(portStr);
+    m_serverAddr.sin_port = static_cast<in_port_t>(int(portStr));
     initialized = true;
     m_server_status = SERVER_STATUS::Initialized;
 }
