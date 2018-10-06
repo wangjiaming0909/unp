@@ -7,3 +7,4 @@ include
 olds
 olds/lib
 server/pthread
+server/thread

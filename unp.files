@@ -12,10 +12,12 @@ server/config/json11.hpp
 server/config/optionValidator.cpp
 server/config/optionValidator.h
 server/main.cpp
-server/pthread/pthread_pool.cpp
-server/pthread/pthread_pool.h
 server/server_status.h
 server/socketops.h
+server/thread/thread.cpp
+server/thread/thread.h
+server/thread/thread_pool.cpp
+server/thread/thread_pool.h
 server/util/FileUtil.cpp
 server/util/FileUtil.h
 server/util/XString.h
