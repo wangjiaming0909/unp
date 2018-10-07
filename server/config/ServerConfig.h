@@ -33,16 +33,13 @@ public:
 	ServerConfig(const string& configFileName);
     ~ServerConfig();
 public:
-//    string operator[](const char*) const;
     string operator[](const string& key);
-//    string operator[](const string& key)const;
 private:
 	bool parseConfigFile();
     int readConfigFile();
     void setConfigFullPath(const string& configFileName);
 
 private:
-	// std::map<ConfigOption, ConfigOption> m_options_map2;
     std::map<string, string>		 	m_options_map;
     string* 							m_configFilePath = nullptr;
     string*								m_options_str = nullptr;
