@@ -4,7 +4,7 @@
 #include "XString.h"
 
 namespace util{
-namespace date{
+namespace datetime{
 
 class Date{
 public:

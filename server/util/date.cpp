@@ -2,7 +2,7 @@
 #include <cstdio>
 
 namespace util{
-namespace date{
+namespace datetime{
 int getJulianDayNumber(int year, int month, int day){
   int a = (14 - month) / 12;
   int y = year + 4800 - a;
@@ -26,16 +26,16 @@ struct Date::YearMonthDay getYearMonthDay(int julianDayNumber){
 }
 }
 
-util::date::Date::Date(int y, int m, int d)
-    : m_julianDayNumber(date::getJulianDayNumber(y, m, d)){}
+util::datetime::Date::Date(int y, int m, int d)
+    : m_julianDayNumber(datetime::getJulianDayNumber(y, m, d)){}
 
-util::date::Date::Date(const struct tm& time)
+util::datetime::Date::Date(const struct tm& time)
     : m_julianDayNumber(getJulianDayNumber(
         time.tm_year+1900,
         time.tm_mon+1,
         time.tm_mday)){}
 
-util::string util::date::Date::toString()const{
+util::string util::datetime::Date::toString()const{
     char buf[32];
     YearMonthDay ymd(yearMonthDay());
     snprintf(buf, sizeof buf, 
@@ -44,6 +44,6 @@ util::string util::date::Date::toString()const{
     return buf;
 }
 
-util::date::Date::YearMonthDay util::date::Date::yearMonthDay() const {
+util::datetime::Date::YearMonthDay util::datetime::Date::yearMonthDay() const {
     return getYearMonthDay(m_julianDayNumber);
 }
