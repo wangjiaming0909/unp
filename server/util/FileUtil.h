@@ -1,5 +1,5 @@
-#ifndef _FILEUTIL_H_
-#define _FILEUTIL_H_
+#ifndef _UNP_FILEUTIL_H_
+#define _UNP_FILEUTIL_H_
 #include "XString.h"
 #include <errno.h>
 

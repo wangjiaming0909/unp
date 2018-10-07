@@ -6,12 +6,26 @@
  ************************************************************************/
 
 #include "unp_time.h"
+#include <stdio.h>
+#include <inttypes.h>
+#include <sys/time.h>
 
 using namespace util;
 using namespace datetime;
 
-Time::Time(int hour, int minite, int second){
-    
+string Time::toString() const
+{
+    char buf[32] = {0};
+    int64_t seconds = m_microSecondsSinceEpoch / (1000*1000);
+    int64_t microseconds = m_microSecondsSinceEpoch % (1000*1000);
+    snprintf(buf, sizeof(buf)-1, "%" PRId64 ".%06" PRId64 "", seconds, microseconds);
+    return buf;
 }
 
-
+Time Time::now()
+{
+    struct timeval tv;
+    gettimeofday(&tv, nullptr);
+    int64_t seconds = tv.tv_sec;
+    return Time(seconds * 1000*1000 + tv.tv_usec);
+}
