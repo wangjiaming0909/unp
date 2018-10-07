@@ -22,10 +22,12 @@ ServerConfig::ServerConfig(const string& configFileName){
 }
 
 ServerConfig::~ServerConfig(){
-    if(m_options_str != nullptr)
+    if(m_options_str != nullptr){
         delete m_options_str;
-	if(m_configFilePath != nullptr)
+	}
+	if(m_configFilePath != nullptr){
 		delete m_configFilePath;
+	}
 }
 
 bool ServerConfig::parseConfigFile(){
