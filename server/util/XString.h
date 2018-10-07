@@ -18,29 +18,24 @@ typedef __gnu_cxx::__sso_string sso_string;
 namespace util{
 class string{
 public:
-    string(){
-        m_capacity = 64 + 64/2;
+    string() : m_length(0), m_capacity(64+64/2){
         m_ptr = new char[m_capacity];
         memset(m_ptr, 0, m_capacity);
-        m_length = 0;
     }
-    string(size_t size){
-        m_capacity = size + size/2;
+    string(size_t size) : m_length(0), m_capacity(size+size/2){
         m_ptr = new char[m_capacity];
         memset(m_ptr, 0, m_capacity);
-        m_length = 0;
     }
-    string(const char *ptr) {
-        this->m_length = strlen(ptr);//TODO: thread safty
-        m_capacity = m_length + m_length/2;
+    string(const char *ptr) : m_length(strlen(ptr)), m_capacity(m_length+m_length/2) {
+        // this->m_length = strlen(ptr);//TODO: thread safty
         m_capacity = (m_capacity == 0 ? (64+64/2) : m_capacity);
         m_ptr = new char[m_capacity];
         memset(m_ptr, 0, m_capacity);
         memcpy(m_ptr, ptr, m_length);
     }
-    explicit string(const char *ptr, size_t size) {
-        this->m_length = size;
-        m_capacity = size + size/2;
+    explicit string(const char *ptr, size_t size) 
+        : m_length(size), 
+        m_capacity(size == 0 ? 64+64/2 : (size+size/2)){
         m_ptr = new char[m_capacity];
         memset(m_ptr, 0, m_capacity);
         ::memcpy(m_ptr, ptr, size);
@@ -48,26 +43,30 @@ public:
     explicit string(const unsigned char* str){
         string(reinterpret_cast<const char*>(str));
     }
-    string(const string& s){
-        this->m_capacity = s.m_capacity;
+    string(const string& s) : m_length(s.m_length), m_capacity(s.m_capacity){
         m_ptr = new char[m_capacity];
         memset(m_ptr, 0, m_capacity);
-        this->m_length = s.m_length;
-        //deep copy
         memcpy(m_ptr, s.m_ptr, s.m_length);
     }
-    string(const std::string& s) {
+    string(string&& s) 
+        : m_length(s.m_length),
+        m_capacity(s.m_capacity),
+        m_ptr(s.m_ptr){
+        s.m_capacity = s.m_length = 0;
+        s.m_ptr = nullptr;
+    }
+    string(const std::string& s) 
+        : m_length(s.length()),
+        m_capacity(m_length+m_length/2){
         const char* ptr = s.c_str();
-        m_length = s.length();
-        m_capacity = m_length + m_length/2;
         m_ptr = new char[m_capacity];
         memset(m_ptr, 0, m_capacity);
         memcpy(m_ptr, ptr, m_length);
     }
-    string(const sso_string& s){
+    string(const sso_string& s)
+        : m_length(s.length()),
+        m_capacity(m_length+m_length/2){
         const char* ptr = s.c_str();
-        m_length = s.length();
-        m_capacity = m_length + m_length/2;
         m_ptr = new char[m_capacity];
         memset(m_ptr, 0, m_capacity);
         memcpy(m_ptr, ptr, m_length);
@@ -99,13 +98,15 @@ private:
         }
         else{
             if(empty()){//m_length == 0
-                delete []m_ptr;
+                if(m_ptr != nullptr)
+                    delete []m_ptr;
                 m_capacity = size + size/2;
                 m_ptr = new char[m_capacity];
                 memset(m_ptr, 0, m_capacity);
             }else{
-                string tmp = *this;//save the content of this
-                delete []m_ptr;//! memory leak
+                // string tmp = *this;//save the content of this
+                string tmp = std::move(*this);
+                // delete []m_ptr;//! memory leak
                 m_capacity = size + size/2;
                 m_ptr = new char[m_capacity];
                 memset(m_ptr, 0, m_capacity);
@@ -120,6 +121,8 @@ public:
         return as_std_string().c_str();
     }
     //the old memory is not my concern, it will managed by outside
+    //TODO rvalue reference version of append
+    //*let user to decide how to mamage the memory of this param str 
     string& append(const string& str){
         size_t size = this->size() + str.size();
         //after append size is big than capacity
@@ -206,9 +209,9 @@ public:
 #undef STRING_BINARY_PREDICATE
 
 private:
-    char*    	 	m_ptr;
     size_t          m_length = 0;
     size_t 			m_capacity = 0;
+    char*    	 	m_ptr;
 };
 
 //std::ostream& operator<<(std::ostream& o, const string& str){
