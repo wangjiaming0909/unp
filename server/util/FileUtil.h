@@ -25,7 +25,7 @@ private:
 private:
     int     		m_fd;
     int     		m_err;
-    char    	m_buf[kBufferSize];
+    char    	    m_buf[kBufferSize];
 };
 
 }

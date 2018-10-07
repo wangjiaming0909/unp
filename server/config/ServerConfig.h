@@ -15,7 +15,6 @@
 #include <cstdlib>
 #include "json11.hpp"
 #include <unistd.h>
-#include <exception>
 #include <utility>
 #include "optionValidator.h"
 #include "../util/XString.h"
@@ -23,7 +22,6 @@
 #include "../util/FileUtil.h"
 #include "configoption.h"
 
-#define CONSOLE_LOG(message) std::cout << message << std::endl;
 namespace config{
 using namespace util;
 
