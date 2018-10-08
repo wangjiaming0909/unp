@@ -7,7 +7,9 @@
 #include "fileutil_test.h"
 #include "server_conf_test.h"
 #include "server_test.h"
+#include "../server/util/easylogging++.h"
 
+INITIALIZE_EASYLOGGINGPP
 int main()
 {
     using namespace TEST;

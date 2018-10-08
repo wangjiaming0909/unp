@@ -2,6 +2,9 @@ CC = g++
 FLAGS = -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors
 #HEADERS = include/unp.h
 
+DEFS = ELPP_THREAD_SAFE
+DEFINES = $(patsubst %, -D%, $(DEFS))
+
 SOURCEDIR = ./server
 BUILDDIR = ./build
 OBJDIR = $(BUILDDIR)/obj
@@ -35,7 +38,7 @@ $(TEST_TARGET): $(TEST_USED_OBJECTS) $(TEST_OBJS)
 	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -o $@ 
 
 $(TEST_OBJS):$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp 
-	$(CC) $(FLAGS) $< -o $@ -I $(INCLUDES)
+	$(CC) $(DEFINES) $(FLAGS) $< -o $@ -I $(INCLUDES)
 
 $(BUILDDIR):
 	$(MKDIR) $@
@@ -45,7 +48,7 @@ $(TARGET): $(OBJECTS)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SOURCEDIR)/%.cpp
 	@$(MKDIR) $(dir $@)
-	$(CC) $(FLAGS) $< -o $@ -I $(INCLUDES)
+	$(CC) $(DEFINES) $(FLAGS) $< -o $@ -I $(INCLUDES)
 
 testclean:FORCE
 	$(RM) $(TEST_OBJS) $(TEST_TARGET)

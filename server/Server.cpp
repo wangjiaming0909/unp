@@ -5,6 +5,7 @@
 	> Created Time: Fri 28 Sep 2018 09:08:21 AM CST
  ************************************************************************/
 #include "Server.h"
+#include "util/easylogging++.h"
 using namespace server;
 
 Server::Server(ServerConfig* config)
@@ -58,15 +59,16 @@ SERVER_STATUS Server::get_status() const
 void Server::initialize(){
     m_listenfd = socket(AF_INET, SOCK_STREAM, 0);
     if(m_listenfd == -1){
-        CONSOLE_LOG("error socket ...");
-        CONSOLE_LOG(strerror(errno));
-        return;
+        LOG(FATAL) << strerror(errno);
+//        CONSOLE_LOG(strerror(errno));
+//        return;
     }
     bzero(&m_serverAddr, sizeof(m_serverAddr));   
     m_serverAddr.sin_family = AF_INET;
     string portStr = (*m_config)["port"];
     if(portStr == "")
-        CONSOLE_LOG("config file error, no PORT specified");
+        LOG(FATAL) << "config file error, no PORT specified";
+//        CONSOLE_LOG("config file error, no PORT specified");
     m_serverAddr.sin_port = htons(int(portStr));//TODO need transfer the format
     initialized = true;
     m_server_status = SERVER_STATUS::Initialized;
@@ -78,9 +80,10 @@ void Server::bind(){
         reinterpret_cast<sockaddr*>(&m_serverAddr),
         sizeof(m_serverAddr));
     if(ret == -1){
-        CONSOLE_LOG("error bind");
-        CONSOLE_LOG(strerror(errno));
-        return;
+        LOG(FATAL) << strerror(errno);
+//        CONSOLE_LOG("error bind");
+//        CONSOLE_LOG(strerror(errno));
+//        return;
     }
     binded = true;
     m_server_status = SERVER_STATUS::Binded;

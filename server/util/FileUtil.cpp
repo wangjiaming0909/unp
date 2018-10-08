@@ -6,6 +6,7 @@
 #include <cassert>
 #include <sys/stat.h>
 #include <cstdlib>
+#include "easylogging++.h"
 
 util::FileUtil::FileUtil(const util::string& fileName)
     : m_fd(::open(fileName.ptr(), O_RDONLY | O_CLOEXEC)),
@@ -13,7 +14,7 @@ util::FileUtil::FileUtil(const util::string& fileName)
     memset(m_buf, 0, kBufferSize);
     if(m_fd < 0){
         m_err = errno;
-        CONSOLE_LOG(strerror(errno));
+        LOG(ERROR) << strerror(errno);
     }
 }
 
@@ -33,9 +34,10 @@ bool util::FileUtil::fd_is_valid(util::string* str_ptr)const {
             if(fileSize){// ** file size unit is byte
                 if(S_ISREG(statbuf.st_mode)){// **normal file
                     if(statbuf.st_size > kBufferSize){
-                        exit(-1);
+                        LOG(WARNING) << "file too big";
                     }
                 }else if(S_ISDIR(statbuf.st_mode)){// ** directory
+                    LOG(WARNING) << "isDIR";
                     err = EISDIR;
                 }
             }
@@ -48,7 +50,8 @@ int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
     assert(str_ptr != nullptr);
     int err = m_err;
     if(!fd_is_valid(str_ptr)){
-        CONSOLE_LOG("fd is not valid")
+//        CONSOLE_LOG("fd is not valid");
+        LOG(FATAL) << "fd is not valid";
         // exit(-1);
         return -1;
     }

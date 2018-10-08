@@ -23,6 +23,8 @@ server/util/FileUtil.h
 server/util/XString.h
 server/util/date.cpp
 server/util/date.h
+server/util/easylogging++.cpp
+server/util/easylogging++.h
 server/util/unp_time.cpp
 server/util/unp_time.h
 server_conf.json
