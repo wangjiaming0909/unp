@@ -8,6 +8,7 @@
 
 int print_Argc_Argv(int argc, char** argv);
 void setupLogger();
+// INITIALIZE_NULL_EASYLOGGINGPP
 INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv){
@@ -26,10 +27,16 @@ void setupLogger(){
     using namespace el;
     Configurations defaultConf;
     defaultConf.setToDefault();
+    defaultConf.set(Level::Global, ConfigurationType::Enabled, "true");
+    defaultConf.set(Level::Global, ConfigurationType::Format, "%datetime, %msg");
     defaultConf.set(Level::Global, ConfigurationType::PerformanceTracking, "false");
     defaultConf.set(Level::Global, ConfigurationType::ToStandardOutput, "false");
+    defaultConf.set(Level::Global, ConfigurationType::ToFile, "true");
     defaultConf.set(Level::Global, ConfigurationType::Filename, "/tmp/unp.log");
-    Loggers::reconfigureLogger("default", defaultConf);
+    defaultConf.set(Level::Global, ConfigurationType::LogFlushThreshold, "100");
+    defaultConf.set(Level::Global, ConfigurationType::MaxLogFileSize, "2097152");
+
+    Loggers::reconfigureAllLoggers(defaultConf);
 }
 
 int print_Argc_Argv(int argc, char** argv){
