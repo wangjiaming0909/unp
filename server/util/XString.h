@@ -79,6 +79,8 @@ public:
     }
 
     string& operator=(const string& s){
+        if(&s == this)
+            return *this;
         if(m_capacity < s.m_length){
             reAllocate(s.m_length);
         }
