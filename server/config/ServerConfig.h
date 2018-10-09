@@ -25,7 +25,7 @@
 namespace config{
 using namespace util;
 
-#define DEFAULT_CONFIG_JSON_FILE_NAME "server_conf.json"
+const string DEFAULT_CONFIG_JSON_FILE_NAME =  "server_conf.json";
 
 class ServerConfig{
 public:
