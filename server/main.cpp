@@ -28,7 +28,7 @@ void setupLogger(){
     Configurations defaultConf;
     defaultConf.setToDefault();
     defaultConf.set(Level::Global, ConfigurationType::Enabled, "true");
-    defaultConf.set(Level::Global, ConfigurationType::Format, "%datetime, %msg");
+    defaultConf.set(Level::Global, ConfigurationType::Format, "%datetime, %thread, %thread_name, %level, %file, %line, %func, %msg");
     defaultConf.set(Level::Global, ConfigurationType::PerformanceTracking, "false");
     defaultConf.set(Level::Global, ConfigurationType::ToStandardOutput, "false");
     defaultConf.set(Level::Global, ConfigurationType::ToFile, "true");
