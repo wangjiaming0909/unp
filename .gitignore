@@ -2,3 +2,4 @@
 build/**
 tests/*.o
 tests/*.out
+**/tags
