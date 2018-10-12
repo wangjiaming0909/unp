@@ -9,7 +9,7 @@
 #define _PMUTEX_H
 
 #include <pthread.h>
-#include "mutexbase.h"
+#include "mutex_base.h"
 #include <sys/syscall.h>
 #include <unistd.h>
 
@@ -27,6 +27,9 @@ public:
     virtual void unlock(){
         unassign_holder();
         pthread_mutex_unlock(&m_mutex_imp);
+    }
+    virtual pthread_mutex_t* get_imp_mutex(){
+        return &m_mutex_imp;
     }
 protected:
     virtual void assign_holder(){

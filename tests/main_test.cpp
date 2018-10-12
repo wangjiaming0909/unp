@@ -7,6 +7,7 @@
 #include "fileutil_test.h"
 #include "server_conf_test.h"
 #include "server_test.h"
+#include "pmutex_test.h"
 #include "../server/util/easylogging++.h"
 
 INITIALIZE_EASYLOGGINGPP
@@ -17,6 +18,9 @@ int main()
     FILEUTIL_TEST::test();
     SERVER_CONFIG_TEST::test();
     SERVER_TEST::test();
+    PMUTEX_TEST::test();
+
+
     return 0;
 }
 
