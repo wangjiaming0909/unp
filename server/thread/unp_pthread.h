@@ -12,14 +12,16 @@
 #include "pmutex.h"
 #include "pcondition.h"
 
+void* thread_cb(void*){
+
+}
+
+
 namespace thread{
-template <typename condition_type,
-        typename thread_id_type,
-        typename mutex_imp_type>
 class unp_pthread : Thread<pcondition, pthread_t, pthread_mutex_t>{
 public:
     typedef Thread<pcondition, pthread_t, pthread_mutex_t> BaseType;
-    unp_pthread(const ThreadFunc& func) : BaseType(func){}
+    unp_pthread(const ThreadFunc& func, util::string thread_name) : BaseType(func, thread_name){}
     ~unp_pthread(){}
     virtual void start(){
         m_started = true;

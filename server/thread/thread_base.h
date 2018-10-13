@@ -45,7 +45,7 @@ protected:
     bool                m_joined;
     THREAD_ID_TYPE      m_thread_id;
     util::string        m_thread_name;
-    ThreadFunc          m_func;
+    ThreadFunc&         m_func;
     LatchType           m_latch;
 };
 
