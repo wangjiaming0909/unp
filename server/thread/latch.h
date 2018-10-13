@@ -32,8 +32,8 @@ public:
     }
     
 private:
-    ConditionType m_condition;
-    MutexType m_mutex;
+    ConditionType* m_condition;
+    MutexType* m_mutex;
     int m_count;
 };
 }

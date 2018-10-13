@@ -14,16 +14,16 @@ public:
     typedef condition_base<pthread_cond_t, pthread_t, pthread_mutex_t> BaseType;
     typedef mutex_base<pthread_t, pthread_mutex_t> MutexType;
     explicit pcondition(MutexType* mutex) : BaseType(mutex){
-        pthread_cond_init(&m_condition, nullptr);
+        pthread_cond_init(m_condition, nullptr);
     }
     ~pcondition(){
-        pthread_cond_destroy(&m_condition);
+        pthread_cond_destroy(m_condition);
     }
     virtual void wait(){
-        pthread_cond_wait(&m_condition, m_mutex->get_imp_mutex());
+        pthread_cond_wait(m_condition, m_mutex->get_imp_mutex());
     }
     virtual void nofity(){
-        pthread_cond_signal(&m_condition);
+        pthread_cond_signal(m_condition);
     }
 };
 }

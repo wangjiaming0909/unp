@@ -2,10 +2,18 @@
 
 using namespace TEST;
 #include "../server/thread/pmutex.h"
-#include <pthread.h>
+#include "../server/thread/unp_pthread.h"
+#include <boost/function.hpp>
+#include <iostream>
+
+void thread_call(){
+    std::cout << 123 << std::endl;
+}
 
 void PMUTEX_TEST::test_constructor(){
-    thread::pmutex mutex;
-    // int i = 0;
-    // pthread_create()
+    // thread::pmutex mutex;
+    boost::function<void()> func = &thread_call;
+    thread::unp_pthread thread1(func, "thread1");
+    thread1.start();
 }
+

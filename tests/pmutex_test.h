@@ -1,7 +1,7 @@
 #ifndef _UNP_PMUTEX_TEST_H_
 #define _UNP_PMUTEX_TEST_H_
 
-#include "./tests_macros.h"
+#include "tests_macros.h"
 #include <typeinfo>
 
 namespace TEST{

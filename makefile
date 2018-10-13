@@ -35,7 +35,7 @@ test: $(TEST_TARGET)
 
 
 $(TEST_TARGET): $(TEST_USED_OBJECTS) $(TEST_OBJS)
-	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -o $@ 
+	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -o $@ -lpthread
 
 $(TEST_OBJS):$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp 
 	$(CC) $(DEFINES) $(FLAGS) $< -o $@ -I $(INCLUDES)
@@ -44,7 +44,7 @@ $(BUILDDIR):
 	$(MKDIR) $@
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ 
+	$(CC) $(OBJECTS) -o $@ -lpthread
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SOURCEDIR)/%.cpp
 	@$(MKDIR) $(dir $@)

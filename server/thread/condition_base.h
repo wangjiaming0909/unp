@@ -18,7 +18,7 @@ public:
 
 protected:
     MutexType*      m_mutex;
-    CONDITION_TYPE  m_condition;
+    CONDITION_TYPE*  m_condition;
 };
 }
 
