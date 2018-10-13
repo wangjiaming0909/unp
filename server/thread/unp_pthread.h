@@ -12,9 +12,9 @@
 #include "pmutex.h"
 #include "pcondition.h"
 
-void* thread_cb(void*){
-
-}
+//void* thread_cb(void*){
+//
+//}
 
 
 namespace thread{
@@ -25,7 +25,7 @@ public:
     ~unp_pthread(){}
     virtual void start(){
         m_started = true;
-        if(pthread_create(&m_thread_id, nullptr, m_func, nullptr)){
+        if(pthread_create(&m_thread_id, nullptr, &m_func, nullptr)){
             m_started = false;
         }else{
             m_latch.wait();

@@ -23,7 +23,7 @@ class Thread
 {
 public:
     typedef latch<CONDITION_TYPE, THREAD_ID_TYPE, MUTEX_IMP_TYPE>   LatchType;
-    typedef boost::function<void* (void*)>                                ThreadFunc;
+    typedef void* ThreadFunc(void*);
     
 public:
     Thread(const ThreadFunc& func, const util::string& thread_name) 
