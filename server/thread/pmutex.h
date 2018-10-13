@@ -15,7 +15,7 @@
 
 namespace thread{
 
-class pmutex : mutex_base<pid_t, pthread_mutex_t>{
+class pmutex : mutex_base<pthread_t, pthread_mutex_t>{
 public:
     pmutex(){
         pthread_mutex_init(&m_mutex_imp, NULL);

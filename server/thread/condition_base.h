@@ -7,10 +7,10 @@ namespace thread{
 
 template <typename CONDITION_TYPE,
         typename THREAD_ID_TYPE,
-        typename MUTEX_TYPE>
+        typename MUTEX_IMP_TYPE>
 class condition_base{
 public:
-    typedef mutex_base<THREAD_ID_TYPE, MUTEX_TYPE> MutexType;
+    typedef mutex_base<THREAD_ID_TYPE, MUTEX_IMP_TYPE> MutexType;
     condition_base(MutexType* mutex) : m_mutex(mutex){}
     virtual ~condition_base(){}
     virtual void wait() = 0;

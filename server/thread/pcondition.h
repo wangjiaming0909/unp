@@ -8,11 +8,11 @@ namespace thread{
 
 class pcondition
  : condition_base<pthread_cond_t,
-                  pid_t,
+                  pthread_t,
                   pthread_mutex_t>{
 public:
-    typedef condition_base<pthread_cond_t, pid_t, pthread_mutex_t> BaseType;
-    typedef mutex_base<pid_t, pthread_mutex_t> MutexType;
+    typedef condition_base<pthread_cond_t, pthread_t, pthread_mutex_t> BaseType;
+    typedef mutex_base<pthread_t, pthread_mutex_t> MutexType;
     explicit pcondition(MutexType* mutex) : BaseType(mutex){
         pthread_cond_init(&m_condition, nullptr);
     }
