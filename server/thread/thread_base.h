@@ -38,7 +38,7 @@ public:
     virtual void start() = 0;
     virtual int join() = 0;
     bool started()const{return m_started;}
-    const util::string thread_name() const {return m_thread_name;}
+    const util::string& thread_name() const {return m_thread_name;}
 
 protected:
     bool                m_started;

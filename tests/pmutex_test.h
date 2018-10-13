@@ -14,7 +14,7 @@ public:
         test.test_constructor();
     }
 
-public:
+private:
     void test_constructor();
 };
 }
