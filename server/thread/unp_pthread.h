@@ -23,7 +23,7 @@ public:
     ~unp_pthread(){}
     virtual void start(){
         m_started = true;
-        if(pthread_create(&m_thread_id, nullptr, nullptr, nullptr)){
+        if(pthread_create(&m_thread_id, nullptr, m_func, nullptr)){
             m_started = false;
         }else{
             m_latch.wait();
@@ -34,7 +34,7 @@ public:
         return pthread_join(m_thread_id, nullptr);
     }
 private:
-}
+};
 
 }
 
