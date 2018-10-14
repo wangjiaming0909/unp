@@ -11,7 +11,7 @@ class Thread_Pool{
 public:
     Thread_Pool();
 private:
-    Thread<CONDITION_IMP_TYPE, THREAD_ID_TYPE, MUTEX_IMP_TYPE> * m_thread;
+    // Thread<CONDITION_IMP_TYPE, THREAD_ID_TYPE, MUTEX_IMP_TYPE> * m_thread;
 };
 }
 

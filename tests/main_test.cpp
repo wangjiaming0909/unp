@@ -11,17 +11,38 @@
 #include "pthread_test.h"
 #include "../server/util/easylogging++.h"
 
+void setupLogger();
+
 INITIALIZE_EASYLOGGINGPP
 int main()
 {
     using namespace TEST;
+    setupLogger();
+    LOG(INFO) << "test started----";
     XSTRING_TEST::test();
     FILEUTIL_TEST::test();
     SERVER_CONFIG_TEST::test();
     SERVER_TEST::test();
     PMUTEX_TEST::test();
     UNP_PTHREAD_TEST::test();
+    LOG(INFO) << "test ended----";
     return 0;
+}
+
+void setupLogger(){
+    using namespace el;
+    Configurations defaultConf;
+    defaultConf.setToDefault();
+    defaultConf.set(Level::Global, ConfigurationType::Enabled, "true");
+    defaultConf.set(Level::Global, ConfigurationType::Format, "%datetime, %thread, %thread_name, %level, %file, %line, %func, %msg");
+    defaultConf.set(Level::Global, ConfigurationType::PerformanceTracking, "false");
+    defaultConf.set(Level::Global, ConfigurationType::ToStandardOutput, "false");
+    defaultConf.set(Level::Global, ConfigurationType::ToFile, "true");
+    defaultConf.set(Level::Global, ConfigurationType::Filename, "/tmp/unp_test.log");
+    defaultConf.set(Level::Global, ConfigurationType::LogFlushThreshold, "100");
+    defaultConf.set(Level::Global, ConfigurationType::MaxLogFileSize, "2097152");
+
+    Loggers::reconfigureAllLoggers(defaultConf);
 }
 
 // BOOST_AUTO_TEST_CASE(test_read_config_file){

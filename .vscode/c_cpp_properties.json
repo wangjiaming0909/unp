@@ -6,6 +6,12 @@
                 "${workspaceFolder}/**",
                 "/boost_1_68_0"
             ],
+            "browse": {
+                "path": [
+                    "/boost_1_68_0",
+                    "/boost_1_68_0/libs/thread/src/pthread"
+                ]
+            },
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",

@@ -17,9 +17,12 @@ OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES) )
 
 
 TARGET = $(BUILDDIR)/a.out
-LIBS = 
+LIBS = /boost_1_68_0/stage/lib
 INCLUDES = /boost_1_68_0
-LDFLAGS = 
+# LDFLAGS = -pthread -lboost_thread -lboost_system
+LDFLAGS = -pthread \
+		/boost_1_68_0/stage/lib/libboost_thread.a \
+		/boost_1_68_0/stage/lib/libboost_system.a
 
 all: $(BUILDDIR) $(TARGET)
 
@@ -35,7 +38,7 @@ test: $(TEST_TARGET)
 
 
 $(TEST_TARGET): $(TEST_USED_OBJECTS) $(TEST_OBJS)
-	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -o $@ -lpthread
+	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -o $@ -L$(LIBS) $(LDFLAGS)
 
 $(TEST_OBJS):$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp 
 	$(CC) $(DEFINES) $(FLAGS) $< -o $@ -I $(INCLUDES)
@@ -44,7 +47,7 @@ $(BUILDDIR):
 	$(MKDIR) $@
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ -lpthread
+	$(CC) $(OBJECTS) -o $@ -L$(LIBS) $(LDFLAGS)
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SOURCEDIR)/%.cpp
 	@$(MKDIR) $(dir $@)

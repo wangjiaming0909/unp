@@ -7,26 +7,46 @@
 #include "pcondition.h"
 #include "latch.h"
 #include <boost/function.hpp>
+// #include <boost/thread.hpp>
+
 namespace thread
 {
-//#ifdef USING_PTHREAD
-//typedef pmutex          MutexType;
-//typedef pcondition      ConditionType;
-//#else
-//typedef stdmutex MutexType;
-//#endif 
+// #ifdef USING_PTHREAD
+typedef pmutex          MutexType;
+typedef pcondition      ConditionType;
+typedef pthread_t       ThreadIDType;
+// #else
+// typedef stdmutex MutexType;
+// #endif 
+
+class Thread{
+public:
+    Thread() noexcept = default;
+    Thread(Thread&) = delete;
+    Thread(const Thread&) = delete;
+    template <typename _Callable, typename... _Args>
+    explicit Thread(_Callable& __f, _Args&... __args){
+    }
+
+    class id{
+        ThreadIDType m_thread_id;
+    public:
+        id() noexcept : m_thread_id(){}
+        explicit id(ThreadIDType __id) : m_thread_id(__id){}
+    };
+};
 
 template <typename CONDITION_TYPE,
         typename THREAD_ID_TYPE,
         typename MUTEX_IMP_TYPE>
-class Thread
+class Thread1
 {
 public:
     typedef latch<CONDITION_TYPE, THREAD_ID_TYPE, MUTEX_IMP_TYPE>   LatchType;
     typedef void* ThreadFunc(void*);
     
 public:
-    Thread(const ThreadFunc& func, const util::string& thread_name) 
+    Thread1(const ThreadFunc& func, const util::string& thread_name) 
         : m_started(false),
         m_joined(false),
         m_thread_id(0),
@@ -34,7 +54,7 @@ public:
         m_func(func),
         m_latch(1)
     {}
-    virtual ~Thread(){}
+    virtual ~Thread1(){}
     virtual void start() = 0;
     virtual int join() = 0;
     bool started()const{return m_started;}

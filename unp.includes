@@ -8,3 +8,4 @@ olds
 olds/lib
 server/pthread
 server/thread
+/boost_1_68_0/libs/thread/src/pthread
