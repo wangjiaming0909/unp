@@ -3,7 +3,6 @@
 
 #include "tests_macros.h"
 #include <typeinfo>
-#include "../server/thread/unp_pthread.h"
 
 namespace TEST{
 class UNP_PTHREAD_TEST{

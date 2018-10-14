@@ -1,6 +1,6 @@
 #ifndef _PTHREAD_POOL_H_
 #define _PTHREAD_POOL_H_
-#include "thread_base.h"
+#include "thread.h"
 namespace thread {
 #ifdef USING_PTHREAD
 typedef pthread_t THREAD_ID_TYPE;
