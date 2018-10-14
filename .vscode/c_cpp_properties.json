@@ -8,8 +8,7 @@
             ],
             "browse": {
                 "path": [
-                    "/boost_1_68_0",
-                    "/boost_1_68_0/libs/thread/src/pthread"
+                    "/boost_1_68_0"
                 ]
             },
             "defines": [],
