@@ -15,6 +15,10 @@
 
 namespace thread {
 
+static void* thread_proxy(void* param){
+    thread_data_sptr thread_info = static_cast<thread_data_base*>(params)->shared_from_this();
+}
+
 template <typename Func>
 class thread_data : public thread_data_base{
 public:
@@ -61,7 +65,13 @@ public:
     // }
 
     void start_thread(){
-
+       thread_info->self = thread_info;
+       const int res = pthread_create(&thread_info->thread_id, 0, nullptr, thread_info.get());
+       if(res != 0){
+           thread_info->self.reset();
+           return false;
+       }
+       return true;
     }
 
 public:
