@@ -15,8 +15,17 @@
 
 namespace thread {
 
-static void* thread_proxy(void* param){
+static void* thread_proxy(void* params){
     thread_data_sptr thread_info = static_cast<thread_data_base*>(params)->shared_from_this();
+    thread_info->self.reset();
+
+    // try{
+        thread_info->run();//TODO try catch
+    // }catch(exception const &){
+
+    // }
+    thread_info->done = true;
+    return 0;
 }
 
 template <typename Func>
@@ -64,14 +73,14 @@ public:
     //     thread_info(){
     // }
 
-    void start_thread(){
+    void start_thread(){//TODO exception handling
        thread_info->self = thread_info;
-       const int res = pthread_create(&thread_info->thread_id, 0, nullptr, thread_info.get());
+       const int res = pthread_create(&thread_info->thread_id, 0, &thread_proxy, thread_info.get());
        if(res != 0){
            thread_info->self.reset();
-           return false;
+        //    return false;
        }
-       return true;
+    //    return true;
     }
 
 public:
