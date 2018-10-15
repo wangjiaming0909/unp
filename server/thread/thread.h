@@ -21,6 +21,7 @@ public:
     thread_data(const thread_data&) = delete;
     thread_data& operator=(const thread_data&) = delete;
     thread_data(const Func&& f_) : m_f(boost::forward<Func>(f_)){}
+//    thread_data(void(*f)()) : 
     void run(){m_f();}
     ~thread_data(){}
 private:
@@ -33,11 +34,11 @@ public:
     Thread() noexcept = default;
     Thread(Thread&) = delete;
     Thread(const Thread&) = delete;
-    // template <typename Func>
-    // explicit Thread(Func&& f_) : 
-    //     thread_info(make_thread_data(std::forward<Func>(f_))) {
-    //     start_thread();
-    // }
+    template <typename Func>
+    explicit Thread(Func&& f_) : 
+        thread_info(make_thread_data(std::forward<Func>(f_))) {
+        start_thread();
+    }
     // template <typename Func, typename... _Args>
     // explicit Thread(Func& __f, _Args&... __args) : 
     //     thread_info(){
@@ -48,11 +49,15 @@ public:
     }
 
 public:
-    // template <typename Func>
-    // static inline thread_data_sptr make_thread_data(const Func&& f_){
-    //     return thread_data_sptr(new thread_data<typename boost::remove_reference<Func>::type>(
-    //         std::forward<Func>(f_)));
-    // }
+    template <typename Func>
+    static inline thread_data_sptr make_thread_data(const Func&& f_){
+        return thread_data_sptr(new thread_data<typename boost::remove_reference<Func>::type>(
+            std::forward<Func>(f_)));
+    }
+    //template <typename Func, typename A>
+    //static inline thread_data_sptr make_thread_data(const Func&& f_, A& a_){
+    //    return thread_data_sptr(new thread_data<typename boost)
+    //}
     // template <typename Func, typename... Args>
     // static inline thread_data_sptr make_thread_data(const Func&& f_, Args&&... args_){
     //     return thread_data_sptr{new thread_data<>()}
