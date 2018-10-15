@@ -11,6 +11,7 @@
 #include <pthread.h>
 #include <iostream>
 #include "thread_data_base.h"
+#include <boost/bind.hpp>
 
 namespace thread {
 
@@ -37,6 +38,21 @@ public:
     template <typename Func>
     explicit Thread(Func&& f_) : 
         thread_info(make_thread_data(std::forward<Func>(f_))) {
+        start_thread();
+    }
+    template <typename Func, typename A>
+    explicit Thread(Func && f_, A& a_)
+    : thread_info(make_thread_data(boost::bind(void(), f_, a_))) {
+        start_thread();
+    }
+    template <typename Func, typename A, typename B>
+    explicit Thread(Func && f_, A& a_, B& b_)
+    : thread_info(make_thread_data(boost::bind(void(), f_, a_, b_))){
+        start_thread();
+    }
+    template <typename Func, typename A, typename B, typename C>
+    explicit Thread(Func && f_, A& a_, B& b_, C& c_)
+    : thread_info(make_thread_data(boost::bind(void(), f_, a_, b_, c_))){
         start_thread();
     }
     // template <typename Func, typename... _Args>
