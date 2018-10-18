@@ -6,19 +6,21 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 namespace thread {
-//#ifdef USING_PTHREAD
-//typedef pthread_t THREAD_ID_TYPE;
-//typedef pthread_mutex_t MUTEX_IMP_TYPE;
-//typedef pthread_cond_t  CONDITION_IMP_TYPE;
-//#endif
 class Thread_Pool{
 public:
-    Thread_Pool();
+    Thread_Pool(const util::string& name = util::string("threadPool"));
     ~Thread_Pool();
-    
+    void setMaxQueueSize(int maxSize){m_maxQueueSize = maxSize;}
+    const util::string& name() const{return m_thread_name;}
+    size_t queueSize() const;
+private:
+    bool isFull() const;
+    void runInThread();
 private:
     util::string m_thread_name;
     boost::ptr_vector<boost::thread> m_threads;
+    bool m_running;
+    int m_maxQueueSize;
 };
 }
 
