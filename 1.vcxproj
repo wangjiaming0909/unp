@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x86">
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x86">
+      <Configuration>Release</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{d14472f1-e80c-4d22-a2b5-6694cdc04c48}</ProjectGuid>
+    <Keyword>Linux</Keyword>
+    <RootNamespace>makefile</RootNamespace>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+    <ApplicationType>Linux</ApplicationType>
+    <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
+    <TargetLinuxPlatform>Generic</TargetLinuxPlatform>
+    <LinuxProjectType>{FC1A4D80-50E9-41DA-9192-61C0DBAA00D2}</LinuxProjectType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+    <LocalRemoteCopySources>false</LocalRemoteCopySources>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include=".\server\tags" />
+    <None Include=".\server\config\json11.hpp" />
+    <None Include=".\tests\test.out" />
+    <None Include=".\tests\server_conf.json" />
+    <None Include=".\build\a.out" />
+    <None Include=".\README" />
+    <None Include=".\makefile" />
+    <None Include=".\olds\sockopt.md" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include=".\server\thread\thread_pool.cpp" />
+    <ClCompile Include=".\server\Server.cpp" />
+    <ClCompile Include=".\server\main.cpp" />
+    <ClCompile Include=".\server\Client.cpp" />
+    <ClCompile Include=".\server\config\optionValidator.cpp" />
+    <ClCompile Include=".\server\config\configoption.cpp" />
+    <ClCompile Include=".\server\config\json11.cpp" />
+    <ClCompile Include=".\server\config\ServerConfig.cpp" />
+    <ClCompile Include=".\server\util\date.cpp" />
+    <ClCompile Include=".\server\util\FileUtil.cpp" />
+    <ClCompile Include=".\server\util\easylogging++.cpp" />
+    <ClCompile Include=".\server\util\unp_time.cpp" />
+    <ClCompile Include=".\server\SocketOps.cpp" />
+    <ClCompile Include=".\tests\string_tests.cpp" />
+    <ClCompile Include=".\tests\pmutex_test.cpp" />
+    <ClCompile Include=".\tests\fileutil_test.cpp" />
+    <ClCompile Include=".\tests\server_test.cpp" />
+    <ClCompile Include=".\tests\main_test.cpp" />
+    <ClCompile Include=".\tests\pthread_test.cpp" />
+    <ClCompile Include=".\tests\server_conf_test.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="\server\socketops.h" />
+    <ClInclude Include="\server\thread\pcondition.h" />
+    <ClInclude Include="\server\thread\pmutex.h" />
+    <ClInclude Include="\server\thread\condition_base.h" />
+    <ClInclude Include="\server\thread\latch.h" />
+    <ClInclude Include="\server\thread\currentthread.h" />
+    <ClInclude Include="\server\thread\stdmutex.h" />
+    <ClInclude Include="\server\thread\mutex_base.h" />
+    <ClInclude Include="\server\thread\thread_data_base.h" />
+    <ClInclude Include="\server\thread\thread_pool.h" />
+    <ClInclude Include="\server\thread\thread.h" />
+    <ClInclude Include="\server\Server.h" />
+    <ClInclude Include="\server\config\optionValidator.h" />
+    <ClInclude Include="\server\config\configoption.h" />
+    <ClInclude Include="\server\config\ServerConfig.h" />
+    <ClInclude Include="\server\util\date.h" />
+    <ClInclude Include="\server\util\FileUtil.h" />
+    <ClInclude Include="\server\util\easylogging++.h" />
+    <ClInclude Include="\server\util\unp_time.h" />
+    <ClInclude Include="\server\util\XString.h" />
+    <ClInclude Include="\server\Client.h" />
+    <ClInclude Include="\server\server_status.h" />
+    <ClInclude Include="\tests\server_test.h" />
+    <ClInclude Include="\tests\string_tests.h" />
+    <ClInclude Include="\tests\tests_macros.h" />
+    <ClInclude Include="\tests\pmutex_test.h" />
+    <ClInclude Include="\tests\fileutil_test.h" />
+    <ClInclude Include="\tests\server_conf_test.h" />
+    <ClInclude Include="\tests\pthread_test.h" />
+  </ItemGroup>
+  <ItemDefinitionGroup />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>
