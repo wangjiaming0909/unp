@@ -7,6 +7,9 @@ Thread_Pool::Thread_Pool(const util::string& name)
 Thread_Pool::~Thread_Pool(){
 	
 }
+void Thread_Pool::default_cb(){
+
+}
 bool Thread_Pool::isFull() const{
 
 }
