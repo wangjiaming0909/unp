@@ -11,6 +11,9 @@ class Thread_Pool{
 public:
     Thread_Pool(const util::string& name = util::string("threadPool"));
     ~Thread_Pool();
+	void start(int numThreads);
+	void stop();
+	void default_cb();
     void setMaxQueueSize(int maxSize){m_maxQueueSize = maxSize;}
     const util::string& name() const{return m_thread_name;}
     size_t queueSize() const;
