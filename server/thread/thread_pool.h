@@ -4,6 +4,7 @@
 #include <boost/thread.hpp>
 #include "../util/XString.h"
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <mutex>
 
 namespace thread {
 class Thread_Pool{
@@ -20,7 +21,9 @@ private:
     util::string m_thread_name;
     boost::ptr_vector<boost::thread> m_threads;
     bool m_running;
+	mutable std::mutex m_mutex;
     int m_maxQueueSize;
+	
 };
 }
 
