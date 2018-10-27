@@ -21,6 +21,7 @@
 #include <errno.h>
 #include "../util/FileUtil.h"
 #include "configoption.h"
+#include "../util/easylogging++.h"
 
 namespace config{
 using namespace util;

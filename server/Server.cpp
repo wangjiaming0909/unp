@@ -28,10 +28,15 @@ Server::~Server(){
 }
 
 void Server::start(){
+    LOG(INFO) << "trying to start the server...";
     string backlog = (*m_config)["backlog"];
     if(backlog == "")
         backlog = "5";
+    LOG(INFO) << "get the backlog.. ";
+    LOG(INFO) << backlog.as_std_string();
     int backlog_int = ::atoi(backlog.ptr());
+    LOG(INFO) << "after converting to int...";
+    LOG(INFO) << backlog_int;
     ::listen(m_listenfd, backlog_int);
     started = true;
     m_server_status = SERVER_STATUS::Started;
@@ -44,6 +49,7 @@ void Server::start(){
 }
 
 void Server::stop(){
+    LOG(INFO) << "trying to stop the server... ";
     if(m_connfd != 0)
         close(m_connfd);
     if(m_listenfd != 0)
@@ -63,16 +69,19 @@ void Server::initialize(){
     }
     bzero(&m_serverAddr, sizeof(m_serverAddr));   
     m_serverAddr.sin_family = AF_INET;
-    LOG(INFO) << "trying to read the port conf";
+//    LOG(INFO) << "trying to read the port conf";
     string portStr = (*m_config)["port"];
     if(portStr == "")
         LOG(FATAL) << "config file error, no PORT specified";
     m_serverAddr.sin_port = htons(int(portStr));//TODO need transfer the format
     initialized = true;
     m_server_status = SERVER_STATUS::Initialized;
+    LOG(INFO) << "class Server: server has been initialized...";
 }
 
 void Server::bind(){
+    LOG(INFO) << "class Server: binding to address: ";
+    LOG(INFO) << m_serverAddr.sin_port;
     int ret = ::bind(
         m_listenfd,
         reinterpret_cast<sockaddr*>(&m_serverAddr),

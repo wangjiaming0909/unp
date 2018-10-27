@@ -1,4 +1,5 @@
 {
     "port": "9999",
-    "clients": "1024"
+    "clients": "1024",
+    "backlog": "5"
 }

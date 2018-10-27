@@ -15,12 +15,13 @@ ServerConfig::ServerConfig(const string& configFileName){
 	setConfigFullPath(configFileName);
     m_read_config_file_ok = !readConfigFile();
 	if(!m_read_config_file_ok){
-		CONSOLE_LOG("fd is not ready");
+		LOG(ERROR) << ("fd is not ready");
 	}
     parseConfigFile();
 }
 
 ServerConfig::~ServerConfig(){
+    LOG(INFO) << "class ServerConfig: deconstructing...";
     if(m_options_str != nullptr){
         delete m_options_str;
 	}
@@ -30,6 +31,7 @@ ServerConfig::~ServerConfig(){
 }
 
 bool ServerConfig::parseConfigFile(){
+    LOG(INFO) << "class ServerConfig: parsing the config file";
 	std::string err;
 	const std::string tmp_str = m_options_str->as_std_string();
 	json11::Json cfgJson = json11::Json::parse(tmp_str, err);
@@ -47,6 +49,7 @@ bool ServerConfig::parseConfigFile(){
 }
 
 int ServerConfig::readConfigFile(){
+    LOG(INFO) << "class ServerConfig: reading the config file";
     FileUtil fileUtil(*m_configFilePath);
     size_t size_of_buffer = 512;
     this->m_options_str = new string(size_of_buffer);
@@ -55,6 +58,7 @@ int ServerConfig::readConfigFile(){
 }
 
 void ServerConfig::setConfigFullPath(const string& configFileName){
+    LOG(INFO) << "class ServerConfig: seting the config file path";
     char *cwd = nullptr;
     cwd = get_current_dir_name();
 	if(long(strlen(cwd) + configFileName.size()) > pathconf(cwd, _PC_NAME_MAX)){
@@ -70,7 +74,7 @@ void ServerConfig::setConfigFullPath(const string& configFileName){
 
 string ServerConfig::operator[](const string& key){
     if(m_options_map.count(key) == 0){
-		std::string message = "No this option" + key.as_std_string();
+		std::string message = "No this option.. filename:  " + key.as_std_string();
 		LOG(WARNING) << message;
 		return "";
     }

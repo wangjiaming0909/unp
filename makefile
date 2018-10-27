@@ -48,6 +48,7 @@ $(BUILDDIR):
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(OBJECTS) -o $@ -L$(LIBS) $(LDFLAGS)
+	@echo "OK......"
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SOURCEDIR)/%.cpp
 	@$(MKDIR) $(dir $@)
