@@ -183,7 +183,7 @@ public:
         return std::string(m_ptr, m_length);
     }
 
-    explicit operator int()const{
+    explicit operator int()const{//add the trim function to trim the \"123\"
         char *ptr = nullptr;
         if(*m_ptr == '\"'){
             ptr = new char[this->m_length - 1];//! need a '\0'

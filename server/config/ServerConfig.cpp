@@ -39,7 +39,7 @@ bool ServerConfig::parseConfigFile(){
     string first, second;
 	for(auto aPair : maps){
         first.clear(); second.clear();
-        auto s = aPair.second.is_string() ? aPair.second.dump() : "";
+        auto s = aPair.second.dump();
         first.append(aPair.first);//memcopy
         second.append(s);//memcopy
 		m_options_map.insert(OptionValidator::validateAndReturn(

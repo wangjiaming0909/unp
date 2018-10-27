@@ -15,14 +15,14 @@ Server::Server(ServerConfig* config)
     }
     initialize();
     bind();
-    // m_clients.push_back(new Client());
+    m_clients.push_back(new Client());
 }
 
 Server::~Server(){
-    // for(Client* client_ptr : m_clients){
-    //     if(client_ptr != nullptr)
-    //         delete client_ptr;
-    // }
+    for(Client* client_ptr : m_clients){
+        if(client_ptr != nullptr)
+            delete client_ptr;
+    }
     close(m_connfd);
     close(m_listenfd);
 }
@@ -41,6 +41,7 @@ void Server::start(){
     started = true;
     m_server_status = SERVER_STATUS::Started;
     //accept
+    LOG(INFO) << "on accepting.....";
     m_connfd = ::accept(m_listenfd,
                         reinterpret_cast<sockaddr*>(&m_clients[0]->m_addr),
                         &(m_clients[0]->m_sock_len));
