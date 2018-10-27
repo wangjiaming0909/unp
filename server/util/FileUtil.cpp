@@ -14,8 +14,8 @@ util::FileUtil::FileUtil(const util::string& fileName)
     memset(m_buf, 0, kBufferSize);
     if(m_fd < 0){
         m_err = errno;
-        string error_message = strerror(errno);
-        error_message.append(" ").append(fileName);
+        std::string error_message = strerror(errno);
+        error_message = error_message + " " + fileName.as_std_string();
         LOG(ERROR) << error_message;
     }
 }

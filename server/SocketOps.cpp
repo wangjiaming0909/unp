@@ -1,4 +1,4 @@
-#include "socketops.h"
+#include "Socketops.h"
 #include <arpa/inet.h>
 #include <string.h>
 #include <errno.h>

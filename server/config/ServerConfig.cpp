@@ -70,7 +70,9 @@ void ServerConfig::setConfigFullPath(const string& configFileName){
 
 string ServerConfig::operator[](const string& key){
     if(m_options_map.count(key) == 0){
-        CONSOLE_LOG("No this option");
+		std::string message = "No this option" + key.as_std_string();
+		LOG(WARNING) << message;
+		return "";
     }
     return m_options_map[key];
 }

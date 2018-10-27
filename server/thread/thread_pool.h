@@ -20,8 +20,8 @@ public:
         _mutex(),
         _unique_lock(_mutex, std::defer_lock),
         _has_task_cv(),
-        _tasks(),
         _deque_full_cv(),
+        _tasks(),
         _threads(0){
     }
     ~thread_pool(){

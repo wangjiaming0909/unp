@@ -5,6 +5,8 @@
 #include <fstream>
 #include "config/ServerConfig.h"
 #include "util/easylogging++.h"
+#include "thread/thread_pool.h"
+#include "Server.h"
 
 int print_Argc_Argv(int argc, char** argv);
 void setupLogger();
@@ -18,6 +20,20 @@ int main(int argc, char** argv){
     setupLogger();
     LOG(INFO) << "Server Started";
     ServerConfig cfg;
+    server::Server server{&cfg};
+    thread::thread_pool pool{5};   
+    pool.add_task(bind(&server::Server::start, &server));
+    pool.start();
+    std::string s;
+    while(1){
+        cin >> s;
+        if(s == "q")
+            exit(0);
+        else if(s == "a"){
+
+        }else
+            cout << s << endl;
+    }
     print_Argc_Argv(argc, argv);
     LOG(INFO) << "Server is going to end";
     return 0;

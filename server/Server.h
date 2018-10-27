@@ -32,7 +32,6 @@ public:
     ~Server();
 
 public:
-    void initialize();
     void start();
     void stop();
 
@@ -43,6 +42,7 @@ public:
     SERVER_STATUS get_status() const;
 
 private:
+    void initialize();
     void bind();
 
 private:

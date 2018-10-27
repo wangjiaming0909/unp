@@ -15,14 +15,14 @@ Server::Server(ServerConfig* config)
     }
     initialize();
     bind();
-    m_clients.push_back(new Client());
+    // m_clients.push_back(new Client());
 }
 
 Server::~Server(){
-    for(Client* client_ptr : m_clients){
-        if(client_ptr != nullptr)
-            delete client_ptr;
-    }
+    // for(Client* client_ptr : m_clients){
+    //     if(client_ptr != nullptr)
+    //         delete client_ptr;
+    // }
     close(m_connfd);
     close(m_listenfd);
 }
@@ -60,15 +60,13 @@ void Server::initialize(){
     m_listenfd = socket(AF_INET, SOCK_STREAM, 0);
     if(m_listenfd == -1){
         LOG(FATAL) << strerror(errno);
-//        CONSOLE_LOG(strerror(errno));
-//        return;
     }
     bzero(&m_serverAddr, sizeof(m_serverAddr));   
     m_serverAddr.sin_family = AF_INET;
+    LOG(INFO) << "trying to read the port conf";
     string portStr = (*m_config)["port"];
     if(portStr == "")
         LOG(FATAL) << "config file error, no PORT specified";
-//        CONSOLE_LOG("config file error, no PORT specified");
     m_serverAddr.sin_port = htons(int(portStr));//TODO need transfer the format
     initialized = true;
     m_server_status = SERVER_STATUS::Initialized;
@@ -81,9 +79,6 @@ void Server::bind(){
         sizeof(m_serverAddr));
     if(ret == -1){
         LOG(FATAL) << strerror(errno);
-//        CONSOLE_LOG("error bind");
-//        CONSOLE_LOG(strerror(errno));
-//        return;
     }
     binded = true;
     m_server_status = SERVER_STATUS::Binded;
