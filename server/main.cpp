@@ -17,7 +17,7 @@ int main(int argc, char** argv){
     using namespace config;
     setupLogger();
     LOG(INFO) << "Server Started";
-    ServerConfig cfg;
+    // ServerConfig cfg;
     print_Argc_Argv(argc, argv);
     LOG(INFO) << "Server is going to end";
     return 0;
