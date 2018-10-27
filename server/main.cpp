@@ -17,7 +17,7 @@ int main(int argc, char** argv){
     using namespace config;
     setupLogger();
     LOG(INFO) << "Server Started";
-    // ServerConfig cfg;
+    ServerConfig cfg;
     print_Argc_Argv(argc, argv);
     LOG(INFO) << "Server is going to end";
     return 0;
@@ -30,7 +30,7 @@ void setupLogger(){
     defaultConf.set(Level::Global, ConfigurationType::Enabled, "true");
     defaultConf.set(Level::Global, ConfigurationType::Format, "%datetime, %thread, %thread_name, %level, %file, %line, %func, %msg");
     defaultConf.set(Level::Global, ConfigurationType::PerformanceTracking, "false");
-    defaultConf.set(Level::Global, ConfigurationType::ToStandardOutput, "false");
+    defaultConf.set(Level::Global, ConfigurationType::ToStandardOutput, "true");
     defaultConf.set(Level::Global, ConfigurationType::ToFile, "true");
     defaultConf.set(Level::Global, ConfigurationType::Filename, "/tmp/unp.log");
     defaultConf.set(Level::Global, ConfigurationType::LogFlushThreshold, "100");

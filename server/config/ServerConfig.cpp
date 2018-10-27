@@ -13,7 +13,6 @@ ServerConfig::ServerConfig()
 
 ServerConfig::ServerConfig(const string& configFileName){
 	setConfigFullPath(configFileName);
-	setConfigFullPath(configFileName);
     m_read_config_file_ok = !readConfigFile();
 	if(!m_read_config_file_ok){
 		CONSOLE_LOG("fd is not ready");
