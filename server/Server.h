@@ -14,11 +14,12 @@
 #include <netinet/in.h>// for sockaddr_in
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <iostream>
 #include <string.h>
 #include <errno.h>
 #include "util/XString.h"
 #include "server_status.h"
+#include <memory>
+#include "Socketops.h"
 
 namespace server{
 
@@ -46,13 +47,13 @@ private:
     void bind();
 
 private:
-    string                  		m_ipAddress;//
-    std::vector<Client*>            m_clients;
-    size_t                  		m_numOfClients = 0;
-    ServerConfig      		        *m_config;
-    int                     		m_listenfd = 0;
-    int                     		m_connfd = 0;
-    SERVER_STATUS                   m_server_status;
+    string                  		        m_ipAddress;//
+    std::vector<std::shared_ptr<Client>>    m_clients;
+    size_t                  		        m_numOfClients = 0;
+    ServerConfig *                          m_config;
+    int                     	            m_listenfd = 0;
+    int                     	            m_connfd = 0;
+    SERVER_STATUS                           m_server_status;
 
 private:
     struct sockaddr_in      	    m_childAddr;

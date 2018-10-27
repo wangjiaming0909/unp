@@ -11,7 +11,8 @@ int server::socket::create_socket_nonblock_or_die(sa_family_t family){
                       SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC,
                       IPPROTO_TCP);
     if(fd < 0){
-        CONSOLE_LOG("socket error: " << strerror(errno));
+        LOG(ERROR) << "socket error ...";
+        LOG(ERROR) << strerror(errno);
         exit(-1);
     }
     return fd;
@@ -22,7 +23,8 @@ void server::socket::bind_or_close(int listen_fd, const struct sockaddr_in* serv
                      reinterpret_cast<const sockaddr*>(serv_addr),
                      static_cast<socklen_t>(sizeof(struct sockaddr_in)));
     if(ret == -1){
-        CONSOLE_LOG("bind error: " << strerror(errno));
+        LOG(ERROR) << "bind error...";
+        LOG(ERROR) << strerror(errno);
         exit(-1);
     }
 }
@@ -30,7 +32,8 @@ void server::socket::bind_or_close(int listen_fd, const struct sockaddr_in* serv
 void server::socket::listen(int listen_fd){
     int ret = ::listen(listen_fd, SOMAXCONN);
     if(ret == -1){
-        CONSOLE_LOG("listen error: " << strerror(errno));
+        LOG(ERROR) << "listen error...";
+        LOG(ERROR) << strerror(errno);
     }
 }
 
@@ -41,15 +44,16 @@ int server::socket::accept(int listen_fd, struct sockaddr_in* client_addr){
                               &addr_len,
                               SOCK_NONBLOCK | SOCK_CLOEXEC);
     if(client_fd == -1){
-        CONSOLE_LOG("accept4 errno: " << strerror(errno));
-        exit(-1);
+        LOG(ERROR) << "accept4 error...";
+        LOG(ERROR) << strerror(errno);
     }
     return client_fd;
 }
 
 void server::socket::close(int sock_fd){
     if(::close(sock_fd) == -1){
-        CONSOLE_LOG("close error: " << strerror(errno));
+        LOG(ERROR) << "close error...";
+        LOG(ERROR) << strerror(errno);
     }
 }
 
@@ -59,10 +63,25 @@ void server::socket::connect_or_close(int local_fd, const struct sockaddr_in* se
                         reinterpret_cast<const struct sockaddr*>(serv_addr),
                         static_cast<socklen_t>(sizeof *serv_addr));
     if(ret == -1){
-        CONSOLE_LOG("connect error: " << strerror(errno));
-        exit(-1);//TODO need to handle the error
+        LOG(ERROR) << "connect error...";
+        LOG(ERROR) << strerror(errno);
     }
 }
 
-//void server::socket::connect_or_close()
 
+util::string&& server::socket::from_in_addr_to_string(const in_addr& addr){
+    char buf[64];
+    bzero(buf, 64);
+    ::inet_ntop(AF_INET, &addr, buf, 64);
+    return std::move(util::string(buf));
+}
+
+in_addr&& server::socket::from_string_to_in_addr(const util::string& addr_str){
+    in_addr addr;
+    int ret = ::inet_pton(AF_INET, addr_str.c_str(), &addr);
+    if(ret != 0){
+        LOG(ERROR) << "transation to in_addr failed";
+        LOG(ERROR) << strerror(errno);
+    }
+    return std::move(addr);
+}

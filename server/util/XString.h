@@ -119,7 +119,7 @@ private:
     }
 
 public:
-    const char* c_str(){
+    const char* c_str() const {
         return as_std_string().c_str();
     }
     //the old memory is not my concern, it will managed by outside

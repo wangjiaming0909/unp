@@ -15,36 +15,41 @@ Server::Server(ServerConfig* config)
     }
     initialize();
     bind();
-    m_clients.push_back(new Client());
 }
 
 Server::~Server(){
-    for(Client* client_ptr : m_clients){
-        if(client_ptr != nullptr)
-            delete client_ptr;
-    }
     close(m_connfd);
     close(m_listenfd);
 }
 
 void Server::start(){
     LOG(INFO) << "trying to start the server...";
-    string backlog = (*m_config)["backlog"];
-    if(backlog == "")
-        backlog = "5";
-    LOG(INFO) << "get the backlog.. ";
-    LOG(INFO) << backlog.as_std_string();
-    int backlog_int = ::atoi(backlog.ptr());
-    LOG(INFO) << "after converting to int...";
-    LOG(INFO) << backlog_int;
-    ::listen(m_listenfd, backlog_int);
+    // string backlog = (*m_config)["backlog"];
+    // if(backlog == "")
+    //     backlog = "5";
+    // LOG(INFO) << "get the backlog.. ";
+    // LOG(INFO) << backlog.as_std_string();
+    // int backlog_int = ::atoi(backlog.ptr());
+    // LOG(INFO) << "after converting to int...";
+    // LOG(INFO) << backlog_int;
+    // ::listen(m_listenfd, backlog_int);
+    socket::listen(m_listenfd);
     started = true;
     m_server_status = SERVER_STATUS::Started;
     //accept
     LOG(INFO) << "on accepting.....";
-    m_connfd = ::accept(m_listenfd,
-                        reinterpret_cast<sockaddr*>(&m_clients[0]->m_addr),
-                        &(m_clients[0]->m_sock_len));
+    std::shared_ptr<Client> client_ptr{new Client()};
+    m_clients.push_back(client_ptr);
+    // m_connfd = ::accept(m_listenfd,
+    //                     reinterpret_cast<sockaddr*>(&m_clients[0]->m_addr),
+    //                     &(client_ptr->m_sock_len));
+    m_connfd = socket::accept(m_listenfd, &client_ptr->m_addr); 
+    if(m_connfd == -1){
+        LOG(ERROR) << "connection file descriptor is -1...";
+        exit(-1);
+    }
+    LOG(INFO) << "accepted a connection from: ";
+    LOG(INFO) << socket::from_in_addr_to_string(client_ptr->m_addr.sin_addr).as_std_string();
     if(m_connfd >= 0)//! won't get here because it will stuck at accept
         m_server_status = SERVER_STATUS::Waiting_for_accept;
 }
@@ -64,10 +69,7 @@ SERVER_STATUS Server::get_status() const
 }
 
 void Server::initialize(){
-    m_listenfd = socket(AF_INET, SOCK_STREAM, 0);
-    if(m_listenfd == -1){
-        LOG(FATAL) << strerror(errno);
-    }
+    m_listenfd = socket::create_socket_nonblock_or_die(AF_INET);
     bzero(&m_serverAddr, sizeof(m_serverAddr));   
     m_serverAddr.sin_family = AF_INET;
 //    LOG(INFO) << "trying to read the port conf";
@@ -83,13 +85,8 @@ void Server::initialize(){
 void Server::bind(){
     LOG(INFO) << "class Server: binding to address: ";
     LOG(INFO) << m_serverAddr.sin_port;
-    int ret = ::bind(
-        m_listenfd,
-        reinterpret_cast<sockaddr*>(&m_serverAddr),
-        sizeof(m_serverAddr));
-    if(ret == -1){
-        LOG(FATAL) << strerror(errno);
-    }
+    // int ret = ::bind( m_listenfd, reinterpret_cast<sockaddr*>(&m_serverAddr), sizeof(m_serverAddr));
+    socket::bind_or_close(m_listenfd, &m_serverAddr);
     binded = true;
     m_server_status = SERVER_STATUS::Binded;
 }
