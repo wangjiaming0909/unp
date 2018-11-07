@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="100">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+      <df name=".vscode">
+      </df>
+      <df name="build">
+        <df name="obj">
+          <df name="config">
+          </df>
+          <df name="net">
+          </df>
+          <df name="thread">
+          </df>
+          <df name="util">
+          </df>
+        </df>
+      </df>
+      <df name="olds">
+      </df>
+      <df name="server">
+        <df name="config">
+          <in>ServerConfig.cpp</in>
+          <in>ServerConfig.h</in>
+          <in>configoption.cpp</in>
+          <in>configoption.h</in>
+          <in>json11.cpp</in>
+          <in>json11.hpp</in>
+          <in>optionValidator.cpp</in>
+          <in>optionValidator.h</in>
+        </df>
+        <df name="net">
+          <in>addr.cpp</in>
+          <in>addr.h</in>
+          <in>inet_addr.cpp</in>
+          <in>inet_addr.h</in>
+        </df>
+        <df name="thread">
+          <in>condition_base.h</in>
+          <in>currentthread.h</in>
+          <in>latch.h</in>
+          <in>mutex_base.h</in>
+          <in>pcondition.h</in>
+          <in>pmutex.h</in>
+          <in>stdmutex.h</in>
+          <in>thread.h</in>
+          <in>thread_data_base.h</in>
+          <in>thread_pool.h</in>
+        </df>
+        <df name="util">
+          <in>FileUtil.cpp</in>
+          <in>FileUtil.h</in>
+          <in>XString.h</in>
+          <in>date.cpp</in>
+          <in>date.h</in>
+          <in>easylogging++.cpp</in>
+          <in>easylogging++.h</in>
+          <in>unp_time.cpp</in>
+          <in>unp_time.h</in>
+        </df>
+        <in>Client.cpp</in>
+        <in>Client.h</in>
+        <in>Server.cpp</in>
+        <in>Server.h</in>
+        <in>Socketops.cpp</in>
+        <in>Socketops.h</in>
+        <in>main.cpp</in>
+        <in>server_status.h</in>
+      </df>
+      <df name="tests">
+        <in>fileutil_test.cpp</in>
+        <in>fileutil_test.h</in>
+        <in>main_test.cpp</in>
+        <in>pmutex_test.cpp</in>
+        <in>pmutex_test.h</in>
+        <in>pthread_test.cpp</in>
+        <in>pthread_test.h</in>
+        <in>server_conf_test.cpp</in>
+        <in>server_conf_test.h</in>
+        <in>server_test.cpp</in>
+        <in>server_test.h</in>
+        <in>string_tests.cpp</in>
+        <in>string_tests.h</in>
+        <in>tests_macros.h</in>
+      </df>
+    </df>
+  </logicalFolder>
+  <projectmakefile>makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <platform>2</platform>
+      </toolsSet>
+      <compile>
+        <compiledirpicklist>
+          <compiledirpicklistitem>.</compiledirpicklistitem>
+          <compiledirpicklistitem>${AUTO_FOLDER}</compiledirpicklistitem>
+        </compiledirpicklist>
+        <compiledir>${AUTO_FOLDER}</compiledir>
+        <compilecommandpicklist>
+          <compilecommandpicklistitem>${MAKE} ${ITEM_NAME}.o</compilecommandpicklistitem>
+          <compilecommandpicklistitem>${AUTO_COMPILE}</compilecommandpicklistitem>
+        </compilecommandpicklist>
+        <compilecommand>${AUTO_COMPILE}</compilecommand>
+      </compile>
+      <dbx_gdbdebugger version="1">
+        <gdb_pathmaps>
+        </gdb_pathmaps>
+        <gdb_interceptlist>
+          <gdbinterceptoptions gdb_all="false" gdb_unhandled="true" gdb_unexpected="true"/>
+        </gdb_interceptlist>
+        <gdb_options>
+          <DebugOptions>
+          </DebugOptions>
+        </gdb_options>
+        <gdb_buildfirst gdb_buildfirst_overriden="false" gdb_buildfirst_old="false"/>
+      </dbx_gdbdebugger>
+      <nativedebugger version="1">
+        <engine>gdb</engine>
+      </nativedebugger>
+      <runprofile version="9">
+        <runcommandpicklist>
+          <runcommandpicklistitem>"${OUTPUT_PATH}"</runcommandpicklistitem>
+        </runcommandpicklist>
+        <runcommand>"${OUTPUT_PATH}"</runcommand>
+        <rundir>.</rundir>
+        <buildfirst>false</buildfirst>
+        <terminal-type>0</terminal-type>
+        <remove-instrumentation>0</remove-instrumentation>
+        <environment>
+        </environment>
+      </runprofile>
+    </conf>
+  </confs>
+</configurationDescriptor>

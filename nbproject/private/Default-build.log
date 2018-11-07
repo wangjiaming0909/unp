@@ -1,0 +1,19 @@
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/Client.cpp -o build/obj/Client.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/config/json11.cpp -o build/obj/config/json11.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/config/configoption.cpp -o build/obj/config/configoption.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/config/optionValidator.cpp -o build/obj/config/optionValidator.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/config/ServerConfig.cpp -o build/obj/config/ServerConfig.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/util/unp_time.cpp -o build/obj/util/unp_time.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/util/date.cpp -o build/obj/util/date.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/util/easylogging++.cpp -o build/obj/util/easylogging++.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/util/FileUtil.cpp -o build/obj/util/FileUtil.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/Server.cpp -o build/obj/Server.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/Socketops.cpp -o build/obj/Socketops.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/main.cpp -o build/obj/main.o -I /boost_1_68_0
+g++  -DELPP_THREAD_SAFE  -DELPP_NO_DEFAULT_LOG_FILE  -DUSING_PTHREAD -Wall -Wextra -std=c++11 -c -O0 -g2 -ggdb -Wfatal-errors server/net/addr.cpp -o build/obj/net/addr.o -I /boost_1_68_0
+server/net/addr.cpp:5:27: error: 'AF_ANY' was not declared in this scope
+ const addr addr::addr_any(AF_ANY, -1);
+                           ^
+compilation terminated due to -Wfatal-errors.
+makefile:54: recipe for target 'build/obj/net/addr.o' failed
+make: *** [build/obj/net/addr.o] Error 1
