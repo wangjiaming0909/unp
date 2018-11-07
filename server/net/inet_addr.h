@@ -32,10 +32,9 @@ public:
 		int address_family = AF_UNSPEC);
 	int set(host_byte_order_port port, const in_addr inet_addr);
 	int set_addr(const in_addr* addr, int len);
+	int set_addr(const char* addr_port);
 	void set_port_number(host_byte_order_port port);
 //	int set_address(const void* addr, int len);
-	int addr_to_string(char* buffer, size_t size);
-	int string_to_addr(const char* addr_port);
 
     virtual ~inet_addr();
 
@@ -44,6 +43,8 @@ private:
 private:
 	sockaddr_in in4_;
 };
+int string_to_addr(const char* addr_port, sockaddr_in *ip4_addr, int addr_family = AF_INET);
+int addr_to_string(char* buffer, size_t size, int addr_family = AF_INET);
 }
 
 #endif /* INET_ADDR_H */

@@ -13,6 +13,8 @@
 
 #include <cstring>
 #include <cerrno>
+#include <arpa/inet.h>
+#include <cstdlib>
 
 #include "inet_addr.h"
 
@@ -45,17 +47,14 @@ int inet_addr::set_addr(const in_addr* addr, int len){
 	return 0;
 }
 
+int inet_addr::set_addr(const char* addr_port){
+	reset_addr();
+	return string_to_addr(addr_port, &in4_, AF_INET);
+}
+
 void inet_addr::set_port_number(host_byte_order_port port){
 	port = htons(port);
 	in4_.sin_port = port;
-}
-
-int inet_addr::addr_to_string(char* buffer, size_t size){
-
-}
-
-int inet_addr::string_to_addr(const char* addr_port){
-
 }
 
 inline void inet_addr::reset_addr(){
@@ -66,3 +65,22 @@ inline void inet_addr::reset_addr(){
 inet_addr::~inet_addr() {
 }
 
+
+/// addr_port looks like 127.0.0.1:9900
+int net::string_to_addr(const char* addr_port, sockaddr_in *ip4_addr, int addr_family ){
+	ip4_addr->sin_family = addr_family;
+	char* addr_str = new char[32];
+	bzero(addr_str, 32);
+	memcpy(addr_str, addr_port, strlen(addr_port));
+	char* position = ::strrchr(addr_str, ':');
+	*position = '\0';
+	int ret = inet_pton(addr_family, addr_str, &ip4_addr->sin_addr);
+	if(ret <= 0) return ret;
+	int port_int_host_byte_order = atoi(position+1);
+	ip4_addr->sin_port = htons(port_int_host_byte_order);
+	return 0;
+} 
+
+int net::addr_to_string(char* buffer, size_t size, int addr_family){
+
+}
