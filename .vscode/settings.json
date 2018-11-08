@@ -53,5 +53,7 @@
         "typeinfo": "cpp",
         "utility": "cpp"
     },
-    "C_Cpp.dimInactiveRegions": false
+    "C_Cpp.dimInactiveRegions": false,
+    "editor.quickSuggestionsDelay": 1,
+    "C_Cpp.workspaceSymbols": "All"
 }

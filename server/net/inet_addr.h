@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   inet_addr.h
  * Author: JWang284
  *
@@ -17,7 +17,7 @@
 #include <netinet/in.h>
 
 namespace net{
-	
+
 class inet_addr : public addr{
 public:
 	using host_byte_order_port = u_short;
@@ -48,4 +48,3 @@ int addr_to_string(char* buffer, const sockaddr_in* ip4_addr , int addr_family =
 }
 
 #endif /* INET_ADDR_H */
-

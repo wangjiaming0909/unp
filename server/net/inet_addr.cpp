@@ -84,5 +84,4 @@ int net::string_to_addr(const char* addr_port, sockaddr_in *ip4_addr, int addr_f
 }
 
 int net::addr_to_string(char* buffer, const sockaddr_in* ip4_addr, int addr_family){
-//	const 
 }

@@ -38,8 +38,8 @@ util::datetime::Date::Date(const struct tm& time)
 util::string util::datetime::Date::toString()const{
     char buf[32];
     YearMonthDay ymd(yearMonthDay());
-    snprintf(buf, sizeof buf, 
-        "%4d-%02d-%02d", 
+    snprintf(buf, sizeof buf,
+        "%4d-%02d-%02d",
         ymd.year, ymd.month, ymd.day);
     return buf;
 }
