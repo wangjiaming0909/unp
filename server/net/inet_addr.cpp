@@ -65,7 +65,6 @@ inline void inet_addr::reset_addr(){
 inet_addr::~inet_addr() {
 }
 
-
 /// addr_port looks like 127.0.0.1:9900
 int net::string_to_addr(const char* addr_port, sockaddr_in *ip4_addr, int addr_family ){
 	ip4_addr->sin_family = addr_family;
@@ -78,9 +77,10 @@ int net::string_to_addr(const char* addr_port, sockaddr_in *ip4_addr, int addr_f
 	if(ret <= 0) return ret;
 	int port_int_host_byte_order = atoi(position+1);
 	ip4_addr->sin_port = htons(port_int_host_byte_order);
+	delete[] addr_str;
 	return 0;
-} 
+}
 
-int net::addr_to_string(char* buffer, size_t size, int addr_family){
-
+int net::addr_to_string(char* buffer, const sockaddr_in* ip4_addr, int addr_family){
+//	const 
 }
