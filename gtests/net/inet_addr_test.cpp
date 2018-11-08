@@ -19,3 +19,8 @@ TEST(test_string_to_addr, give_the_right_ip_and_port){
     ret = memcmp("127.0.0.1", ret_ptr, strlen(ret_ptr));
     if(ret != 0) FAIL();
 }
+
+TEST(test_string_to_addr, give_wrong_ip_or_port){
+    boost::scoped_array<char> wrong_ip_and_port{new char[16]};
+
+}
