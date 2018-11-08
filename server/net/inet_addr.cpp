@@ -15,6 +15,7 @@
 #include <cerrno>
 #include <arpa/inet.h>
 #include <cstdlib>
+#include <boost/scoped_array.hpp>
 
 #include "inet_addr.h"
 
@@ -68,16 +69,17 @@ inet_addr::~inet_addr() {
 /// addr_port looks like 127.0.0.1:9900
 int net::string_to_addr(const char* addr_port, sockaddr_in *ip4_addr, int addr_family ){
 	ip4_addr->sin_family = addr_family;
-	char* addr_str = new char[32];
-	bzero(addr_str, 32);
-	memcpy(addr_str, addr_port, strlen(addr_port));
-	char* position = ::strrchr(addr_str, ':');
+//	char* addr_str = new char[32];
+//	std::unique_ptr<char> addr_str{new char[32]);
+	boost::scoped_array<char> addr_str{new char[32]};
+	bzero(addr_str.get(), 32);
+	memcpy(addr_str.get(), addr_port, strlen(addr_port));
+	char* position = ::strrchr(addr_str.get(), ':');
 	*position = '\0';
-	int ret = inet_pton(addr_family, addr_str, &ip4_addr->sin_addr);
+	int ret = inet_pton(addr_family, addr_str.get(), &ip4_addr->sin_addr);
 	if(ret <= 0) return ret;
 	int port_int_host_byte_order = atoi(position+1);
 	ip4_addr->sin_port = htons(port_int_host_byte_order);
-	delete[] addr_str;
 	return 0;
 }
 
