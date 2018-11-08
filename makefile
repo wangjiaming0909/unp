@@ -22,11 +22,14 @@ INCLUDES = /boost_1_68_0
 # LDFLAGS = -pthread -lboost_thread -lboost_system
 LDFLAGS = -pthread \
 		/boost_1_68_0/stage/lib/libboost_thread.a \
-		/boost_1_68_0/stage/lib/libboost_system.a
+		/boost_1_68_0/stage/lib/libboost_system.a \
+		/usr/local/lib/libgtest.a \
+		/usr/local/lib/libgmock.a
+		
 
 all: $(BUILDDIR) $(TARGET)
 
-TEST_DIR = ./tests
+TEST_DIR = ./gtests
 TEST_OBJ_DIR = $(TEST_DIR)
 TEST_SOURCE = $(shell find $(TEST_DIR) -type f -name '*.cpp')
 TEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp, $(TEST_OBJ_DIR)/%.o, $(TEST_SOURCE) )

@@ -44,7 +44,7 @@ private:
 	sockaddr_in in4_;
 };
 int string_to_addr(const char* addr_port, sockaddr_in *ip4_addr, int addr_family = AF_INET);
-int addr_to_string(char* buffer, const sockaddr_in* ip4_addr , int addr_family = AF_INET);
+int addr_to_string(char* buffer, size_t size, const sockaddr_in* ip4_addr , int addr_family = AF_INET);
 }
 
 #endif /* INET_ADDR_H */

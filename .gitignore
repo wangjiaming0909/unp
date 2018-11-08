@@ -2,4 +2,7 @@
 build/**
 tests/*.o
 tests/*.out
+gtests/*.o
+gtests/**/*.o
+gtests/*.out
 **/tags

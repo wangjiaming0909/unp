@@ -5,10 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/boost_1_68_0",
-                "C:/Users/JWang284/OneDrive - Schlumberger/virtualM/tools/linux_usr_include/include",
-                "C:/Users/JWang284/OneDrive - Schlumberger/virtualM/tools/linux_usr_include/include/x86_64-linux-gnu",
-                "C:/Users/JWang284/OneDrive - Schlumberger/virtualM/tools/linux_usr_include/include/x86_64-linux-gnu/c++/5.4.0",
-                "C:/Users/JWang284/OneDrive - Schlumberger/virtualM/tools/boost_1_68_0/boost_1_68_0"
+                "/usr/local/include"
             ],
             "browse": {
                 "path": [

@@ -15,29 +15,29 @@
 #include <cerrno>
 #include <arpa/inet.h>
 #include <cstdlib>
+#include <cstdio>
 #include <boost/scoped_array.hpp>
 
 #include "inet_addr.h"
 
-using namespace net;
-inet_addr::inet_addr() : addr(AF_INET, sizeof(in4_)){ reset_addr(); }
+net::inet_addr::inet_addr() : addr(AF_INET, sizeof(in4_)){ reset_addr(); }
 
 //inet_addr::inet_addr(const inet_addr& orig) { }
 
-inet_addr::inet_addr(host_byte_order_port port,
+net::inet_addr::inet_addr(host_byte_order_port port,
 		const char* host_name,
 		int address_family) 
 	: addr(AF_INET, sizeof(in4_)){
 	
 }
 
-int inet_addr::set(host_byte_order_port port, const in_addr inet_addr){
+int net::inet_addr::set(host_byte_order_port port, const in_addr inet_addr){
 	reset_addr();
 	set_port_number(port);
 	return set_addr(&inet_addr, sizeof(inet_addr));
 }
 
-int inet_addr::set_addr(const in_addr* addr, int len){
+int net::inet_addr::set_addr(const in_addr* addr, int len){
 	if(len != 4){
 		errno = EINVAL;
 		return -1;
@@ -48,22 +48,22 @@ int inet_addr::set_addr(const in_addr* addr, int len){
 	return 0;
 }
 
-int inet_addr::set_addr(const char* addr_port){
+int net::inet_addr::set_addr(const char* addr_port){
 	reset_addr();
-	return string_to_addr(addr_port, &in4_, AF_INET);
+	return net::string_to_addr(addr_port, &in4_, AF_INET);
 }
 
-void inet_addr::set_port_number(host_byte_order_port port){
+void net::inet_addr::set_port_number(host_byte_order_port port){
 	port = htons(port);
 	in4_.sin_port = port;
 }
 
-inline void inet_addr::reset_addr(){
+inline void net::inet_addr::reset_addr(){
 	memset(&in4_, 0, sizeof(in4_));
 	in4_.sin_family = AF_INET;
 }
 
-inet_addr::~inet_addr() {
+net::inet_addr::~inet_addr() {
 }
 
 /// addr_port looks like 127.0.0.1:9900
@@ -83,5 +83,11 @@ int net::string_to_addr(const char* addr_port, sockaddr_in *ip4_addr, int addr_f
 	return 0;
 }
 
-int net::addr_to_string(char* buffer, const sockaddr_in* ip4_addr, int addr_family){
+int net::addr_to_string(char* buffer, size_t len, const sockaddr_in* ip4_addr, int addr_family){
+	boost::scoped_array<char> addr_str{new char[32]};
+	const char* ret = inet_ntop(addr_family, &(ip4_addr->sin_addr), addr_str.get(), sizeof(in_addr));
+	if(ret == nullptr) return -1;
+	ushort port_short = ntohs(ip4_addr->sin_port);
+	snprintf(buffer, len, "%s:%d", addr_str.get(), port_short);
+	return 0;
 }
