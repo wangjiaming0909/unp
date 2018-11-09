@@ -168,6 +168,9 @@ public:
     bool operator==(const string& s) const {
         return ((m_length == s.m_length) && (strcmp(m_ptr, s.m_ptr) == 0));
     }
+    bool operator==(const char* ptr){
+        return strcmp(m_ptr, ptr) == 0;
+    }
 //    void set(const char* ptr) {
 //        m_ptr = ptr;
 //        m_length = static_cast<int>(strlen(m_ptr));

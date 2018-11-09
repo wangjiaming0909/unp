@@ -17,6 +17,7 @@
 #include <netinet/in.h>
 #include "../../server/util/XString.h"
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_array.hpp>
 
 namespace net{
 int string_to_addr(const char* addr_port, sockaddr_in *ip4_addr, int addr_family = AF_INET);
@@ -38,9 +39,11 @@ public:
 		int address_family = AF_UNSPEC);
 	int set(host_byte_order_port port, const in_addr* inet_addr);
 	int set_address(const in_addr* addr, int len);
+	int set_address(const char* address);
 	int set_addr(const char* addr_port);
 	int set_port_number(host_byte_order_port port);
-//	int set_address(const void* addr, int len);
+	ushort get_port_number()const{return ntohs(in4_.sin_port);}
+	boost::shared_ptr<util::string> get_address_string() const;
 	void reset_addr(void);
 	boost::shared_ptr<util::string> to_string();
 

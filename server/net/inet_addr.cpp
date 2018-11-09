@@ -25,19 +25,18 @@ net::inet_addr::inet_addr() : addr(AF_INET, sizeof(in4_)){ reset_addr(); }
 
 //host_name: 127.0.0.1 not ubuntu, www
 net::inet_addr::inet_addr(host_byte_order_port port,
-		const char* host_name, int address_family) 
-	: addr(AF_INET, sizeof(in4_)){
+		 const char* host_name, int address_family) 
+		 : addr(AF_INET, sizeof(in4_)){
 	if(address_family != AF_INET)
 		throw std::invalid_argument("address_family must be AF_INET...");
 	reset_addr();
 	if(set_port_number(port) != 0)
 		throw std::invalid_argument("invalid argument: port...");
-	if(set_addr(host_name) != 0)
+	if(set_address(host_name) != 0)
 		throw std::invalid_argument("invalid argument: host_name...");
 }
 
 net::inet_addr::inet_addr(const inet_addr& rl) : addr(AF_INET, sizeof(in4_)), in4_(rl.in4_){ }
-
 
 net::inet_addr::~inet_addr() { }
 
@@ -64,6 +63,12 @@ int net::inet_addr::set_address(const in_addr* addr, int len){
 	return 0;
 }
 
+int net::inet_addr::set_address(const char* address){
+	int ret = inet_pton(AF_INET, address, &in4_.sin_addr);
+	if(ret != 1) return -1;
+	return 0;
+}
+
 int net::inet_addr::set_addr(const char* addr_port){
 	reset_addr();
 	//any parse error, it will return
@@ -83,6 +88,23 @@ int net::inet_addr::set_port_number(host_byte_order_port port){
 inline void net::inet_addr::reset_addr(){
 	memset(&in4_, 0, sizeof(in4_));
 	in4_.sin_family = AF_INET;
+}
+
+boost::shared_ptr<util::string> net::inet_addr::get_address_string() const{
+	boost::scoped_array<char> addr_str{new char[INET_ADDRSTRLEN]};
+	memset(addr_str.get(), 0, INET_ADDRSTRLEN);
+	inet_ntop(AF_INET, &(in4_.sin_addr), addr_str.get(), sizeof(sockaddr_in));
+	return boost::shared_ptr<util::string>(new util::string(addr_str.get()));
+}
+
+int net::addr_to_string(char* buffer, size_t len, const sockaddr_in* ip4_addr, int addr_family){
+	boost::scoped_array<char> addr_str{new char[INET_ADDRSTRLEN]};
+	memset(addr_str.get(), 0, INET_ADDRSTRLEN);
+	const char* ret = inet_ntop(addr_family, &(ip4_addr->sin_addr), addr_str.get(), sizeof(sockaddr_in));
+	if(ret == nullptr) return -1;
+	ushort port_short = ntohs(ip4_addr->sin_port);
+	snprintf(buffer, len, "%s:%d", addr_str.get(), port_short);
+	return 0;
 }
 
 
@@ -114,13 +136,4 @@ int net::string_to_addr(const char* addr_port, sockaddr_in *ip4_addr, int addr_f
 	return 0;
 }
 
-int net::addr_to_string(char* buffer, size_t len, const sockaddr_in* ip4_addr, int addr_family){
-	boost::scoped_array<char> addr_str{new char[INET_ADDRSTRLEN]};
-	memset(addr_str.get(), 0, INET_ADDRSTRLEN);
-	const char* ret = inet_ntop(addr_family, &(ip4_addr->sin_addr), addr_str.get(), sizeof(sockaddr_in));
-	if(ret == nullptr) return -1;
-	ushort port_short = ntohs(ip4_addr->sin_port);
-	snprintf(buffer, len, "%s:%d", addr_str.get(), port_short);
-	return 0;
-}
 
