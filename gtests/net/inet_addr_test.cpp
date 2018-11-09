@@ -22,5 +22,10 @@ TEST(test_string_to_addr, give_the_right_ip_and_port){
 
 TEST(test_string_to_addr, give_wrong_ip_or_port){
     boost::scoped_array<char> wrong_ip_and_port{new char[16]};
-
+    snprintf(wrong_ip_and_port.get(), 16, "%s", "127.2.2.1234:22");
+    sockaddr_in ret_addr;
+    int ret = net::string_to_addr(wrong_ip_and_port.get(), &ret_addr, AF_INET);
+    ASSERT_EQ(ret_addr.sin_family, AF_INET);
+    ASSERT_EQ(ret_addr.sin_port, htons(22));
+    //assert that addr is not right
 }
