@@ -7,7 +7,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/gtests/test.out",
             "args": [],
-            "stopAtEntry": true,
+            "stopAtEntry": false,
             "cwd": "${workspaceFolder}/",
             "environment": [],
             "externalConsole": true,
