@@ -1,8 +1,7 @@
-#include "date.h"
+#include "unp_date.h"
 #include <cstdio>
 
 namespace util{
-namespace datetime{
 int getJulianDayNumber(int year, int month, int day){
   int a = (14 - month) / 12;
   int y = year + 4800 - a;
@@ -23,19 +22,17 @@ struct Date::YearMonthDay getYearMonthDay(int julianDayNumber){
   ymd.year = b * 100 + d - 4800 + (m / 10);
   return ymd;
 }
-}
-}
 
-util::datetime::Date::Date(int y, int m, int d)
-    : m_julianDayNumber(datetime::getJulianDayNumber(y, m, d)){}
+Date::Date(int y, int m, int d)
+    : m_julianDayNumber(getJulianDayNumber(y, m, d)){}
 
-util::datetime::Date::Date(const struct tm& time)
+Date::Date(const struct tm& time)
     : m_julianDayNumber(getJulianDayNumber(
         time.tm_year+1900,
         time.tm_mon+1,
         time.tm_mday)){}
 
-util::string util::datetime::Date::toString()const{
+string Date::toString()const{
     char buf[32];
     YearMonthDay ymd(yearMonthDay());
     snprintf(buf, sizeof buf,
@@ -44,6 +41,8 @@ util::string util::datetime::Date::toString()const{
     return buf;
 }
 
-util::datetime::Date::YearMonthDay util::datetime::Date::yearMonthDay() const {
+Date::YearMonthDay Date::yearMonthDay() const {
     return getYearMonthDay(m_julianDayNumber);
+}
+
 }

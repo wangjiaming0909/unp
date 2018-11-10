@@ -13,7 +13,6 @@
 #include "XString.h"
 
 namespace util{
-namespace datetime{
 class Time{
 public:
     Time(int64_t microSecondsSinceEpoch) 
@@ -34,7 +33,6 @@ public:
 private:
     int64_t m_microSecondsSinceEpoch;
 };
-}
 }
 
 #endif
