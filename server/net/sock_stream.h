@@ -4,40 +4,32 @@
 #include <sys/socket.h>
 #include "inet_sock.h"
 #include <unistd.h>
+#include "unp.h"
 namespace net{
 
 class sock_stream{
 public:
     using micro_seconds = std::chrono::microseconds; 
     ssize_t recv( void* buffer, size_t len, 
-        const micro_seconds* timeout = 0) const{
-        return recv_imp(buffer, len, timeout);
-    }
+        const micro_seconds* timeout = 0) const;
     ssize_t recvv(
         iovec iov[], int n,
-        const micro_seconds* timeout = 0)const{
+        const micro_seconds* timeout = 0)const;
 
-    }
 
     ssize_t send( const void* buffer, size_t len, int flags,
-        const micro_seconds* timeout = 0)const{
-        return ::send(this->sock_fd_->get_handler(),
-                      buffer, len, flags);
-    }
+        const micro_seconds* timeout = 0)const;
     ssize_t sendv(
         const iovec iov[],
         int n,
         const micro_seconds* timeout = 0) const;
 
 private:
+    // ssize_t nonblocking_recv()
+
+private:
     ssize_t recv_imp(void* buffer, size_t len,
-        const micro_seconds* timeout = 0) const{
-        if(timeout == 0){
-            return ::read(sock_fd_->get_handler(), buffer, len);
-        } else {
-            //TODO use nonblocking read, wait for timeout with poll
-        }
-    }
+        const micro_seconds* timeout = 0) const;
 private:
     inet_sock* sock_fd_;
 };
