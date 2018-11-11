@@ -8,7 +8,6 @@
 #include "unp_time.h"
 #include <stdio.h>
 #include <inttypes.h>
-#include <sys/time.h>
 
 using namespace util;
 
@@ -28,3 +27,5 @@ Time Time::now()
     int64_t seconds = tv.tv_sec;
     return Time(seconds * 1000*1000 + tv.tv_usec);
 }
+
+

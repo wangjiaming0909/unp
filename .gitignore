@@ -6,3 +6,8 @@ gtests/*.o
 gtests/**/*.o
 gtests/*.out
 **/tags
+*.files
+*.includes
+*.creator
+*.config
+*.user

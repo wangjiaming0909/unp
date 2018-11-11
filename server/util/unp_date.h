@@ -14,9 +14,9 @@ public:
     explicit Date(const struct tm&);
     string toString() const ;
     YearMonthDay yearMonthDay()const;
-    int Date::get_year() const{ return yearMonthDay().year; }
-    int Date::get_month() const{ return yearMonthDay().month; }
-    int Date::get_day() const{ return yearMonthDay().day; }
+    int get_year() const{ return yearMonthDay().year; }
+    int get_month() const{ return yearMonthDay().month; }
+    int get_day() const{ return yearMonthDay().day; }
     int julianDayNumber()const{return m_julianDayNumber;}
 private:
     int m_julianDayNumber;

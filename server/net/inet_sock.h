@@ -2,6 +2,7 @@
 #define _UNP_SOCK_H_
 
 #include <sys/socket.h>
+#include "unp.h"
 namespace net{
 
 enum class sock_type{
@@ -10,8 +11,6 @@ enum class sock_type{
     seqpacket = SOCK_SEQPACKET,
     sock_raw = SOCK_RAW
 };
-
-#define INVALID_HANDLER -1
 
 class inet_sock{
 public:
