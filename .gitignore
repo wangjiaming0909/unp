@@ -11,3 +11,4 @@ gtests/*.out
 *.creator
 *.config
 *.user
+nbproject/**
