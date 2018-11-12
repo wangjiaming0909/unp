@@ -5,11 +5,10 @@ tests/*.out
 gtests/*.o
 gtests/**/*.o
 gtests/*.out
+nbproject/**
 **/tags
 *.files
 *.includes
 *.creator
 *.config
 *.user
-nbproject/**
-nbproject/**/**
