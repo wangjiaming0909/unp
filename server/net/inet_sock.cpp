@@ -13,6 +13,9 @@ inline net::inet_sock::inet_sock(sock_type type, int protocol){
 inline int net::inet_sock::ioctl(int cmd, void* arg) const{
     return ::ioctl(this->handler_, cmd, arg);
 }
+inline int net::inet_sock::fcntl(int cmd,...)const{
+
+}
 inline int net::inet_sock::set_option(int level, int option, void *opt_val, socklen_t opt_len) const{
     return ::setsockopt(this->handler_, level, option, opt_val, opt_len);
 }
