@@ -5,6 +5,7 @@
 #include "inet_sock.h"
 #include <unistd.h>
 #include "unp.h"
+#include "macros.h"
 namespace net{
 
 class sock_stream{
@@ -12,16 +13,11 @@ public:
     using micro_seconds = std::chrono::microseconds; 
     ssize_t recv( void* buffer, size_t len, 
         const micro_seconds* timeout = 0) const;
-    ssize_t recvv(
-        iovec iov[], int n,
+    ssize_t recvv( iovec iov[], int n,
         const micro_seconds* timeout = 0)const;
-
-
     ssize_t send( const void* buffer, size_t len, int flags,
         const micro_seconds* timeout = 0)const;
-    ssize_t sendv(
-        const iovec iov[],
-        int n,
+    ssize_t sendv( const iovec iov[], int n,
         const micro_seconds* timeout = 0) const;
 
 private:

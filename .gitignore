@@ -12,3 +12,4 @@ gtests/*.out
 *.config
 *.user
 nbproject/**
+nbproject/**/**
