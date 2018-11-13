@@ -29,7 +29,7 @@ public:
     inline int ioctl(int cmd, void*) const;
     inline int set_option(int level, int option, void *opt_val, socklen_t opt_len) const;
     inline int get_option(int level, int option, void *opt_val, socklen_t* opt_len) const;
-    inline int open(sock_type type, int protocol);
+    inline int open(sock_type type, int protocol, int reuse_addr = 1);
     inline int close();
 	void shut_down(int how);
 private:
@@ -69,7 +69,7 @@ inline int net::inet_sock::open(sock_type type, int protocol, int reuse_addr){
 	if(handler_ == INVALID_HANDLER){
 		return -1;
 	} else if( reuse_addr && 
-			this->set_option(SOL_SOCKET, SO_REUSEADDR, one, sizeof one) == -1);{
+			this->set_option(SOL_SOCKET, SO_REUSEADDR, &one, sizeof one) == -1){
 		close();
 		return -1;
    }

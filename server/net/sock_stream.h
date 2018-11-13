@@ -59,6 +59,9 @@ public:
 		const micro_seconds *timeout, size_t *bytes_transfered = 0) const;
 private:
     inet_sock* sock_fd_;
+
+public:
+	int get_handle(){return sock_fd_->get_handler();}
 };
 
 }
