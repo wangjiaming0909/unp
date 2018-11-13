@@ -11,8 +11,7 @@ ssize_t net::sock_stream::recvv(
 
 ssize_t net::sock_stream::send( const void* buffer, size_t len, int flags,
     const micro_seconds* timeout)const{
-    return ::send(
-            this->sock_fd_->get_handler(), buffer, len, flags);
+    return send_imp(buffer, len, flags, timeout);
 }
 
 ssize_t net::sock_stream::sendv(
@@ -20,9 +19,8 @@ ssize_t net::sock_stream::sendv(
     const micro_seconds* timeout) const{
 }
 
-
 ssize_t net::sock_stream::recv_imp(void* buffer, size_t len,
-    const micro_seconds* timeout) const{
+    	const micro_seconds* timeout) const{
 	int ret = 0;
     if(timeout == 0){
         return ret = ::read(sock_fd_->get_handler(), buffer, len);
@@ -40,4 +38,21 @@ ssize_t net::sock_stream::recv_imp(void* buffer, size_t len,
         sock_fd_->fcntl(F_SETFL, old_flag);
     }
 	return ret;
+}
+
+ssize_t net::sock_stream::send_imp(const void* buffer, size_t len, int flags, 
+		const micro_seconds* timeout) const{
+	int ret = 0;
+	if(timeout == 0){
+		return ::send(sock_fd_->get_handler(), buffer, len, flags);
+	} else {
+		auto milli_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(*timeout);
+		unp::handle_write_ready_using_poll(sock_fd_->get_handler(), milli_seconds);
+		auto old_flags = sock_fd_->fcntl(F_GETFL, 0);
+		SET_BIT(old_flags, O_NONBLOCK);
+		sock_fd_->fcntl(F_SETFL, old_flags);
+		ret = ::send(sock_fd_->get_handler(), buffer, len, flags);
+		CLR_BIT(old_flags, O_NONBLOCK);
+		sock_fd_->fcntl(F_SETFL, old_flags);
+	}
 }

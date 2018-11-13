@@ -26,6 +26,8 @@ private:
 private:
     ssize_t recv_imp(void* buffer, size_t len,
         const micro_seconds* timeout = 0) const;
+	ssize_t send_imp(const void* buffer, size_t len, int flags,
+		const micro_seconds* timeout = 0)const;
 private:
     inet_sock* sock_fd_;
 };
