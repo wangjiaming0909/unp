@@ -8,26 +8,55 @@
 #include "macros.h"
 namespace net{
 
+//////sock_stream does not contain the memory of the sock_fd
+//when need to use non-blocking read and write 
+////need to change the status of the fd first
+//then use sock_stream
 class sock_stream{
 public:
+	void close_reader();
+	void close_writer();
+	void close();
+public:
     using micro_seconds = std::chrono::microseconds; 
-    ssize_t recv( void* buffer, size_t len, 
+	//read version use system call read which has no flags 
+    ssize_t read( void* buffer, size_t len, 
         const micro_seconds* timeout = 0) const;
-    ssize_t recvv( iovec iov[], int n,
+	//TODO
+	ssize_t write(const void* buffer, size_t len, 
+		const micro_seconds* timeout = 0) const;
+	//recv version use the system call recv which has a flags parameter
+	//TODO
+	ssize_t recv(void* buffer, size_t len, int flags,
+		const micro_seconds* timeout = 0) const;
+    ssize_t readv( iovec iov[], int n,
         const micro_seconds* timeout = 0)const;
+	//send alse has a flags parameter
     ssize_t send( const void* buffer, size_t len, int flags,
         const micro_seconds* timeout = 0)const;
-    ssize_t sendv( const iovec iov[], int n,
+    ssize_t writev( const iovec iov[], int n,
         const micro_seconds* timeout = 0) const;
 
 private:
-    // ssize_t nonblocking_recv()
-
-private:
-    ssize_t recv_imp(void* buffer, size_t len,
+    ssize_t read_imp(void* buffer, size_t len,
         const micro_seconds* timeout = 0) const;
 	ssize_t send_imp(const void* buffer, size_t len, int flags,
+		const micro_seconds* timeout = 0) const;
+	ssize_t readv_imp(iovec iov[], int n, 
 		const micro_seconds* timeout = 0)const;
+	ssize_t writev_imp(const iovec iov[], int n,
+		const micro_seconds* timeout = 0) const;
+
+public:
+	//TODO need implementation
+	ssize_t recv_n(void *buffer, size_t len, int flags, 
+		const micro_seconds* timeout = 0, size_t *bytes_transfered = 0) const;
+	ssize_t readv_n(iovec iov[], size_t n,
+		const micro_seconds* timeout = 0, size_t *bytes_transfered = 0) const;
+	ssize_t send_n(const void *buffer, size_t len, int flags,
+		const micro_seconds* timeout = 0, size_t *bytes_transfered = 0) const;
+	ssize_t writev_n(const void *buffer, size_t len, 
+		const micro_seconds *timeout, size_t *bytes_transfered = 0) const;
 private:
     inet_sock* sock_fd_;
 };
