@@ -11,11 +11,12 @@ public:
     ~sock_connector(){}
     
 protected:
-	int shared_open(sock_stream& new_stream, 
-		int family, int protocol, int reuse_addr){
-		if(new_stream.has_handle()){
-			
-		}
+	int shared_open(sock_stream& new_stream, sock_type type,
+		int protocol, int reuse_addr){
+		if(new_stream.has_handle() 
+			&& new_stream.open_sock_fd(type, protocol, reuse_addr) == -1)
+			return -1;
+		else return 0;
 	}
 
 private:

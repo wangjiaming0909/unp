@@ -8,9 +8,9 @@
 #include "macros.h"
 namespace net{
 
-//////sock_stream does not contain the memory of the sock_fd
+//sock_stream does not contain the memory of the sock_fd
 //when need to use non-blocking read and write 
-////need to change the status of the fd first
+//need to change the status of the fd first
 //then use sock_stream
 class sock_stream{
 public:
@@ -62,6 +62,10 @@ private:
 
 public:
 	int get_handle(){return sock_fd_->get_handler();}
+	bool has_handle(){return sock_fd_->get_handler() != INVALID_HANDLER;}
+	int open_sock_fd(sock_type type, int protocol, int reuse_addr){
+		return sock_fd_->open(type, protocol, reuse_addr);
+	}
 };
 
 }
