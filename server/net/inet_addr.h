@@ -41,6 +41,8 @@ public:
 	int set_address(const in_addr* addr, int len);
 	int set_address(const char* address);
 	int set_addr(const char* addr_port);
+	sockaddr_in get_sockaddr_in() const;
+	boost::shared_ptr<sockaddr_in> get_sockaddr_in_ptr()const;
 	int set_port_number(host_byte_order_port port);
 	ushort get_port_number()const{return ntohs(in4_.sin_port);}
 	boost::shared_ptr<util::string> get_address_string() const;

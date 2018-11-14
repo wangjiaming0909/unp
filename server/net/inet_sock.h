@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include "macros.h"
 namespace net{
 
 enum class sock_type{
@@ -29,9 +30,11 @@ public:
     inline int ioctl(int cmd, void*) const;
     inline int set_option(int level, int option, void *opt_val, socklen_t opt_len) const;
     inline int get_option(int level, int option, void *opt_val, socklen_t* opt_len) const;
-    inline int open(sock_type type, int protocol, int reuse_addr = 1);
+    inline int open(int family, sock_type type, int protocol, int reuse_addr = 1);
     inline int close();
 	void shut_down(int how);
+    int set_non_blocking() const;
+    int restore_blocking() const;
 private:
     inet_sock(const inet_sock&);
     int handler_;
@@ -44,7 +47,7 @@ inline net::inet_sock::inet_sock() : handler_(INVALID_HANDLER){ };
 inline net::inet_sock::~inet_sock(){ close();}
 
 inline net::inet_sock::inet_sock(sock_type type, int protocol){
-    this->open(type, protocol);
+    this->open(AF_INET, type, protocol);
 }
 
 inline int net::inet_sock::ioctl(int cmd, void* arg) const{
@@ -63,8 +66,8 @@ inline int net::inet_sock::get_option(int level, int option, void *opt_val, sock
     return ::getsockopt(this->handler_, level, option, opt_val, opt_len);
 }
 
-inline int net::inet_sock::open(sock_type type, int protocol, int reuse_addr){
-    this->handler_ = ::socket(AF_INET, (int)type, protocol);
+inline int net::inet_sock::open(int family, sock_type type, int protocol, int reuse_addr){
+    this->handler_ = ::socket(family, (int)type, protocol);
 	int one = 1;
 	if(handler_ == INVALID_HANDLER){
 		return -1;
@@ -90,6 +93,20 @@ inline void net::inet_sock::shut_down(int how){
 		::shutdown(handler_, how);
 		handler_ = INVALID_HANDLER;
 	}
+}
+
+inline int net::inet_sock::set_non_blocking() const{
+    if(handler_ == INVALID_HANDLER) return -1;
+    auto flags = fcntl(F_GETFL, 0);
+    SET_BIT(flags, O_NONBLOCK);
+    return fcntl(F_SETFL, flags);
+}
+
+inline int net::inet_sock::restore_blocking() const{
+    if(handler_ == INVALID_HANDLER) return -1;
+    auto flags = fcntl(F_GETFL, 0);
+    CLR_BIT(flags, O_NONBLOCK);
+    return fcntl(F_SETFL, flags);
 }
 
 #endif // _UNP_SOCK_H_

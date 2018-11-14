@@ -63,8 +63,11 @@ private:
 public:
 	int get_handle(){return sock_fd_->get_handler();}
 	bool has_handle(){return sock_fd_->get_handler() != INVALID_HANDLER;}
-	int open_sock_fd(sock_type type, int protocol, int reuse_addr){
-		return sock_fd_->open(type, protocol, reuse_addr);
+	int open_sock_fd(int family, sock_type type, int protocol, int reuse_addr){
+		return sock_fd_->open(family, type, protocol, reuse_addr);
+	}
+	inet_sock& get_sock_fd() const{
+		return *sock_fd_;
 	}
 };
 

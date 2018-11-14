@@ -75,6 +75,17 @@ int net::inet_addr::set_addr(const char* addr_port){
 	return net::string_to_addr(addr_port, &in4_, AF_INET);
 }
 
+sockaddr_in net::inet_addr::get_sockaddr_in() const{
+	return in4_;
+}
+
+boost::shared_ptr<sockaddr_in> net::inet_addr::get_sockaddr_in_ptr()const{
+	sockaddr_in* addr = new sockaddr_in();
+	memcpy(addr, &in4_, sizeof in4_);
+	boost::shared_ptr<sockaddr_in> ret_addr{addr};
+	return ret_addr;
+}
+
 int net::inet_addr::set_port_number(host_byte_order_port port){
 	port = htons(port);
 	if(port > INT16_MAX){

@@ -62,3 +62,19 @@ int unp::handle_ready_using_poll(
             return result;
     }
 }
+
+inline int unp::handle_timed_complete_using_poll(int handle, milliseconds& timeout){
+    struct pollfd fds;
+    fds.fd = handle;
+    fds.events = POLLIN | POLLOUT;
+    fds.events = 0;
+    int n = ::poll(&fds, 1, timeout.count());
+    if(n <= 0){//poll failed
+        if(n == 0 && timeout.count() != 0) errno = ETIME;
+        return INVALID_HANDLER;
+    }
+    //TODO check for the fds returned 
+    // bool know_failure = fds.revents & POLLERR;
+    // bool need_to_check = (fds.revents & POLLIN) || (fds.revents & POLLERR);
+    return handle;
+}
