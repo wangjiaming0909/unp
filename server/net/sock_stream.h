@@ -14,6 +14,8 @@ namespace net{
 //then use sock_stream
 class sock_stream{
 public:
+	sock_stream(inet_sock* sock) : sock_fd_(sock){}
+public:
 	void close_reader();
 	void close_writer();
 	void close();

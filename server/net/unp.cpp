@@ -63,7 +63,7 @@ int unp::handle_ready_using_poll(
     }
 }
 
-inline int unp::handle_timed_complete_using_poll(int handle, milliseconds& timeout){
+int unp::handle_timed_complete_using_poll(int handle, milliseconds& timeout){
     struct pollfd fds;
     fds.fd = handle;
     fds.events = POLLIN | POLLOUT;

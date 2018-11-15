@@ -9,6 +9,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include "macros.h"
+#include "../util/easylogging++.h"
 namespace net{
 
 enum class sock_type{
@@ -68,6 +69,7 @@ inline int net::inet_sock::get_option(int level, int option, void *opt_val, sock
 
 inline int net::inet_sock::open(int family, sock_type type, int protocol, int reuse_addr){
     this->handler_ = ::socket(family, (int)type, protocol);
+    LOG(INFO) << "opening a socket..." << handler_; 
 	int one = 1;
 	if(handler_ == INVALID_HANDLER){
 		return -1;
@@ -82,6 +84,7 @@ inline int net::inet_sock::open(int family, sock_type type, int protocol, int re
 inline int net::inet_sock::close(){
     int ret = 0;
     if(this->handler_ != INVALID_HANDLER){
+        LOG(INFO) << "closing a socket..." << handler_;
         ret = ::close(this->handler_);
         this->handler_ = INVALID_HANDLER;
     }
@@ -90,6 +93,7 @@ inline int net::inet_sock::close(){
 
 inline void net::inet_sock::shut_down(int how){
 	if(handler_ != INVALID_HANDLER){
+        LOG(INFO) << "shutdown a socket..." << handler_;
 		::shutdown(handler_, how);
 		handler_ = INVALID_HANDLER;
 	}
@@ -97,6 +101,7 @@ inline void net::inet_sock::shut_down(int how){
 
 inline int net::inet_sock::set_non_blocking() const{
     if(handler_ == INVALID_HANDLER) return -1;
+    LOG(INFO) << "set socket to non-blocking mode..." << handler_;
     auto flags = fcntl(F_GETFL, 0);
     SET_BIT(flags, O_NONBLOCK);
     return fcntl(F_SETFL, flags);
@@ -104,6 +109,7 @@ inline int net::inet_sock::set_non_blocking() const{
 
 inline int net::inet_sock::restore_blocking() const{
     if(handler_ == INVALID_HANDLER) return -1;
+    LOG(INFO) << "restore socket to blcoking mode...";
     auto flags = fcntl(F_GETFL, 0);
     CLR_BIT(flags, O_NONBLOCK);
     return fcntl(F_SETFL, flags);

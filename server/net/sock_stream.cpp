@@ -53,12 +53,14 @@ ssize_t net::sock_stream::read_imp(void* buffer, size_t len,
 	int ret = 0;
     if(timeout == 0){
         return ret = ::read(sock_fd_->get_handler(), buffer, len);
+		LOG(INFO) << "read from: " << sock_fd_->get_handler() << " read: " << len << "bytes";
     } else {
         //TODO use nonblocking read, wait for timeout with poll
         auto milli_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(*timeout);
         unp::handle_read_ready_using_poll(sock_fd_->get_handler(), milli_seconds);
 		sock_fd_->set_non_blocking();
         ret = ::read(sock_fd_->get_handler(), static_cast<char*>(buffer), len);
+		LOG(INFO) << "read from: " << sock_fd_->get_handler() << " read: " << len << "bytes";
 		sock_fd_->restore_blocking();
     }
 	return ret;
@@ -69,12 +71,14 @@ ssize_t net::sock_stream::send_imp(const void* buffer, size_t len, int flags,
 	if(sock_fd_ == 0) return 0;
 	int ret = 0;
 	if(timeout == 0){
+		LOG(INFO) << "send to: " << sock_fd_->get_handler() << " send: " << len << "bytes";
 		return ::send(sock_fd_->get_handler(), buffer, len, flags);
 	} else {
 		auto milli_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(*timeout);
 		unp::handle_write_ready_using_poll(sock_fd_->get_handler(), milli_seconds);
 		sock_fd_->set_non_blocking();
 		ret = ::send(sock_fd_->get_handler(), buffer, len, flags);
+		LOG(INFO) << "send to: " << sock_fd_->get_handler() << " send: " << len << "bytes";
 		sock_fd_->restore_blocking();
 	}
 	return ret;
@@ -86,11 +90,13 @@ ssize_t net::sock_stream::readv_imp(iovec iov[], int n,
 	int ret = 0;
 	if(timeout == 0){
 		return ::readv(sock_fd_->get_handler(), iov, n);
+		LOG(INFO) << "readv from: " << sock_fd_->get_handler();
 	}else{
 		auto milli_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(*timeout);
 		unp::handle_read_ready_using_poll(sock_fd_->get_handler(), milli_seconds);
 		sock_fd_->set_non_blocking();
 		ret = ::readv(sock_fd_->get_handler(), iov, n);
+		LOG(INFO) << "readv from: " << sock_fd_->get_handler();
 		sock_fd_->restore_blocking();
 	}
 	return ret;
@@ -101,12 +107,14 @@ ssize_t net::sock_stream::writev_imp(const iovec iov[], int n,
 	if(sock_fd_ == 0) return 0;
 	int ret = 0;
 	if(timeout == 0){
+		LOG(INFO) << "writev to: " << sock_fd_->get_handler();
 		return ::writev(sock_fd_->get_handler(), iov, n);
 	}else{
 		auto milli_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(*timeout);
 		unp::handle_read_ready_using_poll(sock_fd_->get_handler(), milli_seconds);
 		sock_fd_->set_non_blocking();
 		ret = ::writev(sock_fd_->get_handler(), iov, n);
+		LOG(INFO) << "writev to: " << sock_fd_->get_handler();
 		sock_fd_->restore_blocking();
 	}
 	return ret;

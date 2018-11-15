@@ -219,9 +219,9 @@ private:
     char*    	 	m_ptr;
 };
 
-// std::ostream& operator<<(std::ostream& o, const util::string& str){
-//    return o << str.as_sso_string();
-// }
+inline std::ostream& operator<<(std::ostream& o, const util::string& str){
+   return o << str.as_std_string();
+}
 
 }
 #endif // _STRING_H_NOT_STD_STRING
