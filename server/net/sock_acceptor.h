@@ -28,9 +28,12 @@ public:
                bool restart = true,
                bool restart_new_handle = false) const;
 protected:
+    int shared_open(const inet_addr& local_sap,
+                    int protocol_family,
+                    int backlog);
 
 private:
-
+    inet_sock * sock_fd_;
 
 };
 }

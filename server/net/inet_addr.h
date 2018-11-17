@@ -43,13 +43,19 @@ public:
 	int set_addr(const char* addr_port);
 	sockaddr_in get_sockaddr_in() const;
 	boost::shared_ptr<sockaddr_in> get_sockaddr_in_ptr()const;
+	boost::shared_ptr<sockaddr> get_sockaddr_ptr() const;
 	int set_port_number(host_byte_order_port port);
 	ushort get_port_number()const{return ntohs(in4_.sin_port);}
 	boost::shared_ptr<util::string> get_address_string() const;
 	void reset_addr(void);
 	boost::shared_ptr<util::string> to_string();
-
     virtual ~inet_addr();
+	bool operator==(const inet_addr& addr){
+		return memcmp(&in4_, &addr, sizeof in4_);
+	}
+	bool operator!=(const inet_addr& addr){
+		return !this->operator==(addr);
+	}
 
 private:
 	sockaddr_in in4_;

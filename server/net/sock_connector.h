@@ -14,7 +14,7 @@ public:
     ~sock_connector(){}
 	int connect(sock_stream& new_stream,
 				const inet_addr& remote_addr,
-				const micro_seconds& timeout,
+				const micro_seconds* timeout,
 				int reuse_addr, int protocol){
 		//socket get the socket fd
 		if(this->shared_open(new_stream, 
@@ -46,31 +46,44 @@ protected:
 	}
 
 private:
-	int connect_error_handling(sock_stream& new_stream, int ret, const micro_seconds& timeout){
-		//if timeout == 0, means that we are not using non-blocking mode
-		if(ret == -1 && timeout.count() != 0){
-			//because we use non-blocking connect, so it will posibilly be EWOULDBLOCK
-			if(errno == EWOULDBLOCK || errno == EINPROGRESS){
-				LOG(ERROR) << strerror(errno);
-				if(complete(new_stream, timeout) == -1){
-					return -1;
-				}
-			}else{
-				LOG(ERROR) << strerror(errno);
-				return -1;
-			}
+	int connect_error_handling(sock_stream& new_stream, int ret, const micro_seconds* timeout){
+		if(ret < 0){
+			if(errno != EINPROGRESS) return -1;//other errors, check the errno yourself
+		}else if(ret == 0) { //connect completed, when client and server are on the same host machine, this could happen
+			new_stream.get_sock_fd().restore_blocking();
+			return 0;
 		}
-		return 0;
+		//errno == EINPROGRESS that's what we expected
+		return complete(new_stream, timeout);
+
+
+		// if(ret == -1 && timeout->count() != 0){
+		// 	//because we use non-blocking connect, so it will posibilly be EWOULDBLOCK
+		// 	if(errno == EWOULDBLOCK || errno == EINPROGRESS){
+		// 		LOG(ERROR) << strerror(errno);
+		// 		if(complete(new_stream, timeout) == -1){
+		// 			return -1;
+		// 		}
+		// 	}else{
+		// 		LOG(ERROR) << strerror(errno);
+		// 		return -1;
+		// 	}
+		// }
+		// return 0;
 	}
 
-	int complete(sock_stream& new_stream, const micro_seconds& timeout){
-		auto timeout_milli_seconds = std::chrono::duration_cast<milliseconds>(timeout);
-		// int h = unp::handle_timed_complete_using_poll(new_stream.get_handle(), 
-		// 	timeout_milli_seconds);
-		// if(h == INVALID_HANDLER) {
-		// 	new_stream.close();
-		// 	return -1;
-		// }
+	int complete(sock_stream& new_stream, const micro_seconds* timeout){
+		//TODO what if timeout is nullptr
+		auto timeout_milli_seconds = std::chrono::duration_cast<milliseconds>(*timeout);
+		int h = unp::handle_timed_connect_using_poll(
+					new_stream.get_handle(), 
+					&timeout_milli_seconds);
+		//timeout or poll error
+		if(h == INVALID_HANDLER) {
+			new_stream.close();//we need to close the fd
+			return -1;
+		}
+		//poll success, connect success
 		new_stream.get_sock_fd().restore_blocking(); //you can read now
 		return 0;
 	}

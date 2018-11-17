@@ -40,7 +40,7 @@ inline int handle_write_ready_using_poll(int handle, const milliseconds& timeout
     return handle_ready_using_poll(handle, timeout, 0, 1);
 }
 
-int handle_timed_complete_using_poll(int handle, milliseconds& timeout);
+int handle_timed_connect_using_poll(int handle, milliseconds* timeout);
 
 }
 

@@ -79,11 +79,18 @@ sockaddr_in net::inet_addr::get_sockaddr_in() const{
 	return in4_;
 }
 
-boost::shared_ptr<sockaddr_in> net::inet_addr::get_sockaddr_in_ptr()const{
-	sockaddr_in* addr = new sockaddr_in();
-	memcpy(addr, &in4_, sizeof in4_);
-	boost::shared_ptr<sockaddr_in> ret_addr{addr};
+boost::shared_ptr<sockaddr> net::inet_addr::get_sockaddr_ptr() const{
+	// boost::shared_ptr<sockaddr> ret_addr{new sockaddr_in()};
+	sockaddr_in* in_addr = new sockaddr_in();
+	boost::shared_ptr<sockaddr> ret_addr{(sockaddr*)in_addr};
+	memcpy(ret_addr.get(), &in4_, sizeof(in4_));
 	return ret_addr;
+}
+
+boost::shared_ptr<sockaddr_in> net::inet_addr::get_sockaddr_in_ptr()const{
+	boost::shared_ptr<sockaddr_in> ret_in_addr{new sockaddr_in()};
+	memcpy(ret_in_addr.get(), &in4_, sizeof in4_);
+	return ret_in_addr;
 }
 
 int net::inet_addr::set_port_number(host_byte_order_port port){

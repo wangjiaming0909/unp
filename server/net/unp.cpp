@@ -4,6 +4,7 @@
 #include "../util/unp_time.h"
 #include <time.h>
 #include <poll.h>
+#include <sys/socket.h>
 
 
 
@@ -63,18 +64,33 @@ int unp::handle_ready_using_poll(
     }
 }
 
-int unp::handle_timed_complete_using_poll(int handle, milliseconds& timeout){
+int unp::handle_timed_connect_using_poll(int handle, milliseconds* timeout){
     struct pollfd fds;
     fds.fd = handle;
-    fds.events = POLLIN | POLLOUT;
+    fds.events = POLLIN | POLLOUT;//in and out events both need to listen
     fds.events = 0;
-    int n = ::poll(&fds, 1, timeout.count());
-    if(n <= 0){//poll failed
-        if(n == 0 && timeout.count() != 0) errno = ETIME;
+    //timeout is nullptr means waiting infinitely, so the timeout patameter passed to poll is -1
+    //else we will pass timeout.count(), milliseconds to wait
+    int n = ::poll(&fds, 1, timeout ? timeout->count() : -1);
+    if(n <= 0){//poll failed or time out
+        if(n == 0 && timeout->count() != 0) errno = ETIMEDOUT;
         return INVALID_HANDLER;
     }
-    //TODO check for the fds returned 
-    // bool know_failure = fds.revents & POLLERR;
-    // bool need_to_check = (fds.revents & POLLIN) || (fds.revents & POLLERR);
+    //success n > 0
+    //but n > 0 does not means that connect succeed, 
+    //connect failed will return n > 0
+    //need to use getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &error, &len);
+    //when connect failed, the revent could be POLLIN or POLLERR
+    int sock_err = 0;
+    socklen_t sock_err_len = sizeof sock_err;
+    int ret = 0;
+    if(fds.revents & (POLLIN | POLLERR)){
+        ret = ::getsockopt(handle, SOL_SOCKET, SO_ERROR, &sock_err, &sock_err_len);
+        if(ret < 0) handle = INVALID_HANDLER;
+        if(sock_err != 0){//error occured
+            errno = sock_err;
+            handle = INVALID_HANDLER;
+        }
+    }
     return handle;
 }

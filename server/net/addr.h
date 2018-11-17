@@ -12,6 +12,13 @@ public:
     void set_type(int type);
 
     static const addr addr_any;
+    bool operator==(const addr& sap) const{
+        return (sap.addr_size_ == this->addr_size_ && sap.addr_type_ == this->addr_type_); }
+    bool operator!=(const addr& sap) const{
+        return !this->operator==(sap);
+    }
+    // virtual void* get_addr() const;
+    // virtual void set_addr(const void*, int len);
 
 private:
     // AF_UNIX, AF_INET, AF_SPIPE
