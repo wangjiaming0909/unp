@@ -36,6 +36,8 @@ public:
 	void shut_down(int how);
     int set_non_blocking() const;
     int restore_blocking() const;
+    int get_flags() const;
+    int set_flags(int cmd, long arg) const;
 private:
     inet_sock(const inet_sock&);
     int handler_;
@@ -113,6 +115,14 @@ inline int net::inet_sock::restore_blocking() const{
     auto flags = fcntl(F_GETFL, 0);
     CLR_BIT(flags, O_NONBLOCK);
     return fcntl(F_SETFL, flags);
+}
+
+inline int net::inet_sock::get_flags() const{
+    return fcntl(F_GETFL, 0);
+}
+
+inline int net::inet_sock::set_flags(int cmd, long arg) const{
+    return fcntl(cmd, arg);
 }
 
 #endif // _UNP_SOCK_H_

@@ -94,3 +94,36 @@ int unp::handle_timed_connect_using_poll(int handle, milliseconds* timeout){
     }
     return handle;
 }
+
+int unp::handle_timed_accept_using_poll(
+        int listen_handle, 
+        const milliseconds* timeout, 
+        bool restart){
+    struct pollfd fds;
+    fds.fd = listen_handle;
+    fds.events = POLLIN;
+    fds.revents = 0;
+
+    for(;;){//we need a for if restart is enabled
+        //timeout == nullptr means that wait infinitely, 
+        //timeout.count() == 0 means do not wait
+        int n = ::poll(&fds, 1, timeout ? timeout->count() : -1);
+        switch(n){
+            case -1:
+                //interrupt by signal, restart the poll
+                if(errno == EINTR && restart) continue;
+                else  return -1;// other errors
+            case 0: //timeout
+                //do not wait, but we got 0 pollfd
+                if(timeout && timeout->count() == 0) errno = EWOULDBLOCK;
+                //wait for timeout->count(), and returned 0, so ETIMEOUT
+                if(timeout && timeout->count() > 0) errno = ETIMEDOUT;
+                return -1;
+            case 1://we only have one fd in pollfd
+                return 0;//means that one connection come, we can accept now, and the accept won't block
+            default:
+                errno = EINVAL;
+                return -1;
+        }
+    }
+}

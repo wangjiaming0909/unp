@@ -27,7 +27,7 @@ int main(int argc, char** argv){
     net::sock_stream new_stream{&fd2};
     net::inet_addr server_addr{80, "192.168.0.2"};
     microseconds timeout = 5s;
-    int ret = connector.connect(new_stream, server_addr, timeout, 1, 0);
+    int ret = connector.connect(new_stream, server_addr, &timeout, 1, 0);
     if(ret != 0) 
         LOG(ERROR) << strerror(errno);
     char buffer[1024];

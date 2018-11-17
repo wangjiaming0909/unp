@@ -38,14 +38,42 @@ int net::sock_acceptor::close(){
 }
 
 int net::sock_acceptor::accept(
-            sock_stream& new_stream,
+            sock_stream& client_stream,
             inet_addr* remote_addr,
             microseconds* timeout,
             bool restart,
             bool restart_new_handle) const{
     //non-blocking accept
-    
+    int in_blocking_mode = 0;
+    int ret = this->shared_accept_start(timeout, restart, in_blocking_mode);
+    if(ret  == -1) return -1;
+
+    socklen_t len = 0;
+    socklen_t *len_ptr = 0;
+    sockaddr* addr = 0;
+    if(remote_addr ){
+        len = remote_addr->get_size();
+        len_ptr = &len;
+        addr = (sockaddr*)remote_addr->get_sockaddr_in_ptr().get();
+    }
+
+    for(;;){
+        int client_fd = ::accept(sock_fd_->get_handler(), addr, len_ptr);
+        //restart set and accept failed and it was interrupted, then continue
+        if(restart && client_fd == -1 && errno == EINTR) continue;
+        else if(client_fd == -1) return -1;//other errors
+        ret = client_stream.set_handle(client_fd);
+        //accept returned successfully, remote addr was set, addrlen was set too
+        //and we write it to the remote_addr pointer
+        if(ret != INVALID_HANDLER && remote_addr){
+            remote_addr->set_size(len);
+            if(addr) remote_addr->set_type(addr->sa_family);
+        }
+    }
+
+    return shared_accept_finish(client_stream, in_blocking_mode);
 }
+
 int net::sock_acceptor::shared_open(
         const inet_addr& local_sap,
         int protocol_family,
@@ -63,4 +91,31 @@ int net::sock_acceptor::shared_open(
         return ret;
     }
     return ret;
+}
+
+int net::sock_acceptor::shared_accept_start(microseconds *timeout,
+                bool restart,
+                int& in_blocking_mode) const{
+    int ret = 0;
+    if(timeout){//using timeout
+        auto timeout_milliseconds = std::chrono::duration_cast<milliseconds>(*timeout);
+        ret = unp::handle_timed_accept_using_poll(sock_fd_->get_handler(), &timeout_milliseconds, restart);
+        if(ret == -1) return -1;
+        else{// ret != -1 then re == 0
+            //means succeed, check the blocking mode, 
+            //set to non-blocking mode for the next accept method
+            in_blocking_mode = BIT_ENABLED(sock_fd_->get_flags(), O_NONBLOCK);
+            if(!in_blocking_mode && sock_fd_->set_flags(F_SETFL, O_NONBLOCK) == -1);
+                return -1;
+        }
+    }
+    return 0;
+}
+
+//set two handle to non-blocking mode
+int net::sock_acceptor::shared_accept_finish(sock_stream& client_stream,
+                bool in_blocking_mode) const{
+    if(in_blocking_mode){
+
+    }
 }

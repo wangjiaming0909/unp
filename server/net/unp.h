@@ -41,7 +41,7 @@ inline int handle_write_ready_using_poll(int handle, const milliseconds& timeout
 }
 
 int handle_timed_connect_using_poll(int handle, milliseconds* timeout);
-
+int handle_timed_accept_using_poll(int listen_handle, const milliseconds* timeout, bool restart);
 }
 
 #endif // _UNP_H_

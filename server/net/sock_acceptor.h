@@ -31,7 +31,11 @@ protected:
     int shared_open(const inet_addr& local_sap,
                     int protocol_family,
                     int backlog);
-
+    int shared_accept_start(microseconds *timeout,
+                    bool restart,
+                    int& in_blocking_mode) const;
+    int shared_accept_finish(sock_stream& client_stream,
+                    bool in_blocking_mode) const;
 private:
     inet_sock * sock_fd_;
 
