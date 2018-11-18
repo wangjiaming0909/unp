@@ -391,3 +391,53 @@ Connection: close
 
 2018-11-15 23:52:03,630, 140695555909440, INFO, server/main.cpp, 61, int main(int, char**), Server is going to end
 2018-11-15 23:52:03,630, 140695555909440, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...5
+2018-11-18 08:37:08,115, 139850082563904, INFO, server/main.cpp, 22, int main(int, char**), Server Started
+2018-11-18 08:37:08,115, 139850082563904, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 08:37:08,115, 139850082563904, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 08:37:08,115, 139850082563904, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
+2018-11-18 08:37:13,120, 139850082563904, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 08:37:13,121, 139850082563904, ERROR, server/main.cpp, 32, int main(int, char**), Connection timed out
+2018-11-18 08:37:18,126, 139850082563904, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: -1 send: 251bytes
+2018-11-18 08:37:18,126, 139850082563904, INFO, server/main.cpp, 38, int main(int, char**), send_buffer: GET / HTTP/1.1
+Connection: keep-alive
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+
+
+2018-11-18 08:37:18,126, 139850082563904, ERROR, server/main.cpp, 40, int main(int, char**), Bad file descriptor
+2018-11-18 08:37:23,132, 139850082563904, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: -1 read: 1024bytes
+2018-11-18 08:37:23,132, 139850082563904, ERROR, server/main.cpp, 43, int main(int, char**), Bad file descriptor
+2018-11-18 08:37:23,132, 139850082563904, INFO, server/main.cpp, 44, int main(int, char**), buffer: 
+2018-11-18 08:37:23,132, 139850082563904, INFO, server/main.cpp, 61, int main(int, char**), Server is going to end
+2018-11-18 08:38:12,012, 139883822249792, INFO, server/main.cpp, 22, int main(int, char**), Server Started
+2018-11-18 08:38:12,012, 139883822249792, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 08:38:12,012, 139883822249792, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 08:38:12,012, 139883822249792, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
+2018-11-18 08:38:17,016, 139883822249792, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 08:38:17,016, 139883822249792, ERROR, server/main.cpp, 32, int main(int, char**), Connection timed out
+2018-11-18 08:38:22,018, 139883822249792, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: -1 send: 251bytes
+2018-11-18 08:38:22,018, 139883822249792, INFO, server/main.cpp, 38, int main(int, char**), send_buffer: GET / HTTP/1.1
+Connection: keep-alive
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
+
+
+2018-11-18 08:38:22,018, 139883822249792, ERROR, server/main.cpp, 40, int main(int, char**), Bad file descriptor
+2018-11-18 08:38:27,023, 139883822249792, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: -1 read: 1024bytes
+2018-11-18 08:38:27,024, 139883822249792, ERROR, server/main.cpp, 43, int main(int, char**), Bad file descriptor
+2018-11-18 08:38:27,024, 139883822249792, INFO, server/main.cpp, 44, int main(int, char**), buffer: 
+2018-11-18 08:38:27,024, 139883822249792, INFO, server/main.cpp, 61, int main(int, char**), Server is going to end
+2018-11-18 08:47:14,889, 140361308497728, INFO, server/main.cpp, 19, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 08:47:14,890, 140361308497728, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 08:47:14,890, 140361308497728, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 08:47:14,890, 140361308497728, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
+2018-11-18 08:47:19,895, 140361308497728, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 08:47:19,895, 140361308497728, ERROR, server/main.cpp, 47, int main(int, char**), Connection timed out
+2018-11-18 08:47:19,896, 140361308497728, INFO, server/main.cpp, 23, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 08:50:18,155, 140101350434624, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 08:50:18,155, 140101350434624, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 08:50:18,155, 140101350434624, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 08:50:18,155, 140101350434624, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
+2018-11-18 08:50:23,156, 140101350434624, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 08:50:23,156, 140101350434624, ERROR, server/main.cpp, 33, int main(int, char**), Connection timed out
+2018-11-18 08:50:23,157, 140101350434624, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end

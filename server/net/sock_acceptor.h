@@ -25,8 +25,7 @@ public:
     int accept(sock_stream& new_stream,
                inet_addr* remote_addr = 0,
                microseconds* timeout = 0,
-               bool restart = true,
-               bool restart_new_handle = false) const;
+               bool restart = true) const;
 protected:
     int shared_open(const inet_addr& local_sap,
                     int protocol_family,

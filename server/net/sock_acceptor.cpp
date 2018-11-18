@@ -10,7 +10,9 @@ net::sock_acceptor::sock_acceptor(const inet_addr& local_addr,
             int protocol_family,
             int backlog,
             int protocol){
-    
+    if(this->open(local_addr, reuse_addr, protocol_family, backlog, protocol) == -1){
+        LOG(ERROR) << "sock_accept: func open error" ;
+    }
 }
 
 int net::sock_acceptor::open(const inet_addr& local_addr,
@@ -34,15 +36,14 @@ int net::sock_acceptor::open(const inet_addr& local_addr,
 }
 
 int net::sock_acceptor::close(){
-
+    return sock_fd_->close();
 }
 
 int net::sock_acceptor::accept(
             sock_stream& client_stream,
             inet_addr* remote_addr,
             microseconds* timeout,
-            bool restart,
-            bool restart_new_handle) const{
+            bool restart) const{
     //non-blocking accept
     int in_blocking_mode = 0;
     int ret = this->shared_accept_start(timeout, restart, in_blocking_mode);
@@ -78,6 +79,11 @@ int net::sock_acceptor::shared_open(
         const inet_addr& local_sap,
         int protocol_family,
         int backlog){
+    if(protocol_family != AF_INET){
+        errno = EINVAL;
+        LOG(ERROR) << "protocol_family is not AF_INET";
+        return -1;
+    }
     int ret = ::bind(sock_fd_->get_handler(), 
         local_sap.get_sockaddr_ptr().get(), 
         local_sap.get_size());
@@ -105,7 +111,7 @@ int net::sock_acceptor::shared_accept_start(microseconds *timeout,
             //means succeed, check the blocking mode, 
             //set to non-blocking mode for the next accept method
             in_blocking_mode = BIT_ENABLED(sock_fd_->get_flags(), O_NONBLOCK);
-            if(!in_blocking_mode && sock_fd_->set_flags(F_SETFL, O_NONBLOCK) == -1);
+            if(!(in_blocking_mode && (sock_fd_->set_flags(F_SETFL, O_NONBLOCK)) == -1))
                 return -1;
         }
     }
@@ -115,7 +121,11 @@ int net::sock_acceptor::shared_accept_start(microseconds *timeout,
 //set two handle to non-blocking mode
 int net::sock_acceptor::shared_accept_finish(sock_stream& client_stream,
                 bool in_blocking_mode) const{
+    int ret = 0;
     if(in_blocking_mode){
-
+        ret = sock_fd_->restore_blocking();
+        if(ret == -1) return ret;
+        ret = client_stream.get_sock_fd().restore_blocking();
     }
+    return ret;
 }

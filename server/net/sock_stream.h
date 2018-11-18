@@ -65,24 +65,23 @@ private:
 
 public:
 	int get_handle(){
-		BOOST_ASSERT_MSG(!sock_fd_, "sock_fd_ not set yet");
+		BOOST_ASSERT_MSG(sock_fd_, "sock_fd_ not set yet");
 		return sock_fd_->get_handler();
 	}
 	int set_handle(int handle){
-		BOOST_ASSERT_MSG(!sock_fd_, "sock_fd_ not set yet");
+		BOOST_ASSERT_MSG(sock_fd_, "sock_fd_ not set yet");
 		sock_fd_->set_handler(handle);
 		return sock_fd_->get_handler();
 	}
 	bool has_handle(){
-		BOOST_ASSERT_MSG(!sock_fd_, "sock_fd_ not set yet");
 		return sock_fd_->get_handler() != INVALID_HANDLER;
 	}
 	int open_sock_fd(int family, sock_type type, int protocol, int reuse_addr){
-		BOOST_ASSERT_MSG(!sock_fd_, "sock_fd_ not set yet");
+		BOOST_ASSERT_MSG(sock_fd_, "sock_fd_ not set yet");
 		return sock_fd_->open(family, type, protocol, reuse_addr);
 	}
 	const inet_sock& get_sock_fd() const{
-		BOOST_ASSERT_MSG(!sock_fd_, "sock_fd_ not set yet");
+		BOOST_ASSERT_MSG(sock_fd_, "sock_fd_ not set yet");
 		return *sock_fd_;
 	}
 
