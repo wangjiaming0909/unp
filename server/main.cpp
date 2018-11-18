@@ -21,8 +21,8 @@ int main(int argc, char** argv){
     // net::inet_sock fd{net::sock_type::stream, 0};
     net::inet_sock fd2{};
     net::sock_stream new_stream{&fd2};
-    net::inet_addr server_addr{9090, "192.168.0.2"};
-    microseconds timeout = 5s;
+    net::inet_addr server_addr{9090, "127.0.0.1"};
+    microseconds timeout = 4s;
     int ret = connector.connect(new_stream, server_addr, &timeout, 1, 0);
     if(ret != 0) {
         LOG(ERROR) << strerror(errno);
@@ -39,7 +39,7 @@ int main(int argc, char** argv){
     ret = new_stream.read(buffer, 1024, &timeout);
     if(ret <= 0) 
         LOG(ERROR) << strerror(errno);
-    LOG(INFO) << "buffer: " << buffer;
+    LOG(INFO) << "recved_buffer: " << buffer;
     // ServerConfig cfg;
     // server::Server server{&cfg};
     // thread::thread_pool pool{5};   

@@ -1,472 +1,96 @@
-2018-10-27 22:47:34,907, 140264387831616, INFO, server/main.cpp, 21, int main(int, char**), Server Started
-2018-10-27 22:47:34,907, 140264387831616, INFO, server/config/ServerConfig.cpp, 61, void config::ServerConfig::setConfigFullPath(const util::string&), class ServerConfig: seting the config file path
-2018-10-27 22:47:34,907, 140264387831616, INFO, server/config/ServerConfig.cpp, 52, int config::ServerConfig::readConfigFile(), class ServerConfig: reading the config file
-2018-10-27 22:47:34,907, 140264387831616, INFO, server/config/ServerConfig.cpp, 34, bool config::ServerConfig::parseConfigFile(), class ServerConfig: parsing the config file
-2018-10-27 22:47:34,907, 140264387831616, INFO, server/Server.cpp, 82, void server::Server::initialize(), class Server: server has been initialized...
-2018-10-27 22:47:34,907, 140264387831616, INFO, server/Server.cpp, 86, void server::Server::bind(), class Server: binding to address: 
-2018-10-27 22:47:34,907, 140264387831616, INFO, server/Server.cpp, 87, void server::Server::bind(), 3879
-2018-10-27 22:47:34,908, 140264362075904, INFO, server/Server.cpp, 26, void server::Server::start(), trying to start the server...
-2018-10-27 22:47:34,908, 140264362075904, INFO, server/Server.cpp, 40, void server::Server::start(), on accepting.....
-2018-10-27 22:47:34,908, 140264362075904, ERROR, server/Socketops.cpp, 47, int server::socket::accept(int, sockaddr_in*), accept4 error...
-2018-10-27 22:47:34,908, 140264362075904, ERROR, server/Socketops.cpp, 48, int server::socket::accept(int, sockaddr_in*), Resource temporarily unavailable
-2018-10-27 22:47:34,908, 140264362075904, ERROR, server/Server.cpp, 48, void server::Server::start(), connection file descriptor is -1...
-2018-10-28 09:07:34,713, 140358008334144, INFO, server/main.cpp, 21, int main(int, char**), Server Started
-2018-10-28 09:07:34,713, 140358008334144, INFO, server/config/ServerConfig.cpp, 61, void config::ServerConfig::setConfigFullPath(const util::string&), class ServerConfig: seting the config file path
-2018-10-28 09:07:34,713, 140358008334144, INFO, server/config/ServerConfig.cpp, 52, int config::ServerConfig::readConfigFile(), class ServerConfig: reading the config file
-2018-10-28 09:07:34,713, 140358008334144, INFO, server/config/ServerConfig.cpp, 34, bool config::ServerConfig::parseConfigFile(), class ServerConfig: parsing the config file
-2018-10-28 09:07:34,713, 140358008334144, INFO, server/Server.cpp, 82, void server::Server::initialize(), class Server: server has been initialized...
-2018-10-28 09:07:34,713, 140358008334144, INFO, server/Server.cpp, 86, void server::Server::bind(), class Server: binding to address: 
-2018-10-28 09:07:34,713, 140358008334144, INFO, server/Server.cpp, 87, void server::Server::bind(), 3879
-2018-10-28 09:07:34,713, 140357990950656, INFO, server/Server.cpp, 26, void server::Server::start(), trying to start the server...
-2018-10-28 09:07:34,713, 140357990950656, INFO, server/Server.cpp, 40, void server::Server::start(), on accepting.....
-2018-10-28 09:07:34,713, 140357990950656, ERROR, server/Socketops.cpp, 47, int server::socket::accept(int, sockaddr_in*), accept4 error...
-2018-10-28 09:07:34,713, 140357990950656, ERROR, server/Socketops.cpp, 48, int server::socket::accept(int, sockaddr_in*), Resource temporarily unavailable
-2018-10-28 09:07:34,713, 140357990950656, ERROR, server/Server.cpp, 48, void server::Server::start(), connection file descriptor is -1...
-2018-10-31 12:57:53,198, 140652662818624, INFO, server/main.cpp, 21, int main(int, char**), Server Started
-2018-10-31 12:57:53,198, 140652662818624, INFO, server/config/ServerConfig.cpp, 61, void config::ServerConfig::setConfigFullPath(const util::string&), class ServerConfig: seting the config file path
-2018-10-31 12:57:53,198, 140652662818624, INFO, server/config/ServerConfig.cpp, 52, int config::ServerConfig::readConfigFile(), class ServerConfig: reading the config file
-2018-10-31 12:57:53,199, 140652662818624, INFO, server/config/ServerConfig.cpp, 34, bool config::ServerConfig::parseConfigFile(), class ServerConfig: parsing the config file
-2018-10-31 12:57:53,199, 140652662818624, INFO, server/Server.cpp, 82, void server::Server::initialize(), class Server: server has been initialized...
-2018-10-31 12:57:53,199, 140652662818624, INFO, server/Server.cpp, 86, void server::Server::bind(), class Server: binding to address: 
-2018-10-31 12:57:53,199, 140652662818624, INFO, server/Server.cpp, 87, void server::Server::bind(), 3879
-2018-10-31 12:57:53,199, 140652645435136, INFO, server/Server.cpp, 26, void server::Server::start(), trying to start the server...
-2018-10-31 12:57:53,199, 140652645435136, INFO, server/Server.cpp, 40, void server::Server::start(), on accepting.....
-2018-10-31 12:57:53,199, 140652645435136, ERROR, server/Socketops.cpp, 47, int server::socket::accept(int, sockaddr_in*), accept4 error...
-2018-10-31 12:57:53,199, 140652645435136, ERROR, server/Socketops.cpp, 48, int server::socket::accept(int, sockaddr_in*), Resource temporarily unavailable
-2018-10-31 12:57:53,199, 140652645435136, ERROR, server/Server.cpp, 48, void server::Server::start(), connection file descriptor is -1...
-2018-10-31 12:58:33,003, 140211993352000, INFO, server/main.cpp, 21, int main(int, char**), Server Started
-2018-10-31 12:58:33,003, 140211993352000, INFO, server/config/ServerConfig.cpp, 61, void config::ServerConfig::setConfigFullPath(const util::string&), class ServerConfig: seting the config file path
-2018-10-31 12:58:33,003, 140211993352000, INFO, server/config/ServerConfig.cpp, 52, int config::ServerConfig::readConfigFile(), class ServerConfig: reading the config file
-2018-10-31 12:58:33,003, 140211993352000, INFO, server/config/ServerConfig.cpp, 34, bool config::ServerConfig::parseConfigFile(), class ServerConfig: parsing the config file
-2018-10-31 12:58:33,003, 140211993352000, INFO, server/Server.cpp, 82, void server::Server::initialize(), class Server: server has been initialized...
-2018-10-31 12:58:33,003, 140211993352000, INFO, server/Server.cpp, 86, void server::Server::bind(), class Server: binding to address: 
-2018-10-31 12:58:33,003, 140211993352000, INFO, server/Server.cpp, 87, void server::Server::bind(), 3879
-2018-10-31 12:58:33,003, 140211975968512, INFO, server/Server.cpp, 26, void server::Server::start(), trying to start the server...
-2018-10-31 12:58:33,003, 140211975968512, INFO, server/Server.cpp, 40, void server::Server::start(), on accepting.....
-2018-10-31 12:58:33,003, 140211975968512, ERROR, server/Socketops.cpp, 47, int server::socket::accept(int, sockaddr_in*), accept4 error...
-2018-10-31 12:58:33,003, 140211975968512, ERROR, server/Socketops.cpp, 48, int server::socket::accept(int, sockaddr_in*), Resource temporarily unavailable
-2018-10-31 12:58:33,003, 140211975968512, ERROR, server/Server.cpp, 48, void server::Server::start(), connection file descriptor is -1...
-2018-10-31 12:59:14,197, 139629961152320, INFO, server/main.cpp, 21, int main(int, char**), Server Started
-2018-10-31 12:59:14,197, 139629961152320, INFO, server/config/ServerConfig.cpp, 61, void config::ServerConfig::setConfigFullPath(const util::string&), class ServerConfig: seting the config file path
-2018-10-31 12:59:14,197, 139629961152320, INFO, server/config/ServerConfig.cpp, 52, int config::ServerConfig::readConfigFile(), class ServerConfig: reading the config file
-2018-10-31 12:59:14,197, 139629961152320, INFO, server/config/ServerConfig.cpp, 34, bool config::ServerConfig::parseConfigFile(), class ServerConfig: parsing the config file
-2018-10-31 12:59:14,197, 139629961152320, INFO, server/Server.cpp, 82, void server::Server::initialize(), class Server: server has been initialized...
-2018-10-31 12:59:14,197, 139629961152320, INFO, server/Server.cpp, 86, void server::Server::bind(), class Server: binding to address: 
-2018-10-31 12:59:14,197, 139629961152320, INFO, server/Server.cpp, 87, void server::Server::bind(), 3879
-2018-10-31 12:59:14,197, 139629943768832, INFO, server/Server.cpp, 26, void server::Server::start(), trying to start the server...
-2018-10-31 12:59:14,197, 139629943768832, INFO, server/Server.cpp, 40, void server::Server::start(), on accepting.....
-2018-10-31 12:59:14,197, 139629943768832, ERROR, server/Socketops.cpp, 47, int server::socket::accept(int, sockaddr_in*), accept4 error...
-2018-10-31 12:59:14,197, 139629943768832, ERROR, server/Socketops.cpp, 48, int server::socket::accept(int, sockaddr_in*), Resource temporarily unavailable
-2018-10-31 12:59:14,197, 139629943768832, ERROR, server/Server.cpp, 48, void server::Server::start(), connection file descriptor is -1...
-2018-11-15 21:26:18,172, 140083517409088, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 21:26:18,172, 140083517409088, ERROR, server/net/sock_connector.h, 48, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 21:26:18,172, 140083517409088, ERROR, server/main.cpp, 31, int main(int, char**), Operation now in progress
-2018-11-15 21:26:23,178, 140083517409088, ERROR, server/main.cpp, 36, int main(int, char**), Resource temporarily unavailable
-2018-11-15 21:26:23,178, 140083517409088, INFO, server/main.cpp, 37, int main(int, char**), 
-2018-11-15 21:26:23,178, 140083517409088, INFO, server/main.cpp, 54, int main(int, char**), Server is going to end
-2018-11-15 21:31:46,350, 139816905795392, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 21:31:46,351, 139816905795392, ERROR, server/net/sock_connector.h, 48, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 21:31:46,351, 139816905795392, ERROR, server/main.cpp, 31, int main(int, char**), Operation now in progress
-2018-11-15 21:31:46,351, 139816905795392, ERROR, server/main.cpp, 37, int main(int, char**), Resource temporarily unavailable
-2018-11-15 21:31:51,356, 139816905795392, ERROR, server/main.cpp, 40, int main(int, char**), Resource temporarily unavailable
-2018-11-15 21:31:51,356, 139816905795392, INFO, server/main.cpp, 41, int main(int, char**), 
-2018-11-15 21:31:51,356, 139816905795392, INFO, server/main.cpp, 58, int main(int, char**), Server is going to end
-2018-11-15 21:32:25,651, 140064168339264, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 21:32:25,651, 140064168339264, ERROR, server/net/sock_connector.h, 48, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 21:32:25,651, 140064168339264, ERROR, server/main.cpp, 31, int main(int, char**), Operation now in progress
-2018-11-15 21:32:25,654, 140064168339264, ERROR, server/main.cpp, 37, int main(int, char**), Operation now in progress
-2018-11-15 21:32:25,657, 140064168339264, ERROR, server/main.cpp, 40, int main(int, char**), Operation now in progress
-2018-11-15 21:32:25,657, 140064168339264, INFO, server/main.cpp, 41, int main(int, char**), HTTP/1.1 400 Page not found
-
-2018-11-15 21:32:25,657, 140064168339264, INFO, server/main.cpp, 58, int main(int, char**), Server is going to end
-2018-11-15 21:33:48,949, 140669281396544, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 21:33:48,949, 140669281396544, ERROR, server/net/sock_connector.h, 48, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 21:33:48,949, 140669281396544, ERROR, server/main.cpp, 31, int main(int, char**), Operation now in progress
-2018-11-15 21:33:48,952, 140669281396544, ERROR, server/main.cpp, 37, int main(int, char**), Operation now in progress
-2018-11-15 21:33:48,956, 140669281396544, ERROR, server/main.cpp, 40, int main(int, char**), Operation now in progress
-2018-11-15 21:33:48,956, 140669281396544, INFO, server/main.cpp, 41, int main(int, char**), HTTP/1.1 400 Page not found
-
-2018-11-15 21:33:48,956, 140669281396544, INFO, server/main.cpp, 58, int main(int, char**), Server is going to end
-2018-11-15 21:36:23,772, 139746589284160, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 21:36:23,772, 139746589284160, ERROR, server/net/sock_connector.h, 48, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 21:36:23,772, 139746589284160, ERROR, server/main.cpp, 31, int main(int, char**), Operation now in progress
-2018-11-15 21:36:24,209, 139746589284160, ERROR, server/main.cpp, 37, int main(int, char**), Operation now in progress
-2018-11-15 21:36:24,275, 139746589284160, ERROR, server/main.cpp, 40, int main(int, char**), Operation now in progress
-2018-11-15 21:36:24,275, 139746589284160, INFO, server/main.cpp, 41, int main(int, char**), SSH-2.0-OpenSSH_7.4p1 Raspbian-10+deb9u1
-
-2018-11-15 21:36:24,275, 139746589284160, INFO, server/main.cpp, 58, int main(int, char**), Server is going to end
-2018-11-15 21:41:59,232, 140046608652096, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 21:41:59,232, 140046608652096, ERROR, server/net/sock_connector.h, 48, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 21:41:59,232, 140046608652096, ERROR, server/main.cpp, 31, int main(int, char**), Operation now in progress
-2018-11-15 21:41:59,303, 140046608652096, INFO, server/main.cpp, 41, int main(int, char**), SSH-2.0-OpenSSH_7.4p1 Raspbian-10+deb9u1
-
-2018-11-15 21:41:59,303, 140046608652096, INFO, server/main.cpp, 58, int main(int, char**), Server is going to end
-2018-11-15 21:44:07,909, 140359359641408, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 21:44:07,909, 140359359641408, INFO, server/net/sock_connector.h, 48, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), in progress...
-2018-11-15 21:44:07,909, 140359359641408, ERROR, server/main.cpp, 31, int main(int, char**), Operation now in progress
-2018-11-15 21:44:07,983, 140359359641408, INFO, server/main.cpp, 41, int main(int, char**), SSH-2.0-OpenSSH_7.4p1 Raspbian-10+deb9u1
-
-2018-11-15 21:44:07,983, 140359359641408, INFO, server/main.cpp, 58, int main(int, char**), Server is going to end
-2018-11-15 21:45:13,364, 140681453401920, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 21:45:13,364, 140681453401920, INFO, server/net/sock_connector.h, 48, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), in progress...
-2018-11-15 21:45:13,435, 140681453401920, INFO, server/main.cpp, 41, int main(int, char**), SSH-2.0-OpenSSH_7.4p1 Raspbian-10+deb9u1
-
-2018-11-15 21:45:13,435, 140681453401920, INFO, server/main.cpp, 58, int main(int, char**), Server is going to end
-2018-11-15 22:05:51,125, 140289657034560, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 22:05:51,125, 140289657034560, INFO, server/net/inet_sock.h, 71, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...11
-2018-11-15 22:05:51,125, 140289657034560, INFO, server/net/inet_sock.h, 71, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 22:05:51,126, 140289657034560, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking...6
-2018-11-15 22:05:51,126, 140289657034560, INFO, server/net/sock_connector.h, 48, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), in progress...
-2018-11-15 22:05:51,133, 140289657034560, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking...6
-2018-11-15 22:05:51,134, 140289657034560, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 6 send: 3bytes
-2018-11-15 22:05:51,195, 140289657034560, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking...6
-2018-11-15 22:05:51,195, 140289657034560, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 6 read: 1024bytes
-2018-11-15 22:05:51,195, 140289657034560, INFO, server/main.cpp, 41, int main(int, char**), SSH-2.0-OpenSSH_7.4p1 Raspbian-10+deb9u1
-
-2018-11-15 22:05:51,196, 140289657034560, INFO, server/main.cpp, 58, int main(int, char**), Server is going to end
-2018-11-15 22:05:51,196, 140289657034560, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...
-2018-11-15 22:06:50,445, 139800045123392, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 22:06:50,446, 139800045123392, INFO, server/net/inet_sock.h, 71, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...11
-2018-11-15 22:06:50,446, 139800045123392, INFO, server/net/inet_sock.h, 71, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 22:06:50,446, 139800045123392, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...6
-2018-11-15 22:06:50,446, 139800045123392, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 0x2228dd0:22
-2018-11-15 22:06:55,451, 139800045123392, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...6
-2018-11-15 22:06:55,452, 139800045123392, ERROR, server/main.cpp, 31, int main(int, char**), Timer expired
-2018-11-15 22:07:00,457, 139800045123392, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: -1 send: 3bytes
-2018-11-15 22:07:00,457, 139800045123392, ERROR, server/main.cpp, 37, int main(int, char**), Bad file descriptor
-2018-11-15 22:07:05,461, 139800045123392, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: -1 read: 1024bytes
-2018-11-15 22:07:05,462, 139800045123392, ERROR, server/main.cpp, 40, int main(int, char**), Bad file descriptor
-2018-11-15 22:07:05,462, 139800045123392, INFO, server/main.cpp, 41, int main(int, char**), 
-2018-11-15 22:07:05,462, 139800045123392, INFO, server/main.cpp, 58, int main(int, char**), Server is going to end
-2018-11-15 22:28:50,992, 140138100787008, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 22:28:50,992, 140138100787008, INFO, server/net/inet_sock.h, 71, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...11
-2018-11-15 22:28:50,992, 140138100787008, INFO, server/net/inet_sock.h, 71, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 22:28:50,992, 140138100787008, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...6
-2018-11-15 22:28:50,992, 140138100787008, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: €‘EŸü     :22
-2018-11-15 22:28:55,994, 140138100787008, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...6
-2018-11-15 22:28:55,994, 140138100787008, ERROR, server/main.cpp, 31, int main(int, char**), Timer expired
-2018-11-15 22:29:01,000, 140138100787008, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: -1 send: 3bytes
-2018-11-15 22:29:01,000, 140138100787008, ERROR, server/main.cpp, 37, int main(int, char**), Bad file descriptor
-2018-11-15 22:29:06,005, 140138100787008, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: -1 read: 1024bytes
-2018-11-15 22:29:06,005, 140138100787008, ERROR, server/main.cpp, 40, int main(int, char**), Bad file descriptor
-2018-11-15 22:29:06,005, 140138100787008, INFO, server/main.cpp, 41, int main(int, char**), 
-2018-11-15 22:29:06,005, 140138100787008, INFO, server/main.cpp, 58, int main(int, char**), Server is going to end
-2018-11-15 22:30:08,957, 140385677023040, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 22:30:08,957, 140385677023040, INFO, server/net/inet_sock.h, 71, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...11
-2018-11-15 22:30:08,957, 140385677023040, INFO, server/net/inet_sock.h, 71, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 22:30:08,957, 140385677023040, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...6
-2018-11-15 22:30:08,957, 140385677023040, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 192.168.0.2:22
-2018-11-15 22:30:13,962, 140385677023040, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...6
-2018-11-15 22:30:13,963, 140385677023040, ERROR, server/main.cpp, 31, int main(int, char**), Timer expired
-2018-11-15 22:30:18,968, 140385677023040, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: -1 send: 3bytes
-2018-11-15 22:30:18,968, 140385677023040, ERROR, server/main.cpp, 37, int main(int, char**), Bad file descriptor
-2018-11-15 22:30:23,973, 140385677023040, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: -1 read: 1024bytes
-2018-11-15 22:30:23,973, 140385677023040, ERROR, server/main.cpp, 40, int main(int, char**), Bad file descriptor
-2018-11-15 22:30:23,974, 140385677023040, INFO, server/main.cpp, 41, int main(int, char**), 
-2018-11-15 22:30:23,974, 140385677023040, INFO, server/main.cpp, 58, int main(int, char**), Server is going to end
-2018-11-15 22:55:35,104, 140242891138880, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 22:55:35,104, 140242891138880, INFO, server/net/inet_sock.h, 72, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 22:55:35,104, 140242891138880, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 22:55:35,104, 140242891138880, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 192.168.0.2:22
-2018-11-15 22:55:35,104, 140242891138880, ERROR, server/net/sock_connector.h, 54, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 22:55:35,104, 140242891138880, ERROR, server/main.cpp, 32, int main(int, char**), Operation now in progress
-2018-11-15 22:55:35,112, 140242891138880, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 22:55:35,112, 140242891138880, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 3bytes
-2018-11-15 22:55:35,112, 140242891138880, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 22:55:35,173, 140242891138880, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 22:55:35,173, 140242891138880, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
-2018-11-15 22:55:35,173, 140242891138880, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 22:55:35,173, 140242891138880, INFO, server/main.cpp, 42, int main(int, char**), SSH-2.0-OpenSSH_7.4p1 Raspbian-10+deb9u1
-
-2018-11-15 22:55:35,173, 140242891138880, INFO, server/main.cpp, 59, int main(int, char**), Server is going to end
-2018-11-15 22:55:35,174, 140242891138880, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...5
-2018-11-15 23:25:14,409, 139911180441408, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 23:25:14,409, 139911180441408, INFO, server/net/inet_sock.h, 72, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 23:25:14,409, 139911180441408, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:25:14,409, 139911180441408, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 192.168.0.2:22
-2018-11-15 23:25:14,409, 139911180441408, ERROR, server/net/sock_connector.h, 54, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 23:25:19,415, 139911180441408, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...5
-2018-11-15 23:25:19,415, 139911180441408, ERROR, server/main.cpp, 32, int main(int, char**), Timer expired
-2018-11-15 23:25:24,420, 139911180441408, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: -1 send: 3bytes
-2018-11-15 23:25:24,420, 139911180441408, ERROR, server/main.cpp, 38, int main(int, char**), Bad file descriptor
-2018-11-15 23:25:29,426, 139911180441408, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: -1 read: 1024bytes
-2018-11-15 23:25:29,426, 139911180441408, ERROR, server/main.cpp, 41, int main(int, char**), Bad file descriptor
-2018-11-15 23:25:29,426, 139911180441408, INFO, server/main.cpp, 42, int main(int, char**), 
-2018-11-15 23:25:29,426, 139911180441408, INFO, server/main.cpp, 59, int main(int, char**), Server is going to end
-2018-11-15 23:40:22,898, 139900237690688, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 23:40:22,898, 139900237690688, INFO, server/net/inet_sock.h, 72, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 23:40:22,898, 139900237690688, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:40:22,899, 139900237690688, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 192.168.0.2:80
-2018-11-15 23:40:22,899, 139900237690688, ERROR, server/net/sock_connector.h, 54, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 23:40:22,899, 139900237690688, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:40:22,909, 139900237690688, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:40:22,909, 139900237690688, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 3bytes
-2018-11-15 23:40:22,909, 139900237690688, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:40:22,922, 139900237690688, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:40:22,922, 139900237690688, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
-2018-11-15 23:40:22,922, 139900237690688, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:40:22,922, 139900237690688, INFO, server/main.cpp, 42, int main(int, char**), buffer: HTTP/1.1 400 Bad Request
-Server: nginx/1.15.2
-Date: Thu, 15 Nov 2018 15:40:22 GMT
-Content-Type: text/html
-Content-Length: 173
-Connection: close
-
-<html>
-<head><title>400 Bad Request</title></head>
-<body bgcolor="white">
-<center><h1>400 Bad Request</h1></center>
-<hr><center>nginx/1.15.2</center>
-</body>
-</html>
-
-2018-11-15 23:40:22,922, 139900237690688, INFO, server/main.cpp, 59, int main(int, char**), Server is going to end
-2018-11-15 23:40:22,922, 139900237690688, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...5
-2018-11-15 23:43:29,783, 139823477417792, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 23:43:29,784, 139823477417792, INFO, server/net/inet_sock.h, 72, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 23:43:29,784, 139823477417792, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:43:29,784, 139823477417792, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 192.168.0.2:80
-2018-11-15 23:43:29,784, 139823477417792, ERROR, server/net/sock_connector.h, 54, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 23:43:29,785, 139823477417792, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:43:30,322, 139823477417792, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:43:30,323, 139823477417792, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 14bytes
-2018-11-15 23:43:30,323, 139823477417792, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:43:35,323, 139823477417792, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:43:35,324, 139823477417792, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
-2018-11-15 23:43:35,324, 139823477417792, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:43:35,324, 139823477417792, ERROR, server/main.cpp, 41, int main(int, char**), Resource temporarily unavailable
-2018-11-15 23:43:35,324, 139823477417792, INFO, server/main.cpp, 42, int main(int, char**), buffer: 
-2018-11-15 23:43:35,324, 139823477417792, INFO, server/main.cpp, 59, int main(int, char**), Server is going to end
-2018-11-15 23:43:35,324, 139823477417792, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...5
-2018-11-15 23:46:54,508, 139646096508736, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 23:46:54,508, 139646096508736, INFO, server/net/inet_sock.h, 72, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 23:46:54,508, 139646096508736, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:46:54,508, 139646096508736, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 192.168.0.2:80
-2018-11-15 23:46:54,508, 139646096508736, ERROR, server/net/sock_connector.h, 54, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 23:46:54,508, 139646096508736, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:46:54,518, 139646096508736, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:46:54,519, 139646096508736, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 160bytes
-2018-11-15 23:46:54,519, 139646096508736, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:46:59,524, 139646096508736, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:46:59,524, 139646096508736, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
-2018-11-15 23:46:59,524, 139646096508736, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:46:59,524, 139646096508736, ERROR, server/main.cpp, 43, int main(int, char**), Resource temporarily unavailable
-2018-11-15 23:46:59,525, 139646096508736, INFO, server/main.cpp, 44, int main(int, char**), buffer: 
-2018-11-15 23:46:59,525, 139646096508736, INFO, server/main.cpp, 61, int main(int, char**), Server is going to end
-2018-11-15 23:46:59,525, 139646096508736, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...5
-2018-11-15 23:47:24,836, 139998641297216, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 23:47:24,836, 139998641297216, INFO, server/net/inet_sock.h, 72, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 23:47:24,836, 139998641297216, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:47:24,836, 139998641297216, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 192.168.0.2:80
-2018-11-15 23:47:24,836, 139998641297216, ERROR, server/net/sock_connector.h, 54, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 23:47:24,836, 139998641297216, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:47:24,847, 139998641297216, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:47:24,847, 139998641297216, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 163bytes
-2018-11-15 23:47:24,847, 139998641297216, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:47:29,850, 139998641297216, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:47:29,850, 139998641297216, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
-2018-11-15 23:47:29,850, 139998641297216, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:47:29,850, 139998641297216, ERROR, server/main.cpp, 43, int main(int, char**), Resource temporarily unavailable
-2018-11-15 23:47:29,850, 139998641297216, INFO, server/main.cpp, 44, int main(int, char**), buffer: 
-2018-11-15 23:47:29,850, 139998641297216, INFO, server/main.cpp, 61, int main(int, char**), Server is going to end
-2018-11-15 23:47:29,850, 139998641297216, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...5
-2018-11-15 23:48:12,396, 139636297742144, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 23:48:12,396, 139636297742144, INFO, server/net/inet_sock.h, 72, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 23:48:12,396, 139636297742144, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:48:12,396, 139636297742144, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 192.168.0.2:80
-2018-11-15 23:48:12,397, 139636297742144, ERROR, server/net/sock_connector.h, 54, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 23:48:12,397, 139636297742144, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:48:12,407, 139636297742144, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:48:12,407, 139636297742144, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 262bytes
-2018-11-15 23:48:12,407, 139636297742144, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:48:17,412, 139636297742144, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:48:17,412, 139636297742144, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
-2018-11-15 23:48:17,412, 139636297742144, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:48:17,413, 139636297742144, ERROR, server/main.cpp, 44, int main(int, char**), Resource temporarily unavailable
-2018-11-15 23:48:17,413, 139636297742144, INFO, server/main.cpp, 45, int main(int, char**), buffer: 
-2018-11-15 23:48:17,413, 139636297742144, INFO, server/main.cpp, 62, int main(int, char**), Server is going to end
-2018-11-15 23:48:17,413, 139636297742144, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...5
-2018-11-15 23:50:37,360, 139837107332928, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 23:50:37,360, 139837107332928, INFO, server/net/inet_sock.h, 72, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 23:50:37,360, 139837107332928, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:50:37,360, 139837107332928, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 192.168.0.2:80
-2018-11-15 23:50:37,360, 139837107332928, ERROR, server/net/sock_connector.h, 54, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 23:50:37,360, 139837107332928, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:50:37,373, 139837107332928, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:50:37,373, 139837107332928, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 253bytes
-2018-11-15 23:50:37,373, 139837107332928, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:50:37,394, 139837107332928, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:50:37,394, 139837107332928, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
-2018-11-15 23:50:37,394, 139837107332928, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:50:37,394, 139837107332928, INFO, server/main.cpp, 43, int main(int, char**), buffer: HTTP/1.1 400 Bad Request
-Server: nginx/1.15.2
-Date: Thu, 15 Nov 2018 15:50:37 GMT
-Content-Type: text/html
-Content-Length: 173
-Connection: close
-
-<html>
-<head><title>400 Bad Request</title></head>
-<body bgcolor="white">
-<center><h1>400 Bad Request</h1></center>
-<hr><center>nginx/1.15.2</center>
-</body>
-</html>
-
-2018-11-15 23:50:37,394, 139837107332928, INFO, server/main.cpp, 60, int main(int, char**), Server is going to end
-2018-11-15 23:50:37,394, 139837107332928, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...5
-2018-11-15 23:51:32,848, 140339232130880, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 23:51:32,848, 140339232130880, INFO, server/net/inet_sock.h, 72, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 23:51:32,848, 140339232130880, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:51:32,848, 140339232130880, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 192.168.0.2:80
-2018-11-15 23:51:32,848, 140339232130880, ERROR, server/net/sock_connector.h, 54, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 23:51:32,848, 140339232130880, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:51:32,860, 140339232130880, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:51:32,860, 140339232130880, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 253bytes
-2018-11-15 23:51:32,860, 140339232130880, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:51:32,860, 140339232130880, INFO, server/main.cpp, 38, int main(int, char**), send_buffer: GET / HTTP/1.1
-Connection: keep-alive
- User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
- Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
-
-
-2018-11-15 23:51:32,889, 140339232130880, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:51:32,889, 140339232130880, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
-2018-11-15 23:51:32,889, 140339232130880, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:51:32,889, 140339232130880, INFO, server/main.cpp, 44, int main(int, char**), buffer: HTTP/1.1 400 Bad Request
-Server: nginx/1.15.2
-Date: Thu, 15 Nov 2018 15:51:32 GMT
-Content-Type: text/html
-Content-Length: 173
-Connection: close
-
-<html>
-<head><title>400 Bad Request</title></head>
-<body bgcolor="white">
-<center><h1>400 Bad Request</h1></center>
-<hr><center>nginx/1.15.2</center>
-</body>
-</html>
-
-2018-11-15 23:51:32,889, 140339232130880, INFO, server/main.cpp, 61, int main(int, char**), Server is going to end
-2018-11-15 23:51:32,889, 140339232130880, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...5
-2018-11-15 23:52:03,580, 140695555909440, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-15 23:52:03,580, 140695555909440, INFO, server/net/inet_sock.h, 72, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-15 23:52:03,580, 140695555909440, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:52:03,580, 140695555909440, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds&, int, int), trying to connect to: 192.168.0.2:80
-2018-11-15 23:52:03,580, 140695555909440, ERROR, server/net/sock_connector.h, 54, int net::sock_connector::connect_error_handling(net::sock_stream&, int, const micro_seconds&), Operation now in progress
-2018-11-15 23:52:03,580, 140695555909440, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:52:03,588, 140695555909440, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:52:03,589, 140695555909440, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 251bytes
-2018-11-15 23:52:03,589, 140695555909440, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:52:03,589, 140695555909440, INFO, server/main.cpp, 38, int main(int, char**), send_buffer: GET / HTTP/1.1
+2018-11-18 10:39:31,720, 140328227616576, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 10:39:31,720, 140328227616576, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 10:39:31,720, 140328227616576, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 10:39:31,720, 140328227616576, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 127.0.0.1:9090
+2018-11-18 10:39:36,722, 140328227616576, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 10:39:36,722, 140328227616576, ERROR, server/main.cpp, 28, int main(int, char**), Connection timed out
+2018-11-18 10:39:36,722, 140328227616576, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 10:59:42,290, 140049547151168, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 10:59:42,290, 140049547151168, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 10:59:42,290, 140049547151168, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 10:59:42,290, 140049547151168, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 127.0.0.1:9090
+2018-11-18 10:59:52,291, 140049547151168, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 10:59:52,291, 140049547151168, ERROR, server/main.cpp, 28, int main(int, char**), Connection timed out
+2018-11-18 10:59:52,291, 140049547151168, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 11:05:05,640, 140224446342976, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 11:05:05,640, 140224446342976, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 11:05:05,640, 140224446342976, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 11:05:05,640, 140224446342976, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 127.0.0.1:9090
+2018-11-18 11:05:09,644, 140224446342976, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 11:05:09,644, 140224446342976, ERROR, server/main.cpp, 28, int main(int, char**), Connection timed out
+2018-11-18 11:05:09,644, 140224446342976, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 11:30:05,677, 139739040999232, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 11:30:05,678, 139739040999232, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 11:30:05,678, 139739040999232, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 11:30:05,678, 139739040999232, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 127.0.0.1:9090
+2018-11-18 11:30:05,678, 139739040999232, ERROR, server/net/unp.cpp, 111, int unp::handle_timed_connect_using_select(int, std::chrono::milliseconds*), 213123123123123123123123123123
+2018-11-18 11:30:05,678, 139739040999232, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 11:30:05,678, 139739040999232, ERROR, server/main.cpp, 28, int main(int, char**), Operation now in progress
+2018-11-18 11:30:05,678, 139739040999232, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 11:36:17,908, 140493995755328, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 11:36:17,908, 140493995755328, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 11:36:17,908, 140493995755328, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 11:36:17,909, 140493995755328, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 127.0.0.1:9090
+2018-11-18 11:36:17,909, 140493995755328, INFO, server/net/inet_sock.h, 114, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
+2018-11-18 11:36:17,909, 140493995755328, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 11:36:17,909, 140493995755328, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 251bytes
+2018-11-18 11:36:17,909, 140493995755328, INFO, server/net/inet_sock.h, 114, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
+2018-11-18 11:36:17,909, 140493995755328, INFO, server/main.cpp, 36, int main(int, char**), send_buffer: GET / HTTP/1.1
 Connection: keep-alive
 User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
 
 
-2018-11-15 23:52:03,630, 140695555909440, INFO, server/net/inet_sock.h, 104, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-15 23:52:03,630, 140695555909440, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
-2018-11-15 23:52:03,630, 140695555909440, INFO, server/net/inet_sock.h, 112, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
-2018-11-15 23:52:03,630, 140695555909440, INFO, server/main.cpp, 44, int main(int, char**), buffer: HTTP/1.1 400 Bad Request
-Server: nginx/1.15.2
-Date: Thu, 15 Nov 2018 15:52:03 GMT
-Content-Type: text/html
-Content-Length: 575
-Connection: close
-
-<html>
-<head><title>400 Bad Request</title></head>
-<body bgcolor="white">
-<center><h1>400 Bad Request</h1></center>
-<hr><center>nginx/1.15.2</center>
-</body>
-</html>
-<!-- a padding to disable MSIE and Chrome friendly error page -->
-<!-- a padding to disable MSIE and Chrome friendly error page -->
-<!-- a padding to disable MSIE and Chrome friendly error page -->
-<!-- a padding to disable MSIE and Chrome friendly error page -->
-<!-- a padding to disable MSIE and Chrome friendly error page -->
-<!-- a padding to disable MSIE and Chrome friendly error page -->
-
-2018-11-15 23:52:03,630, 140695555909440, INFO, server/main.cpp, 61, int main(int, char**), Server is going to end
-2018-11-15 23:52:03,630, 140695555909440, INFO, server/net/inet_sock.h, 87, int net::inet_sock::close(), closing a socket...5
-2018-11-18 08:37:08,115, 139850082563904, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-18 08:37:08,115, 139850082563904, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-18 08:37:08,115, 139850082563904, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-18 08:37:08,115, 139850082563904, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
-2018-11-18 08:37:13,120, 139850082563904, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
-2018-11-18 08:37:13,121, 139850082563904, ERROR, server/main.cpp, 32, int main(int, char**), Connection timed out
-2018-11-18 08:37:18,126, 139850082563904, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: -1 send: 251bytes
-2018-11-18 08:37:18,126, 139850082563904, INFO, server/main.cpp, 38, int main(int, char**), send_buffer: GET / HTTP/1.1
+2018-11-18 11:36:18,909, 140493995755328, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 11:36:18,909, 140493995755328, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
+2018-11-18 11:36:18,910, 140493995755328, INFO, server/net/inet_sock.h, 114, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
+2018-11-18 11:36:18,910, 140493995755328, INFO, server/main.cpp, 42, int main(int, char**), buffer: 123
+2018-11-18 11:36:18,910, 140493995755328, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 11:36:18,910, 140493995755328, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 11:39:36,905, 139770347067200, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 11:39:36,905, 139770347067200, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 11:39:36,905, 139770347067200, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 11:39:36,905, 139770347067200, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 127.0.0.1:9090
+2018-11-18 11:39:36,906, 139770347067200, INFO, server/net/inet_sock.h, 114, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
+2018-11-18 11:39:36,906, 139770347067200, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 11:39:36,906, 139770347067200, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 251bytes
+2018-11-18 11:39:36,906, 139770347067200, INFO, server/net/inet_sock.h, 114, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
+2018-11-18 11:39:36,906, 139770347067200, INFO, server/main.cpp, 36, int main(int, char**), send_buffer: GET / HTTP/1.1
 Connection: keep-alive
 User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
 
 
-2018-11-18 08:37:18,126, 139850082563904, ERROR, server/main.cpp, 40, int main(int, char**), Bad file descriptor
-2018-11-18 08:37:23,132, 139850082563904, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: -1 read: 1024bytes
-2018-11-18 08:37:23,132, 139850082563904, ERROR, server/main.cpp, 43, int main(int, char**), Bad file descriptor
-2018-11-18 08:37:23,132, 139850082563904, INFO, server/main.cpp, 44, int main(int, char**), buffer: 
-2018-11-18 08:37:23,132, 139850082563904, INFO, server/main.cpp, 61, int main(int, char**), Server is going to end
-2018-11-18 08:38:12,012, 139883822249792, INFO, server/main.cpp, 22, int main(int, char**), Server Started
-2018-11-18 08:38:12,012, 139883822249792, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-18 08:38:12,012, 139883822249792, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-18 08:38:12,012, 139883822249792, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
-2018-11-18 08:38:17,016, 139883822249792, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
-2018-11-18 08:38:17,016, 139883822249792, ERROR, server/main.cpp, 32, int main(int, char**), Connection timed out
-2018-11-18 08:38:22,018, 139883822249792, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: -1 send: 251bytes
-2018-11-18 08:38:22,018, 139883822249792, INFO, server/main.cpp, 38, int main(int, char**), send_buffer: GET / HTTP/1.1
+2018-11-18 11:39:37,906, 139770347067200, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 11:39:37,906, 139770347067200, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
+2018-11-18 11:39:37,906, 139770347067200, INFO, server/net/inet_sock.h, 114, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
+2018-11-18 11:39:37,907, 139770347067200, INFO, server/main.cpp, 42, int main(int, char**), buffer: GET / HTTP/1.1
+Connection: keep-alive
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
+2018-11-18 11:39:37,907, 139770347067200, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 11:39:37,907, 139770347067200, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 11:41:05,568, 139738656188224, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 11:41:05,568, 139738656188224, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 11:41:05,568, 139738656188224, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 11:41:05,568, 139738656188224, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 127.0.0.1:9090
+2018-11-18 11:41:05,569, 139738656188224, INFO, server/net/inet_sock.h, 114, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
+2018-11-18 11:41:05,569, 139738656188224, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 11:41:05,569, 139738656188224, INFO, server/net/sock_stream.cpp, 81, ssize_t net::sock_stream::send_imp(const void*, size_t, int, const micro_seconds*) const, send to: 5 send: 251bytes
+2018-11-18 11:41:05,569, 139738656188224, INFO, server/net/inet_sock.h, 114, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
+2018-11-18 11:41:05,569, 139738656188224, INFO, server/main.cpp, 36, int main(int, char**), send_buffer: GET / HTTP/1.1
 Connection: keep-alive
 User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8
 
 
-2018-11-18 08:38:22,018, 139883822249792, ERROR, server/main.cpp, 40, int main(int, char**), Bad file descriptor
-2018-11-18 08:38:27,023, 139883822249792, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: -1 read: 1024bytes
-2018-11-18 08:38:27,024, 139883822249792, ERROR, server/main.cpp, 43, int main(int, char**), Bad file descriptor
-2018-11-18 08:38:27,024, 139883822249792, INFO, server/main.cpp, 44, int main(int, char**), buffer: 
-2018-11-18 08:38:27,024, 139883822249792, INFO, server/main.cpp, 61, int main(int, char**), Server is going to end
-2018-11-18 08:47:14,889, 140361308497728, INFO, server/main.cpp, 19, server_scoped_helper::server_scoped_helper(int, char**), Server Started
-2018-11-18 08:47:14,890, 140361308497728, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-18 08:47:14,890, 140361308497728, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-18 08:47:14,890, 140361308497728, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
-2018-11-18 08:47:19,895, 140361308497728, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
-2018-11-18 08:47:19,895, 140361308497728, ERROR, server/main.cpp, 47, int main(int, char**), Connection timed out
-2018-11-18 08:47:19,896, 140361308497728, INFO, server/main.cpp, 23, server_scoped_helper::~server_scoped_helper(), Server is going to end
-2018-11-18 08:50:18,155, 140101350434624, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
-2018-11-18 08:50:18,155, 140101350434624, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-18 08:50:18,155, 140101350434624, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-18 08:50:18,155, 140101350434624, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
-2018-11-18 08:50:23,156, 140101350434624, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
-2018-11-18 08:50:23,156, 140101350434624, ERROR, server/main.cpp, 33, int main(int, char**), Connection timed out
-2018-11-18 08:50:23,157, 140101350434624, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
-2018-11-18 09:02:26,520, 140296001431360, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
-2018-11-18 09:02:26,520, 140296001431360, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-18 09:02:26,520, 140296001431360, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-18 09:02:26,520, 140296001431360, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
-2018-11-18 09:02:31,524, 140296001431360, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
-2018-11-18 09:02:31,524, 140296001431360, ERROR, server/main.cpp, 33, int main(int, char**), Connection timed out
-2018-11-18 09:02:31,524, 140296001431360, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
-2018-11-18 09:14:40,572, 139944374699840, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
-2018-11-18 09:14:40,572, 139944374699840, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-18 09:14:40,572, 139944374699840, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-18 09:14:40,572, 139944374699840, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
-2018-11-18 09:14:45,578, 139944374699840, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
-2018-11-18 09:14:45,578, 139944374699840, ERROR, server/main.cpp, 28, int main(int, char**), Connection timed out
-2018-11-18 09:14:45,578, 139944374699840, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
-2018-11-18 09:37:13,714, 140206677239616, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
-2018-11-18 09:37:13,715, 140206677239616, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-18 09:37:13,715, 140206677239616, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
-2018-11-18 09:37:13,715, 140206677239616, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
-2018-11-18 09:37:18,720, 140206677239616, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
-2018-11-18 09:37:18,720, 140206677239616, ERROR, server/main.cpp, 28, int main(int, char**), Connection timed out
-2018-11-18 09:37:18,720, 140206677239616, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
-2018-11-18 09:49:33,173, 140631252301632, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-18 09:53:12,845, 140611024222016, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-18 09:53:12,845, 140611024222016, INFO, server/net/sock_acceptor.cpp, 88, int net::sock_acceptor::shared_open(const net::inet_addr&, int, int), trying to bind to: 0xc041e0:0...
-2018-11-18 09:53:12,845, 140611024222016, INFO, server/net/sock_acceptor.cpp, 96, int net::sock_acceptor::shared_open(const net::inet_addr&, int, int), listening on: 0xc041e0:0...
-2018-11-18 09:54:16,368, 140183477962560, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
-2018-11-18 09:54:16,368, 140183477962560, INFO, server/net/sock_acceptor.cpp, 88, int net::sock_acceptor::shared_open(const net::inet_addr&, int, int), trying to bind to: 0x1c141e0:0...
-2018-11-18 09:54:16,368, 140183477962560, INFO, server/net/sock_acceptor.cpp, 96, int net::sock_acceptor::shared_open(const net::inet_addr&, int, int), listening on: 0x1c141e0:0...
-2018-11-18 09:54:21,374, 140183477962560, INFO, gtests/net/integration_test.cpp, 35, virtual void server_as_a_server_Test::TestBody(), Connection timed out
+2018-11-18 11:41:06,569, 139738656188224, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 11:41:06,569, 139738656188224, INFO, server/net/sock_stream.cpp, 63, ssize_t net::sock_stream::read_imp(void*, size_t, const micro_seconds*) const, read from: 5 read: 1024bytes
+2018-11-18 11:41:06,569, 139738656188224, INFO, server/net/inet_sock.h, 114, int net::inet_sock::restore_blocking() const, restore socket to blcoking mode...
+2018-11-18 11:41:06,569, 139738656188224, INFO, server/main.cpp, 42, int main(int, char**), recved_buffer: GET / HTTP/1.1
+Connection: keep-alive
+User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36
+2018-11-18 11:41:06,570, 139738656188224, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 11:41:06,570, 139738656188224, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 12:11:53,434, 140654904239936, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 12:11:53,434, 140654904239936, INFO, server/net/sock_acceptor.cpp, 92, int net::sock_acceptor::shared_open(const net::inet_addr&, int, int), trying to bind to: 0.0.0.0:9090...
+2018-11-18 12:11:53,434, 140654904239936, INFO, server/net/sock_acceptor.cpp, 100, int net::sock_acceptor::shared_open(const net::inet_addr&, int, int), listening on: 0.0.0.0:9090...

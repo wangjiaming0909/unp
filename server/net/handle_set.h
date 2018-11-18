@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <string.h>
 
-#define INVALID_HANDLER -1
+#define INVALID_HANDLE -1
 
 namespace unp{
 
@@ -16,7 +16,7 @@ public:
         memcpy(&set_, &set, sizeof set_);
     }
     void reset(){
-        max_handle_ = INVALID_HANDLER;
+        max_handle_ = INVALID_HANDLE;
         size_ = 0;
         FD_ZERO(&set_);
     }
@@ -27,7 +27,7 @@ public:
     }
     void set_bit(int fd){
         //check the fd and if it has been set in set_
-        if(fd != INVALID_HANDLER && !is_set(fd)){
+        if(fd != INVALID_HANDLE && !is_set(fd)){
             FD_SET(fd, &set_);
             ++size_;
             if(fd > max_handle_)//set the max_fd

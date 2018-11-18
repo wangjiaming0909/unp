@@ -50,6 +50,7 @@ private:
 		if(ret < 0){
 			if(errno != EINPROGRESS) return -1;//other errors, check the errno yourself
 		}else if(ret == 0) { //connect completed, when client and server are on the same host machine, this could happen
+			LOG(INFO) << "connect succeed...";
 			new_stream.get_sock_fd().restore_blocking();
 			return 0;
 		}
@@ -75,9 +76,12 @@ private:
 	int complete(sock_stream& new_stream, const micro_seconds* timeout){
 		//TODO what if timeout is nullptr
 		auto timeout_milli_seconds = std::chrono::duration_cast<milliseconds>(*timeout);
-		int h = unp::handle_timed_connect_using_poll(
-					new_stream.get_handle(), 
-					&timeout_milli_seconds);
+		int h = unp::handle_timed_connect_using_select(
+				new_stream.get_handle(),
+				&timeout_milli_seconds);
+		// int h = unp::handle_timed_connect_using_poll(
+		// 			new_stream.get_handle(), 
+		// 			&timeout_milli_seconds);
 		//timeout or poll error
 		if(h == INVALID_HANDLER) {
 			new_stream.close();//we need to close the fd

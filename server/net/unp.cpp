@@ -5,6 +5,7 @@
 #include <time.h>
 #include <poll.h>
 #include <sys/socket.h>
+#include "../util/easylogging++.h"
 
 
 
@@ -73,8 +74,8 @@ int unp::handle_timed_connect_using_poll(int handle, milliseconds* timeout){
     //else we will pass timeout.count(), milliseconds to wait
     int n = ::poll(&fds, 1, timeout ? timeout->count() : -1);
     if(n <= 0){//poll failed or time out
-        if(n == 0 && timeout->count() != 0) errno = ETIMEDOUT;
-        return INVALID_HANDLER;
+        if(n == 0 && timeout && timeout->count() > 0) errno = ETIMEDOUT;
+        return INVALID_HANDLE;
     }
     //success n > 0
     //but n > 0 does not means that connect succeed, 
@@ -86,10 +87,36 @@ int unp::handle_timed_connect_using_poll(int handle, milliseconds* timeout){
     int ret = 0;
     if(fds.revents & (POLLIN | POLLERR)){
         ret = ::getsockopt(handle, SOL_SOCKET, SO_ERROR, &sock_err, &sock_err_len);
-        if(ret < 0) handle = INVALID_HANDLER;
+        if(ret < 0) handle = INVALID_HANDLE;
         if(sock_err != 0){//error occured
             errno = sock_err;
-            handle = INVALID_HANDLER;
+            handle = INVALID_HANDLE;
+        }
+    }
+    return handle;
+}
+
+int unp::handle_timed_connect_using_select(int handle, milliseconds* timeout){
+    handle_set read_handles, write_handles;
+    write_handles.set_bit(handle);
+    read_handles.set_bit(handle);
+   timeval timeout_timeval = util::duration_to_timeval(*timeout);
+    int n = ::select(handle + 1, read_handles.get_fd_set(), write_handles.get_fd_set(), 0, &timeout_timeval);
+    if(n == 0 && timeout && timeout->count() > 0){
+        errno = ETIMEDOUT;
+        return INVALID_HANDLE;
+    }
+    //TODO check the fds
+
+    int sock_err = 0;
+    socklen_t sock_err_len = sizeof sock_err;
+    int ret = 0;
+    if(FD_ISSET(handle, write_handles.get_fd_set()) || FD_ISSET(handle, read_handles.get_fd_set())){
+        ret = ::getsockopt(handle, SOL_SOCKET, SO_ERROR, &sock_err, &sock_err_len);
+        if(ret < 0) handle = INVALID_HANDLE;
+        if(sock_err != 0){
+            errno = sock_err;
+            handle = INVALID_HANDLE;
         }
     }
     return handle;

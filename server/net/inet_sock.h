@@ -45,7 +45,7 @@ private:
 
 }
 
-inline net::inet_sock::inet_sock() : handler_(INVALID_HANDLER){ };
+inline net::inet_sock::inet_sock() : handler_(INVALID_HANDLE){ };
 
 inline net::inet_sock::~inet_sock(){ close();}
 
@@ -73,7 +73,7 @@ inline int net::inet_sock::open(int family, sock_type type, int protocol, int re
     this->handler_ = ::socket(family, (int)type, protocol);
     LOG(INFO) << "opening a socket..." << handler_; 
 	int one = 1;
-	if(handler_ == INVALID_HANDLER){
+	if(handler_ == INVALID_HANDLE){
 		return -1;
 	} else if( reuse_addr && 
 			this->set_option(SOL_SOCKET, SO_REUSEADDR, &one, sizeof one) == -1){
@@ -85,24 +85,24 @@ inline int net::inet_sock::open(int family, sock_type type, int protocol, int re
 
 inline int net::inet_sock::close(){
     int ret = 0;
-    if(this->handler_ != INVALID_HANDLER){
+    if(this->handler_ != INVALID_HANDLE){
         LOG(INFO) << "closing a socket..." << handler_;
         ret = ::close(this->handler_);
-        this->handler_ = INVALID_HANDLER;
+        this->handler_ = INVALID_HANDLE;
     }
     return ret;
 }
 
 inline void net::inet_sock::shut_down(int how){
-	if(handler_ != INVALID_HANDLER){
+	if(handler_ != INVALID_HANDLE){
         LOG(INFO) << "shutdown a socket..." << handler_;
 		::shutdown(handler_, how);
-		handler_ = INVALID_HANDLER;
+		handler_ = INVALID_HANDLE;
 	}
 }
 
 inline int net::inet_sock::set_non_blocking() const{
-    if(handler_ == INVALID_HANDLER) return -1;
+    if(handler_ == INVALID_HANDLE) return -1;
     LOG(INFO) << "set socket to non-blocking mode..." << handler_;
     auto flags = fcntl(F_GETFL, 0);
     SET_BIT(flags, O_NONBLOCK);
@@ -110,7 +110,7 @@ inline int net::inet_sock::set_non_blocking() const{
 }
 
 inline int net::inet_sock::restore_blocking() const{
-    if(handler_ == INVALID_HANDLER) return -1;
+    if(handler_ == INVALID_HANDLE) return -1;
     LOG(INFO) << "restore socket to blcoking mode...";
     auto flags = fcntl(F_GETFL, 0);
     CLR_BIT(flags, O_NONBLOCK);

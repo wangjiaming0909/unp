@@ -62,7 +62,10 @@ int net::sock_acceptor::accept(
         LOG(INFO) << "invoking accept...";
         int client_fd = ::accept(sock_fd_->get_handler(), addr, len_ptr);
         //restart set and accept failed and it was interrupted, then continue
-        if(restart && client_fd == -1 && errno == EINTR) continue;
+        if(restart && client_fd == -1 && errno == EINTR){
+            LOG(INFO) << "interrupted... restarting.....";
+            continue;
+        }
         else if(client_fd == -1) return -1;//other errors
         ret = client_stream.set_handle(client_fd);
         //accept returned successfully, remote addr was set, addrlen was set too
@@ -70,6 +73,7 @@ int net::sock_acceptor::accept(
         if(ret != INVALID_HANDLER && remote_addr){
             remote_addr->set_size(len);
             if(addr) remote_addr->set_type(addr->sa_family);
+            break;
         }
     }
 
