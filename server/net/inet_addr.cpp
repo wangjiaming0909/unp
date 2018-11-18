@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <boost/scoped_array.hpp>
 #include <exception>
+#include "../util/easylogging++.h"
 
 #include "inet_addr.h"
 
@@ -94,9 +95,11 @@ boost::shared_ptr<sockaddr_in> net::inet_addr::get_sockaddr_in_ptr()const{
 }
 
 int net::inet_addr::set_port_number(host_byte_order_port port){
-	port = htons(port);
-	if(port > INT16_MAX){
-		in4_.sin_port = htons(0);
+	try{
+		port = htons(port);
+	}catch (std::exception e){
+		LOG(ERROR) << e.what();
+		in4_.sin_port = -1;
 		return -1;
 	}
 	in4_.sin_port = port;
