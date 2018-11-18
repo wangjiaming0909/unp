@@ -59,6 +59,7 @@ int net::sock_acceptor::accept(
     }
 
     for(;;){
+        LOG(INFO) << "invoking accept...";
         int client_fd = ::accept(sock_fd_->get_handler(), addr, len_ptr);
         //restart set and accept failed and it was interrupted, then continue
         if(restart && client_fd == -1 && errno == EINTR) continue;
@@ -84,6 +85,7 @@ int net::sock_acceptor::shared_open(
         LOG(ERROR) << "protocol_family is not AF_INET";
         return -1;
     }
+    LOG(INFO) << "trying to bind to: " << local_sap.get_address_string() << ":" << local_sap.get_port_number() << "..." ;
     int ret = ::bind(sock_fd_->get_handler(), 
         local_sap.get_sockaddr_ptr().get(), 
         local_sap.get_size());
@@ -91,6 +93,7 @@ int net::sock_acceptor::shared_open(
         LOG(ERROR) << "bind error: " << strerror(errno);
         return ret;
     }
+    LOG(INFO) << "listening on: " << local_sap.get_address_string() << ":" << local_sap.get_port_number() << "...";
     ret = ::listen(sock_fd_->get_handler(), backlog);
     if(ret != 0){
         LOG(ERROR) << "listen error: " <<strerror(errno);

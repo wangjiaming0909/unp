@@ -1,7 +1,5 @@
-#include <iostream>
 #include <exception>
 #include <cstdlib>
-#include <fstream>
 #include "config/ServerConfig.h"
 #include "util/easylogging++.h"
 #include "thread/thread_pool.h"
@@ -23,7 +21,7 @@ int main(int argc, char** argv){
     // net::inet_sock fd{net::sock_type::stream, 0};
     net::inet_sock fd2{};
     net::sock_stream new_stream{&fd2};
-    net::inet_addr server_addr{80, "192.168.0.2"};
+    net::inet_addr server_addr{9090, "192.168.0.2"};
     microseconds timeout = 5s;
     int ret = connector.connect(new_stream, server_addr, &timeout, 1, 0);
     if(ret != 0) {

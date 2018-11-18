@@ -441,3 +441,32 @@ Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/a
 2018-11-18 08:50:23,156, 140101350434624, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
 2018-11-18 08:50:23,156, 140101350434624, ERROR, server/main.cpp, 33, int main(int, char**), Connection timed out
 2018-11-18 08:50:23,157, 140101350434624, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 09:02:26,520, 140296001431360, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 09:02:26,520, 140296001431360, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 09:02:26,520, 140296001431360, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 09:02:26,520, 140296001431360, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
+2018-11-18 09:02:31,524, 140296001431360, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 09:02:31,524, 140296001431360, ERROR, server/main.cpp, 33, int main(int, char**), Connection timed out
+2018-11-18 09:02:31,524, 140296001431360, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 09:14:40,572, 139944374699840, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 09:14:40,572, 139944374699840, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 09:14:40,572, 139944374699840, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 09:14:40,572, 139944374699840, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
+2018-11-18 09:14:45,578, 139944374699840, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 09:14:45,578, 139944374699840, ERROR, server/main.cpp, 28, int main(int, char**), Connection timed out
+2018-11-18 09:14:45,578, 139944374699840, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 09:37:13,714, 140206677239616, INFO, server/main_helper.h, 50, server_scoped_helper::server_scoped_helper(int, char**), Server Started
+2018-11-18 09:37:13,715, 140206677239616, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 09:37:13,715, 140206677239616, INFO, server/net/inet_sock.h, 106, int net::inet_sock::set_non_blocking() const, set socket to non-blocking mode...5
+2018-11-18 09:37:13,715, 140206677239616, INFO, server/net/sock_connector.h, 26, int net::sock_connector::connect(net::sock_stream&, const net::inet_addr&, const micro_seconds*, int, int), trying to connect to: 192.168.0.2:80
+2018-11-18 09:37:18,720, 140206677239616, INFO, server/net/inet_sock.h, 89, int net::inet_sock::close(), closing a socket...5
+2018-11-18 09:37:18,720, 140206677239616, ERROR, server/main.cpp, 28, int main(int, char**), Connection timed out
+2018-11-18 09:37:18,720, 140206677239616, INFO, server/main_helper.h, 54, server_scoped_helper::~server_scoped_helper(), Server is going to end
+2018-11-18 09:49:33,173, 140631252301632, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 09:53:12,845, 140611024222016, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 09:53:12,845, 140611024222016, INFO, server/net/sock_acceptor.cpp, 88, int net::sock_acceptor::shared_open(const net::inet_addr&, int, int), trying to bind to: 0xc041e0:0...
+2018-11-18 09:53:12,845, 140611024222016, INFO, server/net/sock_acceptor.cpp, 96, int net::sock_acceptor::shared_open(const net::inet_addr&, int, int), listening on: 0xc041e0:0...
+2018-11-18 09:54:16,368, 140183477962560, INFO, server/net/inet_sock.h, 74, int net::inet_sock::open(int, net::sock_type, int, int), opening a socket...5
+2018-11-18 09:54:16,368, 140183477962560, INFO, server/net/sock_acceptor.cpp, 88, int net::sock_acceptor::shared_open(const net::inet_addr&, int, int), trying to bind to: 0x1c141e0:0...
+2018-11-18 09:54:16,368, 140183477962560, INFO, server/net/sock_acceptor.cpp, 96, int net::sock_acceptor::shared_open(const net::inet_addr&, int, int), listening on: 0x1c141e0:0...
+2018-11-18 09:54:21,374, 140183477962560, INFO, gtests/net/integration_test.cpp, 35, virtual void server_as_a_server_Test::TestBody(), Connection timed out
