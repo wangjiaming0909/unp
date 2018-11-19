@@ -61,6 +61,7 @@ public:
 	ssize_t writev_n(const void *buffer, size_t len, 
 		const micro_seconds *timeout, size_t *bytes_transfered = 0) const;
 private:
+	//TODO! why using a pointer, use a reference instead
     inet_sock* sock_fd_;
 
 public:
