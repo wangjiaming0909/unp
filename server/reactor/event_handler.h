@@ -15,6 +15,7 @@ public:
         SIGNAL_EVENT = 010,
         CLOSE_EVENT = 020
     };
+    event_handler(int handle) : handle_(handle){};
     virtual void handle_input(int handle) = 0;
     virtual void handle_output(int handle) = 0;
     virtual void handle_timeout(int handle) = 0;
@@ -23,6 +24,8 @@ public:
     virtual int get_handle() const = 0;
 protected:
     virtual ~event_handler();
+private:
+    int handle_;
 };
 } // reactor
 

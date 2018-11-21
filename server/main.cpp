@@ -6,6 +6,7 @@
 #include "Server.h"
 #include "net/sock_connector.h"
 #include "main_helper.h"
+#include "reactor/reactor.h"
 
 
 // INITIALIZE_NULL_EASYLOGGINGPP

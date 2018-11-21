@@ -5,12 +5,12 @@
             "name": "test",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/gtests/test.out",
-            "args": [],
+            "program": "${workspaceFolder}/gtests/test.out ",
+            "args": ["--gtest_filter=test_reactor.*"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/",
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "setupCommands": [
                 {

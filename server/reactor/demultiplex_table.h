@@ -15,7 +15,7 @@ public:
         event_handler *event_handler_;
         Event_Type event_type_;
     };
-    demultiplex_element table_[]
+    demultiplex_element table_[sizeof(unsigned long int)];
 private:
     
 };
