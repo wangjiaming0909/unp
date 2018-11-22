@@ -12,6 +12,7 @@ class event_handler;
 class reactor_implementation;
 class reactor{
 public:
+    //should I alloc the memory of reactor_impl, new it in the this constructor
     reactor(reactor_implementation* reactor_impl = 0) : reactor_impl_(reactor_impl){}
     virtual ~reactor(){}
     using Event_Type = event_handler::Event_Type;
@@ -43,6 +44,7 @@ private:
 };
 boost::shared_ptr<reactor> reactor::reactor_ptr_ = 0;
 
+//TODO seperate these classes to another file
 class reactor_implementation{
 public:
     using Event_Type = event_handler::Event_Type;
