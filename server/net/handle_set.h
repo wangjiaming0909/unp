@@ -2,8 +2,8 @@
 #define _UNP_HANDLE_SET_H_
 #include <sys/types.h>
 #include <string.h>
+#include "macros.h"
 
-#define INVALID_HANDLE -1
 
 namespace unp{
 

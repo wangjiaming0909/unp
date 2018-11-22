@@ -2,7 +2,6 @@
 #define _UNP_DEMULTIPLEX_TABLE_H_
 
 #include "event_handler.h"
-//jjjjjjjjjjjjjjjjjjj
 //namespace reactor
 //{
 //struct select_event_tuple{

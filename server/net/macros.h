@@ -6,5 +6,6 @@
 #define BIT_ENABLED(flags, bit) (flags & bit)
 #define BIT_DISABLED(flags, bit) (!BIT_ENABLED((flags), (bit)))
 
+#define INVALID_HANDLE -1
 
 #endif //_UNP_MACROS_H_ 

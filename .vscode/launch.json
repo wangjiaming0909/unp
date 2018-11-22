@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/gtests/test.out ",
-            "args": ["--gtest_filter=test_reactor.*"],
+            "args": ["--gtest_filter=select_reactor_impl_test.*"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/",
             "environment": [],
