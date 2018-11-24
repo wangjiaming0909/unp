@@ -1,4 +1,5 @@
 #include "select_reactor_impl.h"
+#include "../util/unp_time.h"
 
 using namespace reactor;
 
@@ -23,7 +24,7 @@ int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Typ
                     << handle << " handler: " << handler;
         return -1;
     }
-    if(table_.size() <= handle)
+    if((int)table_.size() <= handle)
         table_.resize(handle + handle/2);
     table_[handle].event_handler_ = handler;
     table_[handle].event_type_ = type;
@@ -59,11 +60,31 @@ int select_demultiplex_table::unbind(int handle){
 const long int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 
 
-int select_reactor_impl::select(select_reactor_handle_set& dispatch_set, 
-    std::chrono::microseconds* timeout){
-    
+void select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
+    int n = this->select(timeout);
+    dispatch();
+}
+
+int select_reactor_impl::select(std::chrono::microseconds* timeout){
+    const int width = this->demux_table_.get_current_max_handle_p_1();
+    dispatch_set_.read_set = this->wait_set_.read_set;
+    dispatch_set_.write_set = this->wait_set_.write_set;
+    dispatch_set_.exception_set = this->wait_set_.exception_set;
+    timeval timeout_timeval = util::duration_to_timeval(*timeout);
+    int number_of_active_handles = ::select(width, 
+                     dispatch_set_.read_set.get_select_fd_set_ptr(),
+                     dispatch_set_.write_set.get_select_fd_set_ptr(),
+                     dispatch_set_.exception_set.get_select_fd_set_ptr(),
+                     &timeout_timeval);
+    // if(number_of_active_handles < 0)   
 }
 
 int select_reactor_impl::dispatch(){
+
+}
+void select_reactor_impl::register_handler(event_handler* handler, Event_Type type) {
+
+}
+void select_reactor_impl::remove_handler(event_handler *handler, Event_Type type) {
 
 }

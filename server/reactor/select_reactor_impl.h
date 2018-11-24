@@ -72,7 +72,7 @@ public:
     // void register_handler(int handle, event_handler *handler, Event_Type type) override{ }
     // void remove_handler(int handle, event_handler *handler, Event_Type type) override{ }
 private:
-    int select(select_reactor_handle_set& dispatch_set, std::chrono::microseconds* timeout);
+    int select(std::chrono::microseconds* timeout);
     int dispatch();
 private:
     //track handles that are currently ready for dispatch

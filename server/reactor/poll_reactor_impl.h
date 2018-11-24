@@ -13,17 +13,13 @@ public:
     void register_handler(event_handler* handler, Event_Type type) override{
 
     }
-    void register_handler(int handle, event_handler *handler, Event_Type type) override{
-
-    }
+    // void register_handler(int handle, event_handler *handler, Event_Type type) override{ }
     void remove_handler(event_handler *handler, Event_Type type) override{
 
     }
-    void remove_handler(int handle, event_handler *handler, Event_Type type) override{
-
-    }
+    // void remove_handler(int handle, event_handler *handler, Event_Type type) override{ }
 private:
-    demultiplex_table demux_table_;
+    // demultiplex_table demux_table_;
 };
 
 

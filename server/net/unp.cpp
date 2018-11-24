@@ -101,7 +101,7 @@ int unp::handle_timed_connect_using_select(int handle, milliseconds* timeout){
     handle_set read_handles, write_handles;
     write_handles.set_bit(handle);
     read_handles.set_bit(handle);
-   timeval timeout_timeval = util::duration_to_timeval(*timeout);
+    timeval timeout_timeval = util::duration_to_timeval(*timeout);
     int n = ::select(handle + 1, read_handles.get_fd_set(), write_handles.get_fd_set(), 0, &timeout_timeval);
     if(n == 0 && timeout && timeout->count() > 0){
         errno = ETIMEDOUT;

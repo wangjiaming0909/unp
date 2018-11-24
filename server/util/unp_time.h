@@ -13,6 +13,8 @@
 #include <chrono>
 #include "XString.h"
 #include <sys/time.h>
+#include <boost/shared_array.hpp>
+#include <boost/make_shared.hpp>
 
 using namespace std::chrono;
 
@@ -55,6 +57,9 @@ private:
     int64_t m_microSecondsSinceEpoch;
 };
 
+//dura is a ref, so it can't be null
+//but sometimes, we need time to be null means that will wait indefinitely
+//so we need a pointer version 
 template<typename DURATION>
 timeval duration_to_timeval(const DURATION& dura){
     seconds s = duration_cast<seconds>(dura);
@@ -65,11 +70,35 @@ timeval duration_to_timeval(const DURATION& dura){
     return ret;
 }
 
+template<typename DURATION>
+boost::shared_ptr<timeval> duration_to_timeval(const DURATION* dura){
+    if(dura == 0){//means wait forever
+        return boost::make_shared<timeval>(0);
+    }
+    seconds s = duration_cast<seconds>(dura);
+    microseconds ms = duration_cast<microseconds>(dura);
+    auto ret_ptr = boost::make_shared<timeval>(new timeval());
+    ret_ptr->tv_sec = s.count();
+    ret_ptr->tv_usec = ms.count() - duration_cast<microseconds>(s).count();
+    return ret_ptr;
+}
+
 template <typename DURATION>
 DURATION timeval_to_duration(const timeval& time_val){
     microseconds us{time_val.tv_sec * 1000 * 1000 + time_val.tv_usec};
     return duration_cast<DURATION>(us);
 }
+template <typename DURATION>
+boost::shared_ptr<DURATION> timeval_to_duration(const timeval* time_val){
+    if(time_val == 0)
+        return boost::make_shared<DURATION>(0);
+    microseconds us{time_val->tv_sec * 1000 * 1000 + time_val->tv_usec};
+    auto ret_duration_ptr = boost::make_shared<DURATION>(new DURATION());
+    *ret_duration_ptr = duration_cast<DURATION>(us);
+    return ret_duration_ptr;
+}
+
+
 }
 
 #endif

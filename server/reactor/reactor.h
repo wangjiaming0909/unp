@@ -14,15 +14,15 @@ public:
     virtual void register_handler(event_handler* handler, Event_Type type){
         reactor_impl_->register_handler(handler, type);
     }
-    virtual void register_handler(int handle, event_handler *handler, Event_Type type) {
-        reactor_impl_->register_handler(handle, handler, type);
-    }
+    // virtual void register_handler(int handle, event_handler *handler, Event_Type type) {
+    //     reactor_impl_->register_handler(handle, handler, type);
+    // }
     virtual void remove_handler(event_handler *handler, Event_Type type) {
         reactor_impl_->remove_handler(handler, type);
     }
-    virtual void remove_handler(int handle, event_handler *handler, Event_Type type) {
-        reactor_impl_->remove_handler(handle, handler, type);
-    }
+    // virtual void remove_handler(int handle, event_handler *handler, Event_Type type) {
+    //     reactor_impl_->remove_handler(handle, handler, type);
+    // }
     void handle_events(std::chrono::microseconds *timeout = 0){
         reactor_impl_->handle_events(timeout);
     }

@@ -39,6 +39,13 @@ public:
         if(size_ > 0) return &set_;
         else return nullptr;
     }
+    //not const, and not return const
+    //select will change the fd_set when get the fd_set*
+    fd_set* get_select_fd_set_ptr(){
+        if(size_ > 0) 
+            return &set_;
+        return static_cast<fd_set*>(0);
+    }
 private:
     int         size_;
     int         max_handle_;
