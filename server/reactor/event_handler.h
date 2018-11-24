@@ -36,19 +36,19 @@ public:
     default_event_handler(int handle) : event_handler(handle){}
     ~default_event_handler(){}
     virtual void handle_input(int handle) override {
-        LOG(INFO) << "handle_input...";
+        LOG(INFO) << "handle_input handle: " << handle << "...";
     }
     virtual void handle_output(int handle) override {
-        LOG(INFO) << "handle_output...";
+        LOG(INFO) << "handle_output: " << handle << "...";
     }
     virtual void handle_timeout(int handle) override {
-        LOG(INFO) << "handle_timeout...";
+        LOG(INFO) << "handle_timeout: " << handle << "...";
     }
     virtual void handle_close(int handle) override {
-        LOG(INFO) << "handle_close...";
+        LOG(INFO) << "handle_close: " << handle << "...";
     }
     virtual void handle_signal(int handle) override {
-        LOG(INFO) << "handle_signal...";
+        LOG(INFO) << "handle_signal: " << handle << "...";
     }
 };
 } // reactor
