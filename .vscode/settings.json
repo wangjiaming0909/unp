@@ -51,7 +51,13 @@
         "tuple": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "codecvt": "cpp",
+        "condition_variable": "cpp",
+        "csignal": "cpp",
+        "unordered_set": "cpp",
+        "mutex": "cpp",
+        "cinttypes": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false,
     "editor.quickSuggestionsDelay": 1,
