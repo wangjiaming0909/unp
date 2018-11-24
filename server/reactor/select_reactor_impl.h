@@ -85,9 +85,8 @@ public:
         //if handle is the max_handle - 1
         int tmp = handle;
         if(current_max_handle_p_1_ == handle + 1){
-            while(table_[--tmp].handle_ == INVALID_HANDLE){
-                
-            }
+            while(table_[--tmp].handle_ == INVALID_HANDLE);
+            current_max_handle_p_1_ = tmp + 1;
         }
         table_[handle].event_handler_ = 0;
         table_[handle].event_type_ = 0;

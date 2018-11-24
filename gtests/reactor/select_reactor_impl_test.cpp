@@ -10,11 +10,13 @@ TEST(select_reactor_impl_test, test_set_table_size_1024){
     reactor::select_demultiplex_table table{1024};
     ASSERT_EQ(table.get_event_tuple_array().capacity(), 1024);
     ASSERT_EQ(table.get_event_tuple_array().size(), 0);
+    ASSERT_EQ(table.get_current_max_handle_p_1(), -1);
 }
 
 TEST(select_reactor_impl_test, test_invalid_capacity){
     reactor::select_demultiplex_table table{1025};
     ASSERT_EQ(table.get_event_tuple_array().capacity(), 1024);
+    ASSERT_EQ(table.get_current_max_handle_p_1(), -1);
 }
 
 TEST(select_reactor_impl_test, test_bind_event_tuple){
@@ -27,6 +29,7 @@ TEST(select_reactor_impl_test, test_bind_event_tuple){
     table.bind(event_tuple);
     ASSERT_EQ(table.get_event_tuple_array().capacity(), 4);
     ASSERT_EQ(table.get_event_tuple_array().size(), 2);
+    ASSERT_EQ(table.get_current_max_handle_p_1(), 2);
 }
 
 TEST(select_reactor_impl_test, test_bind_2_event_tuple_table_size){
@@ -42,4 +45,5 @@ TEST(select_reactor_impl_test, test_bind_2_event_tuple_table_size){
     table.bind(event_tuple2);
     ASSERT_EQ(table.get_event_tuple_array().capacity(), 4);
     ASSERT_EQ(table.get_event_tuple_array().size(), 4);
+    ASSERT_EQ(table.get_current_max_handle_p_1(), 4);
 }
