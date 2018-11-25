@@ -13,7 +13,7 @@ select_demultiplex_table::select_demultiplex_table(size_t size) : table_(){
 }
 event_handler* select_demultiplex_table::get_handler(int handle) const{
     if(!is_handle_in_range(handle)){
-        LOG(ERROR) << "handle is not in range, handle: " << handle;
+        LOG(WARNING) << "handle is not in range, handle: " << handle;
         return 0;
     }
     return table_[handle].event_handler_;
@@ -67,14 +67,14 @@ void select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
 
 int select_reactor_impl::select(std::chrono::microseconds* timeout){
     const int width = this->demux_table_.get_current_max_handle_p_1();
-    dispatch_set_.read_set = this->wait_set_.read_set;
-    dispatch_set_.write_set = this->wait_set_.write_set;
-    dispatch_set_.exception_set = this->wait_set_.exception_set;
+    dispatch_sets_.read_set = this->wait_sets_.read_set;
+    dispatch_sets_.write_set = this->wait_sets_.write_set;
+    dispatch_sets_.exception_set = this->wait_sets_.exception_set;
     timeval timeout_timeval = util::duration_to_timeval(*timeout);
     int number_of_active_handles = ::select(width, 
-                     dispatch_set_.read_set.get_select_fd_set_ptr(),
-                     dispatch_set_.write_set.get_select_fd_set_ptr(),
-                     dispatch_set_.exception_set.get_select_fd_set_ptr(),
+                     dispatch_sets_.read_set.get_select_fd_set_ptr(),
+                     dispatch_sets_.write_set.get_select_fd_set_ptr(),
+                     dispatch_sets_.exception_set.get_select_fd_set_ptr(),
                      &timeout_timeval);
     //!could be interrupted, restart?
     if(number_of_active_handles < 0){
@@ -93,7 +93,7 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
 }
 
 int select_reactor_impl::dispatch(){
-
+    
 }
 void select_reactor_impl::register_handler(event_handler* handler, Event_Type type) {
 
@@ -105,30 +105,50 @@ void select_reactor_impl::remove_handler(event_handler *handler, Event_Type type
 //dispatch io_handlers read_set, write_set, exception_set
 int select_reactor_impl::dispatch_io_handlers(int active_handle_count, int& io_handles_dispatched){
     int ret = dispatch_io_set(
-            active_handle_count, 
-            io_handles_dispatched, 
-            event_handler::READ_EVENT, 
-            &event_handler::handle_input);
+        active_handle_count, 
+        io_handles_dispatched, 
+        event_handler::READ_EVENT, 
+        this->dispatch_sets_.read_set,
+        this->ready_sets_.read_set,
+        &event_handler::handle_input);
     //TODO check ret
     ret = dispatch_io_set(
-            active_handle_count, 
-            io_handles_dispatched, 
-            event_handler::WRITE_EVENT, 
-            &event_handler::handle_output);
+        active_handle_count, 
+        io_handles_dispatched, 
+        event_handler::WRITE_EVENT, 
+        this->dispatch_sets_.write_set,
+        this->ready_sets_.write_set,
+        &event_handler::handle_output);
     //TODO check ret
     ret = dispatch_io_set(
-            active_handle_count, 
-            io_handles_dispatched, 
-            event_handler::EXCEPT_EVENT, 
-            &event_handler::handle_output);
+        active_handle_count, 
+        io_handles_dispatched, 
+        event_handler::EXCEPT_EVENT, 
+        this->dispatch_sets_.exception_set,
+        this->ready_sets_.exception_set,
+        &event_handler::handle_output);
     //TODO check ret
 }
 
 //
-int select_reactor_impl::dispatch_io_set(int number_of_active_handlers, 
-                    int& number_of_handlers_dispatched,
-                    event_handler::Event_Type type, //read, write or exception
-                    HANDLER callback){
-    int current_handle = 0;
-    while(dispatch_set_.)
+int select_reactor_impl::dispatch_io_set(
+        int number_of_active_handlers, 
+        int& number_of_handlers_dispatched,
+        event_handler::Event_Type type,//can tell us what we are doing: handling read, write or exception events
+        unp::handle_set& dispatch_set,
+        unp::handle_set& ready_set,
+        HANDLER callback){
+    int current_handle = -1;
+    //go throuth the handle_set, dispatch all the handles
+    while((current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE
+          && number_of_handlers_dispatched < number_of_active_handlers){
+        ++number_of_handlers_dispatched;
+        event_handler* handler = this->demux_table_.get_handler(current_handle);
+        if(handler == 0) return -1;
+        int ret = (handler->*callback) (current_handle);
+        //TODO ret handling
+        dispatch_set.unset_bit(current_handle);
+        ready_set.unset_bit(current_handle);
+    }
+    return 0;
 }

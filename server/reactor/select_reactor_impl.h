@@ -11,7 +11,7 @@
 
 namespace reactor{
 
-struct select_reactor_handle_set{
+struct select_reactor_handle_sets{
     unp::handle_set read_set;
     unp::handle_set write_set;
     unp::handle_set exception_set;
@@ -65,6 +65,7 @@ public:
 
 typedef int (event_handler::*HANDLER)(int);
 
+//?how to test it when using a system call select?
 class select_reactor_impl : public reactor_implementation{
 public:
     void handle_events(std::chrono::microseconds *timeout) override;
@@ -82,17 +83,19 @@ private:
         int number_of_active_handlers, 
         int& number_of_handlers_dispatched,
         Event_Type type,
+        unp::handle_set& dispatch_set,
+        unp::handle_set& ready_set,
         HANDLER callback);
 private:
     //track handles that are currently ready for dispatch
-    select_reactor_handle_set dispatch_set_;
+    select_reactor_handle_sets dispatch_sets_;
     //track handles that are waited for by <select>
-    select_reactor_handle_set wait_set_;
+    select_reactor_handle_sets wait_sets_;
     //track handles that are currently suspended
-    // select_reactor_handle_set suspend_set_;
+    // select_reactor_handle_sets suspend_set_;
     //track handles we are interested in for various events that must be dispatched
     //without going through <select>
-    select_reactor_handle_set ready_set;
+    select_reactor_handle_sets ready_sets_;
     select_demultiplex_table demux_table_;
     // event_handler 
 };

@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include "macros.h"
+#include "../../server/util/easylogging++.h"
 
 
 namespace unp{
@@ -11,28 +12,38 @@ class handle_set{
 public:
     handle_set(){ reset(); }
     ~handle_set(){}
-    handle_set(const fd_set &set) : current_handle_(INVALID_HANDLE){
+    handle_set(const fd_set &set) {
         reset();
         memcpy(&set_, &set, sizeof set_);
     }
     void reset(){
         max_handle_ = INVALID_HANDLE;
-        current_handle_ = INVALID_HANDLE;
         size_ = 0;
         FD_ZERO(&set_);
     }
-    bool is_set(int fd) const {
+    bool is_set(int handle) const {
         //why need cast ---ace
         // fd_set * set = const_cast<fd_set*>(&this->set_);
-        return FD_ISSET(fd, &set_);
+        return FD_ISSET(handle, &set_);
     }
-    void set_bit(int fd){
-        //check the fd and if it has been set in set_
-        if(fd != INVALID_HANDLE && !is_set(fd)){
-            FD_SET(fd, &set_);
+    void set_bit(int handle){
+        //check the handle and if it has been set in set_
+        if(handle != INVALID_HANDLE && !is_set(handle)){
+            FD_SET(handle, &set_);
             ++size_;
-            if(fd > max_handle_)//set the max_fd
-                max_handle_ = fd;
+            if(handle > max_handle_)//set the max_fd
+                max_handle_ = handle;
+        }
+    }
+    void unset_bit(int handle) {
+        if(handle != INVALID_HANDLE && handle < FD_SETSIZE && is_set(handle)){
+            FD_CLR(handle, &set_);
+            --size_;
+            if(handle == max_handle_){//if the unseted handle is the maximun handle, need to change the max_handle_
+                int tmp_handle = handle + 1;
+                while(!is_set(--tmp_handle));
+                max_handle_ = tmp_handle;
+            }
         }
     }
     int handles_count() const {return size_;}
@@ -51,8 +62,8 @@ public:
         //empty fd_set
         if(size_ <= 0) return INVALID_HANDLE;
 
-        int handle = 0;
-        while(!is_set(handle++));
+        int handle = -1;
+        while(!is_set(++handle));
         return handle;
     }
     int next_handle(int current_handle) {
@@ -62,7 +73,8 @@ public:
         }
         if(is_last_handle(current_handle)) 
             return INVALID_HANDLE;
-        while(!is_set(current_handle++));
+        current_handle -= 1;//minus 1
+        while(!is_set(++current_handle));//must use ++current_handle, not current_handle++
         return current_handle;
     }
 
