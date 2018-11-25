@@ -41,21 +41,21 @@ test: $(TEST_TARGET)
 
 
 $(TEST_TARGET): $(TEST_USED_OBJECTS) $(TEST_OBJS)
-	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -o $@ -L$(LIBS) $(LDFLAGS)
+	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -L $(LIBS) $(LDFLAGS) -o $@ 
 
 $(TEST_OBJS):$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp 
-	$(CC) $(DEFINES) $(FLAGS) $< -o $@ -I $(INCLUDES)
+	$(CC) $(DEFINES) $(FLAGS) $< -I $(INCLUDES) -o $@
 
 $(BUILDDIR):
 	$(MKDIR) $@
 
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $@ -L$(LIBS) $(LDFLAGS)
+	$(CC) $(OBJECTS) -L $(LIBS) $(LDFLAGS) -o $@
 	@echo "OK......"
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SOURCEDIR)/%.cpp
 	@$(MKDIR) $(dir $@)
-	$(CC) $(DEFINES) $(FLAGS) $< -o $@ -I $(INCLUDES)
+	$(CC) $(DEFINES) $(FLAGS) $< -I $(INCLUDES) -o $@
 
 testclean:FORCE
 	$(RM) $(TEST_OBJS) $(TEST_TARGET)

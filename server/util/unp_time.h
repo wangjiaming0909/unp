@@ -73,11 +73,11 @@ timeval duration_to_timeval(const DURATION& dura){
 template<typename DURATION>
 boost::shared_ptr<timeval> duration_to_timeval(const DURATION* dura){
     if(dura == 0){//means wait forever
-        return boost::make_shared<timeval>(0);
+        return boost::shared_ptr<timeval>{nullptr};
     }
-    seconds s = duration_cast<seconds>(dura);
-    microseconds ms = duration_cast<microseconds>(dura);
-    auto ret_ptr = boost::make_shared<timeval>(new timeval());
+    seconds s = duration_cast<seconds>(*dura);
+    microseconds ms = duration_cast<microseconds>(*dura);
+    boost::shared_ptr<timeval> ret_ptr{new timeval()};
     ret_ptr->tv_sec = s.count();
     ret_ptr->tv_usec = ms.count() - duration_cast<microseconds>(s).count();
     return ret_ptr;

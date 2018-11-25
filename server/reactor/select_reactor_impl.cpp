@@ -8,8 +8,7 @@ select_demultiplex_table::select_demultiplex_table(size_t size) : table_(){
     if(size > MAX_NUMBER_OF_HANDLE) {
         LOG(ERROR) << "select_demultiplex_table size specified is size, bigger than " 
                    << MAX_NUMBER_OF_HANDLE;
-        table_.resize(MAX_NUMBER_OF_HANDLE);
-    } else table_.resize(size);
+        table_.resize(MAX_NUMBER_OF_HANDLE); } else table_.resize(size);
 }
 event_handler* select_demultiplex_table::get_handler(int handle) const{
     if(!is_handle_in_range(handle)){
@@ -62,7 +61,7 @@ const long int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 
 void select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
     int n = this->select(timeout);
-    dispatch();
+    dispatch(n);
 }
 
 int select_reactor_impl::select(std::chrono::microseconds* timeout){
@@ -70,12 +69,12 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
     dispatch_sets_.read_set = this->wait_sets_.read_set;
     dispatch_sets_.write_set = this->wait_sets_.write_set;
     dispatch_sets_.exception_set = this->wait_sets_.exception_set;
-    timeval timeout_timeval = util::duration_to_timeval(*timeout);
+    auto timeout_timeval = util::duration_to_timeval<std::chrono::microseconds>(timeout);
     int number_of_active_handles = ::select(width, 
                      dispatch_sets_.read_set.get_select_fd_set_ptr(),
                      dispatch_sets_.write_set.get_select_fd_set_ptr(),
                      dispatch_sets_.exception_set.get_select_fd_set_ptr(),
-                     &timeout_timeval);
+                     timeout_timeval.get());
     //!could be interrupted, restart?
     if(number_of_active_handles < 0){
         return -1;
@@ -92,13 +91,31 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
     return number_of_active_handles;
 }
 
-int select_reactor_impl::dispatch(){
-    
+int select_reactor_impl::dispatch(int active_handle_count){
+    int number_of_handlers_dispatched = 0;
+    return dispatch_io_handlers(active_handle_count, number_of_handlers_dispatched);
 }
 void select_reactor_impl::register_handler(event_handler* handler, Event_Type type) {
 
 }
-void select_reactor_impl::remove_handler(event_handler *handler, Event_Type type) {
+void select_reactor_impl::unregister_handler(event_handler *handler, Event_Type type) {
+
+}
+void select_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type){
+    if(handle == INVALID_HANDLE || handler == 0 || type != event_handler::NONE){
+        return;
+    }
+    if(type == event_handler::READ_EVENT){
+        wait_sets_.read_set.set_bit(handle);
+    }else if(type == event_handler::WRITE_EVENT){
+        wait_sets_.write_set.set_bit(handle);
+    }else if(type == event_handler::EXCEPT_EVENT){
+        wait_sets_.exception_set.set_bit(handle);
+    }
+    demux_table_.bind(handle, handler, type);
+}
+
+void select_reactor_impl::unregister_handler(int handle, event_handler *handler, Event_Type type){
 
 }
 

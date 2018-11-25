@@ -7,17 +7,11 @@ namespace reactor{
 
 class poll_reactor_iml : public reactor_implementation{
 public:
-    void handle_events(std::chrono::microseconds *timeout) override{
-
-    }
-    void register_handler(event_handler* handler, Event_Type type) override{
-
-    }
-    // void register_handler(int handle, event_handler *handler, Event_Type type) override{ }
-    void remove_handler(event_handler *handler, Event_Type type) override{
-
-    }
-    // void remove_handler(int handle, event_handler *handler, Event_Type type) override{ }
+    void handle_events(std::chrono::microseconds *timeout) override{ }
+    void register_handler(event_handler* handler, Event_Type type) override{ }
+    void register_handler(int handle, event_handler *handler, Event_Type type) override{ }
+    void unregister_handler(event_handler *handler, Event_Type type) override{ }
+    void unregister_handler(int handle, event_handler *handler, Event_Type type) override{ }
 private:
     // demultiplex_table demux_table_;
 };

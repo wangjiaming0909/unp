@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 #include "../../server/reactor/select_reactor_impl.h"
+#include "../../server/reactor/event_handler.h"
 
 TEST(select_reactor_impl_test, test_max_number_of_handles){
     long int number_of_handles = reactor::select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
@@ -57,4 +58,14 @@ TEST(select_reactor_impl_test, test_bind_3_event_tuple_table_size_and_unbind){
     ASSERT_EQ(table.get_current_max_handle_p_1(), 5);
     table.unbind(handle3);
     ASSERT_EQ(table.get_current_max_handle_p_1(), 0);
+}
+
+TEST(select_reactor_impl_test, test_select_and_dispatch_events){
+    using namespace reactor;
+    select_reactor_impl react{};
+    int handle1 = 1;
+    default_event_handler handler1{handle1};
+    react.register_handler(handle1, &handler1, event_handler::READ_EVENT);
+    react.handle_events(0);
+    ASSERT_EQ(1, 1);
 }

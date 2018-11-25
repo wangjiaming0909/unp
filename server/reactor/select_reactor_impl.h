@@ -12,6 +12,10 @@
 namespace reactor{
 
 struct select_reactor_handle_sets{
+    select_reactor_handle_sets() 
+        : read_set()
+        , write_set()
+        , exception_set(){}
     unp::handle_set read_set;
     unp::handle_set write_set;
     unp::handle_set exception_set;
@@ -34,7 +38,7 @@ struct select_event_tuple{
 class select_demultiplex_table{
 public:
     using Event_Type = event_handler::Event_Type;
-    select_demultiplex_table(size_t capacity);
+    select_demultiplex_table(size_t capacity = 8);
     event_handler* get_handler(int handle) const;
     const std::vector<select_event_tuple>& get_event_tuple_array() const { return table_; }
     int bind(int handle, event_handler* handler, Event_Type type);
@@ -68,14 +72,20 @@ typedef int (event_handler::*HANDLER)(int);
 //?how to test it when using a system call select?
 class select_reactor_impl : public reactor_implementation{
 public:
+    select_reactor_impl() 
+        : reactor_implementation()
+        , dispatch_sets_()
+        , wait_sets_()
+        , ready_sets_()
+        , demux_table_(){}
     void handle_events(std::chrono::microseconds *timeout) override;
     void register_handler(event_handler* handler, Event_Type type) override;
-    void remove_handler(event_handler *handler, Event_Type type) override;
-    // void register_handler(int handle, event_handler *handler, Event_Type type) override{ }
-    // void remove_handler(int handle, event_handler *handler, Event_Type type) override{ }
+    void unregister_handler(event_handler *handler, Event_Type type) override;
+    void register_handler(int handle, event_handler *handler, Event_Type type) override;
+    void unregister_handler(int handle, event_handler *handler, Event_Type type) override;
 private:
     int select(std::chrono::microseconds* timeout);
-    int dispatch();
+    int dispatch(int active_handle_count);
 
 //for io_dispatching
     int dispatch_io_handlers(int active_handle_count, int& io_handles_dispatched);

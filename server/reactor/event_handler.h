@@ -18,7 +18,6 @@ public:
         TIMEOUT_EVENT = 0x010,
         SIGNAL_EVENT = 0x020,
         CLOSE_EVENT = 0x040,
-        
     };
     event_handler(int handle) : handle_(handle){};
     virtual int handle_input(int handle) = 0;
@@ -39,7 +38,9 @@ public:
     default_event_handler(int handle) : event_handler(handle){}
     ~default_event_handler(){}
     virtual int handle_input(int handle) override {
-        LOG(INFO) << "handle_input handle: " << handle << "...";
+        char buffer[32] = {};
+        int reads = ::read(handle, buffer, 32);
+        LOG(INFO) << "handle_input handle: " << handle << ", " << reads << " bytes read: " << buffer;
     }
     virtual int handle_output(int handle) override {
         LOG(INFO) << "handle_output: " << handle << "...";
