@@ -76,7 +76,15 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
                      dispatch_set_.write_set.get_select_fd_set_ptr(),
                      dispatch_set_.exception_set.get_select_fd_set_ptr(),
                      &timeout_timeval);
-    // if(number_of_active_handles < 0)   
+    if(number_of_active_handles < 0){
+        return -1;
+    }
+    if(number_of_active_handles == 0 && timeout && timeout->count() != 0){
+        errno = ETIMEDOUT;
+        return -1;
+    }
+    //check the fds
+
 }
 
 int select_reactor_impl::dispatch(){
