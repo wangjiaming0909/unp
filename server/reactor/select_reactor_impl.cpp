@@ -76,6 +76,7 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
                      dispatch_set_.write_set.get_select_fd_set_ptr(),
                      dispatch_set_.exception_set.get_select_fd_set_ptr(),
                      &timeout_timeval);
+    //!could be interrupted, restart?
     if(number_of_active_handles < 0){
         return -1;
     }
@@ -84,7 +85,11 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
         return -1;
     }
     //check the fds
-
+    if(number_of_active_handles > 0){
+        return number_of_active_handles;
+    }
+    //TODO what if number_of_active_handles == 0 and not timeout
+    return number_of_active_handles;
 }
 
 int select_reactor_impl::dispatch(){
@@ -95,4 +100,35 @@ void select_reactor_impl::register_handler(event_handler* handler, Event_Type ty
 }
 void select_reactor_impl::remove_handler(event_handler *handler, Event_Type type) {
 
+}
+
+//dispatch io_handlers read_set, write_set, exception_set
+int select_reactor_impl::dispatch_io_handlers(int active_handle_count, int& io_handles_dispatched){
+    int ret = dispatch_io_set(
+            active_handle_count, 
+            io_handles_dispatched, 
+            event_handler::READ_EVENT, 
+            &event_handler::handle_input);
+    //TODO check ret
+    ret = dispatch_io_set(
+            active_handle_count, 
+            io_handles_dispatched, 
+            event_handler::WRITE_EVENT, 
+            &event_handler::handle_output);
+    //TODO check ret
+    ret = dispatch_io_set(
+            active_handle_count, 
+            io_handles_dispatched, 
+            event_handler::EXCEPT_EVENT, 
+            &event_handler::handle_output);
+    //TODO check ret
+}
+
+//
+int select_reactor_impl::dispatch_io_set(int number_of_active_handlers, 
+                    int& number_of_handlers_dispatched,
+                    event_handler::Event_Type type, //read, write or exception
+                    HANDLER callback){
+    int current_handle = 0;
+    while(dispatch_set_.)
 }

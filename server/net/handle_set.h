@@ -11,12 +11,13 @@ class handle_set{
 public:
     handle_set(){ reset(); }
     ~handle_set(){}
-    handle_set(const fd_set &set){
+    handle_set(const fd_set &set) : current_handle_(INVALID_HANDLE){
         reset();
         memcpy(&set_, &set, sizeof set_);
     }
     void reset(){
         max_handle_ = INVALID_HANDLE;
+        current_handle_ = INVALID_HANDLE;
         size_ = 0;
         FD_ZERO(&set_);
     }
@@ -34,7 +35,7 @@ public:
                 max_handle_ = fd;
         }
     }
-    int nums_set() const{return size_;}
+    int handles_count() const {return size_;}
     fd_set* get_fd_set(){ 
         if(size_ > 0) return &set_;
         else return nullptr;
@@ -46,6 +47,30 @@ public:
             return &set_;
         return static_cast<fd_set*>(0);
     }
+    int first_handle() const {
+        //empty fd_set
+        if(size_ <= 0) return INVALID_HANDLE;
+
+        int handle = 0;
+        while(!is_set(handle++));
+        return handle;
+    }
+    int next_handle(int current_handle) {
+        if(!is_set(current_handle)){
+            LOG(WARNING) << "the handle is not in the set, handle: " << current_handle;
+            return INVALID_HANDLE;
+        }
+        if(is_last_handle(current_handle)) 
+            return INVALID_HANDLE;
+        while(!is_set(current_handle++));
+        return current_handle;
+    }
+
+    bool is_last_handle(int handle) const {
+        if(handle == max_handle_) return true;
+        return false;
+    }
+
 private:
     int         size_;
     int         max_handle_;

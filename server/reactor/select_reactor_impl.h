@@ -63,6 +63,7 @@ public:
     static const long int MAX_NUMBER_OF_HANDLE = FD_SETSIZE;
 };
 
+typedef int (event_handler::*HANDLER)(int);
 
 class select_reactor_impl : public reactor_implementation{
 public:
@@ -74,6 +75,14 @@ public:
 private:
     int select(std::chrono::microseconds* timeout);
     int dispatch();
+
+//for io_dispatching
+    int dispatch_io_handlers(int active_handle_count, int& io_handles_dispatched);
+    int dispatch_io_set(
+        int number_of_active_handlers, 
+        int& number_of_handlers_dispatched,
+        Event_Type type,
+        HANDLER callback);
 private:
     //track handles that are currently ready for dispatch
     select_reactor_handle_set dispatch_set_;
