@@ -3,6 +3,7 @@
 
 #include "../../server/util/easylogging++.h"
 #include <poll.h>
+#include <unistd.h>
 
 namespace reactor
 {
