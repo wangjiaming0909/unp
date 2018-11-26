@@ -8,8 +8,10 @@ select_demultiplex_table::select_demultiplex_table(size_t size) : table_(){
     if(size > MAX_NUMBER_OF_HANDLE) {
         LOG(ERROR) << "select_demultiplex_table size specified is size, bigger than " 
                    << MAX_NUMBER_OF_HANDLE;
-        table_.resize(MAX_NUMBER_OF_HANDLE); } else table_.resize(size);
+        table_.resize(MAX_NUMBER_OF_HANDLE); 
+    } else table_.resize(size);
 }
+
 event_handler* select_demultiplex_table::get_handler(int handle) const{
     if(!is_handle_in_range(handle)){
         LOG(WARNING) << "handle is not in range, handle: " << handle;
@@ -17,6 +19,7 @@ event_handler* select_demultiplex_table::get_handler(int handle) const{
     }
     return table_[handle].event_handler_;
 }
+
 int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
     if(!is_valid_handle(handle) || handler == 0) {
         LOG(ERROR) << "handle is not in range or handler is null handle: " 
@@ -33,11 +36,13 @@ int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Typ
     }
     return 0;
 }
+
 int select_demultiplex_table::bind(const select_event_tuple& event_tuple){
     return bind( event_tuple.handle_, 
                  event_tuple.event_handler_, 
                  event_tuple.event_type_);
 }
+
 int select_demultiplex_table::unbind(int handle){
     if(!is_handle_in_range(handle) || table_[handle].event_handler_ == 0){
         LOG(WARNING) << "handle is not in the table, handle: " << handle;
@@ -95,12 +100,15 @@ int select_reactor_impl::dispatch(int active_handle_count){
     int number_of_handlers_dispatched = 0;
     return dispatch_io_handlers(active_handle_count, number_of_handlers_dispatched);
 }
+
 void select_reactor_impl::register_handler(event_handler* handler, Event_Type type) {
 
 }
+
 void select_reactor_impl::unregister_handler(event_handler *handler, Event_Type type) {
 
 }
+
 void select_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type){
     if(handle == INVALID_HANDLE || handler == 0 || type != event_handler::NONE){
         return;
