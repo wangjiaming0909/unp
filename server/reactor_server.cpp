@@ -20,7 +20,6 @@ int reactor_server::stop(){
 }
 
 void reactor_server::initialize(){
-
 }
 
 void reactor_server::bind(){

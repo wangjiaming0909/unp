@@ -21,6 +21,7 @@ public:
         CLOSE_EVENT = 0x040,
     };
     event_handler(int handle) : handle_(handle){};
+    event_handler(){};
     virtual int handle_input(int handle) = 0;
     virtual int handle_output(int handle) = 0;
     virtual int handle_timeout(int handle) = 0;

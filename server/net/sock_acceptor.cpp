@@ -1,7 +1,7 @@
 #include "sock_acceptor.h"
 
 
-net::sock_acceptor::sock_acceptor(){}
+// net::sock_acceptor::sock_acceptor(){}
 
 net::sock_acceptor::~sock_acceptor(){}
 
@@ -10,6 +10,7 @@ net::sock_acceptor::sock_acceptor(const inet_addr& local_addr,
             int protocol_family,
             int backlog,
             int protocol){
+    sock_fd_ = boost::make_shared<inet_sock>();
     if(this->open(local_addr, reuse_addr, protocol_family, backlog, protocol) == -1){
         LOG(ERROR) << "sock_accept: func open error" ;
     }
@@ -135,4 +136,7 @@ int net::sock_acceptor::shared_accept_finish(sock_stream& client_stream,
         ret = client_stream.get_sock_fd().restore_blocking();
     }
     return ret;
+}
+int net::sock_acceptor::get_handle() const{
+    return sock_fd_->get_handler();
 }
