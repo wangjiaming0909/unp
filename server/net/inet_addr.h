@@ -25,7 +25,7 @@ int addr_to_string(char* buffer, size_t size, const sockaddr_in* ip4_addr , int 
 
 class inet_addr : public addr{
 public:
-	using host_byte_order_port = u_short;
+	using host_byte_order_port = in_port_t;
     inet_addr();
 //    inet_addr(const inet_addr& orig);
 //	inet_addr(const sockaddr_in *addr, int len);

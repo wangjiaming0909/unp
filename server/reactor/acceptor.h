@@ -5,9 +5,10 @@
 #include "../net/inet_addr.h"
 
 namespace reactor{
-enum class IO_TYPE{
-    SELECT, POLL, EPOLL
-};
+// enum class IO_TYPE{
+//     SELECT, POLL, EPOLL
+// };
+
 enum {
     NOT_REUSE_ADDR = 0,
     REUSE_ADDR = 1
@@ -15,10 +16,12 @@ enum {
 
 class reactor_acceptor : public event_handler{
 public:
-    reactor_acceptor(const net::inet_addr& local_addr, IO_TYPE io_type);  
+    //here use a inet_addr, so that we can specify an interface to listen
+    reactor_acceptor(const net::inet_addr& local_addr);  
     ~reactor_acceptor();
     virtual int handle_input(int handle) override;
-    virtual int handle_output(int handle) override;
+    //accept do not need output
+    // virtual int handle_output(int handle) override;
     virtual int handle_timeout(int handle) override;
     virtual int handle_close(int handle) override;
     virtual int handle_signal(int handle) override;
@@ -27,7 +30,6 @@ private:
     int open();
     int close();
 private:
-    IO_TYPE                 io_type_;
     net::sock_acceptor	    acceptor_;
     net::inet_addr          local_addr_;
 };

@@ -11,9 +11,9 @@ net::sock_acceptor::sock_acceptor(const inet_addr& local_addr,
             int backlog,
             int protocol){
     sock_fd_ = boost::make_shared<inet_sock>();
-    if(this->open(local_addr, reuse_addr, protocol_family, backlog, protocol) == -1){
-        LOG(ERROR) << "sock_accept: func open error" ;
-    }
+    // if(this->open(local_addr, reuse_addr, protocol_family, backlog, protocol) == -1){
+    //     LOG(ERROR) << "sock_accept: func open error" ;
+    // }
 }
 
 int net::sock_acceptor::open(const inet_addr& local_addr,

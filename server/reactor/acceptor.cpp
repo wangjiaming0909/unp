@@ -1,11 +1,7 @@
 #include "acceptor.h"
 
-reactor::reactor_acceptor:: reactor_acceptor(
-        const net::inet_addr& local_addr, 
-        IO_TYPE io_type)
-    : io_type_(io_type)
-    , acceptor_(local_addr)
-    , local_addr_(local_addr){ 
+reactor::reactor_acceptor:: reactor_acceptor( const net::inet_addr& local_addr)
+        : acceptor_(local_addr) , local_addr_(local_addr){ 
     this->open();
 }
 
@@ -24,9 +20,6 @@ int reactor::reactor_acceptor::close(){
 
 int reactor::reactor_acceptor::handle_input(int handle){
     
-}
-int reactor::reactor_acceptor::handle_output(int handle){
-
 }
 int reactor::reactor_acceptor::handle_timeout(int handle){
 
