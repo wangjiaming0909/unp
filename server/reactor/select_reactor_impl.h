@@ -90,8 +90,8 @@ private:
 //for io_dispatching
     int dispatch_io_handlers(int active_handle_count, int& io_handles_dispatched);
     int dispatch_io_set(
-        int number_of_active_handlers, 
-        int& number_of_handlers_dispatched,
+        int number_of_active_handles, 
+        int& number_of_handles_dispatched,
         Event_Type type,
         unp::handle_set& dispatch_set,
         unp::handle_set& ready_set,

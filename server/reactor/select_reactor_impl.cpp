@@ -97,8 +97,8 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
 }
 
 int select_reactor_impl::dispatch(int active_handle_count){
-    int number_of_handlers_dispatched = 0;
-    return dispatch_io_handlers(active_handle_count, number_of_handlers_dispatched);
+    int number_of_handles_dispatched = 0;
+    return dispatch_io_handlers(active_handle_count, number_of_handles_dispatched);
 }
 
 void select_reactor_impl::register_handler(event_handler* handler, Event_Type type) {
@@ -157,8 +157,8 @@ int select_reactor_impl::dispatch_io_handlers(int active_handle_count, int& io_h
 
 //
 int select_reactor_impl::dispatch_io_set(
-        int number_of_active_handlers, 
-        int& number_of_handlers_dispatched,
+        int number_of_active_handles, 
+        int& number_of_handles_dispatched,
         event_handler::Event_Type type,//can tell us what we are doing: handling read, write or exception events
         unp::handle_set& dispatch_set,
         unp::handle_set& ready_set,
@@ -166,8 +166,8 @@ int select_reactor_impl::dispatch_io_set(
     int current_handle = -1;
     //go throuth the handle_set, dispatch all the handles
     while((current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE
-          && number_of_handlers_dispatched < number_of_active_handlers){
-        ++number_of_handlers_dispatched;
+          && number_of_handles_dispatched < number_of_active_handles){
+        ++number_of_handles_dispatched;
         event_handler* handler = this->demux_table_.get_handler(current_handle);
         if(handler == 0) return -1;
         int ret = (handler->*callback) (current_handle);

@@ -16,7 +16,7 @@ enum {
 
 class reactor_acceptor : public event_handler{
 public:
-    //here use a inet_addr, so that we can specify an interface to listen
+    //here use a inet_addr, so that we can specify an interface and a port to listen
     reactor_acceptor(const net::inet_addr& local_addr);  
     ~reactor_acceptor();
     virtual int handle_input(int handle) override;

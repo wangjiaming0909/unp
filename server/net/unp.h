@@ -2,7 +2,7 @@
 #define _UNP_H_
 #include <chrono>
 
-#define INVALID_HANDLER -1
+#define INVALID_HANDLE -1
 using namespace std::chrono;
 
 namespace unp{

@@ -61,7 +61,7 @@ int net::sock_acceptor::accept(
 
     for(;;){
         LOG(INFO) << "invoking accept...";
-        int client_fd = ::accept(sock_fd_->get_handler(), addr, len_ptr);
+        int client_fd = ::accept(sock_fd_->get_handle(), addr, len_ptr);
         //restart set and accept failed and it was interrupted, then continue
         if(restart && client_fd == -1 && errno == EINTR){
             LOG(INFO) << "interrupted... restarting.....";
@@ -71,7 +71,7 @@ int net::sock_acceptor::accept(
         ret = client_stream.set_handle(client_fd);
         //accept returned successfully, remote addr was set, addrlen was set too
         //and we write it to the remote_addr pointer
-        if(ret != INVALID_HANDLER && remote_addr){
+        if(ret != INVALID_HANDLE && remote_addr){
             remote_addr->set_size(len);
             if(addr) remote_addr->set_type(addr->sa_family);
             break;
@@ -91,7 +91,7 @@ int net::sock_acceptor::shared_open(
         return -1;
     }
     LOG(INFO) << "trying to bind to: " << *(local_sap.get_address_string().get()) << ":" << local_sap.get_port_number() << "..." ;
-    int ret = ::bind(sock_fd_->get_handler(), 
+    int ret = ::bind(sock_fd_->get_handle(), 
         local_sap.get_sockaddr_ptr().get(), 
         local_sap.get_size());
     if(ret != 0){
@@ -99,7 +99,7 @@ int net::sock_acceptor::shared_open(
         return ret;
     }
     LOG(INFO) << "listening on: " << *(local_sap.get_address_string().get()) << ":" << local_sap.get_port_number() << "...";
-    ret = ::listen(sock_fd_->get_handler(), backlog);
+    ret = ::listen(sock_fd_->get_handle(), backlog);
     if(ret != 0){
         LOG(ERROR) << "listen error: " <<strerror(errno);
         return ret;
@@ -113,7 +113,7 @@ int net::sock_acceptor::shared_accept_start(microseconds *timeout,
     int ret = 0;
     if(timeout){//using timeout
         auto timeout_milliseconds = std::chrono::duration_cast<milliseconds>(*timeout);
-        ret = unp::handle_timed_accept_using_poll(sock_fd_->get_handler(), &timeout_milliseconds, restart);
+        ret = unp::handle_timed_accept_using_poll(sock_fd_->get_handle(), &timeout_milliseconds, restart);
         if(ret == -1) return -1;
         else{// ret != -1 then re == 0
             //means succeed, check the blocking mode, 
@@ -138,5 +138,5 @@ int net::sock_acceptor::shared_accept_finish(sock_stream& client_stream,
     return ret;
 }
 int net::sock_acceptor::get_handle() const{
-    return sock_fd_->get_handler();
+    return sock_fd_->get_handle();
 }
