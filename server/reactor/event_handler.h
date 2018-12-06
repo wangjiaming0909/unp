@@ -30,10 +30,7 @@ public:
     virtual int get_handle() const {return handle_;}
 protected:
     virtual ~event_handler(){}
-private:
-    int handle_;
-};
-
+private: int handle_; };
 
 class default_event_handler : public event_handler{
 public:

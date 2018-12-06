@@ -83,7 +83,7 @@ private:
 		// 			new_stream.get_handle(), 
 		// 			&timeout_milli_seconds);
 		//timeout or poll error
-		if(h == INVALID_HANDLER) {
+        if(h == INVALID_HANDLE) {
 			new_stream.close();//we need to close the fd
 			return -1;
 		}
