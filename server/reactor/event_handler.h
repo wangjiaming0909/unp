@@ -4,9 +4,18 @@
 #include "../../server/util/easylogging++.h"
 #include <poll.h>
 #include <unistd.h>
+#include "../net/macros.h"
 
 namespace reactor
 {
+class reactor;
+
+//class event_handler
+/*
+    1, event_handler do not has handle member in it
+    2, event_handler need a reactor pointer as a parameter of the constructor, and a member of reactor*
+    3, all the handle_* function can't be pure virtual
+*/
 class event_handler{
 public:
     typedef unsigned int Event_Type;
@@ -20,21 +29,27 @@ public:
         SIGNAL_EVENT = 0x020,
         CLOSE_EVENT = 0x040,
     };
-    event_handler(int handle) : handle_(handle){}
-    event_handler(){}
-    virtual int handle_input(int handle) = 0;
-    virtual int handle_output(int handle) = 0;
-    virtual int handle_timeout(int handle) = 0;
-    virtual int handle_close(int handle) = 0;
-    virtual int handle_signal(int handle) = 0;
-    virtual int get_handle() const {return handle_;}
+    event_handler(reactor* react) : reactor_(react) {}
+    //these functions can't be pure virtual
+    //because some handlers may not need to implement all of them
+    //so the these handlers can be non-abstract classes
+    virtual int handle_input(int handle){}
+    virtual int handle_output(int handle){}
+    virtual int handle_timeout(int handle){}
+    virtual int handle_close(int handle){}
+    virtual int handle_signal(int handle){}
+    virtual int get_handle() const{}
+    virtual void set_handle(int handle){}
 protected:
     virtual ~event_handler(){}
-private: int handle_; };
+    reactor* reactor_;
+};
 
 class default_event_handler : public event_handler{
 public:
-    default_event_handler(int handle) : event_handler(handle){}
+    default_event_handler(reactor* react)
+        : event_handler(react)
+    {}
     ~default_event_handler(){}
     virtual int handle_input(int handle) override {
         char buffer[32] = {};

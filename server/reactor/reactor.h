@@ -7,10 +7,10 @@
 namespace reactor {
 class reactor{
 public:
+    using Event_Type = event_handler::Event_Type;
     //should I alloc the memory of reactor_impl, new it in this constructor
     reactor(reactor_implementation* reactor_impl = 0) : reactor_impl_(reactor_impl){}
     virtual ~reactor(){}
-    using Event_Type = event_handler::Event_Type;
     virtual void register_handler(event_handler* handler, Event_Type type){
         reactor_impl_->register_handler(handler, type);
     }
@@ -35,11 +35,9 @@ public:
     }
 private:
     boost::shared_ptr<reactor_implementation> reactor_impl_;
+    //static shared_ptr, means that this object will not be deleted
     static boost::shared_ptr<reactor> reactor_ptr_;
 };
-
-boost::shared_ptr<reactor> reactor::reactor_ptr_ = 0;
-
 
 } // reactor
 

@@ -1,17 +1,24 @@
 #include "acceptor.h"
 
-reactor::reactor_acceptor:: reactor_acceptor( const net::inet_addr& local_addr)
-        : acceptor_(local_addr) , local_addr_(local_addr){ 
+reactor::reactor_acceptor:: reactor_acceptor(reactor* react, const net::inet_addr& local_addr)
+        : event_handler(react), 
+          acceptor_(local_addr), 
+          local_addr_(local_addr){ 
     this->open();
 }
 
 reactor::reactor_acceptor::~reactor_acceptor(){ }
 
-int reactor::reactor_acceptor::get_handle() const{
-    return acceptor_.get_handle();
-}
 int reactor::reactor_acceptor::open(){
-    return acceptor_.open(local_addr_, REUSE_ADDR);
+    int ret = 0;
+    if((ret = acceptor_.open(local_addr_, REUSE_ADDR)) < 0){
+        LOG(ERROR) << "sock_acceptor open error..." << strerror(errno);
+        return ret;
+    }
+    //open succeed
+    //register to the reactor
+    reactor_->register_handler(this, event_handler::ACCEPT_EVENT);
+    return 0;
 }
 
 int reactor::reactor_acceptor::close(){
