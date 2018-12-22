@@ -5,8 +5,8 @@ namespace thread{
 template <typename lock_type>
 class lock_guard{
 public:
-    lock_guard(const lock_type& lock) : locker_(&lock){
-        this->lock();
+    lock_guard(lock_type& lock) : locker_(&lock){
+        this->locker_->lock();
     }
     ~lock_guard(){
         locker_->unlock();
