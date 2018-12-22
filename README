@@ -1,2 +1,5 @@
 boost:
     bjam --with-thread --with-system
+
+filtering gtests:
+    "args": ["--gtest_filter=select_reactor_impl_test.*"]

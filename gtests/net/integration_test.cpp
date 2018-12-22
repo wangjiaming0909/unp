@@ -15,7 +15,7 @@ protected:
 
 class server : public testing::Test{
 protected:
-   server(){} 
+   server() : server_addr_(), acceptor_(server_addr_){} 
    ~server() override{}
     void SetUp() override{
         server_addr_ = inet_addr{};
@@ -23,8 +23,8 @@ protected:
         acceptor_ = net::sock_acceptor(server_addr_, 1);
     }
     void TearDown() override{}
-    net::sock_acceptor acceptor_;
     inet_addr server_addr_;
+    net::sock_acceptor acceptor_;
 };
 
 TEST_F(server, as_a_server){
