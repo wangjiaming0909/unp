@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <string.h>
 #include "macros.h"
-#include "../../server/util/easylogging++.h"
+#include "server/util/easylogging++.h"
 
 
 namespace unp{

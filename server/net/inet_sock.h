@@ -9,7 +9,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include "macros.h"
-#include "../util/easylogging++.h"
+#include "server/util/easylogging++.h"
 namespace net{
 
 enum class sock_type{

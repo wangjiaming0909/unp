@@ -1,7 +1,7 @@
 #ifndef _UNP_THREAD_BASE_H_
 #define _UNP_THREAD_BASE_H_
 
-#include "../util/XString.h"
+#include "server/util/XString.h"
 #include "pmutex.h"
 #include "stdmutex.h"
 #include "pcondition.h"

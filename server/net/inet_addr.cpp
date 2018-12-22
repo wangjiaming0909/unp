@@ -18,7 +18,7 @@
 #include <cstdio>
 #include <boost/scoped_array.hpp>
 #include <exception>
-#include "../util/easylogging++.h"
+#include "server/util/easylogging++.h"
 
 #include "inet_addr.h"
 

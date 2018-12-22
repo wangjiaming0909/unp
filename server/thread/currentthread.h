@@ -1,7 +1,7 @@
 #ifndef _CURRENT_THREAD_H_
 #define _CURRENT_THREAD_H_
 
-#include "../util/XString.h"
+#include "server/util/XString.h"
 namespace thread{
 
 template <typename THREAD_IMP, typename THREAD_ID_TYPE>

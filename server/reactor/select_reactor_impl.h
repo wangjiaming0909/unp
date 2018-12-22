@@ -3,9 +3,9 @@
 
 #include "reactor_implementation.h"
 #include <vector>
-#include "../util/easylogging++.h"
-#include "../net/macros.h"
-#include "../net/handle_set.h"
+#include "server/util/easylogging++.h"
+#include "server/net/macros.h"
+#include "server/net/handle_set.h"
 #include "event_handler.h"
 #include <sys/select.h>
 

@@ -3,7 +3,7 @@
 
 #include <deque>
 #include <mutex>
-#include "../util/XString.h"
+#include "server/util/XString.h"
 
 namespace thread{
 class message_queue{

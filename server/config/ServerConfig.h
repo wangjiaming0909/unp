@@ -17,11 +17,11 @@
 #include <unistd.h>
 #include <utility>
 #include "optionValidator.h"
-#include "../util/XString.h"
+#include "server/util/XString.h"
 #include <errno.h>
-#include "../util/FileUtil.h"
+#include "server/util/FileUtil.h"
 #include "configoption.h"
-#include "../util/easylogging++.h"
+#include "server/util/easylogging++.h"
 
 namespace config{
 using namespace util;

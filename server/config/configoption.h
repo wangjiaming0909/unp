@@ -1,7 +1,7 @@
 #ifndef CONFIGOPTION_H
 #define CONFIGOPTION_H
 
-#include "../util/XString.h"
+#include "server/util/XString.h"
 namespace config{
 
 template <typename T>

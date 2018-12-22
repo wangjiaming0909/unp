@@ -1,12 +1,12 @@
 #include <exception>
 #include <cstdlib>
-#include "config/ServerConfig.h"
-#include "util/easylogging++.h"
-#include "thread/thread_pool.h"
-#include "Server.h"
-#include "net/sock_connector.h"
-#include "main_helper.h"
-#include "reactor/reactor.h"
+#include "server/config/ServerConfig.h"
+#include "server/util/easylogging++.h"
+#include "server/thread/thread_pool.h"
+#include "server/Server.h"
+#include "server/net/sock_connector.h"
+#include "server/main_helper.h"
+#include "server/reactor/reactor.h"
 
 
 // INITIALIZE_NULL_EASYLOGGINGPP

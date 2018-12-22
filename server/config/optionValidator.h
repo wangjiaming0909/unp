@@ -5,7 +5,7 @@
 #define _H_OPTIONVALIDATOR_
 
 #include <utility>
-#include "../util/XString.h"
+#include "server/util/XString.h"
 using namespace util;
 
 namespace config{

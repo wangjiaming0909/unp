@@ -3,7 +3,7 @@
 
 #include "sock_stream.h"
 #include "inet_addr.h"
-#include "../util/easylogging++.h"
+#include "server/util/easylogging++.h"
 
 namespace net{
 

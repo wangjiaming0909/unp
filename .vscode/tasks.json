@@ -16,6 +16,10 @@
         {
             "label": "clean ",
             "type": "shell",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
             "command": "make",
             "args": [
                 "clean"

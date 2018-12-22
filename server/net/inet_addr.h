@@ -15,7 +15,7 @@
 #define INET_ADDR_H
 #include "addr.h"
 #include <netinet/in.h>
-#include "../../server/util/XString.h"
+#include "server/util/XString.h"
 #include <boost/shared_ptr.hpp>
 #include <boost/scoped_array.hpp>
 

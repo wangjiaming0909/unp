@@ -1,10 +1,10 @@
 #ifndef _UNP_REACTOR_EVENT_HANDLER_H_
 #define _UNP_REACTOR_EVENT_HANDLER_H_
 
-#include "../../server/util/easylogging++.h"
+#include "server/util/easylogging++.h"
 #include <poll.h>
 #include <unistd.h>
-#include "../net/macros.h"
+#include "server/net/macros.h"
 
 namespace reactor
 {
