@@ -17,7 +17,7 @@ public:
     using guard_type = lock_guard<mutex_type>;
     using cv_type = std::condition_variable;
     using lock_type = std::unique_lock<mutex_type>;
-    message_queue(size_t hwm, size_t lwm);
+    message_queue(size_t hwm = 1024, size_t lwm = 1024);
     int open();
     int close();
     ~message_queue();
@@ -32,6 +32,8 @@ public:
 protected:
     int wait_not_empty_condition(const microseconds& timeout);
     int wait_not_full_condition(const microseconds& timeout);
+    void signal_enqueue_waiters(){ not_full_cv_.notify_one(); }
+    void signal_dequeue_waiters(){ not_empty_cv_.notify_one(); }
 
 private:
     size_t                                          high_water_mark_;

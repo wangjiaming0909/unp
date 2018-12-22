@@ -24,13 +24,17 @@ int message_queue::enqueue_head(const util::string& message, const microseconds&
     if(wait_not_full_condition(timeout) != 0)//timeout
         return -1;
     deque_ptr_->push_front(message);
+    if(deque_ptr_->size() < high_water_mark_)
+    signal_dequeue_waiters();
     return 0;
 }
+    
 int message_queue::enqueue_tail(const util::string& message, const microseconds& timeout){
     guard_type _{mutex_};
     if(wait_not_full_condition(timeout) != 0)
         return -1;
     deque_ptr_->push_back(message);
+    signal_dequeue_waiters();
     return 0;
 }
 int message_queue::dequeue_head(util::string*& first_message, const microseconds& timeout){
@@ -40,6 +44,7 @@ int message_queue::dequeue_head(util::string*& first_message, const microseconds
         return -1;
     *first_message = deque_ptr_->front();
     deque_ptr_->pop_front();
+    signal_enqueue_waiters();
     return 0;
 }
 int message_queue::dequeue_tail(util::string*& dequeued, const microseconds& timeout){
@@ -48,8 +53,10 @@ int message_queue::dequeue_tail(util::string*& dequeued, const microseconds& tim
         return -1;
     *dequeued = deque_ptr_->back();
     deque_ptr_->back();
+    signal_enqueue_waiters();
     return 0;
 }
+
 int message_queue::wait_not_empty_condition(const microseconds& timeout){
     lock_type u_lock{mutex_, std::adopt_lock_t{}};
     int result = 0;
@@ -61,6 +68,7 @@ int message_queue::wait_not_empty_condition(const microseconds& timeout){
     }
     return result;
 }
+
 int message_queue::wait_not_full_condition(const microseconds& timeout){
     lock_type u_lock{mutex_, std::adopt_lock_t{}};
     int result = 0;

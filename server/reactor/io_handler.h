@@ -14,15 +14,15 @@ namespace reactor{
     //means that io_handler will handle the event in a new thread
 class io_handler : public event_handler{
 public:
-    io_handler(reactor* react) : event_handler(react){}
+    io_handler(Reactor* react);
     
-    virtual int handle_input(int handle){}
-    virtual int handle_output(int handle){}
-    virtual int handle_timeout(int handle){}
-    virtual int handle_close(int handle){}
-    virtual int handle_signal(int handle){}
-    virtual int get_handle() const{}
-    virtual void set_handle(int handle){}
+    virtual int handle_input(int handle);
+    virtual int handle_output(int handle);
+    virtual int handle_timeout(int handle);
+    virtual int handle_close(int handle);
+    virtual int handle_signal(int handle);
+    virtual int get_handle() const;
+    virtual void set_handle(int handle);
     
 };
 }
