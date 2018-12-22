@@ -39,6 +39,9 @@ private:
     size_t                                          high_water_mark_;
     size_t                                          low_water_mark_;
     mutex_type	                                    mutex_;
+    //虽然，这里使用了deque，但是并没有使用deque的双端可进可出的特点，只是使用了一端进一端出的特点
+    //若要使用双端特性，则需要加上按照优先级进行enqueue、dequeue
+    //TODO add priority
     std::shared_ptr<std::deque<util::string>>       deque_ptr_;
     cv_type	                                        not_empty_cv_;
     cv_type	                                        not_full_cv_;
