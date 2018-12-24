@@ -18,14 +18,14 @@ class reference_count_base{
 public:
     reference_count_base() : r_count_(1){}
     virtual ~reference_count_base() {}
-    void release(){
+    virtual void release(){
         if(r_count_.fetch_sub(1) == 1) {
             dispose();
             destroy();
         }
     }
     void add_reference(){ r_count_.fetch_add(1); }
-    int get_reference_count(){ return r_count_.load(); }
+    virtual int get_reference_count(){ return r_count_.load(); }
     virtual void dispose() = 0;
     virtual void destroy() = 0;
 private:
@@ -45,12 +45,29 @@ private:
     Ptr        p_;
 };
 
+template <typename Ptr>
+class no_reference_count_ptr : public reference_count_base{
+public:
+    no_reference_count_ptr(Ptr){}
+    virtual void release(){
+        if(r_count_.fetch_sub(1) == 1)
+            destroy();
+    }
+    virtual void dispose(){}
+    virtual void destroy(){ delete this; }
+    no_reference_count_ptr(const no_reference_count_ptr&) = delete;
+    no_reference_count_ptr& operator=(const no_reference_count_ptr&) = delete;
+};
+
 //combine the ptr and count
 template <typename Ptr>
 class data_block_count{
 public:
-    data_block_count(Ptr p){
-        msg_r_count_ = new reference_count_ptr<Ptr>(p);
+    data_block_count(Ptr p, bool need_delete){
+        if(need_delete)
+            msg_r_count_ = new reference_count_ptr<Ptr>(p);
+        else
+            msg_r_count_ = new no_reference_count_ptr<Ptr>(p);
     }
     //? other is a const, and other.msg_data_ is a const too?
     //? assign a const to non-const this->msg_r_count_
@@ -58,7 +75,7 @@ public:
         if(msg_r_count_ != 0) msg_r_count_->add_reference();
     }
     data_block_count& operator=(const data_block_count& other){
-        //? operator=(*this)
+        //? operator=(*this)自我赋值
         reference_count_base* tmp = other.msg_r_count_;
         if(tmp != msg_r_count_){
             if(tmp != 0){
@@ -83,7 +100,7 @@ private:
 template <typename T>
 class data_block{
 public:
-    data_block(T* msg_data, size_t size)
+    data_block(T* msg_data, size_t size, bool need_delete)
         : msg_data_(msg_data)
         , count_(msg_data)
         , size_(size) {
@@ -92,9 +109,10 @@ public:
             size_ = 0;
         }
     }
-    data_block(const data_block& other)
-        : msg_data_(other.msg_data_)
-        , size_(other.size_){ }
+    data_block(const data_block& other) = default;
+        // : msg_data_(other.msg_data_)
+        // , size_(other.size_)
+        // , count_(other.count_){ }
     ~data_block(){}
 private:
     T*                          msg_data_;
@@ -102,29 +120,36 @@ private:
     size_t                      size_;
 };
 
+//* 对于被data_block管理内存的对象, data_block需要delete
+//* 对于内存不需要data_block关心的对象, data_block不需要delete
+//! 对于这两种对象, 虽然都是通过指针传递进data_block的, 但是其真正的行为需要使用者自己遵守约定
+//如果传递需要data_block 帮忙delete的对象, 则need_delete 就为true, 否则就为false //! 并且这个模板也要能够放进mesage_queue中
+//? 从这一点看, 模板似乎不可行, 因此要让message_queue能够接受这个模板, 就需要提供模板参数给data_block
+//或者可以有两个data_block类, 想使用哪一种就实例化哪一个类 //! 但是这两个类都需要能够放进message_queue中
+//又或者对类的行为利用一个变量进行控制
 
 //TODO delete or not delete 
-template <typename T, bool need_delete = true>
-class message_block{
-public:
-    message_block(T* base, size_t size) 
-        : base_(base) {}
-    message_block(const message_block& other) 
-        : base_(other.base_) { }
-    //if we don't want to copy we have to use a reference count to count the usage
-    message_block& operator= (const message_block& other){//here copied the void* data
-        // if(this == &other) return *this;
-        // base_ = operator new (this->size_);
-        // memcpy(this->base_, other.base_, other.size_);
-    }
-    ~message_block(){
-    }
-private:
-    data_block<T>*              base_;
-};
+// template <typename T, bool need_delete = true>
+// class message_block{
+// public:
+//     message_block(T* base, size_t size) 
+//         : base_(base) {}
+//     message_block(const message_block& other) 
+//         : base_(other.base_) { }
+//     //if we don't want to copy we have to use a reference count to count the usage
+//     message_block& operator= (const message_block& other){//here copied the void* data
+//         // if(this == &other) return *this;
+//         // base_ = operator new (this->size_);
+//         // memcpy(this->base_, other.base_, other.size_);
+//     }
+//     ~message_block(){
+//     }
+// private:
+//     data_block<T>*              base_;
+// };
 
 
-template <typename T, bool need_delete = true>
+template <typename T>
 class message_queue{
 public:
     using microseconds = std::chrono::microseconds;
@@ -132,7 +157,7 @@ public:
     using guard_type = lock_guard<mutex_type>;
     using cv_type = std::condition_variable;
     using lock_type = std::unique_lock<mutex_type>;
-    using message_block_type = message_block<T, need_delete>;
+    using message_block_type = data_block<T>;
     message_queue(size_t hwm = 1024, size_t lwm = 1024);
     int open();
     int close();
@@ -152,9 +177,9 @@ protected:
     void signal_dequeue_waiters(){ not_empty_cv_.notify_one(); }
 
 private:
-    size_t                                          high_water_mark_;
-    size_t                                          low_water_mark_;
-    mutex_type	                                    mutex_;
+    size_t                                                          high_water_mark_;
+    size_t                                                          low_water_mark_;
+    mutex_type	                                                    mutex_;
     //虽然，这里使用了deque，但是并没有使用deque的双端可进可出的特点，只是使用了一端进一端出的特点
     //若要使用双端特性，则需要加上按照优先级进行enqueue、dequeue
     //TODO add priority
@@ -164,28 +189,28 @@ private:
 
 };
 
-template <typename T, bool need_delete>
-message_queue<T, need_delete>::message_queue(
+template <typename T>
+message_queue<T>::message_queue(
     size_t hwm, size_t lwm) 
     : high_water_mark_(hwm)
     , low_water_mark_(lwm)
-    , deque_ptr_(new std::deque<message_block<T, need_delete>*>{})
+    , deque_ptr_(new std::deque<message_block_type*>{})
     , mutex_()
     , not_empty_cv_()
     , not_full_cv_(){
 }
-template <typename T, bool need_delete>
-int message_queue<T, need_delete>::open(){
+template <typename T>
+int message_queue<T>::open(){
 
 }
-template <typename T, bool need_delete>
-int message_queue<T, need_delete>::close(){
+template <typename T>
+int message_queue<T>::close(){
     deque_ptr_->clear();
 }
-template <typename T, bool need_delete>
-message_queue<T, need_delete>::~message_queue(){ }
-template <typename T, bool need_delete>
-int message_queue<T, need_delete>::enqueue_head(message_block<T, need_delete>* message, const microseconds& timeout){
+template <typename T>
+message_queue<T>::~message_queue(){ }
+template <typename T>
+int message_queue<T>::enqueue_head(message_block_type* message, const microseconds& timeout){
     guard_type _{mutex_};
     if(wait_not_full_condition(timeout) != 0)//timeout
         return -1;
@@ -195,8 +220,8 @@ int message_queue<T, need_delete>::enqueue_head(message_block<T, need_delete>* m
     return 0;
 }
     
-template <typename T, bool need_delete>
-int message_queue<T, need_delete>::enqueue_tail(message_block<T, need_delete>* message, const microseconds& timeout){
+template <typename T>
+int message_queue<T>::enqueue_tail(message_block_type* message, const microseconds& timeout){
     guard_type _{mutex_};
     if(wait_not_full_condition(timeout) != 0)
         return -1;
@@ -204,8 +229,8 @@ int message_queue<T, need_delete>::enqueue_tail(message_block<T, need_delete>* m
     signal_dequeue_waiters();
     return 0;
 }
-template <typename T, bool need_delete>
-int message_queue<T, need_delete>::dequeue_head(message_block<T, need_delete>*& first_message, const microseconds& timeout){
+template <typename T>
+int message_queue<T>::dequeue_head(message_block_type*& first_message, const microseconds& timeout){
     if(first_message == nullptr){
         LOG(ERROR) << "first_message is null";
         return -1;
@@ -219,8 +244,8 @@ int message_queue<T, need_delete>::dequeue_head(message_block<T, need_delete>*& 
     signal_enqueue_waiters();
     return 0;
 }
-template <typename T, bool need_delete>
-int message_queue<T, need_delete>::dequeue_tail(message_block<T, need_delete>*& dequeued, const microseconds& timeout){
+template <typename T>
+int message_queue<T>::dequeue_tail(message_block_type*& dequeued, const microseconds& timeout){
     if(dequeued == nullptr){
         LOG(ERROR) << "dequeued is null";
         return -1;
@@ -234,8 +259,8 @@ int message_queue<T, need_delete>::dequeue_tail(message_block<T, need_delete>*& 
     return 0;
 }
 
-template <typename T, bool need_delete>
-int message_queue<T, need_delete>::wait_not_empty_condition(const microseconds& timeout){
+template <typename T>
+int message_queue<T>::wait_not_empty_condition(const microseconds& timeout){
     lock_type u_lock{mutex_, std::adopt_lock_t{}};
     int result = 0;
     while(this->deque_ptr_->size() == 0){
@@ -247,8 +272,8 @@ int message_queue<T, need_delete>::wait_not_empty_condition(const microseconds& 
     return result;
 }
 
-template <typename T, bool need_delete>
-int message_queue<T, need_delete>::wait_not_full_condition(const microseconds& timeout){
+template <typename T>
+int message_queue<T>::wait_not_full_condition(const microseconds& timeout){
     lock_type u_lock{mutex_, std::adopt_lock_t{}};
     int result = 0;
     while(this->deque_ptr_->size() >= high_water_mark_){
