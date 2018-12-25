@@ -33,13 +33,13 @@ public:
     //these functions can't be pure virtual
     //because some handlers may not need to implement all of them
     //so the these handlers can be non-abstract classes
-    virtual int handle_input(int handle){}
-    virtual int handle_output(int handle){}
-    virtual int handle_timeout(int handle){}
-    virtual int handle_close(int handle){}
-    virtual int handle_signal(int handle){}
-    virtual int get_handle() const{}
-    virtual void set_handle(int handle){}
+    virtual int handle_input(int ){ return 0; }
+    virtual int handle_output(int ){ return 0; }
+    virtual int handle_timeout(int ){ return 0; }
+    virtual int handle_close(int ){ return 0; }
+    virtual int handle_signal(int ){ return 0; }
+    virtual int get_handle() const{ return 0; }
+    virtual void set_handle(int ){}
 protected:
     virtual ~event_handler(){}
     Reactor* reactor_;
@@ -55,18 +55,23 @@ public:
         char buffer[32] = {};
         int reads = ::read(handle, buffer, 32);
         LOG(INFO) << "handle_input handle: " << handle << ", " << reads << " bytes read: " << buffer;
+        return 0;
     }
     virtual int handle_output(int handle) override {
         LOG(INFO) << "handle_output: " << handle << "...";
+        return 0;
     }
     virtual int handle_timeout(int handle) override {
         LOG(INFO) << "handle_timeout: " << handle << "...";
+        return 0;
     }
     virtual int handle_close(int handle) override {
         LOG(INFO) << "handle_close: " << handle << "...";
+        return 0;
     }
     virtual int handle_signal(int handle) override {
         LOG(INFO) << "handle_signal: " << handle << "...";
+        return 0;
     }
 };
 } // reactor

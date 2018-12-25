@@ -10,6 +10,7 @@
 #include "server/thread/lock_guard.h"
 #include <condition_variable>
 #include "server/util/easylogging++.h"
+#include <cassert>
 
 namespace thread{
 
@@ -162,17 +163,17 @@ public:
     int open();
     int close();
     ~message_queue();
-    int enqueue_head(message_block_type* message, const microseconds& timeout);
-    int enqueue_tail(message_block_type* message, const microseconds& timeout);
-    int dequeue_head(message_block_type*& first_message, const microseconds& timeout);
-    int dequeue_tail(message_block_type*& dequeued, const microseconds& timeout);
+    int enqueue_head(message_block_type* message, const microseconds* timeout);
+    int enqueue_tail(message_block_type* message, const microseconds* timeout);
+    int dequeue_head(message_block_type*& first_message, const microseconds* timeout);
+    int dequeue_tail(message_block_type*& dequeued, const microseconds* timeout);
     bool is_full() const {return deque_ptr_->size() == high_water_mark_;}
     bool is_empty() const {return deque_ptr_->size() == 0;}
     size_t current_message_count() const {return deque_ptr_->size();}
 
 protected:
-    int wait_not_empty_condition(const microseconds& timeout);
-    int wait_not_full_condition(const microseconds& timeout);
+    int wait_not_empty_condition(const microseconds* timeout);
+    int wait_not_full_condition(const microseconds* timeout);
     void signal_enqueue_waiters(){ not_full_cv_.notify_one(); }
     void signal_dequeue_waiters(){ not_empty_cv_.notify_one(); }
 
@@ -201,70 +202,79 @@ message_queue<T>::message_queue(
 }
 template <typename T>
 int message_queue<T>::open(){
-
+    return 0;
 }
+
 template <typename T>
 int message_queue<T>::close(){
     deque_ptr_->clear();
 }
+
 template <typename T>
 message_queue<T>::~message_queue(){ }
+
 template <typename T>
-int message_queue<T>::enqueue_head(message_block_type* message, const microseconds& timeout){
+int message_queue<T>::enqueue_head(message_block_type* message, const microseconds* timeout){
     guard_type _{mutex_};
-    if(wait_not_full_condition(timeout) != 0)//timeout
+    if(timeout != 0 && wait_not_full_condition(timeout) != 0)
         return -1;
     deque_ptr_->push_front(message);
-    if(deque_ptr_->size() < high_water_mark_)
-    signal_dequeue_waiters();
+    if(timeout != 0 && deque_ptr_->size() < high_water_mark_)
+        signal_dequeue_waiters();
     return 0;
 }
     
 template <typename T>
-int message_queue<T>::enqueue_tail(message_block_type* message, const microseconds& timeout){
+int message_queue<T>::enqueue_tail(message_block_type* message, const microseconds* timeout){
     guard_type _{mutex_};
-    if(wait_not_full_condition(timeout) != 0)
+    if(timeout != 0 && wait_not_full_condition(timeout) != 0)
         return -1;
     deque_ptr_->push_back(message);
-    signal_dequeue_waiters();
+    if(timeout != 0)
+        signal_dequeue_waiters();
     return 0;
 }
+
 template <typename T>
-int message_queue<T>::dequeue_head(message_block_type*& first_message, const microseconds& timeout){
+int message_queue<T>::dequeue_head(message_block_type*& first_message, const microseconds* timeout){
     if(first_message == nullptr){
         LOG(ERROR) << "first_message is null";
         return -1;
     }
     guard_type _{mutex_};
     int result = 0;
-    if(wait_not_empty_condition(timeout) != 0)//timeout
+    if(timeout != 0 && wait_not_empty_condition(timeout) != 0)//timeout
         return -1;
     *first_message = *deque_ptr_->front();
     deque_ptr_->pop_front();
-    signal_enqueue_waiters();
+    if(timeout != 0)
+        signal_enqueue_waiters();
     return 0;
 }
+
 template <typename T>
-int message_queue<T>::dequeue_tail(message_block_type*& dequeued, const microseconds& timeout){
+int message_queue<T>::dequeue_tail(message_block_type*& dequeued, const microseconds* timeout){
     if(dequeued == nullptr){
         LOG(ERROR) << "dequeued is null";
         return -1;
     }
     guard_type _{mutex_};
-    if(wait_not_empty_condition(timeout) != 0)//timeout
+    if(timeout != 0 && wait_not_empty_condition(timeout) != 0)//timeout
         return -1;
     *dequeued = *deque_ptr_->back();
     deque_ptr_->back();
-    signal_enqueue_waiters();
+    if(timeout != 0)
+        signal_enqueue_waiters();
     return 0;
 }
 
 template <typename T>
-int message_queue<T>::wait_not_empty_condition(const microseconds& timeout){
+int message_queue<T>::wait_not_empty_condition(const microseconds* timeout){
+    assert(timeout != 0);
     lock_type u_lock{mutex_, std::adopt_lock_t{}};
     int result = 0;
     while(this->deque_ptr_->size() == 0){
-        if(not_empty_cv_.wait_for(u_lock, timeout) == std::cv_status::timeout){
+        if(not_empty_cv_.wait_for(u_lock, *timeout) == std::cv_status::timeout){
             result = -1;
             break;
         }
@@ -273,11 +283,12 @@ int message_queue<T>::wait_not_empty_condition(const microseconds& timeout){
 }
 
 template <typename T>
-int message_queue<T>::wait_not_full_condition(const microseconds& timeout){
+int message_queue<T>::wait_not_full_condition(const microseconds* timeout){
+    assert(timeout != 0);
     lock_type u_lock{mutex_, std::adopt_lock_t{}};
     int result = 0;
     while(this->deque_ptr_->size() >= high_water_mark_){
-        if(not_full_cv_.wait_for(u_lock, timeout) == std::cv_status::timeout){
+        if(not_full_cv_.wait_for(u_lock, *timeout) == std::cv_status::timeout){
             result = -1;
             break;
         }
