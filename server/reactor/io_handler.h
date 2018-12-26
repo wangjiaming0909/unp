@@ -3,6 +3,7 @@
 
 #include "reactor.h"
 #include "server/thread/task.h"
+#include "server/net/sock_stream.h"
 
 namespace reactor{
 
@@ -34,6 +35,9 @@ public:
     virtual void set_handle(int handle){
 
     }
+
+private:
+    net::sock_stream peer_;
 };
 template <typename data_type>
 void io_handler<data_type>::open(){
@@ -41,9 +45,11 @@ void io_handler<data_type>::open(){
 }
 
 template <typename data_type>
-io_handler<data_type>::io_handler(Reactor* react, mq_type* messageQueue, thread::thread_pool* threadPool){
-
-}
+io_handler<data_type>::io_handler(
+    Reactor* react, 
+    mq_type* messageQueue, 
+    thread::thread_pool* threadPool)
+    : base(threadPool, messageQueue){ }
 
 template <typename data_type>
 int io_handler<data_type>::handle_input(int handle){
@@ -72,5 +78,6 @@ template <typename data_type>
 int io_handler<data_type>::routine() {
 
 }
+
 }
 #endif // _UNP_IO_HANDLER_H_

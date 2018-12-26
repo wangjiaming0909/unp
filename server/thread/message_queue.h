@@ -29,7 +29,7 @@ public:
     virtual int get_reference_count(){ return r_count_.load(); }
     virtual void dispose() = 0;
     virtual void destroy() = 0;
-private:
+protected:
     std::atomic<int>    r_count_;
 };
 
@@ -50,7 +50,7 @@ template <typename Ptr>
 class no_reference_count_ptr : public reference_count_base{
 public:
     no_reference_count_ptr(Ptr){}
-    virtual void release(){
+    virtual void release() override {
         if(r_count_.fetch_sub(1) == 1)
             destroy();
     }
@@ -103,7 +103,7 @@ class data_block{
 public:
     data_block(T* msg_data, size_t size, bool need_delete)
         : msg_data_(msg_data)
-        , count_(msg_data)
+        , count_(msg_data, need_delete)
         , size_(size) {
         if(msg_data_ == 0){
             LOG(WARNING) << "msg_data is nullptr";
@@ -117,7 +117,7 @@ public:
     ~data_block(){}
 private:
     T*                          msg_data_;
-    data_block_count<T>         count_;
+    data_block_count<T*>        count_;
     size_t                      size_;
 };
 
