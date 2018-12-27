@@ -8,22 +8,27 @@ TEST(message_queue_test, test_constructor){
     ASSERT_TRUE(mq.is_empty());
     int count = mq.current_message_count();
     ASSERT_EQ(count, 0);
+}
+
+TEST(message_queue_test, test_dequeue_and_enqueue){
+    thread::message_queue<std::string> mq{};
+
     std::string message1{"message1"};
-    thread::data_block<std::string> data_b1{&message1, sizeof(message1), false};
+    thread::data_block<std::string> data_b1{&message1, false};
     mq.enqueue_head(&data_b1, 0);
-    count = mq.current_message_count();
+    int count = mq.current_message_count();
     ASSERT_EQ(count, 1);
+
     std::string message2{"message2"};
-    thread::data_block<std::string> data_b2{&message2, sizeof(message2), false};
+    thread::data_block<std::string> data_b2{&message2, false};
     mq.enqueue_tail(&data_b2, 0);
     count = mq.current_message_count();
     ASSERT_EQ(count, 2);
 
-    std::string message3{};
-    thread::data_block<std::string> data_b3{&message3, sizeof(message3), false};
-    auto *p1 = &data_b3;
+    thread::data_block<std::string> data_b3{};
+    auto *p1 = &data_b3;//这个指针的引用未免太恶心了吧, 传进去还必须先获取其指针
     mq.dequeue_head(p1, 0);
+    ASSERT_EQ(data_b3.get(), &message1);// 地址是相同的， 所以data_b3所指的内存就是message1的内存地址
     mq.dequeue_tail(p1, 0);
-    ASSERT_EQ(message3, "message1");
-    ASSERT_EQ(message3, "message2");
+    ASSERT_EQ(data_b3.get(), &message2);//message2同理
 }

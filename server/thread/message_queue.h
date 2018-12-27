@@ -70,11 +70,13 @@ public:
         else
             msg_r_count_ = new no_reference_count_ptr<Ptr>(p);
     }
+
     //? other is a const, and other.msg_data_ is a const too?
     //? assign a const to non-const this->msg_r_count_
     data_block_count(const data_block_count& other) : msg_r_count_(other.msg_r_count_){
         if(msg_r_count_ != 0) msg_r_count_->add_reference();
     }
+
     data_block_count& operator=(const data_block_count& other){
         //? operator=(*this)自我赋值
         reference_count_base* tmp = other.msg_r_count_;
@@ -89,6 +91,13 @@ public:
         }
         return *this;
     }
+
+    void swap(data_block_count& other){
+        reference_count_base* tmp = msg_r_count_;
+        msg_r_count_ = other.msg_r_count_;
+        other.msg_r_count_ = tmp;
+    }
+
     ~data_block_count(){
         if(msg_r_count_ != nullptr){
             msg_r_count_->release();
@@ -101,15 +110,34 @@ private:
 template <typename T>
 class data_block{
 public:
-    data_block(T* msg_data, size_t size, bool need_delete)
+    data_block() : msg_data_(0), count_(msg_data_, false){}
+    data_block(T* msg_data, bool need_delete)
         : msg_data_(msg_data)
-        , count_(msg_data, need_delete)
-        , size_(size) {
+        , count_(msg_data, need_delete) {
         if(msg_data_ == 0){
             LOG(WARNING) << "msg_data is nullptr";
-            size_ = 0;
         }
     }
+
+    const T* get() const { return msg_data_; }
+
+    void reset(T* p, bool need_delete){
+        data_block(p, need_delete).swap(*this);
+    }
+
+    void reset() { data_block().swap(*this); }
+
+    void swap(data_block& other){
+        std::swap(msg_data_, other.msg_data_);
+        count_->swap(other.count_);
+    }
+
+    data_block& operator=(const data_block& other) {
+        msg_data_ = other.msg_data_;
+        count_ = other.count_;
+        return *this;
+    }
+
     data_block(const data_block& other) = default;
         // : msg_data_(other.msg_data_)
         // , size_(other.size_)
@@ -118,7 +146,6 @@ public:
 private:
     T*                          msg_data_;
     data_block_count<T*>        count_;
-    size_t                      size_;
 };
 
 //* 对于被data_block管理内存的对象, data_block需要delete
@@ -200,6 +227,7 @@ message_queue<T>::message_queue(
     , not_empty_cv_()
     , not_full_cv_(){
 }
+
 template <typename T>
 int message_queue<T>::open(){
     return 0;
