@@ -49,7 +49,7 @@ io_handler<data_type>::io_handler(
     Reactor* react, 
     mq_type* messageQueue, 
     thread::thread_pool* threadPool)
-    : base(threadPool, messageQueue){ }
+    : base(react, threadPool, messageQueue){ }
 
 template <typename data_type>
 int io_handler<data_type>::handle_input(int handle){
