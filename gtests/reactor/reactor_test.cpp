@@ -1,9 +1,10 @@
 #include <gtest/gtest.h>
 #include "../../server/reactor/reactor.h"
+#include "server/reactor/select_reactor_impl.h"
 
-TEST(test_reactor, instance_function_can_get_a_instance_of_reactor){
-    // auto react = reactor::Reactor::instance();
-    // ASSERT_TRUE(react != 0);
-    // auto ptr = react.get();
-    // ASSERT_TRUE(ptr != 0);
+using namespace reactor;
+
+TEST(test_reactor, constructor_of_reactor){
+    Reactor react{new select_reactor_impl{}};
+    ASSERT_EQ(1, 1);
 }

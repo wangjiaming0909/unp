@@ -125,6 +125,8 @@ public:
         data_block(p, need_delete).swap(*this);
     }
 
+    T& operator*() {return *msg_data_;}
+
     void reset() { data_block().swap(*this); }
 
     void swap(data_block& other){

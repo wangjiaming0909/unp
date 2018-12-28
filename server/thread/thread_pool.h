@@ -8,12 +8,14 @@
 #include <condition_variable>
 #include <assert.h>
 #include <iostream>
+#include "server/util/easylogging++.h"
 
 namespace thread {
 class thread_pool{
 public:
     typedef std::function<void ()> task;
     using lock_gd = std::lock_guard<std::mutex>;
+    using micro_seconds = std::chrono::microseconds;
     thread_pool(size_t number_of_threads)
         : _n_of_threads(number_of_threads),
         _running(false),
@@ -25,7 +27,8 @@ public:
         _threads(0){
     }
     ~thread_pool(){
-        stop();
+        if(_running)
+        stop(micro_seconds(0));
     }
     //will we have multi threads to add_tasks?
     void add_task(const task& t){
@@ -47,20 +50,29 @@ public:
         _running = true;
         initialize();
     }
-    // void join(){
-    //     for(auto t : _threads)
-    //         t->join();
-    // }
-    void stop(){
-        // log_with_thread_id("trying to get the mutex");
-        // _unique_lock.lock();
-        // log_with_thread_id("get the mutex");
+
+    //? if timeout == nullptr -> wait infinitly, and all the threads will not close
+    //? if timeout != nullptr, but the timeout is 0 -> do not wait, close all the threads
+    //? if timeout != nullptr, and timeout is not 0 -> wait for the timeout, and stop them all
+    void wait(const micro_seconds* timeout) {
+        if(timeout == nullptr) {
+            for(auto &t : _threads) {
+                if(t->joinable()) t->join();
+            }
+        } else {
+            stop(*timeout);
+        }
+    }
+
+
+    void stop(const micro_seconds& timeout){
+        if(timeout.count() != 0){
+            std::this_thread::sleep_for(timeout);
+        }
         _running = false;
         _has_task_cv.notify_all();
         _deque_full_cv.notify_all();
-        // _unique_lock.unlock();
-        // log_with_thread_id("release the mutex");
-        for(auto t : _threads){
+        for(auto& t : _threads){
             t->detach();
         }
     }
@@ -93,7 +105,13 @@ private:
             }
             //someone added a task to the tasks
             // std::cout << "starting to take one task" << std::endl;
-            task t = _tasks.front();
+            task t{};
+            try{
+                t = _tasks.front();
+            }catch(std::system_error& e){
+                u_lock.unlock();
+                LOG(ERROR) << e.what();
+            }
             _tasks.pop_front();
             _deque_full_cv.notify_one();
             u_lock.unlock();

@@ -18,7 +18,7 @@ public:
     message_queue<T>* mq() { return msg_queue_p_; }
 
     virtual int activate(int thread_count);
-    virtual int wait();
+    virtual int wait(const micro_seconds* timeout = 0);
 
     int put_data(data_type*& data, const micro_seconds* timeout = 0);
     int get_data(data_type*& data, const micro_seconds* timeout = 0);
@@ -46,14 +46,14 @@ task<T>::task(reactor::Reactor* react, thread_pool* t_pool, mq_type* msg_q)
 template <typename T>
 int task<T>::activate(int thread_count){
     for(int i = 0; i < thread_count; i++){
-        t_pool_p_->add_task(std::bind(task::routine_run, this));
+        t_pool_p_->add_task(std::bind(&task::routine_run, this));
     }
     return thread_count;
 }
 
 template <typename T>
-int task<T>::wait(){
-    t_pool_p_->stop();
+int task<T>::wait(const micro_seconds* timeout){
+    t_pool_p_->wait(timeout);
     return 0;
 }
 
