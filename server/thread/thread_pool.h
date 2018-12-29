@@ -28,7 +28,7 @@ public:
     }
     ~thread_pool(){
         if(_running)
-        stop(micro_seconds(0));
+            stop(micro_seconds(0));
     }
     //will we have multi threads to add_tasks?
     void add_task(const task& t){
@@ -63,7 +63,6 @@ public:
             stop(*timeout);
         }
     }
-
 
     void stop(const micro_seconds& timeout){
         if(timeout.count() != 0){
