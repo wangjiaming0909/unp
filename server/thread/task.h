@@ -3,6 +3,7 @@
 #include "server/thread/thread_pool.h"
 #include "server/thread/message_queue.h"
 #include "server/reactor/event_handler.h"
+#include <boost/shared_ptr.hpp>
 
 namespace thread{
 
@@ -20,8 +21,9 @@ public:
     virtual int activate(int thread_count);
     virtual int wait(const micro_seconds* timeout = 0);
 
-    int put_data(data_type*& data, const micro_seconds* timeout = 0);
-    int get_data(data_type*& data, const micro_seconds* timeout = 0);
+    int put_data(data_type*& data, const micro_seconds& timeout = 0);
+    boost::shared_ptr<data_type> get_data(const micro_seconds& timeout = 0);
+    int get_data(data_type*& data, const micro_seconds& timeout = 0);
 
    //在routine中，需要自己从message_queue中拿出data，然后自己做处理
    //routine 会被 routine_run 自动调用
@@ -63,13 +65,21 @@ int task<T>::routine_run(task* self){
 }
 
 template <typename T>
-int task<T>::put_data(data_type*& data, const micro_seconds* timeout){
+int task<T>::put_data(data_type*& data, const micro_seconds& timeout){
     return msg_queue_p_->enqueue_head(data, timeout);
 }
 
 template <typename T>
-int task<T>::get_data(data_type*& data, const micro_seconds* timeout){
+int task<T>::get_data(data_type*& data, const micro_seconds& timeout){
     return msg_queue_p_->dequeue_tail(data, timeout);
+}
+
+template <typename T>
+auto task<T>::get_data(const micro_seconds& timeout) -> boost::shared_ptr<data_type>{
+    boost::shared_ptr<data_type> ret_ptr{new data_type{}};
+    int ret = msg_queue_p_->dequeue_tail(ret_ptr->get(), timeout);
+    if(ret != 0) return boost::shared_ptr<data_type>{nullptr};
+    return ret_ptr;
 }
 
 }//namespace thread

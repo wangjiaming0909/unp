@@ -15,10 +15,11 @@ class fake_task : public task<int>{
 public:
     fake_task(reactor::Reactor* react, thread_pool* pool, message_queue<int>* mq) : task<int>(react, pool, mq){}
     virtual int routine() override {
-       auto *p_data = new data_block<int>();
-       this->get_data(p_data, 0);
-       LOG(INFO) << p_data->operator*()++ << " " << std::this_thread::get_id();
-       delete p_data;
+    //    auto *p_data = new data_block<int>();
+    //    this->get_data(p_data, 0);
+       auto data_ptr = this->get_data(0);
+       LOG(INFO) << data_ptr->operator*()++ << " " << std::this_thread::get_id();
+    //    delete p_data;
     }
 };
 
@@ -49,9 +50,10 @@ TEST(task_test, test_one_task_using_two_threads){
     data_block<int> data(&a, false);
     auto *p = &data;
     t.put_data(p, 0);
-    t.activate(9);
+    t.activate(1);
     std::chrono::microseconds timeout{};
     timeout = 3s;
     t.wait(&timeout);
     ASSERT_EQ(a, 9);
+    LOG(INFO) << "OVER...";
 }

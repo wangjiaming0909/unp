@@ -119,7 +119,7 @@ public:
         }
     }
 
-    const T* get() const { return msg_data_; }
+    T* get() const { return msg_data_; }
 
     void reset(T* p, bool need_delete){
         data_block(p, need_delete).swap(*this);
@@ -182,7 +182,7 @@ private:
 template <typename T>
 class message_queue{
 public:
-    using microseconds = std::chrono::microseconds;
+    using micro_seconds = std::chrono::microseconds;
     using mutex_type = std::mutex;
     using guard_type = lock_guard<mutex_type>;
     using cv_type = std::condition_variable;
@@ -192,17 +192,17 @@ public:
     int open();
     int close();
     ~message_queue();
-    int enqueue_head(message_block_type* message, const microseconds* timeout);
-    int enqueue_tail(message_block_type* message, const microseconds* timeout);
-    int dequeue_head(message_block_type*& first_message, const microseconds* timeout);
-    int dequeue_tail(message_block_type*& dequeued, const microseconds* timeout);
+    int enqueue_head(message_block_type* message, const micro_seconds* timeout);
+    int enqueue_tail(message_block_type* message, const micro_seconds* timeout);
+    int dequeue_head(message_block_type* first_message, const micro_seconds* timeout);
+    int dequeue_tail(message_block_type* dequeued, const micro_seconds* timeout);
     bool is_full() const {return deque_ptr_->size() == high_water_mark_;}
     bool is_empty() const {return deque_ptr_->size() == 0;}
     size_t current_message_count() const {return deque_ptr_->size();}
 
 protected:
-    int wait_not_empty_condition(const microseconds* timeout);
-    int wait_not_full_condition(const microseconds* timeout);
+    int wait_not_empty_condition(const micro_seconds* timeout);
+    int wait_not_full_condition(const micro_seconds* timeout);
     void signal_enqueue_waiters(){ not_full_cv_.notify_one(); }
     void signal_dequeue_waiters(){ not_empty_cv_.notify_one(); }
 
@@ -238,13 +238,14 @@ int message_queue<T>::open(){
 template <typename T>
 int message_queue<T>::close(){
     deque_ptr_->clear();
+    return 0;
 }
 
 template <typename T>
 message_queue<T>::~message_queue(){ }
 
 template <typename T>
-int message_queue<T>::enqueue_head(message_block_type* message, const microseconds* timeout){
+int message_queue<T>::enqueue_head(message_block_type* message, const micro_seconds* timeout){
     guard_type _{mutex_};
     if(timeout != 0 && wait_not_full_condition(timeout) != 0)
         return -1;
@@ -255,7 +256,7 @@ int message_queue<T>::enqueue_head(message_block_type* message, const microsecon
 }
     
 template <typename T>
-int message_queue<T>::enqueue_tail(message_block_type* message, const microseconds* timeout){
+int message_queue<T>::enqueue_tail(message_block_type* message, const micro_seconds* timeout){
     guard_type _{mutex_};
     if(timeout != 0 && wait_not_full_condition(timeout) != 0)
         return -1;
@@ -266,7 +267,7 @@ int message_queue<T>::enqueue_tail(message_block_type* message, const microsecon
 }
 
 template <typename T>
-int message_queue<T>::dequeue_head(message_block_type*& first_message, const microseconds* timeout){
+int message_queue<T>::dequeue_head(message_block_type* first_message, const micro_seconds* timeout){
     if(first_message == nullptr){
         LOG(ERROR) << "first_message is null";
         return -1;
@@ -283,7 +284,7 @@ int message_queue<T>::dequeue_head(message_block_type*& first_message, const mic
 }
 
 template <typename T>
-int message_queue<T>::dequeue_tail(message_block_type*& dequeued, const microseconds* timeout){
+int message_queue<T>::dequeue_tail(message_block_type* dequeued, const micro_seconds* timeout){
     if(dequeued == nullptr){
         LOG(ERROR) << "dequeued is null";
         return -1;
@@ -299,7 +300,7 @@ int message_queue<T>::dequeue_tail(message_block_type*& dequeued, const microsec
 }
 
 template <typename T>
-int message_queue<T>::wait_not_empty_condition(const microseconds* timeout){
+int message_queue<T>::wait_not_empty_condition(const micro_seconds* timeout){
     assert(timeout != 0);
     lock_type u_lock{mutex_, std::adopt_lock_t{}};
     int result = 0;
@@ -313,7 +314,7 @@ int message_queue<T>::wait_not_empty_condition(const microseconds* timeout){
 }
 
 template <typename T>
-int message_queue<T>::wait_not_full_condition(const microseconds* timeout){
+int message_queue<T>::wait_not_full_condition(const micro_seconds* timeout){
     assert(timeout != 0);
     lock_type u_lock{mutex_, std::adopt_lock_t{}};
     int result = 0;
