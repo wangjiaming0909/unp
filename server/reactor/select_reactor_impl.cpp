@@ -102,11 +102,13 @@ int select_reactor_impl::dispatch(int active_handle_count){
 }
 
 void select_reactor_impl::register_handler(event_handler* handler, Event_Type type) {
-
+    (void)handler;
+    (void)type;
 }
 
 void select_reactor_impl::unregister_handler(event_handler *handler, Event_Type type) {
-
+    (void)handler;
+    (void)type;
 }
 
 void select_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type){
@@ -124,7 +126,9 @@ void select_reactor_impl::register_handler(int handle, event_handler *handler, E
 }
 
 void select_reactor_impl::unregister_handler(int handle, event_handler *handler, Event_Type type){
-
+    (void)handle;
+    (void)handler;
+    (void)type;
 }
 
 //dispatch io_handlers read_set, write_set, exception_set
@@ -153,6 +157,7 @@ int select_reactor_impl::dispatch_io_handlers(int active_handle_count, int& io_h
         this->ready_sets_.exception_set,
         &event_handler::handle_output);
     //TODO check ret
+    return ret;
 }
 
 //
@@ -171,9 +176,11 @@ int select_reactor_impl::dispatch_io_set(
         event_handler* handler = this->demux_table_.get_handler(current_handle);
         if(handler == 0) return -1;
         int ret = (handler->*callback) (current_handle);
+        (void)ret;
         //TODO ret handling
         dispatch_set.unset_bit(current_handle);
         ready_set.unset_bit(current_handle);
     }
+    (void)type;
     return 0;
 }

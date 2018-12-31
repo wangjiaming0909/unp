@@ -224,8 +224,8 @@ message_queue<T>::message_queue(
     size_t hwm, size_t lwm) 
     : high_water_mark_(hwm)
     , low_water_mark_(lwm)
-    , deque_ptr_(new std::deque<message_block_type*>{})
     , mutex_()
+    , deque_ptr_(new std::deque<message_block_type*>{})
     , not_empty_cv_()
     , not_full_cv_(){
 }
