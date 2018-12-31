@@ -28,9 +28,8 @@ protected:
 };
 
 TEST_F(server, as_a_server){
-    inet_sock client_fd{};
     inet_addr client_addr{};
-    sock_stream client_stream{&client_fd};
+    sock_stream client_stream{};
     std::chrono::microseconds timeout = 5s;
     int ret = acceptor_.accept(client_stream, &client_addr, &timeout);
     // char buffer[100];

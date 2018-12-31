@@ -15,7 +15,8 @@ namespace net{
 //then use sock_stream
 class sock_stream{
 public:
-	sock_stream(inet_sock* sock) : sock_fd_(sock){}
+	sock_stream() : sock_fd_(new inet_sock()){}
+	~sock_stream() { delete sock_fd_; }
 public:
 	void close_reader();
 	void close_writer();
@@ -61,16 +62,13 @@ public:
 	ssize_t writev_n(const void *buffer, size_t len, 
 		const micro_seconds *timeout, size_t *bytes_transfered = 0) const;
 private:
-	//TODO! why using a pointer, use a reference instead
     inet_sock* sock_fd_;
 
 public:
 	int get_handle(){
-		BOOST_ASSERT_MSG(sock_fd_, "sock_fd_ not set yet");
         return sock_fd_->get_handle();
 	}
 	int set_handle(int handle){
-		BOOST_ASSERT_MSG(sock_fd_, "sock_fd_ not set yet");
         sock_fd_->set_handle(handle);
         return sock_fd_->get_handle();
 	}
@@ -78,11 +76,9 @@ public:
         return sock_fd_->get_handle() != INVALID_HANDLE;
 	}
 	int open_sock_fd(int family, sock_type type, int protocol, int reuse_addr){
-		BOOST_ASSERT_MSG(sock_fd_, "sock_fd_ not set yet");
 		return sock_fd_->open(family, type, protocol, reuse_addr);
 	}
 	const inet_sock& get_sock_fd() const{
-		BOOST_ASSERT_MSG(sock_fd_, "sock_fd_ not set yet");
 		return *sock_fd_;
 	}
 

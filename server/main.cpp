@@ -20,8 +20,7 @@ int main(int argc, char** argv){
 
     net::sock_connector connector{};
     // net::inet_sock fd{net::sock_type::stream, 0};
-    net::inet_sock fd2{};
-    net::sock_stream new_stream{&fd2};
+    net::sock_stream new_stream{};
     net::inet_addr server_addr{9090, "127.0.0.1"};
     microseconds timeout = 4s;
     int ret = connector.connect(new_stream, server_addr, &timeout, 1, 0);

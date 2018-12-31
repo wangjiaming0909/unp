@@ -33,6 +33,7 @@ public:
     //cancel all the threads immediately
     int cancel();
 private:
+    //对当前线程调用
     int disable_cancellability();
     void enable_cancellability_and_test();
 

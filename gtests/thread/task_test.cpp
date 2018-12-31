@@ -20,8 +20,8 @@ public:
         LOG(INFO) << "sleeping for 1 seconds..." << std::this_thread::get_id();
         std::this_thread::sleep_for(std::chrono::seconds(1));
         data_ptr->operator*()++;
-        // LOG(INFO) << data_ptr->operator*()++ << " " << std::this_thread::get_id();
     }
+    virtual void open() override {}
 };
 
 TEST(task_test, test_task_constructor){
@@ -43,7 +43,7 @@ TEST(task_test, test_task_constructor){
 
 TEST(task_test, test_one_task_using_two_threads){
     thread_pool pool{2};
-    reactor::Reactor rt{new select_reactor_impl()};
+    reactor::Reactor rt{new reactor::select_reactor_impl{}};
     pool.start();
     message_queue<int> mq{};
     fake_task t{&rt, &pool, &mq};
@@ -52,7 +52,7 @@ TEST(task_test, test_one_task_using_two_threads){
     auto *p = &data;
     std::chrono::seconds _{0};
     t.put_data(p, _);
-    t.activate(1);
+    t.activate(2);
     t.cancel();
     ASSERT_EQ(a, 2);
 }
