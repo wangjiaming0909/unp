@@ -20,6 +20,7 @@ public:
 
     virtual int activate(int thread_count);
     virtual int wait(const micro_seconds* timeout = 0);
+    void cancel();
 
     int put_data(data_type* data, const micro_seconds& timeout = 0);
     boost::shared_ptr<data_type> get_data(const micro_seconds& timeout = 0);
@@ -57,6 +58,13 @@ template <typename T>
 int task<T>::wait(const micro_seconds* timeout){
     t_pool_p_->wait(timeout);
     return 0;
+}
+
+template <typename T>
+void task<T>::cancel() {
+    if(!t_pool_p_->cancel()){
+        LOG(WARNING) << "cancel warning" << strerror(errno);
+    }
 }
 
 template <typename T>

@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/gtests/test.out ",
-            "args": ["--gtest_filter=task_test.*"],
+            "args": ["--gtest_filter=thread_pool_test.*"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/",
             "environment": [],

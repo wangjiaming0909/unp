@@ -6,7 +6,6 @@ thread_pool::thread_pool(size_t number_of_threads)
     : _n_of_threads(number_of_threads),
     _running(false),
     _mutex(),
-    _unique_lock(_mutex, std::defer_lock),
     _has_task_cv(),
     _deque_full_cv(),
     _tasks(),
@@ -21,18 +20,19 @@ thread_pool::~thread_pool(){
 //will we have multi threads to add_tasks?
 void thread_pool::add_task(const task& t){
     // log_with_thread_id("trying to get the mutex");
-    _unique_lock.lock();
+    lock_gd guard(_mutex, std::defer_lock);
+    guard.lock();
     // log_with_thread_id("get the mutex");
     //put the check inside the lock??
     while(deque_full()){
-        _deque_full_cv.wait(_unique_lock);
+        _deque_full_cv.wait(guard);
     }
     //if has space for the new task
     _tasks.push_back(t);
     //if the deque is empty, we need to notify one thread when we add one task
     _has_task_cv.notify_one();
-    _unique_lock.unlock();
     // log_with_thread_id("release the mutex");
+    guard.unlock();
 }
 
 void thread_pool::start(){
@@ -46,7 +46,8 @@ void thread_pool::start(){
 void thread_pool::wait(const micro_seconds* timeout) {
     if(timeout == nullptr) {
         for(auto &t : _threads) {
-            if(t->joinable()) t->join();
+            if(t->joinable()) 
+                t->join();
         }
     } else {
         stop(*timeout);
@@ -61,8 +62,29 @@ void thread_pool::stop(const micro_seconds& timeout){
     _has_task_cv.notify_all();
     _deque_full_cv.notify_all();
     for(auto& t : _threads){
-        t->detach();
+        if(t->joinable()) 
+            t->detach();
     }
+}
+
+//只要任何一个线程cancel失败，ret就不为0
+int thread_pool::cancel(){
+    int ret = 0;
+    if(_running) {
+        pthread_t id;
+        for(auto& t : _threads) {
+            id = t->native_handle();
+            ret |= pthread_cancel(id);
+        }
+    }
+    if(_running) {
+        for(auto& t : _threads) {
+            if(t->joinable()){
+                t->join();
+            }
+        }
+    }
+    return ret == 0;
 }
 
 //allocate threads
@@ -78,25 +100,62 @@ void thread_pool::initialize(){
 //to each thread
 void thread_pool::default_routine(){
     while(_running){
-        std::unique_lock<std::mutex> u_lock{_mutex, std::defer_lock};
-        u_lock.lock();
+        lock_gd guard(_mutex, std::defer_lock);
+        pthread_cleanup_push(cancel_cleanup, static_cast<void*>(&guard));
+        guard.lock();
         //no task so wait
         while(!has_task()){
-            _has_task_cv.wait(_unique_lock);//unlock and block
+            _has_task_cv.wait(guard);//unlock and block
         }
+
+        //this_thread could be canceled here(after you locked the mutex, before you get one task out)
+        //if we got canceled, we will invoke the cleanup handler, unlock the mutex
+        //using disable cancellability to ensure that 要么取出task并执行完毕，要么不取任何task
+        disable_cancellability();
         //someone added a task to the tasks
-        // std::cout << "starting to take one task" << std::endl;
         task t{};
         try{
             t = _tasks.front();
         }catch(std::system_error& e){
-            u_lock.unlock();
+            guard.unlock();
             LOG(ERROR) << e.what();
         }
         _tasks.pop_front();
         _deque_full_cv.notify_one();
-        u_lock.unlock();
+        guard.unlock();
 
         t();
+        enable_cancellability_and_test();
+        pthread_cleanup_pop(1);
+    }
+}
+
+
+int thread_pool::disable_cancellability(){
+    int cancel_state = 0;
+    int ret = pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &cancel_state);
+    if(ret != 0) {
+        LOG(ERROR) << "pthread_setcancelstate error" << strerror(errno);
+        cancel_state = -1;
+    }
+    return cancel_state;
+}
+
+void thread_pool::enable_cancellability_and_test(){
+    int cancel_state = 0;
+    int ret = pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &cancel_state);
+    if(ret != 0) {
+        LOG(ERROR) << "pthread_setcancelstate error" << strerror(errno);
+        return;
+    }
+    pthread_testcancel();
+}
+
+void cancel_cleanup(void* guard) {
+    if(guard == 0) return;
+    auto g = static_cast<thread_pool::lock_gd*>(guard);
+    if(g->owns_lock()) {
+        LOG(INFO) << "owns the mutex trying to unlock it...";
+        g->unlock();
     }
 }

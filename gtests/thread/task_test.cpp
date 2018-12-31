@@ -17,6 +17,8 @@ public:
     virtual int routine() override {
         micro_seconds _{0};
         auto data_ptr = this->get_data(_);
+        LOG(INFO) << "sleeping for 1 seconds..." << std::this_thread::get_id();
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         data_ptr->operator*()++;
         // LOG(INFO) << data_ptr->operator*()++ << " " << std::this_thread::get_id();
     }
@@ -40,7 +42,7 @@ TEST(task_test, test_task_constructor){
 }
 
 TEST(task_test, test_one_task_using_two_threads){
-    thread_pool pool{4};
+    thread_pool pool{2};
     reactor::Reactor rt{new select_reactor_impl()};
     pool.start();
     message_queue<int> mq{};
@@ -51,9 +53,6 @@ TEST(task_test, test_one_task_using_two_threads){
     std::chrono::seconds _{0};
     t.put_data(p, _);
     t.activate(1);
-    std::chrono::microseconds timeout{};
-    timeout = 3s;
-    t.wait(&timeout);
-    ASSERT_EQ(a, 1);
-    LOG(INFO) << "OVER...";
+    t.cancel();
+    ASSERT_EQ(a, 2);
 }
