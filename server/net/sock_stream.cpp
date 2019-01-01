@@ -66,8 +66,7 @@ ssize_t net::sock_stream::read_imp(void* buffer, size_t len,
 	return ret;
 }
 
-ssize_t net::sock_stream::send_imp(const void* buffer, size_t len, int flags, 
-		const micro_seconds* timeout) const{
+ssize_t net::sock_stream::send_imp(const void* buffer, size_t len, int flags, const micro_seconds* timeout) const{
 	if(sock_fd_ == 0) return 0;
 	int ret = 0;
 	if(timeout == 0){
@@ -84,8 +83,7 @@ ssize_t net::sock_stream::send_imp(const void* buffer, size_t len, int flags,
 	return ret;
 }
 
-ssize_t net::sock_stream::readv_imp(iovec iov[], int n, 
-		const micro_seconds* timeout) const {
+ssize_t net::sock_stream::readv_imp(iovec iov[], int n, const micro_seconds* timeout) const {
 	if(sock_fd_ == 0) return 0;
 	int ret = 0;
 	if(timeout == 0){
@@ -102,8 +100,7 @@ ssize_t net::sock_stream::readv_imp(iovec iov[], int n,
 	return ret;
 }
 
-ssize_t net::sock_stream::writev_imp(const iovec iov[], int n, 
-		const micro_seconds* timeout) const {
+ssize_t net::sock_stream::writev_imp(const iovec iov[], int n, const micro_seconds* timeout) const {
 	if(sock_fd_ == 0) return 0;
 	int ret = 0;
 	if(timeout == 0){

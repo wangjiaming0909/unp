@@ -23,7 +23,7 @@ public:
 			return -1;
 		}
 		new_stream.get_sock_fd().set_non_blocking();//non-blocking connect
-		LOG(INFO) << "trying to connect to: " << *(remote_addr.get_address_string().get()) << ":" << remote_addr.get_port_number();
+		LOG(INFO) << "trying to connect to: " << remote_addr.get_address_string() << ":" << remote_addr.get_port_number();
 		int ret = ::connect(new_stream.get_handle(), 
 							reinterpret_cast<sockaddr*>(remote_addr.get_sockaddr_in_ptr().get()),
 							remote_addr.get_size());

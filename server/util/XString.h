@@ -171,6 +171,10 @@ public:
     bool operator==(const char* ptr){
         return strcmp(m_ptr, ptr) == 0;
     }
+    // template <unsigned N>
+    // bool operator==(const char arr[N]){
+    //     return strncmp(m_ptr, arr, N);
+    // }
 //    void set(const char* ptr) {
 //        m_ptr = ptr;
 //        m_length = static_cast<int>(strlen(m_ptr));

@@ -103,8 +103,8 @@ protected:
 
 TEST_F(inet_addr_test, construct_a_inet_addr){
     inaddr_ptr = boost::shared_ptr<net::inet_addr>(new net::inet_addr(22, "127.0.0.1"));
-    boost::shared_ptr<util::string> addr_str = inaddr_ptr->to_string();
-    ASSERT_EQ(*addr_str, "127.0.0.1:22");
+    util::string addr_str = inaddr_ptr->to_string();
+    ASSERT_EQ(addr_str, "127.0.0.1:22");
 }
 
 TEST_F(inet_addr_test, give_wrong_port_or_address_or_address_family_should_throw_exception){
@@ -116,7 +116,7 @@ TEST_F(inet_addr_test, copy_constructor){
     inaddr_ptr = boost::shared_ptr<net::inet_addr>(new net::inet_addr(22, "127.0.0.1"));
     net::inet_addr rl = *inaddr_ptr;
     ASSERT_EQ(rl.get_port_number(), inaddr_ptr->get_port_number());
-    ASSERT_EQ(*(rl.get_address_string()), *(inaddr_ptr->get_address_string()));
+    ASSERT_EQ(rl.get_address_string(), inaddr_ptr->get_address_string());
 }
 
 TEST_F(inet_addr_test, operator_equal){
@@ -124,7 +124,7 @@ TEST_F(inet_addr_test, operator_equal){
     net::inet_addr rl{};
     rl = *inaddr_ptr;
     ASSERT_EQ(rl.get_port_number(), inaddr_ptr->get_port_number());
-    ASSERT_EQ(*(rl.get_address_string()), *(inaddr_ptr->get_address_string()));
+    ASSERT_EQ(rl.get_address_string(), inaddr_ptr->get_address_string());
 }
 
 TEST_F(inet_addr_test, get_port_number){
@@ -135,8 +135,8 @@ TEST_F(inet_addr_test, get_port_number){
 
 TEST_F(inet_addr_test, get_address_string){
     inaddr_ptr = boost::shared_ptr<net::inet_addr>(new net::inet_addr(22, "127.0.0.1"));
-    boost::shared_ptr<util::string> actual_address_str = inaddr_ptr->get_address_string();
-    ASSERT_EQ(*actual_address_str, util::string("127.0.0.1"));
+    auto actual_address_str = inaddr_ptr->get_address_string();
+    ASSERT_EQ(actual_address_str, util::string("127.0.0.1"));
 }
 
 TEST_F(inet_addr_test, set_port_number){
@@ -148,13 +148,13 @@ TEST_F(inet_addr_test, set_port_number){
 TEST_F(inet_addr_test, set_address){
     inaddr_ptr = boost::shared_ptr<net::inet_addr>(new net::inet_addr());
     inaddr_ptr->set_address("127.0.0.1");
-    boost::shared_ptr<util::string> actual_address_str = inaddr_ptr->get_address_string();
-    ASSERT_EQ(*actual_address_str, util::string("127.0.0.1"));
+    auto actual_address_str = inaddr_ptr->get_address_string();
+    ASSERT_EQ(actual_address_str, util::string("127.0.0.1"));
 }
 
 TEST_F(inet_addr_test, set_addr){
     inaddr_ptr = boost::shared_ptr<net::inet_addr>(new net::inet_addr());
     inaddr_ptr->set_addr("127.0.0.1:22");
-    boost::shared_ptr<util::string> actual_addr_str = inaddr_ptr->to_string();
-    ASSERT_EQ(*actual_addr_str, "127.0.0.1:22");
+    auto actual_addr_str = inaddr_ptr->to_string();
+    ASSERT_EQ(actual_addr_str, "127.0.0.1:22");
 }

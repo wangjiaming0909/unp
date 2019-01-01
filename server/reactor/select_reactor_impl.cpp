@@ -65,8 +65,11 @@ const long int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 
 
 void select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
-    int n = this->select(timeout);
-    dispatch(n);
+    int n = 0;
+    while((n = this->select(timeout)) >= 0){
+        LOG(INFO) << "select n: " << n;
+        dispatch(n);
+    }
 }
 
 int select_reactor_impl::select(std::chrono::microseconds* timeout){
@@ -112,10 +115,13 @@ void select_reactor_impl::unregister_handler(event_handler *handler, Event_Type 
 }
 
 void select_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type){
-    if(handle == INVALID_HANDLE || handler == 0 || type != event_handler::NONE){
+    LOG(INFO) << "registering handler..." ;
+    if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
+        LOG(ERROR) << "handle error or registered type error...";
         return;
     }
-    if(type == event_handler::READ_EVENT){
+    LOG(INFO) << "handle: " << handle << "type: " << type;
+    if(type == event_handler::READ_EVENT || type == event_handler::ACCEPT_EVENT){
         wait_sets_.read_set.set_bit(handle);
     }else if(type == event_handler::WRITE_EVENT){
         wait_sets_.write_set.set_bit(handle);
@@ -176,10 +182,14 @@ int select_reactor_impl::dispatch_io_set(
         event_handler* handler = this->demux_table_.get_handler(current_handle);
         if(handler == 0) return -1;
         int ret = (handler->*callback) (current_handle);
-        (void)ret;
-        //TODO ret handling
-        dispatch_set.unset_bit(current_handle);
-        ready_set.unset_bit(current_handle);
+        if(ret == -1){
+            //TODO ret handling
+            handler->handle_close(current_handle);
+            dispatch_set.unset_bit(current_handle);
+            ready_set.unset_bit(current_handle);
+        }else{
+            LOG(INFO) <<"keep listening on handle: " << current_handle << " event: " << type;
+        }
     }
     (void)type;
     return 0;

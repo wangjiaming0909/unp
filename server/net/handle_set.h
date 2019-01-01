@@ -68,7 +68,7 @@ public:
     }
     int next_handle(int current_handle) {
         if(size_ == 0) return INVALID_HANDLE;
-        if(!is_set(current_handle)){
+        if(current_handle != INVALID_HANDLE && !is_set(current_handle)){
             LOG(WARNING) << "the handle is not in the set, handle: " << current_handle;
             LOG(WARNING) << "trying to find the next handle...";
         }

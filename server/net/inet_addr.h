@@ -46,9 +46,9 @@ public:
 	boost::shared_ptr<sockaddr> get_sockaddr_ptr() const;
 	int set_port_number(host_byte_order_port port);
 	ushort get_port_number()const{return ntohs(in4_.sin_port);}
-	boost::shared_ptr<util::string> get_address_string() const;
+	util::string get_address_string() const;
 	void reset_addr(void);
-	boost::shared_ptr<util::string> to_string();
+	util::string to_string();
     virtual ~inet_addr();
 	bool operator==(const inet_addr& addr){
 		return memcmp(&in4_, &addr, sizeof in4_);

@@ -33,6 +33,7 @@ int net::sock_acceptor::open(const inet_addr& local_addr,
     //     protocol_family = AF_INET;
     //first open the socket
     if(sock_fd_->open(protocol_family, sock_type::stream, protocol, reuse_addr) == -1){
+        LOG(ERROR) << "sock_fd open error ..." << strerror(errno);
         return -1;
     }else{
     //then bind, listen
@@ -74,12 +75,18 @@ int net::sock_acceptor::accept(
             continue;
         }
         else if(client_fd == -1) return -1;//other errors
+        LOG(INFO) << "accepted a connection...";
         ret = client_stream.set_handle(client_fd);
+        if(remote_addr) {
+            LOG(INFO) << "ret: " << ret;
+            LOG(INFO) << remote_addr->get_address_string();
+        }
         //accept returned successfully, remote addr was set, addrlen was set too
         //and we write it to the remote_addr pointer
         if(ret != INVALID_HANDLE && remote_addr){
             remote_addr->set_size(len);
             if(addr) remote_addr->set_type(addr->sa_family);
+            LOG(INFO) << "settings size and family " << len << " " << addr->sa_family;
             break;
         }
     }
@@ -96,7 +103,7 @@ int net::sock_acceptor::shared_open(
         LOG(ERROR) << "protocol_family is not AF_INET";
         return -1;
     }
-    LOG(INFO) << "trying to bind to: " << *(local_sap.get_address_string().get()) << ":" << local_sap.get_port_number() << "..." ;
+    LOG(INFO) << "trying to bind to: " << local_sap.get_address_string() << ":" << local_sap.get_port_number() << "..." ;
     int ret = ::bind(sock_fd_->get_handle(), 
         local_sap.get_sockaddr_ptr().get(), 
         local_sap.get_size());
@@ -104,7 +111,7 @@ int net::sock_acceptor::shared_open(
         LOG(ERROR) << "bind error: " << strerror(errno);
         return ret;
     }
-    LOG(INFO) << "listening on: " << *(local_sap.get_address_string().get()) << ":" << local_sap.get_port_number() << "...";
+    LOG(INFO) << "listening on: " << local_sap.get_address_string() << ":" << local_sap.get_port_number() << "...";
     ret = ::listen(sock_fd_->get_handle(), backlog);
     if(ret != 0){
         LOG(ERROR) << "listen error: " <<strerror(errno);

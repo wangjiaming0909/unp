@@ -23,9 +23,9 @@ public:
 
     void cancel();
 
-    int put_data(data_type* data, const micro_seconds& timeout = 0);
-    boost::shared_ptr<data_type> get_data(const micro_seconds& timeout = 0);
-    int get_data(data_type* data, const micro_seconds& timeout = 0);
+    int put_data(data_type* data, const micro_seconds& timeout = micro_seconds{0});
+    boost::shared_ptr<data_type> get_data(const micro_seconds& timeout = micro_seconds{0});
+    int get_data(data_type* data, const micro_seconds& timeout = micro_seconds{0});
 
    //在routine中，需要自己从message_queue中拿出data，然后自己做处理
    //routine 会被 routine_run 自动调用
@@ -52,6 +52,7 @@ task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q)
 template <typename T>
 int task<T>::activate(int thread_count){
     for(int i = 0; i < thread_count; i++){
+        LOG(INFO) << "adding one task... " << i+1 << " of " << thread_count;
         t_pool_p_->add_task(std::bind(&task::routine_run, this));
     }
     return thread_count;

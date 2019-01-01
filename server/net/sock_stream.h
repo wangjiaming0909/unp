@@ -30,6 +30,7 @@ public:
 	ssize_t write(const void* buffer, size_t len, 
 		const micro_seconds* timeout = 0) const;
 	//recv version use the system call recv which has a flags parameter
+
 	//TODO
 	ssize_t recv(void* buffer, size_t len, int flags,
 		const micro_seconds* timeout = 0) const;
@@ -41,15 +42,19 @@ public:
     ssize_t writev( const iovec iov[], int n,
         const micro_seconds* timeout = 0) const;
 
-private:
-    ssize_t read_imp(void* buffer, size_t len,
-        const micro_seconds* timeout = 0) const;
-	ssize_t send_imp(const void* buffer, size_t len, int flags,
-		const micro_seconds* timeout = 0) const;
-	ssize_t readv_imp(iovec iov[], int n, 
-		const micro_seconds* timeout = 0)const;
-	ssize_t writev_imp(const iovec iov[], int n,
-		const micro_seconds* timeout = 0) const;
+public:
+	int get_handle(){ return sock_fd_->get_handle(); }
+	int set_handle(int handle){
+        sock_fd_->set_handle(handle);
+        return sock_fd_->get_handle();
+	}
+	bool has_handle(){
+        return sock_fd_->get_handle() != INVALID_HANDLE;
+	}
+	int open_sock_fd(int family, sock_type type, int protocol, int reuse_addr){
+		return sock_fd_->open(family, type, protocol, reuse_addr);
+	}
+	inet_sock& get_sock_fd() const{ return *sock_fd_; }
 
 public:
 	//TODO need implementation
@@ -61,27 +66,19 @@ public:
 		const micro_seconds* timeout = 0, size_t *bytes_transfered = 0) const;
 	ssize_t writev_n(const void *buffer, size_t len, 
 		const micro_seconds *timeout, size_t *bytes_transfered = 0) const;
+
+private:
+    ssize_t read_imp(void* buffer, size_t len,
+        const micro_seconds* timeout = 0) const;
+	ssize_t send_imp(const void* buffer, size_t len, int flags,
+		const micro_seconds* timeout = 0) const;
+	ssize_t readv_imp(iovec iov[], int n, 
+		const micro_seconds* timeout = 0)const;
+	ssize_t writev_imp(const iovec iov[], int n,
+		const micro_seconds* timeout = 0) const;
+
 private:
     inet_sock* sock_fd_;
-
-public:
-	int get_handle(){
-        return sock_fd_->get_handle();
-	}
-	int set_handle(int handle){
-        sock_fd_->set_handle(handle);
-        return sock_fd_->get_handle();
-	}
-	bool has_handle(){
-        return sock_fd_->get_handle() != INVALID_HANDLE;
-	}
-	int open_sock_fd(int family, sock_type type, int protocol, int reuse_addr){
-		return sock_fd_->open(family, type, protocol, reuse_addr);
-	}
-	const inet_sock& get_sock_fd() const{
-		return *sock_fd_;
-	}
-
 };
 
 }

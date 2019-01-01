@@ -4,6 +4,7 @@
 #include "server/net/sock_acceptor.h"
 #include "server/net/inet_addr.h"
 #include "reactor.h"
+#include "server/reactor/read_handler.h"
 
 namespace reactor{
 // enum class IO_TYPE{
@@ -35,12 +36,19 @@ public:
     virtual int handle_close(int handle) override;
     virtual int handle_signal(int handle) override;
     virtual int get_handle() const {return acceptor_.get_handle();}
+    // template <typename data_type>
+    // boost::shared_ptr<ReadHandler<data_type>> make_read_handler();
+    // template <typename data_type>
 private:
+    void activate_read_handler();
     int open();
     int close();
 private:
-    net::sock_acceptor	    acceptor_;
-    net::inet_addr          local_addr_;
+    net::sock_acceptor	            acceptor_;
+    net::inet_addr                  local_addr_;
+    message_queue<char>             mq_;
+    thread_pool	                    pool_;
+    ReadHandler<char>               read_handler_;
 };
 }
 #endif // _UNP_REACTOR_ACCEPTOR_H_

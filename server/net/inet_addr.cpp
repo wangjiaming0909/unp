@@ -111,11 +111,11 @@ inline void net::inet_addr::reset_addr(){
 	in4_.sin_family = AF_INET;
 }
 
-boost::shared_ptr<util::string> net::inet_addr::get_address_string() const{
+util::string net::inet_addr::get_address_string() const{
 	boost::scoped_array<char> addr_str{new char[INET_ADDRSTRLEN]};
 	memset(addr_str.get(), 0, INET_ADDRSTRLEN);
 	inet_ntop(AF_INET, &(in4_.sin_addr), addr_str.get(), sizeof(sockaddr_in));
-	return boost::shared_ptr<util::string>(new util::string(addr_str.get()));
+	return util::string{addr_str.get()};
 }
 
 int net::addr_to_string(char* buffer, size_t len, const sockaddr_in* ip4_addr, int addr_family){
@@ -129,11 +129,11 @@ int net::addr_to_string(char* buffer, size_t len, const sockaddr_in* ip4_addr, i
 }
 
 
-boost::shared_ptr<util::string> net::inet_addr::to_string(){
+util::string net::inet_addr::to_string(){
 	boost::scoped_array<char> addr_str{new char[16]};
 	int ret = addr_to_string(addr_str.get(), 16, &in4_, AF_INET);
 	if(ret != 0) return nullptr;
-	return boost::shared_ptr<util::string>(new util::string(addr_str.get()));
+	return util::string(addr_str.get());
 }
 
 /// addr_port looks like 127.0.0.1:9900

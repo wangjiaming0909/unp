@@ -20,7 +20,7 @@ class event_handler{
 public:
     typedef unsigned int Event_Type;
     enum{
-        NONE = 0x001,
+        NONE = 0x000,
         READ_EVENT = POLLIN,
         EXCEPT_EVENT = POLLPRI,//0x2
         WRITE_EVENT = POLLOUT,//0x4
@@ -47,9 +47,7 @@ protected:
 
 class default_event_handler : public event_handler{
 public:
-    default_event_handler(Reactor& react)
-        : event_handler(react)
-    {}
+    default_event_handler(Reactor& react) : event_handler(react) {}
     ~default_event_handler(){}
     virtual int handle_input(int handle) override {
         char buffer[32] = {};

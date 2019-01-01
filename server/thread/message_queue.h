@@ -135,6 +135,7 @@ public:
     }
 
     data_block& operator=(const data_block& other) {
+        LOG(INFO) << other.count_;
         msg_data_ = other.msg_data_;
         count_ = other.count_;
         return *this;
@@ -272,7 +273,7 @@ int message_queue<T>::dequeue_head(message_block_type* first_message, const micr
     int result = 0;
     if(wait_not_empty_condition(timeout) != 0)//timeout
         return -1;
-    *first_message = *deque_ptr_->front();
+    *first_message = *(deque_ptr_->front());
     deque_ptr_->pop_front();
     if(timeout.count() != 0)
         signal_enqueue_waiters();
@@ -284,8 +285,13 @@ int message_queue<T>::dequeue_tail(message_block_type* dequeued, const micro_sec
     guard_type _{mutex_};
     if(wait_not_empty_condition(timeout) != 0)//timeout
         return -1;
-    *dequeued = *deque_ptr_->back();
-    deque_ptr_->back();
+    if(deque_ptr_->size() >= 1)
+        *dequeued = *(deque_ptr_->back());
+    else{
+        LOG(ERROR) << "deque size is 0";
+        return -1;
+    } 
+    deque_ptr_->pop_back();
     if(timeout.count() != 0)
         signal_enqueue_waiters();
     return 0;
