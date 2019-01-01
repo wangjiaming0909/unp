@@ -1,6 +1,6 @@
 #include "acceptor.h"
 
-reactor::reactor_acceptor:: reactor_acceptor(Reactor* react, const net::inet_addr& local_addr)
+reactor::reactor_acceptor:: reactor_acceptor(Reactor& react, const net::inet_addr& local_addr)
         : event_handler(react), 
           acceptor_(local_addr), 
           local_addr_(local_addr){ 

@@ -19,7 +19,7 @@ public:
     using base = thread::task<data_type>;
     using mq_type = typename base::mq_type;
     using micro_seconds = typename base::micro_seconds;
-    io_handler(Reactor* react, mq_type* messageQueue, thread::thread_pool* threadPool);
+    io_handler(Reactor& react, mq_type& messageQueue, thread::thread_pool& threadPool);
     // virtual void open();
     // virtual int routine();
 
@@ -42,9 +42,9 @@ protected:
 
 template <typename data_type>
 io_handler<data_type>::io_handler(
-        Reactor* react, 
-        mq_type* messageQueue, 
-        thread::thread_pool* threadPool)
+        Reactor& react, 
+        mq_type& messageQueue, 
+        thread::thread_pool& threadPool)
     : base(react, threadPool, messageQueue)
     , peer_(){ }
 

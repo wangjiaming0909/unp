@@ -26,7 +26,7 @@ class reactor_acceptor : public event_handler{
 public:
     //here use a inet_addr,
     //so that we can specify an interface and a port to listen
-    reactor_acceptor(Reactor* react, const net::inet_addr& local_addr);  
+    reactor_acceptor(Reactor& react, const net::inet_addr& local_addr);  
     ~reactor_acceptor() override ;
     virtual int handle_input(int handle) override;
     //accept do not need output

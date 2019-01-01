@@ -10,7 +10,7 @@ TEST(io_handler_test, constructor_test){
     thread_pool pool{2};
     pool.start();
     message_queue<int> queue{};
-    ReadHandler<int> handler{&reactor, &queue, &pool};
+    ReadHandler<int> handler{reactor, queue, pool};
     int a = 0;
     data_block<int> data(&a, false);
     std::chrono::seconds _{0};

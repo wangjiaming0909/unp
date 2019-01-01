@@ -14,7 +14,7 @@ public:
     using micro_seconds = std::chrono::microseconds; 
     using mq_type = message_queue<T>;
     using data_type = data_block<T>;
-    task(reactor::Reactor* react, thread_pool* t_pool, mq_type* msg_q);
+    task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q);
     thread_pool* th_pool() {return t_pool_p_; }
     message_queue<T>* mq() { return msg_queue_p_; }
 
@@ -43,10 +43,10 @@ protected:
 };
 
 template <typename T>
-task<T>::task(reactor::Reactor* react, thread_pool* t_pool, mq_type* msg_q) 
+task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q) 
     : event_handler(react)
-    , t_pool_p_(t_pool)
-    , msg_queue_p_(msg_q){ }
+    , t_pool_p_(&t_pool)
+    , msg_queue_p_(&msg_q){ }
 
 //pass routine_run to the threads
 template <typename T>

@@ -13,7 +13,7 @@ using namespace reactor;
 
 class fake_task : public task<int>{
 public:
-    fake_task(reactor::Reactor* react, thread_pool* pool, message_queue<int>* mq) : task<int>(react, pool, mq){} 
+    fake_task(reactor::Reactor& react, thread_pool& pool, message_queue<int>& mq) : task<int>(react, pool, mq){} 
     virtual int routine() override {
         micro_seconds _{0};
         auto data_ptr = this->get_data(_);
@@ -46,7 +46,7 @@ TEST(task_test, test_one_task_using_two_threads){
     reactor::Reactor rt{new reactor::select_reactor_impl{}};
     pool.start();
     message_queue<int> mq{};
-    fake_task t{&rt, &pool, &mq};
+    fake_task t{rt, pool, mq};
     int a = 0;
     data_block<int> data(&a, false);
     auto *p = &data;

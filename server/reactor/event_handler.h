@@ -29,7 +29,7 @@ public:
         SIGNAL_EVENT = 0x020,
         CLOSE_EVENT = 0x040,
     };
-    event_handler(Reactor* react) : reactor_(react) {}
+    event_handler(Reactor& react) : reactor_(&react) {}
     //these functions can't be pure virtual
     //because some handlers may not need to implement all of them
     //so the these handlers can be non-abstract classes
@@ -47,7 +47,7 @@ protected:
 
 class default_event_handler : public event_handler{
 public:
-    default_event_handler(Reactor* react)
+    default_event_handler(Reactor& react)
         : event_handler(react)
     {}
     ~default_event_handler(){}
