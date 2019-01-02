@@ -12,12 +12,12 @@ select_demultiplex_table::select_demultiplex_table(size_t size) : table_(){
     } else table_.resize(size);
 }
 
-event_handler* select_demultiplex_table::get_handler(int handle) const{
+event_handler* select_demultiplex_table::get_handler(int handle, Event_Type type) const{
     if(!is_handle_in_range(handle)){
         LOG(WARNING) << "handle is not in range, handle: " << handle;
         return 0;
     }
-    return table_[handle].event_handler_;
+    return table_[handle].get_handler(type);
 }
 
 int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
@@ -28,38 +28,43 @@ int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Typ
     }
     if((int)table_.size() <= handle)
         table_.resize(handle + handle/2);
-    table_[handle].event_handler_ = handler;
-    table_[handle].event_type_ = type;
-    table_[handle].handle_ = handle;
+    table_[handle].handle = handle;
+    table_[handle].bind_new(type, handler);
     if(handle > current_max_handle_p_1_ - 1){
         current_max_handle_p_1_ = handle + 1;
     }
     return 0;
 }
 
-int select_demultiplex_table::bind(const select_event_tuple& event_tuple){
-    return bind( event_tuple.handle_, 
-                 event_tuple.event_handler_, 
-                 event_tuple.event_type_);
-}
+// int select_demultiplex_table::bind(const select_event_tuple& event_tuple){
+//     return bind( event_tuple.handle_, 
+//                  event_tuple.event_handler_, 
+//                  event_tuple.event_type_);
+// }
 
 int select_demultiplex_table::unbind(int handle){
-    if(!is_handle_in_range(handle) || table_[handle].event_handler_ == 0){
-        LOG(WARNING) << "handle is not in the table, handle: " << handle;
+    if(!is_handle_in_range(handle) || table_[handle].types_and_handlers.size() == 0){
+        LOG(WARNING) << "handle is not in the table or handle has no handler, handle: " << handle;
         return -1;
     }
     //if handle is the max_handle - 1
     int tmp = handle;
     if(current_max_handle_p_1_ == handle + 1){
-        while(tmp-- != -1 && table_[tmp].handle_ == INVALID_HANDLE);
+        while(tmp-- != -1 && table_[tmp].handle == INVALID_HANDLE);
         current_max_handle_p_1_ = tmp + 1;
     }
-    table_[handle].event_handler_ = 0;
-    table_[handle].event_type_ = 0;
-    table_[handle].handle_ = INVALID_HANDLE;
+    table_[handle].handle = INVALID_HANDLE;
+    table_[handle].clear();
 
     return 0;
 }
+
+// int select_demultiplex_table::unbind(const select_event_tuple& event_tuple){
+//     if( !  is_handle_in_range(event_tuple.handle_) 
+//         || table_[event_tuple.handle_].event_handler_ == 0){
+//         LOG(WARNING) << "handle is not in the table"
+//     }
+// }
 
 const long int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 
@@ -70,14 +75,27 @@ void select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
         LOG(INFO) << "select n: " << n;
         dispatch(n);
     }
+    LOG(WARNING) << "select return -1: " << strerror(errno);
 }
 
+//if returned value < 0, means error
+//if returned value == 0, means ?
+//if returned value > 0, means n fd(s) are ready
 int select_reactor_impl::select(std::chrono::microseconds* timeout){
     const int width = this->demux_table_.get_current_max_handle_p_1();
     dispatch_sets_.read_set = this->wait_sets_.read_set;
     dispatch_sets_.write_set = this->wait_sets_.write_set;
     dispatch_sets_.exception_set = this->wait_sets_.exception_set;
     auto timeout_timeval = util::duration_to_timeval<std::chrono::microseconds>(timeout);
+
+    LOG(INFO) << "trying to wait on " << width << " fds...";
+    int read_fd_count = dispatch_sets_.read_set.handles_count();
+    int write_fd_count = dispatch_sets_.write_set.handles_count();
+    int exception_fd_count = dispatch_sets_.exception_set.handles_count();
+    LOG(INFO) << "read fd count: " << read_fd_count;
+    LOG(INFO) << "write fd count: " << write_fd_count;
+    LOG(INFO) << "exception fd count: " << exception_fd_count;
+
     int number_of_active_handles = ::select(width, 
                      dispatch_sets_.read_set.get_select_fd_set_ptr(),
                      dispatch_sets_.write_set.get_select_fd_set_ptr(),
@@ -95,7 +113,7 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
     if(number_of_active_handles > 0){
         return number_of_active_handles;
     }
-    //TODO what if number_of_active_handles == 0 and not timeout
+    //TODO what if number_of_active_handles == 0 and not timeout, will this happen
     return number_of_active_handles;
 }
 
@@ -184,6 +202,7 @@ int select_reactor_impl::dispatch_io_set(
         int ret = (handler->*callback) (current_handle);
         if(ret == -1){
             //TODO ret handling
+            this->demux_table_.unbind(current_handle);
             handler->handle_close(current_handle);
             dispatch_set.unset_bit(current_handle);
             ready_set.unset_bit(current_handle);

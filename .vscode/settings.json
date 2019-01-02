@@ -57,7 +57,8 @@
         "csignal": "cpp",
         "unordered_set": "cpp",
         "mutex": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "hash_set": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false,
     "editor.quickSuggestionsDelay": 1,

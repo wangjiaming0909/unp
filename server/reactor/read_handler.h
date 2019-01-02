@@ -24,7 +24,8 @@ public:
         (void)handle;
         // data_block<data_type> data{};
         int ret = this->put_data(0);
-        this->activate(1);
+        if(ret == 0)
+            this->activate(1);
         return ret;
     }
 

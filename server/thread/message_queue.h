@@ -135,7 +135,7 @@ public:
     }
 
     data_block& operator=(const data_block& other) {
-        LOG(INFO) << other.count_;
+        if(&other == 0) return *this;
         msg_data_ = other.msg_data_;
         count_ = other.count_;
         return *this;
@@ -247,6 +247,9 @@ message_queue<T>::~message_queue(){ }
 
 template <typename T>
 int message_queue<T>::enqueue_head(message_block_type* message, const micro_seconds& timeout){
+    if(message == 0){
+        return -1;
+    }
     guard_type _{mutex_};
     if(timeout.count() != 0 && wait_not_full_condition(timeout) != 0)
         return -1;
@@ -285,8 +288,10 @@ int message_queue<T>::dequeue_tail(message_block_type* dequeued, const micro_sec
     guard_type _{mutex_};
     if(wait_not_empty_condition(timeout) != 0)//timeout
         return -1;
-    if(deque_ptr_->size() >= 1)
-        *dequeued = *(deque_ptr_->back());
+    if(deque_ptr_->size() >= 1){
+        auto tmp = deque_ptr_->back();
+        *dequeued = *tmp;
+    }
     else{
         LOG(ERROR) << "deque size is 0";
         return -1;

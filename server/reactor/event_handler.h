@@ -5,6 +5,7 @@
 #include <poll.h>
 #include <unistd.h>
 #include "server/net/macros.h"
+#include "server/util/XString.h"
 
 namespace reactor
 {
@@ -44,6 +45,27 @@ protected:
     virtual ~event_handler(){}
     Reactor* reactor_;
 };
+
+static util::string event_type_to_string(event_handler::Event_Type type){
+    switch(type){
+        case event_handler::NONE:
+            return util::string("NONE");
+        case event_handler::READ_EVENT:
+            return util::string("READ_EVENT");
+        case event_handler::SIGNAL_EVENT:
+            return util::string("SIGNAL_EVENT");
+        case event_handler::TIMEOUT_EVENT:
+            return util::string("TIMEOUT_EVENT");
+        case event_handler::WRITE_EVENT:
+            return util::string("WRITE_EVENT");
+        case event_handler::ACCEPT_EVENT:
+            return util::string("ACCEPT_EVENT");
+        case event_handler::CLOSE_EVENT:
+            return util::string("CLOSE_EVENT");
+        default:
+            return util::string();
+    }
+}
 
 class default_event_handler : public event_handler{
 public:

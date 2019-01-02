@@ -1,5 +1,5 @@
 CC = g++
-FLAGS = -Wall -Wextra -std=c++17 -c -ggdb3 -Wfatal-errors
+FLAGS = -Wall -Wextra -std=c++17 -c -ggdb -Wfatal-errors
 #HEADERS = include/unp.h
 
 DEFS = ELPP_THREAD_SAFE ELPP_NO_DEFAULT_LOG_FILE USING_PTHREAD

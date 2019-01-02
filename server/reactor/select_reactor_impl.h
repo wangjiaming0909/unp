@@ -8,6 +8,7 @@
 #include "server/net/handle_set.h"
 #include "event_handler.h"
 #include <sys/select.h>
+#include <unordered_map>
 
 namespace reactor{
 
@@ -21,36 +22,97 @@ struct select_reactor_handle_sets{
     unp::handle_set exception_set;
 };
 
+// struct handler_and_type{
+//     using Event_Type = event_handler::Event_Type;
+//     handler_and_type(event_handler* handler, Event_Type type)
+//         : event_handler_(handler), event_type_(type){}
+//     bool operator==(const handler_and_type& other){
+//         return (event_handler_ == other.event_handler_) &&
+//                (event_type_ == other.event_type_);
+//     }
+    
+//     event_handler*      event_handler_;
+//     Event_Type          event_type_;
+// };
+
 //event tuple
 struct select_event_tuple{
     using Event_Type = event_handler::Event_Type;
-    select_event_tuple( event_handler* handler = 0, 
-                        int handle = INVALID_HANDLE, 
-                        Event_Type type = 0) 
-      : event_handler_(handler), 
-        handle_(handle),
-        event_type_(type) {}
-    event_handler  *event_handler_;
-    int handle_;
-    Event_Type event_type_;
+    using type_handler_pair = std::pair<Event_Type, event_handler*>;
+    select_event_tuple (int handle) : handle(handle), types_and_handlers() { }
+    // int bind_new(const handler_and_type& handler_type){
+    //     return bind_new(handler_type.event_type_, handler_type.event_handler_);
+    // }
+    int bind_new(Event_Type type, event_handler* handler){
+        if(handle == INVALID_HANDLE) return -1;
+        if(type == event_handler::NONE || handler == 0){
+            LOG(WARNING) << "can't bind NONE event or handler is nullptr";
+            return -1;
+        }
+        types_and_handlers.insert(
+            type_handler_pair(type, handler));
+        return 0;
+    }
+    // int unbind(const handler_and_type& handler_type){
+    //     if(handle == INVALID_HANDLE) return -1;
+    //     if(handlers_types_.count(handler_type) != 1){
+    //         return -1;
+    //     }
+    //     int ret = handlers_types_.erase(handler_type);
+    //     if(ret <= 0) return -1;
+    //     return 0;
+    // }
+    int unbind(Event_Type type, event_handler* handler){
+        if(handle == INVALID_HANDLE) return -1;
+        if(types_and_handlers.count(type) != 1) {
+            LOG(WARNING) << "can't unbind, no this type of event";
+            return -1;
+        }
+        if(types_and_handlers[type] != handler) {
+            LOG(WARNING) << "the handler you unbinded is not the same as you provided";
+        }
+        types_and_handlers.erase(type);
+        return 0;
+    }
+    event_handler* get_handler(Event_Type type) const {
+        if(types_and_handlers.count(type) != 1) {
+            LOG(WARNING) 
+                << "handle " << handle 
+                << " has no handler for type " 
+                << event_type_to_string(type);
+            return nullptr;
+        }
+        return types_and_handlers.find(type).operator*().second;
+    }
+    void clear() {types_and_handlers.clear(); }
+    int                                                     handle;
+    //for handler and type
+    //one handle:
+    //one type of event, only have one handler, 如果可以有两个，那么事件发生的时候我调用谁呢?
+    //but one handler, 可以有多个事件与之对应
+    std::unordered_map<Event_Type, event_handler*>          types_and_handlers;
 };
 
 class select_demultiplex_table{
 public:
     using Event_Type = event_handler::Event_Type;
     select_demultiplex_table(size_t capacity = 8);
-    event_handler* get_handler(int handle) const;
+    event_handler* get_handler(int handle, Event_Type type) const;
     const std::vector<select_event_tuple>& get_event_tuple_array() const { return table_; }
     int bind(int handle, event_handler* handler, Event_Type type);
-    int bind(const select_event_tuple& event_tuple);
+    // int bind(const select_event_tuple& event_tuple);
+    //unbind掉绑定到这个handle的所有事件处理器
     int unbind(int handle);
+    // int unbind(const select_event_tuple& event_tuple);
     int get_current_max_handle_p_1() const { return current_max_handle_p_1_;}
 private:
     bool is_handle_in_range(int handle) const {
         if(handle < 0 || ((handle + 1) > current_max_handle_p_1_)) 
             return false;
-        if(table_[handle].event_handler_ == 0) 
+        if(table_[handle].types_and_handlers.size() == 0) {
+            // LOG(WARNING) << "handle is in the table, but no handler and type registered...";
             return false;
+        }
         return true;
     }
     bool is_valid_handle(int handle) const {

@@ -114,7 +114,7 @@ int net::sock_acceptor::shared_open(
     LOG(INFO) << "listening on: " << local_sap.get_address_string() << ":" << local_sap.get_port_number() << "...";
     ret = ::listen(sock_fd_->get_handle(), backlog);
     if(ret != 0){
-        LOG(ERROR) << "listen error: " <<strerror(errno);
+        LOG(ERROR) << "listen error: " << strerror(errno);
         return ret;
     }
     return ret;
