@@ -16,13 +16,14 @@ void setupLogger(){
     Configurations defaultConf;
     defaultConf.setToDefault();
     defaultConf.set(Level::Global, ConfigurationType::Enabled, "true");
-    defaultConf.set(Level::Global, ConfigurationType::Format, "%datetime, %thread, %level, %file, %line, %func, %msg");
+    //%func
+    defaultConf.set(Level::Global, ConfigurationType::Format, "%datetime, %thread, %level, %file, %line, %msg");
     defaultConf.set(Level::Global, ConfigurationType::PerformanceTracking, "false");
     defaultConf.set(Level::Global, ConfigurationType::ToFile, "true");
     defaultConf.set(Level::Global, ConfigurationType::ToStandardOutput, "true");
     defaultConf.set(Level::Global, ConfigurationType::Filename, "./log");
     defaultConf.set(Level::Global, ConfigurationType::LogFlushThreshold, "100");
-    defaultConf.set(Level::Global, ConfigurationType::MaxLogFileSize, "2097152");
+    defaultConf.set(Level::Global, ConfigurationType::MaxLogFileSize, "2 * 1024 * 1024");
 
     Loggers::reconfigureAllLoggers(defaultConf);
 }

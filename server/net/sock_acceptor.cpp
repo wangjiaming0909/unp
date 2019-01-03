@@ -75,9 +75,9 @@ int net::sock_acceptor::accept(
             continue;
         }
         else if(client_fd == -1) return -1;//other errors
-        LOG(INFO) << "accepted a connection...";
         ret = client_stream.set_handle(client_fd);
         if(remote_addr) {
+            LOG(INFO) << "accepted a connection...";
             LOG(INFO) << "ret: " << ret;
             LOG(INFO) << remote_addr->get_address_string();
         }
@@ -140,8 +140,10 @@ int net::sock_acceptor::shared_accept_start(microseconds *timeout,
 }
 
 //set two handle to non-blocking mode
-int net::sock_acceptor::shared_accept_finish(sock_stream& client_stream,
-                bool in_blocking_mode) const{
+int net::sock_acceptor::shared_accept_finish(
+        sock_stream& client_stream,
+        bool in_blocking_mode) const
+{
     int ret = 0;
     if(in_blocking_mode){
         ret = sock_fd_->restore_blocking();
@@ -150,6 +152,7 @@ int net::sock_acceptor::shared_accept_finish(sock_stream& client_stream,
     }
     return ret;
 }
+
 int net::sock_acceptor::get_handle() const{
     return sock_fd_->get_handle();
 }

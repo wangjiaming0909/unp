@@ -46,7 +46,7 @@ protected:
     Reactor* reactor_;
 };
 
-static util::string event_type_to_string(event_handler::Event_Type type){
+inline util::string event_type_to_string(event_handler::Event_Type type){
     switch(type){
         case event_handler::NONE:
             return util::string("NONE");

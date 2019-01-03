@@ -112,10 +112,16 @@ inline void net::inet_addr::reset_addr(){
 }
 
 util::string net::inet_addr::get_address_string() const{
-	boost::scoped_array<char> addr_str{new char[INET_ADDRSTRLEN]};
-	memset(addr_str.get(), 0, INET_ADDRSTRLEN);
-	inet_ntop(AF_INET, &(in4_.sin_addr), addr_str.get(), sizeof(sockaddr_in));
-	return util::string{addr_str.get()};
+//	boost::scoped_array<char> addr_str{new char[INET_ADDRSTRLEN]};
+    char addr_str[INET_ADDRSTRLEN];
+	memset(addr_str, 0, INET_ADDRSTRLEN);
+	const char* ret = inet_ntop(AF_INET, &(in4_.sin_addr), addr_str, sizeof(sockaddr_in));
+    if(ret == nullptr) {
+        LOG(WARNING) << "inet_ntop error..." << strerror(errno);
+        return util::string{};
+    }
+    LOG(INFO) << addr_str;
+	return util::string{addr_str};
 }
 
 int net::addr_to_string(char* buffer, size_t len, const sockaddr_in* ip4_addr, int addr_family){

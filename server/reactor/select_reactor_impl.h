@@ -39,7 +39,7 @@ struct select_reactor_handle_sets{
 struct select_event_tuple{
     using Event_Type = event_handler::Event_Type;
     using type_handler_pair = std::pair<Event_Type, event_handler*>;
-    select_event_tuple (int handle) : handle(handle), types_and_handlers() { }
+    select_event_tuple (int handle = INVALID_HANDLE) : handle(handle), types_and_handlers() { }
     // int bind_new(const handler_and_type& handler_type){
     //     return bind_new(handler_type.event_type_, handler_type.event_handler_);
     // }
@@ -74,8 +74,14 @@ struct select_event_tuple{
         types_and_handlers.erase(type);
         return 0;
     }
+
     event_handler* get_handler(Event_Type type) const {
         if(types_and_handlers.count(type) != 1) {
+            if(type == event_handler::READ_EVENT){
+                if(types_and_handlers.count(event_handler::ACCEPT_EVENT) == 1){
+                    return types_and_handlers.find(event_handler::ACCEPT_EVENT).operator*().second;
+                }
+            }
             LOG(WARNING) 
                 << "handle " << handle 
                 << " has no handler for type " 
@@ -84,7 +90,9 @@ struct select_event_tuple{
         }
         return types_and_handlers.find(type).operator*().second;
     }
+
     void clear() {types_and_handlers.clear(); }
+
     int                                                     handle;
     //for handler and type
     //one handle:

@@ -8,7 +8,7 @@ select_demultiplex_table::select_demultiplex_table(size_t size) : table_(){
     if(size > MAX_NUMBER_OF_HANDLE) {
         LOG(ERROR) << "select_demultiplex_table size specified is size, bigger than " 
                    << MAX_NUMBER_OF_HANDLE;
-        table_.resize(MAX_NUMBER_OF_HANDLE); 
+        table_.resize(MAX_NUMBER_OF_HANDLE); //resize requires that T has default constructor
     } else table_.resize(size);
 }
 
@@ -21,6 +21,7 @@ event_handler* select_demultiplex_table::get_handler(int handle, Event_Type type
 }
 
 int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
+    LOG(INFO) << "bind handle: " << handle << " type: " << event_type_to_string(type);
     if(!is_valid_handle(handle) || handler == 0) {
         LOG(ERROR) << "handle is not in range or handler is null handle: " 
                     << handle << " handler: " << handler;
@@ -75,26 +76,31 @@ void select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
         LOG(INFO) << "select n: " << n;
         dispatch(n);
     }
-    LOG(WARNING) << "select return -1: " << strerror(errno);
+    LOG(WARNING) << "select returned -1: " << strerror(errno);
 }
 
 //if returned value < 0, means error
 //if returned value == 0, means ?
 //if returned value > 0, means n fd(s) are ready
 int select_reactor_impl::select(std::chrono::microseconds* timeout){
+    LOG(INFO) << "preparing to select...";
     const int width = this->demux_table_.get_current_max_handle_p_1();
     dispatch_sets_.read_set = this->wait_sets_.read_set;
     dispatch_sets_.write_set = this->wait_sets_.write_set;
     dispatch_sets_.exception_set = this->wait_sets_.exception_set;
     auto timeout_timeval = util::duration_to_timeval<std::chrono::microseconds>(timeout);
 
-    LOG(INFO) << "trying to wait on " << width << " fds...";
+//    LOG(INFO) << "trying to wait on " << width << " fds...";
     int read_fd_count = dispatch_sets_.read_set.handles_count();
     int write_fd_count = dispatch_sets_.write_set.handles_count();
     int exception_fd_count = dispatch_sets_.exception_set.handles_count();
     LOG(INFO) << "read fd count: " << read_fd_count;
     LOG(INFO) << "write fd count: " << write_fd_count;
     LOG(INFO) << "exception fd count: " << exception_fd_count;
+    if((read_fd_count + write_fd_count + exception_fd_count) == 0){
+        LOG(ERROR) << "there is no fd to select";
+        return -1;
+    }
 
     int number_of_active_handles = ::select(width, 
                      dispatch_sets_.read_set.get_select_fd_set_ptr(),
@@ -133,12 +139,11 @@ void select_reactor_impl::unregister_handler(event_handler *handler, Event_Type 
 }
 
 void select_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type){
-    LOG(INFO) << "registering handler..." ;
+    LOG(INFO) << "registering handler for "  << "handle: " << handle << " event: " << event_type_to_string(type);
     if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
         LOG(ERROR) << "handle error or registered type error...";
         return;
     }
-    LOG(INFO) << "handle: " << handle << "type: " << type;
     if(type == event_handler::READ_EVENT || type == event_handler::ACCEPT_EVENT){
         wait_sets_.read_set.set_bit(handle);
     }else if(type == event_handler::WRITE_EVENT){
@@ -197,19 +202,19 @@ int select_reactor_impl::dispatch_io_set(
     while((current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE
           && number_of_handles_dispatched < number_of_active_handles){
         ++number_of_handles_dispatched;
-        event_handler* handler = this->demux_table_.get_handler(current_handle);
+        event_handler* handler = this->demux_table_.get_handler(current_handle, type);
         if(handler == 0) return -1;
         int ret = (handler->*callback) (current_handle);
         if(ret == -1){
             //TODO ret handling
+            LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_to_string(type);
             this->demux_table_.unbind(current_handle);
             handler->handle_close(current_handle);
             dispatch_set.unset_bit(current_handle);
             ready_set.unset_bit(current_handle);
         }else{
-            LOG(INFO) <<"keep listening on handle: " << current_handle << " event: " << type;
+            LOG(INFO) <<"keep listening on handle: " << current_handle << " event: " << event_type_to_string(type);
         }
     }
-    (void)type;
     return 0;
 }
