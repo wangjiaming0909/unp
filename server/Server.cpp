@@ -49,7 +49,7 @@ void Server::start(){
         exit(-1);
     }
     LOG(INFO) << "accepted a connection from: ";
-    LOG(INFO) << socket::from_in_addr_to_string(client_ptr->m_addr.sin_addr).as_std_string();
+    // LOG(INFO) << socket::from_in_addr_to_string(client_ptr->m_addr.sin_addr).as_std_string();
     if(m_connfd >= 0)//! won't get here because it will stuck at accept
         m_server_status = SERVER_STATUS::Waiting_for_accept;
 }

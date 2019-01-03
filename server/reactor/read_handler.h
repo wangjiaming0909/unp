@@ -38,7 +38,8 @@ public:
             LOG(ERROR) << "read none..." ;
             return -1;
         }
-        LOG(INFO) << buffer_ << std::this_thread::get_id();
+        auto id = std::this_thread::get_id();
+        LOG(INFO) << buffer_ << " " << id;
         return 0;
     }
 

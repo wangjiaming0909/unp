@@ -29,6 +29,8 @@ int reactor_acceptor::close(){ return acceptor_.close();
 
 int reactor_acceptor::handle_input(int handle){
     pool_.start();
+    char*p = new char;
+    delete p;
     activate_read_handler();
     // read_handler_.activate(1);
     return 0;

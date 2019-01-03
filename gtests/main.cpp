@@ -23,7 +23,7 @@ void setupLogger(){
     defaultConf.set(Level::Global, ConfigurationType::ToStandardOutput, "true");
     defaultConf.set(Level::Global, ConfigurationType::Filename, "./log");
     defaultConf.set(Level::Global, ConfigurationType::LogFlushThreshold, "100");
-    defaultConf.set(Level::Global, ConfigurationType::MaxLogFileSize, "2 * 1024 * 1024");
+    defaultConf.set(Level::Global, ConfigurationType::MaxLogFileSize, "10485760");
 
     Loggers::reconfigureAllLoggers(defaultConf);
 }

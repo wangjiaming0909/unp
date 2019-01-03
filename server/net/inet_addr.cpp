@@ -120,7 +120,6 @@ util::string net::inet_addr::get_address_string() const{
         LOG(WARNING) << "inet_ntop error..." << strerror(errno);
         return util::string{};
     }
-    LOG(INFO) << addr_str;
 	return util::string{addr_str};
 }
 

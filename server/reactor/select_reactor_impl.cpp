@@ -204,6 +204,8 @@ int select_reactor_impl::dispatch_io_set(
         ++number_of_handles_dispatched;
         event_handler* handler = this->demux_table_.get_handler(current_handle, type);
         if(handler == 0) return -1;
+        char* p = new char;
+        delete p;
         int ret = (handler->*callback) (current_handle);
         if(ret == -1){
             //TODO ret handling
@@ -213,7 +215,7 @@ int select_reactor_impl::dispatch_io_set(
             dispatch_set.unset_bit(current_handle);
             ready_set.unset_bit(current_handle);
         }else{
-            LOG(INFO) <<"keep listening on handle: " << current_handle << " event: " << event_type_to_string(type);
+            LOG(INFO) <<"keep listening on handle: " << current_handle << " event: ";// << event_type_to_string(type);
         }
     }
     return 0;
