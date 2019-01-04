@@ -21,7 +21,8 @@ event_handler* select_demultiplex_table::get_handler(int handle, Event_Type type
 }
 
 int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
-    LOG(INFO) << "bind handle: " << handle << " type: " << event_type_to_string(type);
+    auto event_type_str = event_type_to_string(type);
+    LOG(INFO) << "bind handle: " << handle << " type: " << event_type_str;
     if(!is_valid_handle(handle) || handler == 0) {
         LOG(ERROR) << "handle is not in range or handler is null handle: " 
                     << handle << " handler: " << handler;
@@ -139,7 +140,8 @@ void select_reactor_impl::unregister_handler(event_handler *handler, Event_Type 
 }
 
 void select_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type){
-    LOG(INFO) << "registering handler for "  << "handle: " << handle << " event: " << event_type_to_string(type);
+    auto event_type_str = event_type_to_string(type);
+    LOG(INFO) << "registering handler for "  << "handle: " << handle << " event: "<< event_type_str;
     if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
         LOG(ERROR) << "handle error or registered type error...";
         return;
@@ -209,7 +211,8 @@ int select_reactor_impl::dispatch_io_set(
         int ret = (handler->*callback) (current_handle);
         if(ret == -1){
             //TODO ret handling
-            LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_to_string(type);
+            auto event_type_str = event_type_to_string(type);
+            LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_str;
             this->demux_table_.unbind(current_handle);
             handler->handle_close(current_handle);
             dispatch_set.unset_bit(current_handle);
