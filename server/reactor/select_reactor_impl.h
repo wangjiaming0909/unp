@@ -58,8 +58,15 @@ struct select_event_tuple{
         // types_and_handlers[type] = handler;
         // types_and_handlers.emplace(std::make_pair(type, handler));
         types_and_handlers[type] = handler;
-        char* p1 = new char;
-        delete p1;
+        try
+        {
+            char* p1 = new char;
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        
         return 0;
     }
     // int unbind(const handler_and_type& handler_type){

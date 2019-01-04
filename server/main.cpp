@@ -26,6 +26,7 @@ int main(int argc, char** argv){
     reactor::Reactor rt{new reactor::select_reactor_impl{}};
     inet_addr listen_addr{9000, "127.0.0.1"};
     reactor_acceptor acceptor{rt, listen_addr};
+    
     rt.handle_events();
 
     /*
@@ -56,14 +57,14 @@ int main(int argc, char** argv){
     // thread::thread_pool pool{5};   
     // pool.add_task(bind(&server::Server::start, &server));
     // pool.start();
-    // std::string s;
-    // while(1){
-    //     cin >> s;
-    //     if(s == "q")
-    //         exit(0);
-    //     else if(s == "a"){
+    std::string s;
+    while(1){
+        cin >> s;
+        if(s == "q")
+            exit(0);
+        else if(s == "a"){
 
-    //     }else
-    //         cout << s << endl;
-    // }
+        }else
+            cout << s << endl;
+    }
 }

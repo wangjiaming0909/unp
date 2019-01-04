@@ -28,11 +28,12 @@ int reactor_acceptor::close(){ return acceptor_.close();
 }
 
 int reactor_acceptor::handle_input(int handle){
+    LOG(INFO) << "start to accepting a connection";
     pool_.start();
-    char*p = new char;
-    delete p;
+    // char*p = new char;
+    // delete p;
     activate_read_handler();
-    // read_handler_.activate(1);
+    read_handler_.activate(1);
     return 0;
 }
 int reactor_acceptor::handle_timeout(int handle){
@@ -52,8 +53,10 @@ int reactor_acceptor::handle_signal(int handle){
 void reactor_acceptor::activate_read_handler(){
     net::inet_addr peer{};
     int ret = this->acceptor_.accept(read_handler_.get_sock_stream(), &peer);
+    char* p = new char;
+    delete p;
     if(ret == 0) 
-        LOG(INFO) << "accepted...";
+        // LOG(INFO) << "accepted...";
     if(ret != 0){
         LOG(ERROR) << "accept error..." << strerror(errno);
     }

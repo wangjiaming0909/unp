@@ -19,23 +19,29 @@ thread_pool::~thread_pool(){
 
 //will we have multi threads to add_tasks?
 void thread_pool::add_task(const task& t){
-    LOG(INFO) << "adding task";
+    // LOG(INFO) << "adding task";
     // log_with_thread_id("trying to get the mutex");
+    char*p3 = new char;
+    delete p3;
     lock_gd guard(_mutex, std::defer_lock);
     guard.lock();
-    LOG(INFO) << "adding task";
+    // LOG(INFO) << "adding task";
     // log_with_thread_id("get the mutex");
     //put the check inside the lock??
+    char*p2 = new char;
+    delete p2;
     while(deque_full()){
         _deque_full_cv.wait(guard);
     }
+    char*p1 = new char;
+    delete p1;
     //if has space for the new task
     _tasks.push_back(t);
     //if the deque is empty, we need to notify one thread when we add one task
     _has_task_cv.notify_one();
     // log_with_thread_id("release the mutex");
     guard.unlock();
-    LOG(INFO) << "added task";
+    // LOG(INFO) << "added task";
 }
 
 void thread_pool::start(){

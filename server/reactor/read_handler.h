@@ -17,7 +17,7 @@ public:
     }
     
     virtual void open() override {
-        LOG(INFO) << "opening ReadHandler...";
+        // LOG(INFO) << "opening ReadHandler...";
         this->reactor_->register_handler(this->peer_.get_handle(), this, event_handler::READ_EVENT);
     }
 

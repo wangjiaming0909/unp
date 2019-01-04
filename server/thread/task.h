@@ -29,10 +29,10 @@ public:
 
    //在routine中，需要自己从message_queue中拿出data，然后自己做处理
    //routine 会被 routine_run 自动调用
-   virtual int routine() = 0;
+    virtual int routine() = 0;
    //decide which event you want to register
     virtual void open() = 0;
-   static int routine_run(task* self);
+    int routine_run();
 private:
     //why delete ?
 //    task(const task&) = delete;
@@ -48,17 +48,34 @@ task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q)
     , t_pool_p_(&t_pool)
     , msg_queue_p_(&msg_q){ }
 
+inline void p(int i){
+
+}
+
+ inline void ff(thread_pool::task t){
+    char*p = new char;
+    delete p;
+}
 //pass routine_run to the threads
 template <typename T>
 int task<T>::activate(int thread_count){
     for(int i = 0; i < thread_count; i++){
-        LOG(INFO) << "adding one task... " << i+1 << " of " << thread_count;
-        LOG(INFO) << t_pool_p_;
+        // LOG(INFO) << "adding one task... " << i+1 << " of " << thread_count;
+        // LOG(INFO) << t_pool_p_;
+        char*p2 = new char;
+        delete p2;
         t_pool_p_->add_task(std::bind(&task::routine_run, this));
-        LOG(INFO) << "added task";
+        // auto f = std::bind(&task::routine_run, this);
+        // auto f = std::bind(&p, 1);
+        // t_pool_p_->add_task(f);
+        // ff(f);
+        char* p = new char;
+        delete p;
+        // LOG(INFO) << "added task";
     }
     return thread_count;
 }
+
 
 template <typename T>
 int task<T>::wait(const micro_seconds* timeout){
@@ -74,8 +91,8 @@ void task<T>::cancel() {
 }
 
 template <typename T>
-int task<T>::routine_run(task* self){
-    return self->routine();
+int task<T>::routine_run(){
+    return this->routine();
 }
 
 template <typename T>
