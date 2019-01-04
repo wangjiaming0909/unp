@@ -248,6 +248,7 @@ message_queue<T>::~message_queue(){ }
 template <typename T>
 int message_queue<T>::enqueue_head(message_block_type* message, const micro_seconds& timeout){
     if(message == 0){
+        LOG(WARNING) << "message_queue enqueue message is null";
         return -1;
     }
     guard_type _{mutex_};

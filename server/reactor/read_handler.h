@@ -23,8 +23,8 @@ public:
 
     virtual int handle_input(int handle) {
         (void)handle;
-        // data_block<data_type> data{};
-        int ret = this->put_data(0);
+        data_block<data_type> data{};
+        int ret = this->put_data(&data);
         if(ret == 0)
             this->activate(1);
         return ret;
@@ -33,6 +33,7 @@ public:
     virtual int routine() override {
         //need to dequeue，为了使得没有消息时，该线程会被阻塞，如果不dequeue，就会read阻塞
         //虽然没有使用这个data
+        LOG(INFO) << "routine";
         this->get_data();
         if(this->peer_.read(static_cast<void*>(buffer_), 64, 0) <= 0){
             LOG(ERROR) << "read none..." ;

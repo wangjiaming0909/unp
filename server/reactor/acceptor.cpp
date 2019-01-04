@@ -7,7 +7,7 @@ reactor_acceptor:: reactor_acceptor(Reactor& react, const net::inet_addr& local_
         , acceptor_(local_addr)
         , local_addr_(local_addr)
         , mq_()
-        , pool_(2)
+        , pool_(1)
         , read_handler_(react, mq_, pool_) { this->open(); }
 
 reactor_acceptor::~reactor_acceptor(){ }

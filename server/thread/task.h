@@ -53,7 +53,9 @@ template <typename T>
 int task<T>::activate(int thread_count){
     for(int i = 0; i < thread_count; i++){
         LOG(INFO) << "adding one task... " << i+1 << " of " << thread_count;
+        LOG(INFO) << t_pool_p_;
         t_pool_p_->add_task(std::bind(&task::routine_run, this));
+        LOG(INFO) << "added task";
     }
     return thread_count;
 }
