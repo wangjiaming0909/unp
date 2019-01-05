@@ -65,13 +65,12 @@ int net::sock_acceptor::accept(
     if(remote_addr ){
         len = remote_addr->get_size();
         len_ptr = &len;
+        memcpy(&addr, (sockaddr*)remote_addr->get_sockaddr_in_ptr().get(), sizeof(sockaddr));
         // addr = (sockaddr*)remote_addr->get_sockaddr_in_ptr().get();//!ERROR
     }
 
     for(;;){
-        char*p = new char;
-        delete p;
-        // LOG(INFO) << "invoking accept...";
+        LOG(INFO) << "invoking accept...";
         int client_fd = ::accept(sock_fd_->get_handle(), &addr, len_ptr);
         //restart set and accept failed and it was interrupted, then continue
         if(restart && client_fd == -1 && errno == EINTR){
@@ -80,15 +79,14 @@ int net::sock_acceptor::accept(
         } else if(client_fd == -1) return -1;//other errors
         ret = client_stream.set_handle(client_fd);
         if(remote_addr) {
-            // auto addr_string = remote_addr->get_address_string();
-            // LOG(INFO) << "accepted a connection..." << addr_string;
+            auto addr_string = remote_addr->get_address_string();
+            LOG(INFO) << "accepted a connection..." << addr_string;
         }
         //accept returned successfully, remote addr was set, addrlen was set too
         //and we write it to the remote_addr pointer
         if(ret != INVALID_HANDLE && remote_addr){
             remote_addr->set_size(len);
-            // if(addr) remote_addr->set_type(addr->sa_family);
-            // LOG(INFO) << "settings size and family " << len << " " << addr->sa_family;
+            LOG(INFO) << "settings size and family " << len << " " << addr.sa_family;
             break;
         }
     }

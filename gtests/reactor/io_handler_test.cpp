@@ -14,6 +14,6 @@ TEST(io_handler_test, constructor_test){
     int a = 0;
     data_block<int> data(&a, false);
     std::chrono::seconds _{0};
-    handler.put_data(&data, _);
+    handler.put_data(data, _);
     handler.open();
 }

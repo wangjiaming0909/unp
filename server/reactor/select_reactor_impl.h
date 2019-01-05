@@ -54,18 +54,7 @@ struct select_event_tuple{
             LOG(WARNING) << "can't bind NONE event or handler is nullptr";
             return -1;
         }
-        // types_and_handlers.insert( type_handler_pair(type, handler));
-        // types_and_handlers[type] = handler;
-        // types_and_handlers.emplace(std::make_pair(type, handler));
         types_and_handlers[type] = handler;
-        try
-        {
-            char* p1 = new char;
-        }
-        catch(const std::exception& e)
-        {
-            std::cerr << e.what() << '\n';
-        }
         
         return 0;
     }

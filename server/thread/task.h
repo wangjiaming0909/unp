@@ -23,8 +23,9 @@ public:
 
     void cancel();
 
-    int put_data(data_type* data, const micro_seconds& timeout = micro_seconds{0});
-    boost::shared_ptr<data_type> get_data(const micro_seconds& timeout = micro_seconds{0});
+    int put_data(data_type data, const micro_seconds& timeout = micro_seconds{0});
+    // boost::shared_ptr<data_type> get_data(const micro_seconds& timeout = micro_seconds{0});
+    data_type get_data(const micro_seconds& timeout = micro_seconds{0});
     int get_data(data_type* data, const micro_seconds& timeout = micro_seconds{0});
 
    //在routine中，需要自己从message_queue中拿出data，然后自己做处理
@@ -48,29 +49,13 @@ task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q)
     , t_pool_p_(&t_pool)
     , msg_queue_p_(&msg_q){ }
 
-inline void p(int i){
-
-}
-
- inline void ff(thread_pool::task t){
-    char*p = new char;
-    delete p;
-}
 //pass routine_run to the threads
 template <typename T>
 int task<T>::activate(int thread_count){
     for(int i = 0; i < thread_count; i++){
         // LOG(INFO) << "adding one task... " << i+1 << " of " << thread_count;
         // LOG(INFO) << t_pool_p_;
-        char*p2 = new char;
-        delete p2;
         t_pool_p_->add_task(std::bind(&task::routine_run, this));
-        // auto f = std::bind(&task::routine_run, this);
-        // auto f = std::bind(&p, 1);
-        // t_pool_p_->add_task(f);
-        // ff(f);
-        char* p = new char;
-        delete p;
         // LOG(INFO) << "added task";
     }
     return thread_count;
@@ -96,7 +81,7 @@ int task<T>::routine_run(){
 }
 
 template <typename T>
-int task<T>::put_data(data_type* data, const micro_seconds& timeout){
+int task<T>::put_data(data_type data, const micro_seconds& timeout){
     return msg_queue_p_->enqueue_head(data, timeout);
 }
 
@@ -106,12 +91,20 @@ int task<T>::get_data(data_type* data, const micro_seconds& timeout){
 }
 
 template <typename T>
-auto task<T>::get_data(const micro_seconds& timeout) -> boost::shared_ptr<data_type>{
-    boost::shared_ptr<data_type> ret_ptr{new data_type{}};
-    int ret = msg_queue_p_->dequeue_tail(ret_ptr.get(), timeout);
-    if(ret != 0) return boost::shared_ptr<data_type>{nullptr};
-    return ret_ptr;
+typename task<T>::data_type task<T>::get_data(const micro_seconds& timeout){
+    data_type ret{};
+    int res = msg_queue_p_->dequeue_tail(&ret, timeout);
+    if(res != 0) LOG(INFO) << "dequeue error";
+    return ret;
 }
+
+// template <typename T>
+// auto task<T>::get_data(const micro_seconds& timeout) -> boost::shared_ptr<data_type>{
+//     boost::shared_ptr<data_type> ret_ptr{new data_type{}};
+//     int ret = msg_queue_p_->dequeue_tail(ret_ptr.get(), timeout);
+//     if(ret != 0) return boost::shared_ptr<data_type>{nullptr};
+//     return ret_ptr;
+// }
 
 }//namespace thread
 
