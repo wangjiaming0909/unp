@@ -46,9 +46,9 @@ private:
 private:
     net::sock_acceptor	            acceptor_;
     net::inet_addr                  local_addr_;
-    message_queue<char>             mq_;
+    message_queue<int>             mq_;
     thread_pool	                    pool_;
-    ReadHandler<char>               read_handler_;
+    ReadHandler<int>               read_handler_;
 };
 }
 #endif // _UNP_REACTOR_ACCEPTOR_H_

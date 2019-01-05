@@ -23,8 +23,8 @@ public:
 
     virtual int handle_input(int handle) {
         (void)handle;
-        // data_block<data_type> data{};
-        int ret = this->put_data(0);
+        data_block<data_type> data{new data_type, true};
+        int ret = this->put_data(data);
         if(ret == 0)
             this->activate(1);
         return ret;
@@ -33,12 +33,22 @@ public:
     virtual int routine() override {
         //need to dequeue，为了使得没有消息时，该线程会被阻塞，如果不dequeue，就会read阻塞
         //虽然没有使用这个data
-        this->get_data();
+        LOG(INFO) << "routine has started...";
+        data_block<data_type> data{};
+        int ret = this->get_data(&data);
+        LOG(INFO) << "data: " << *data;
+        if(ret != 0 ) {
+            LOG(INFO) << "get data error";
+            return -1;
+        }
         if(this->peer_.read(static_cast<void*>(buffer_), 64, 0) <= 0){
             LOG(ERROR) << "read none..." ;
             return -1;
         }
-        LOG(INFO) << buffer_ << std::this_thread::get_id();
+        LOG(INFO) << "get data from peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();
+        if(*data == 'q'){
+            return -1;
+        }
         return 0;
     }
 

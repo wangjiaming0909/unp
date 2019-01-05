@@ -39,7 +39,12 @@ struct select_reactor_handle_sets{
 struct select_event_tuple{
     using Event_Type = event_handler::Event_Type;
     using type_handler_pair = std::pair<Event_Type, event_handler*>;
-    select_event_tuple (int handle = INVALID_HANDLE) : handle(handle), types_and_handlers() { }
+    select_event_tuple (int handle = INVALID_HANDLE) : handle(handle), types_and_handlers() { 
+        types_and_handlers.resize(64);
+        for(int i = 0; i < 64; i++){
+            types_and_handlers[i] = nullptr;
+        }
+    }
     // int bind_new(const handler_and_type& handler_type){
     //     return bind_new(handler_type.event_type_, handler_type.event_handler_);
     // }
@@ -49,8 +54,8 @@ struct select_event_tuple{
             LOG(WARNING) << "can't bind NONE event or handler is nullptr";
             return -1;
         }
-        types_and_handlers.insert(
-            type_handler_pair(type, handler));
+        types_and_handlers[type] = handler;
+        
         return 0;
     }
     // int unbind(const handler_and_type& handler_type){
@@ -64,22 +69,22 @@ struct select_event_tuple{
     // }
     int unbind(Event_Type type, event_handler* handler){
         if(handle == INVALID_HANDLE) return -1;
-        if(types_and_handlers.count(type) != 1) {
+        if(types_and_handlers[type] != nullptr) {
             LOG(WARNING) << "can't unbind, no this type of event";
             return -1;
         }
         if(types_and_handlers[type] != handler) {
             LOG(WARNING) << "the handler you unbinded is not the same as you provided";
         }
-        types_and_handlers.erase(type);
+        types_and_handlers[type] = nullptr;
         return 0;
     }
 
     event_handler* get_handler(Event_Type type) const {
-        if(types_and_handlers.count(type) != 1) {
+        if(types_and_handlers[type] == nullptr) {
             if(type == event_handler::READ_EVENT){
-                if(types_and_handlers.count(event_handler::ACCEPT_EVENT) == 1){
-                    return types_and_handlers.find(event_handler::ACCEPT_EVENT).operator*().second;
+                if(types_and_handlers[event_handler::ACCEPT_EVENT] != nullptr){
+                    return types_and_handlers[event_handler::ACCEPT_EVENT];
                 }
             }
             LOG(WARNING) 
@@ -88,7 +93,7 @@ struct select_event_tuple{
                 << event_type_to_string(type);
             return nullptr;
         }
-        return types_and_handlers.find(type).operator*().second;
+        return types_and_handlers[type];
     }
 
     void clear() {types_and_handlers.clear(); }
@@ -98,7 +103,8 @@ struct select_event_tuple{
     //one handle:
     //one type of event, only have one handler, 如果可以有两个，那么事件发生的时候我调用谁呢?
     //but one handler, 可以有多个事件与之对应
-    std::unordered_map<Event_Type, event_handler*>          types_and_handlers;
+    // std::unordered_map<Event_Type, event_handler*>          types_and_handlers;
+    std::vector<event_handler*>                             types_and_handlers;
 };
 
 class select_demultiplex_table{

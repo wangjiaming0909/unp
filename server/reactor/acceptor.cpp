@@ -7,7 +7,7 @@ reactor_acceptor:: reactor_acceptor(Reactor& react, const net::inet_addr& local_
         , acceptor_(local_addr)
         , local_addr_(local_addr)
         , mq_()
-        , pool_(2)
+        , pool_(1)
         , read_handler_(react, mq_, pool_) { this->open(); }
 
 reactor_acceptor::~reactor_acceptor(){ }
@@ -28,6 +28,7 @@ int reactor_acceptor::close(){ return acceptor_.close();
 }
 
 int reactor_acceptor::handle_input(int handle){
+    LOG(INFO) << "start to accepting a connection";
     pool_.start();
     activate_read_handler();
     // read_handler_.activate(1);

@@ -4,7 +4,6 @@
 using namespace reactor;
 
 select_demultiplex_table::select_demultiplex_table(size_t size) : table_(){
-    // LOG(TRACE) << "select_demultiplex_table";
     if(size > MAX_NUMBER_OF_HANDLE) {
         LOG(ERROR) << "select_demultiplex_table size specified is size, bigger than " 
                    << MAX_NUMBER_OF_HANDLE;
@@ -21,7 +20,8 @@ event_handler* select_demultiplex_table::get_handler(int handle, Event_Type type
 }
 
 int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
-    LOG(INFO) << "bind handle: " << handle << " type: " << event_type_to_string(type);
+    // auto event_type_str = event_type_to_string(type);
+    // LOG(INFO) << "bind handle: " << handle << " type: " << event_type_str;
     if(!is_valid_handle(handle) || handler == 0) {
         LOG(ERROR) << "handle is not in range or handler is null handle: " 
                     << handle << " handler: " << handler;
@@ -73,7 +73,7 @@ const long int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 void select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
     int n = 0;
     while((n = this->select(timeout)) >= 0){
-        LOG(INFO) << "select n: " << n;
+        LOG(INFO) << n << " fd ready...";
         dispatch(n);
     }
     LOG(WARNING) << "select returned -1: " << strerror(errno);
@@ -139,7 +139,8 @@ void select_reactor_impl::unregister_handler(event_handler *handler, Event_Type 
 }
 
 void select_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type){
-    LOG(INFO) << "registering handler for "  << "handle: " << handle << " event: " << event_type_to_string(type);
+    auto event_type_str = event_type_to_string(type);
+    LOG(INFO) << "registering handler for "  << "handle: " << handle << " event: "<< event_type_str;
     if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
         LOG(ERROR) << "handle error or registered type error...";
         return;
@@ -198,22 +199,29 @@ int select_reactor_impl::dispatch_io_set(
         unp::handle_set& ready_set,
         HANDLER callback){
     int current_handle = -1;
+
+
     //go throuth the handle_set, dispatch all the handles
-    while((current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE
-          && number_of_handles_dispatched < number_of_active_handles){
+    while(
+        ((current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE) && 
+        (number_of_handles_dispatched < number_of_active_handles))
+    {
+        LOG(INFO) << "dispatching... handle: " << current_handle << " event: " << event_type_to_string(type);
         ++number_of_handles_dispatched;
         event_handler* handler = this->demux_table_.get_handler(current_handle, type);
         if(handler == 0) return -1;
         int ret = (handler->*callback) (current_handle);
+
         if(ret == -1){
             //TODO ret handling
-            LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_to_string(type);
+            auto event_type_str = event_type_to_string(type);
+            LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_str;
             this->demux_table_.unbind(current_handle);
             handler->handle_close(current_handle);
             dispatch_set.unset_bit(current_handle);
             ready_set.unset_bit(current_handle);
         }else{
-            LOG(INFO) <<"keep listening on handle: " << current_handle << " event: " << event_type_to_string(type);
+            LOG(INFO) <<"keep listening on handle: " << current_handle << " event: ";// << event_type_to_string(type);
         }
     }
     return 0;

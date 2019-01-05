@@ -17,7 +17,8 @@ public:
     virtual int routine() override {
         micro_seconds _{0};
         auto data_ptr = this->get_data(_);
-        LOG(INFO) << "sleeping for 1 seconds..." << std::this_thread::get_id();
+        auto id = std::this_thread::get_id();
+        LOG(INFO) << "sleeping for 1 seconds..." << id;
         std::this_thread::sleep_for(std::chrono::seconds(1));
         data_ptr->operator*()++;
     }

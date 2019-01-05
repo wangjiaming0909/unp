@@ -193,8 +193,8 @@ public:
     int open();
     int close();
     ~message_queue();
-    int enqueue_head(message_block_type* message, const micro_seconds& timeout);
-    int enqueue_tail(message_block_type* message, const micro_seconds& timeout);
+    int enqueue_head(message_block_type message, const micro_seconds& timeout);
+    int enqueue_tail(message_block_type message, const micro_seconds& timeout);
     int dequeue_head(message_block_type* first_message, const micro_seconds& timeout);
     int dequeue_tail(message_block_type* dequeued, const micro_seconds& timeout);
     bool is_full() const {return deque_ptr_->size() == high_water_mark_;}
@@ -214,7 +214,7 @@ private:
     //虽然，这里使用了deque，但是并没有使用deque的双端可进可出的特点，只是使用了一端进一端出的特点
     //若要使用双端特性，则需要加上按照优先级进行enqueue、dequeue
     //TODO add priority
-    std::shared_ptr<std::deque<message_block_type*>>                deque_ptr_;
+    std::shared_ptr<std::deque<message_block_type>>                 deque_ptr_;
     cv_type	                                                        not_empty_cv_;
     cv_type	                                                        not_full_cv_;
 
@@ -226,7 +226,7 @@ message_queue<T>::message_queue(
     : high_water_mark_(hwm)
     , low_water_mark_(lwm)
     , mutex_()
-    , deque_ptr_(new std::deque<message_block_type*>{})
+    , deque_ptr_(new std::deque<message_block_type>{})
     , not_empty_cv_()
     , not_full_cv_(){
 }
@@ -246,27 +246,26 @@ template <typename T>
 message_queue<T>::~message_queue(){ }
 
 template <typename T>
-int message_queue<T>::enqueue_head(message_block_type* message, const micro_seconds& timeout){
-    if(message == 0){
-        return -1;
-    }
+int message_queue<T>::enqueue_head(message_block_type message, const micro_seconds& timeout){
     guard_type _{mutex_};
-    if(timeout.count() != 0 && wait_not_full_condition(timeout) != 0)
+    if(wait_not_full_condition(timeout) != 0)
         return -1;
     deque_ptr_->push_front(message);
-    if(timeout.count() != 0 && deque_ptr_->size() < high_water_mark_)
-        signal_dequeue_waiters();
+    LOG(INFO) << "now have " << deque_ptr_->size() << " tasks";
+    // if(deque_ptr_->size() < high_water_mark_)
+    signal_dequeue_waiters();
     return 0;
 }
     
 template <typename T>
-int message_queue<T>::enqueue_tail(message_block_type* message, const micro_seconds& timeout){
+int message_queue<T>::enqueue_tail(message_block_type message, const micro_seconds& timeout){
     guard_type _{mutex_};
-    if(timeout.count() != 0 && wait_not_full_condition(timeout) != 0)
+    if(wait_not_full_condition(timeout) != 0)
         return -1;
     deque_ptr_->push_back(message);
-    if(timeout.count() != 0)
-        signal_dequeue_waiters();
+    LOG(INFO) << "now have " << deque_ptr_->size() << " tasks";
+    // if(timeout.count() != 0)
+    signal_dequeue_waiters();
     return 0;
 }
 
@@ -276,10 +275,11 @@ int message_queue<T>::dequeue_head(message_block_type* first_message, const micr
     int result = 0;
     if(wait_not_empty_condition(timeout) != 0)//timeout
         return -1;
-    *first_message = *(deque_ptr_->front());
+    *first_message = deque_ptr_->front();
     deque_ptr_->pop_front();
-    if(timeout.count() != 0)
-        signal_enqueue_waiters();
+    LOG(INFO) << "now have " << deque_ptr_->size() << " tasks";
+    // if(timeout.count() != 0)
+    signal_enqueue_waiters();
     return 0;
 }
 
@@ -290,15 +290,16 @@ int message_queue<T>::dequeue_tail(message_block_type* dequeued, const micro_sec
         return -1;
     if(deque_ptr_->size() >= 1){
         auto tmp = deque_ptr_->back();
-        *dequeued = *tmp;
+        *dequeued = tmp;
     }
     else{
         LOG(ERROR) << "deque size is 0";
         return -1;
     } 
     deque_ptr_->pop_back();
-    if(timeout.count() != 0)
-        signal_enqueue_waiters();
+    LOG(INFO) << "now have " << deque_ptr_->size() << " tasks";
+    // if(timeout.count() != 0)
+    signal_enqueue_waiters();
     return 0;
 }
 
@@ -307,6 +308,11 @@ int message_queue<T>::wait_not_empty_condition(const micro_seconds& timeout){
     lock_type u_lock{mutex_, std::adopt_lock};
     int result = 0;
     while(this->deque_ptr_->size() == 0){
+        if(timeout.count() == 0){
+            not_empty_cv_.wait(u_lock);
+            result = 0;
+            break;
+        }
         if(not_empty_cv_.wait_for(u_lock, timeout) == std::cv_status::timeout){
             result = -1;
             break;
@@ -320,6 +326,11 @@ int message_queue<T>::wait_not_full_condition(const micro_seconds& timeout){
     lock_type u_lock{mutex_, std::adopt_lock};
     int result = 0;
     while(this->deque_ptr_->size() >= high_water_mark_){
+        if(timeout.count() == 0){
+            not_full_cv_.wait(u_lock);
+            result = 0;
+            break;
+        }
         if(not_full_cv_.wait_for(u_lock, timeout) == std::cv_status::timeout){
             result = -1;
             break;

@@ -51,7 +51,8 @@ int net::sock_acceptor::accept(
             sock_stream& client_stream,
             inet_addr* remote_addr,
             microseconds* timeout,
-            bool restart) const{
+            bool restart) const
+{
     //non-blocking accept
     int in_blocking_mode = 0;
     int ret = this->shared_accept_start(timeout, restart, in_blocking_mode);
@@ -59,34 +60,33 @@ int net::sock_acceptor::accept(
 
     socklen_t len = 0;
     socklen_t *len_ptr = 0;
-    sockaddr* addr = 0;
+    sockaddr addr;
+    // sockaddr* addr = 0;
     if(remote_addr ){
         len = remote_addr->get_size();
         len_ptr = &len;
-        addr = (sockaddr*)remote_addr->get_sockaddr_in_ptr().get();
+        memcpy(&addr, (sockaddr*)remote_addr->get_sockaddr_in_ptr().get(), sizeof(sockaddr));
+        // addr = (sockaddr*)remote_addr->get_sockaddr_in_ptr().get();//!ERROR
     }
 
     for(;;){
         LOG(INFO) << "invoking accept...";
-        int client_fd = ::accept(sock_fd_->get_handle(), addr, len_ptr);
+        int client_fd = ::accept(sock_fd_->get_handle(), &addr, len_ptr);
         //restart set and accept failed and it was interrupted, then continue
         if(restart && client_fd == -1 && errno == EINTR){
             LOG(INFO) << "interrupted... restarting.....";
             continue;
-        }
-        else if(client_fd == -1) return -1;//other errors
+        } else if(client_fd == -1) return -1;//other errors
         ret = client_stream.set_handle(client_fd);
         if(remote_addr) {
-            LOG(INFO) << "accepted a connection...";
-            LOG(INFO) << "ret: " << ret;
-            LOG(INFO) << remote_addr->get_address_string();
+            auto addr_string = remote_addr->get_address_string();
+            LOG(INFO) << "accepted a connection..." << addr_string;
         }
         //accept returned successfully, remote addr was set, addrlen was set too
         //and we write it to the remote_addr pointer
         if(ret != INVALID_HANDLE && remote_addr){
             remote_addr->set_size(len);
-            if(addr) remote_addr->set_type(addr->sa_family);
-            LOG(INFO) << "settings size and family " << len << " " << addr->sa_family;
+            LOG(INFO) << "settings size and family " << len << " " << addr.sa_family;
             break;
         }
     }
@@ -103,7 +103,9 @@ int net::sock_acceptor::shared_open(
         LOG(ERROR) << "protocol_family is not AF_INET";
         return -1;
     }
-    LOG(INFO) << "trying to bind to: " << local_sap.get_address_string() << ":" << local_sap.get_port_number() << "..." ;
+    auto addr_str = local_sap.get_address_string();
+    auto port = local_sap.get_port_number();
+    LOG(INFO) << "trying to bind to: " << addr_str << ":" << port << "..." ;
     int ret = ::bind(sock_fd_->get_handle(), 
         local_sap.get_sockaddr_ptr().get(), 
         local_sap.get_size());
@@ -111,7 +113,7 @@ int net::sock_acceptor::shared_open(
         LOG(ERROR) << "bind error: " << strerror(errno);
         return ret;
     }
-    LOG(INFO) << "listening on: " << local_sap.get_address_string() << ":" << local_sap.get_port_number() << "...";
+    LOG(INFO) << "listening on: " << addr_str << ":" << port << "...";
     ret = ::listen(sock_fd_->get_handle(), backlog);
     if(ret != 0){
         LOG(ERROR) << "listen error: " << strerror(errno);
