@@ -60,6 +60,10 @@ int select_demultiplex_table::unbind(int handle){
     return 0;
 }
 
+int select_demultiplex_table::unbind(int handle, const event_handler* handler){
+
+}
+
 // int select_demultiplex_table::unbind(const select_event_tuple& event_tuple){
 //     if( !  is_handle_in_range(event_tuple.handle_) 
 //         || table_[event_tuple.handle_].event_handler_ == 0){
@@ -145,12 +149,19 @@ void select_reactor_impl::register_handler(int handle, event_handler *handler, E
         LOG(ERROR) << "handle error or registered type error...";
         return;
     }
-    if(type == event_handler::READ_EVENT || type == event_handler::ACCEPT_EVENT){
-        wait_sets_.read_set.set_bit(handle);
-    }else if(type == event_handler::WRITE_EVENT){
-        wait_sets_.write_set.set_bit(handle);
-    }else if(type == event_handler::EXCEPT_EVENT){
-        wait_sets_.exception_set.set_bit(handle);
+    switch (type) {
+        case event_handler::READ_EVENT:
+        case event_handler::ACCEPT_EVENT:
+            wait_sets_.read_set.set_bit(handle);
+            break;
+        case event_handler::WRITE_EVENT:
+            wait_sets_.write_set.set_bit(handle);
+            break;
+        case event_handler::EXCEPT_EVENT:   
+            wait_sets_.exception_set.set_bit(handle);
+            break;
+        default:
+            break;
     }
     demux_table_.bind(handle, handler, type);
 }

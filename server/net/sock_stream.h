@@ -43,7 +43,7 @@ public:
         const micro_seconds* timeout = 0) const;
 
 public:
-	int get_handle(){ return sock_fd_->get_handle(); }
+	int get_handle() const { return sock_fd_->get_handle(); }
 	int set_handle(int handle){
         sock_fd_->set_handle(handle);
         return sock_fd_->get_handle();

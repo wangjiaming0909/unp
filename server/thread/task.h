@@ -33,7 +33,13 @@ public:
     virtual int routine() = 0;
    //decide which event you want to register
     virtual void open() = 0;
+    //for closing the handler
+    virtual int close();
     int routine_run();
+
+// public:
+//     Event_Type get_event_type() const {return current_event_;}
+//     void set_event_type(Event_Type event) {current_event_ = event; }
 private:
     //why delete ?
 //    task(const task&) = delete;
@@ -41,13 +47,15 @@ private:
 protected:
     thread_pool*                t_pool_p_;
     mq_type*                    msg_queue_p_;
+    Event_Type                  current_event_;
 };
 
 template <typename T>
 task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q) 
     : event_handler(react)
     , t_pool_p_(&t_pool)
-    , msg_queue_p_(&msg_q){ }
+    , msg_queue_p_(&msg_q)
+    , current_event_(0){ }
 
 //pass routine_run to the threads
 template <typename T>
@@ -77,7 +85,19 @@ void task<T>::cancel() {
 
 template <typename T>
 int task<T>::routine_run(){
-    return this->routine();
+    int ret = this->routine();
+    if(ret != 0) {
+        if(this->close() != 0) return -1;
+    }
+    return ret;
+}
+
+template <typename T>
+int task<T>::close(){
+    int handle = this->get_handle();
+    if(handle == INVALID_HANDLE) return -1;
+    this->reactor_->unregister_handler(this->get_handle(), this, current_event_);
+    return this->handle_close(0); // 0没有意义
 }
 
 template <typename T>

@@ -117,6 +117,7 @@ public:
     // int bind(const select_event_tuple& event_tuple);
     //unbind掉绑定到这个handle的所有事件处理器
     int unbind(int handle);
+    int unbind(int handle, const event_handler* handler);
     // int unbind(const select_event_tuple& event_tuple);
     int get_current_max_handle_p_1() const { return current_max_handle_p_1_;}
 private:

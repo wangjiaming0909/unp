@@ -14,11 +14,12 @@ public:
     ReadHandler(Reactor& react, mq_type& messageQueue, thread::thread_pool& threadPool)
         : base(react, messageQueue, threadPool){
         memset(buffer_, 0, 128);
+        this->current_event_ = event_handler::READ_EVENT;       
     }
     
     virtual void open() override {
         LOG(INFO) << "opening ReadHandler...";
-        this->reactor_->register_handler(this->peer_.get_handle(), this, event_handler::READ_EVENT);
+        this->reactor_->register_handler(this->peer_.get_handle(), this, this->current_event_);
     }
 
     virtual int handle_input(int handle) {
@@ -46,12 +47,17 @@ public:
             return -1;
         }
         LOG(INFO) << "get data from peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();
+        if(buffer_[0] == 'q') {
+            LOG(INFO) << "remote sended a quit, closing...";
+            return -1;
+        }
         return 0;
     }
 
     virtual int handle_close(int handle) {
         this->peer_.close();
     }
+
 private:
     char buffer_[128];
 };
