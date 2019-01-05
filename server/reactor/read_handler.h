@@ -46,9 +46,6 @@ public:
             return -1;
         }
         LOG(INFO) << "get data from peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();
-        if(*data == 'q'){
-            return -1;
-        }
         return 0;
     }
 
