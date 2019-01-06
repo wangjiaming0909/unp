@@ -92,7 +92,7 @@ public:
     using Event_Type = event_handler::Event_Type;
     select_demultiplex_table(size_t capacity = 8);
     event_handler* get_handler(int handle, Event_Type type) const;
-    const std::vector<select_event_tuple>& get_event_tuple_array() const { return table_; }
+    const std::vector<select_event_tuple>& get_event_vector() const { return event_vector_; }
     int bind(int handle, event_handler* handler, Event_Type type);
     //unbind掉绑定到这个handle的所有事件处理器
     int unbind(int handle);
@@ -101,11 +101,10 @@ public:
 private:
     bool is_handle_in_range(int handle) const ;
     bool is_valid_handle(int handle) const ;
-    int next_max_handle() const ;
 
 private:
     //the size of table_ is meaningless
-    std::vector<select_event_tuple> table_;
+    std::vector<select_event_tuple> event_vector_;
     int current_max_handle_p_1_ = INVALID_HANDLE + 1;
 public:
     static const long int MAX_NUMBER_OF_HANDLE = FD_SETSIZE;

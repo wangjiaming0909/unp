@@ -3,13 +3,13 @@
 
 using namespace reactor;
 
-select_demultiplex_table::select_demultiplex_table(size_t size) : table_(){
+select_demultiplex_table::select_demultiplex_table(size_t size) : event_vector_(){
     if(size > MAX_NUMBER_OF_HANDLE) {
         LOG(ERROR) << "select_demultiplex_table size specified is " 
                    << size << ", bigger than " 
                    << MAX_NUMBER_OF_HANDLE;
-        table_.resize(MAX_NUMBER_OF_HANDLE); //resize requires that T has default constructor
-    } else table_.resize(size);
+        event_vector_.resize(MAX_NUMBER_OF_HANDLE); //resize requires that T has default constructor
+    } else event_vector_.resize(size);
 }
 
 event_handler* select_demultiplex_table::get_handler(int handle, Event_Type type) const{
@@ -17,7 +17,7 @@ event_handler* select_demultiplex_table::get_handler(int handle, Event_Type type
         LOG(WARNING) << "handle is not in range, handle: " << handle;
         return 0;
     }
-    return table_[handle].get_handler(type);
+    return event_vector_[handle].get_handler(type);
 }
 
 int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
@@ -28,10 +28,10 @@ int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Typ
                     << handle << " handler: " << handler;
         return -1;
     }
-    if((int)table_.size() <= handle)
-        table_.resize(handle + handle/2);
-    table_[handle].handle = handle;
-    table_[handle].bind_new(type, handler);
+    if((int)event_vector_.size() <= handle)
+        event_vector_.resize(handle + handle/2);
+    event_vector_[handle].handle = handle;
+    event_vector_[handle].bind_new(type, handler);
     if(handle > current_max_handle_p_1_ - 1){
         current_max_handle_p_1_ = handle + 1;
     }
@@ -39,33 +39,33 @@ int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Typ
 }
 
 int select_demultiplex_table::unbind(int handle){
-    if(!is_handle_in_range(handle) || table_[handle].event_count == 0){
+    if(!is_handle_in_range(handle) || event_vector_[handle].event_count == 0){
         LOG(WARNING) << "handle is not in the table or handle has no handler, handle: " << handle;
         return -1;
     }
     //if handle is the max_handle - 1
     int tmp = handle;
     if(current_max_handle_p_1_ == handle + 1){
-        while(tmp-- != -1 && table_[tmp].handle == INVALID_HANDLE);
+        while(tmp-- != -1 && event_vector_[tmp].handle == INVALID_HANDLE);
         current_max_handle_p_1_ = tmp + 1;
     }
-    table_[handle].handle = INVALID_HANDLE;
-    table_[handle].clear();
+    event_vector_[handle].handle = INVALID_HANDLE;
+    event_vector_[handle].clear();
 
     return 0;
 }
 
 int select_demultiplex_table::unbind(int handle, const event_handler* handler, Event_Type type){
-    if(!is_handle_in_range(handle) || table_[handle].get_handler(type) == nullptr){
+    if(!is_handle_in_range(handle) || event_vector_[handle].get_handler(type) == nullptr){
         LOG(WARNING) << "handle is not in the table or handle has no handler, handle: " << handle;
         return -1;
     }
     int tmp = handle;
-    int ret = table_[handle].unbind(type, handler);
+    int ret = event_vector_[handle].unbind(type, handler);
     //如果当前handle只有这一个handler存在，那么就需要重新寻找最大的fd，否则不需要
-    if(table_[handle].event_count == 0){
+    if(event_vector_[handle].event_count == 0){
         if(handle + 1 == current_max_handle_p_1_){//find the next max handle
-            while(tmp-- != INVALID_HANDLE && table_[tmp].handle == INVALID_HANDLE);
+            while(tmp-- != INVALID_HANDLE && event_vector_[tmp].handle == INVALID_HANDLE);
             current_max_handle_p_1_ = tmp + 1;
         }
     }
