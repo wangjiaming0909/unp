@@ -5,6 +5,7 @@
 #include "server/reactor/event_handler.h"
 #include <boost/shared_ptr.hpp>
 
+using namespace std::chrono_literals;
 namespace thread{
 
 //type T is the type of data
@@ -20,13 +21,13 @@ public:
 
     virtual int activate(int thread_count);
     virtual int wait(const micro_seconds* timeout = 0);
+    virtual int put_data_and_activate(data_type data, const micro_seconds& timeout = 0ms);
 
     void cancel();
 
-    int put_data(data_type data, const micro_seconds& timeout = micro_seconds{0});
-    // boost::shared_ptr<data_type> get_data(const micro_seconds& timeout = micro_seconds{0});
-    data_type get_data(const micro_seconds& timeout = micro_seconds{0});
-    int get_data(data_type* data, const micro_seconds& timeout = micro_seconds{0});
+    int put_data(data_type data, const micro_seconds& timeout = 0ms);
+    data_type get_data(const micro_seconds& timeout = 0ms);
+    int get_data(data_type* data, const micro_seconds& timeout = 0ms);
 
    //在routine中，需要自己从message_queue中拿出data，然后自己做处理
    //routine 会被 routine_run 自动调用
@@ -61,14 +62,17 @@ task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q)
 template <typename T>
 int task<T>::activate(int thread_count){
     for(int i = 0; i < thread_count; i++){
-        // LOG(INFO) << "adding one task... " << i+1 << " of " << thread_count;
-        // LOG(INFO) << t_pool_p_;
         t_pool_p_->add_task(std::bind(&task::routine_run, this));
-        // LOG(INFO) << "added task";
     }
     return thread_count;
 }
 
+template <typename T>
+int task<T>::put_data_and_activate(data_type data, const micro_seconds& timeout){
+    int ret = put_data(data, timeout);
+    if(ret != 0) return -1;
+    return activate(1);
+}
 
 template <typename T>
 int task<T>::wait(const micro_seconds* timeout){
@@ -117,14 +121,6 @@ typename task<T>::data_type task<T>::get_data(const micro_seconds& timeout){
     if(res != 0) LOG(INFO) << "dequeue error";
     return ret;
 }
-
-// template <typename T>
-// auto task<T>::get_data(const micro_seconds& timeout) -> boost::shared_ptr<data_type>{
-//     boost::shared_ptr<data_type> ret_ptr{new data_type{}};
-//     int ret = msg_queue_p_->dequeue_tail(ret_ptr.get(), timeout);
-//     if(ret != 0) return boost::shared_ptr<data_type>{nullptr};
-//     return ret_ptr;
-// }
 
 }//namespace thread
 

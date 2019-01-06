@@ -58,7 +58,11 @@
         "unordered_set": "cpp",
         "mutex": "cpp",
         "cinttypes": "cpp",
-        "hash_set": "cpp"
+        "hash_set": "cpp",
+        "optional": "cpp",
+        "string_view": "cpp",
+        "future": "cpp",
+        "shared_mutex": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false,
     "editor.quickSuggestionsDelay": 1,
