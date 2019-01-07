@@ -24,8 +24,7 @@ int reactor_acceptor::open(){
     return 0;
 }
 
-int reactor_acceptor::close(){ return acceptor_.close();
-}
+int reactor_acceptor::close(){ return acceptor_.close(); }
 
 int reactor_acceptor::handle_input(int handle){
     LOG(INFO) << "start to accepting a connection";
@@ -34,20 +33,17 @@ int reactor_acceptor::handle_input(int handle){
     // read_handler_.activate(1);
     return 0;
 }
+
 int reactor_acceptor::handle_timeout(int handle){
 
 }
 int reactor_acceptor::handle_close(int handle){
-
+    
 }
 int reactor_acceptor::handle_signal(int handle){
 
 }
 
-// template <typename data_type>
-// boost::shared_ptr<ReadHandler<data_type>> reactor_acceptor::make_read_handler(){
-//     boost::shared_ptr<ReadHandler<data_type> ret{new ReadHandler<data_type>()};
-// }
 void reactor_acceptor::activate_read_handler(){
     net::inet_addr peer{};
     int ret = this->acceptor_.accept(read_handler_.get_sock_stream(), &peer);

@@ -6,7 +6,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/gtests/test.out ",
-            "args": ["--gtest_filter=read_handler_test.*"],
+            "args": ["--gtest_filter=io_handler_test.*"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/",
             "environment": [],

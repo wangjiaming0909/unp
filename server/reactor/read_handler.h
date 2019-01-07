@@ -14,11 +14,12 @@ public:
     ReadHandler(Reactor& react, mq_type& messageQueue, thread::thread_pool& threadPool)
         : base(react, messageQueue, threadPool){
         memset(buffer_, 0, 128);
+        this->current_event_ = event_handler::READ_EVENT;       
     }
     
     virtual void open() override {
         LOG(INFO) << "opening ReadHandler...";
-        this->reactor_->register_handler(this->peer_.get_handle(), this, event_handler::READ_EVENT);
+        this->reactor_->register_handler(this->peer_.get_handle(), this, this->current_event_);
     }
 
     virtual int handle_input(int handle) {
@@ -30,23 +31,27 @@ public:
         return ret;
     }
 
+    //! thread safty 存在race condition 当多个线程处理 get_data得到的时同一份数据时，并且对这份数据做了操作
     virtual int routine() override {
         //need to dequeue，为了使得没有消息时，该线程会被阻塞，如果不dequeue，就会read阻塞
         //虽然没有使用这个data
         LOG(INFO) << "routine has started...";
         data_block<data_type> data{};
         int ret = this->get_data(&data);
-        LOG(INFO) << "data: " << *data;
         if(ret != 0 ) {
             LOG(INFO) << "get data error";
             return -1;
         }
+        { //! lock if you will modify the data
+            LOG(INFO) << "data: " << *data;
+        } //!
         if(this->peer_.read(static_cast<void*>(buffer_), 64, 0) <= 0){
             LOG(ERROR) << "read none..." ;
             return -1;
         }
         LOG(INFO) << "get data from peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();
-        if(*data == 'q'){
+        if(buffer_[0] == 'q') {
+            LOG(INFO) << "remote sended a quit, closing...";
             return -1;
         }
         return 0;
@@ -55,6 +60,7 @@ public:
     virtual int handle_close(int handle) {
         this->peer_.close();
     }
+
 private:
     char buffer_[128];
 };

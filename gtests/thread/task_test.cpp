@@ -18,11 +18,15 @@ public:
         micro_seconds _{0};
         auto data_ptr = this->get_data(_);
         auto id = std::this_thread::get_id();
-        LOG(INFO) << "sleeping for 1 seconds..." << id;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        data_ptr->operator*()++;
+        LOG(INFO) << "got the data... " << id;
+        {
+            lock_guard<std::mutex> _{lock_};
+            data_ptr.operator*()++;
+        }
     }
     virtual void open() override {}
+
+    std::mutex lock_;
 };
 
 TEST(task_test, test_task_constructor){
@@ -50,10 +54,12 @@ TEST(task_test, test_one_task_using_two_threads){
     fake_task t{rt, pool, mq};
     int a = 0;
     data_block<int> data(&a, false);
-    auto *p = &data;
-    std::chrono::seconds _{0};
-    t.put_data(p, _);
-    t.activate(2);
+    // t.put_data(data, _);
+    // t.put_data(data, _);
+    // t.activate(1);
+    t.put_data_and_activate(data, 0s);
+    t.put_data_and_activate(data, 0s);
+    std::this_thread::sleep_for(1s);
     t.cancel();
     ASSERT_EQ(a, 2);
 }

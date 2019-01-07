@@ -16,13 +16,12 @@ TEST(message_queue_test, test_dequeue_and_enqueue){
 
     std::string message1{"message1"};
     thread::data_block<std::string> data_b1{&message1, false};
-    mq.enqueue_head(&data_b1, _);
+    mq.enqueue_head(data_b1, _);
     int count = mq.current_message_count();
     ASSERT_EQ(count, 1);
 
-    std::string message2{"message2"};
-    thread::data_block<std::string> data_b2{&message2, false};
-    mq.enqueue_tail(&data_b2, _);
+    thread::data_block<std::string> data_b2{new std::string("message2"), true};
+    mq.enqueue_tail(data_b2, _);
     count = mq.current_message_count();
     ASSERT_EQ(count, 2);
 
@@ -31,5 +30,5 @@ TEST(message_queue_test, test_dequeue_and_enqueue){
     mq.dequeue_head(p1, _);
     ASSERT_EQ(data_b3.get(), &message1);// 地址是相同的， 所以data_b3所指的内存就是message1的内存地址
     mq.dequeue_tail(p1, _);
-    ASSERT_EQ(data_b3.get(), &message2);//message2同理
+    ASSERT_EQ(data_b3.get(), data_b2.get());//message2同理
 }

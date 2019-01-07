@@ -30,7 +30,7 @@ public:
     // virtual int handle_timeout(int handle);
     // virtual int handle_close(int handle);
     // virtual int handle_signal(int handle);
-    // virtual int get_handle() const{ }
+    virtual int get_handle() const { return this->peer_.get_handle(); }
     // virtual void set_handle(int handle){ }
 
 protected:

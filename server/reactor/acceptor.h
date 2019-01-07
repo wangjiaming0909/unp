@@ -7,9 +7,6 @@
 #include "server/reactor/read_handler.h"
 
 namespace reactor{
-// enum class IO_TYPE{
-//     SELECT, POLL, EPOLL
-// };
 
 enum {
     NOT_REUSE_ADDR = 0,
@@ -36,9 +33,6 @@ public:
     virtual int handle_close(int handle) override;
     virtual int handle_signal(int handle) override;
     virtual int get_handle() const {return acceptor_.get_handle();}
-    // template <typename data_type>
-    // boost::shared_ptr<ReadHandler<data_type>> make_read_handler();
-    // template <typename data_type>
 private:
     void activate_read_handler();
     int open();
@@ -46,9 +40,10 @@ private:
 private:
     net::sock_acceptor	            acceptor_;
     net::inet_addr                  local_addr_;
-    message_queue<int>             mq_;
+    message_queue<int>              mq_;
     thread_pool	                    pool_;
-    ReadHandler<int>               read_handler_;
+    ReadHandler<int>                read_handler_;
+    //TODO std::vector<ReadHandler<int>> read_handlers_; //for multi read_handler
 };
 }
 #endif // _UNP_REACTOR_ACCEPTOR_H_

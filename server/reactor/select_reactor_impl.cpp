@@ -3,12 +3,13 @@
 
 using namespace reactor;
 
-select_demultiplex_table::select_demultiplex_table(size_t size) : table_(){
+select_demultiplex_table::select_demultiplex_table(size_t size) : event_vector_(){
     if(size > MAX_NUMBER_OF_HANDLE) {
-        LOG(ERROR) << "select_demultiplex_table size specified is size, bigger than " 
+        LOG(ERROR) << "select_demultiplex_table size specified is " 
+                   << size << ", bigger than " 
                    << MAX_NUMBER_OF_HANDLE;
-        table_.resize(MAX_NUMBER_OF_HANDLE); //resize requires that T has default constructor
-    } else table_.resize(size);
+        event_vector_.resize(MAX_NUMBER_OF_HANDLE); //resize requires that T has default constructor
+    } else event_vector_.resize(size);
 }
 
 event_handler* select_demultiplex_table::get_handler(int handle, Event_Type type) const{
@@ -16,7 +17,7 @@ event_handler* select_demultiplex_table::get_handler(int handle, Event_Type type
         LOG(WARNING) << "handle is not in range, handle: " << handle;
         return 0;
     }
-    return table_[handle].get_handler(type);
+    return event_vector_[handle].get_handler(type);
 }
 
 int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
@@ -27,45 +28,61 @@ int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Typ
                     << handle << " handler: " << handler;
         return -1;
     }
-    if((int)table_.size() <= handle)
-        table_.resize(handle + handle/2);
-    table_[handle].handle = handle;
-    table_[handle].bind_new(type, handler);
+    if((int)event_vector_.size() <= handle)
+        event_vector_.resize(handle + handle/2);
+    event_vector_[handle].handle = handle;
+    event_vector_[handle].bind_new(type, handler);
     if(handle > current_max_handle_p_1_ - 1){
         current_max_handle_p_1_ = handle + 1;
     }
     return 0;
 }
 
-// int select_demultiplex_table::bind(const select_event_tuple& event_tuple){
-//     return bind( event_tuple.handle_, 
-//                  event_tuple.event_handler_, 
-//                  event_tuple.event_type_);
-// }
-
 int select_demultiplex_table::unbind(int handle){
-    if(!is_handle_in_range(handle) || table_[handle].types_and_handlers.size() == 0){
+    if(!is_handle_in_range(handle) || event_vector_[handle].event_count == 0){
         LOG(WARNING) << "handle is not in the table or handle has no handler, handle: " << handle;
         return -1;
     }
     //if handle is the max_handle - 1
     int tmp = handle;
     if(current_max_handle_p_1_ == handle + 1){
-        while(tmp-- != -1 && table_[tmp].handle == INVALID_HANDLE);
+        while(tmp-- != -1 && event_vector_[tmp].handle == INVALID_HANDLE);
         current_max_handle_p_1_ = tmp + 1;
     }
-    table_[handle].handle = INVALID_HANDLE;
-    table_[handle].clear();
+    event_vector_[handle].handle = INVALID_HANDLE;
+    event_vector_[handle].clear();
 
     return 0;
 }
 
-// int select_demultiplex_table::unbind(const select_event_tuple& event_tuple){
-//     if( !  is_handle_in_range(event_tuple.handle_) 
-//         || table_[event_tuple.handle_].event_handler_ == 0){
-//         LOG(WARNING) << "handle is not in the table"
-//     }
-// }
+int select_demultiplex_table::unbind(int handle, const event_handler* handler, Event_Type type){
+    if(!is_handle_in_range(handle) || event_vector_[handle].get_handler(type) == nullptr){
+        LOG(WARNING) << "handle is not in the table or handle has no handler, handle: " << handle;
+        return -1;
+    }
+    int tmp = handle;
+    int ret = event_vector_[handle].unbind(type, handler);
+    //如果当前handle只有这一个handler存在，那么就需要重新寻找最大的fd，否则不需要
+    if(event_vector_[handle].event_count == 0){
+        if(handle + 1 == current_max_handle_p_1_){//find the next max handle
+            while(tmp-- != INVALID_HANDLE && event_vector_[tmp].handle == INVALID_HANDLE);
+            current_max_handle_p_1_ = tmp + 1;
+        }
+    }
+    return ret;
+}
+
+bool select_demultiplex_table::is_handle_in_range(int handle) const {
+    if(handle < 0 || ((handle + 1) > current_max_handle_p_1_)) 
+        return false;
+    return true;
+}
+
+bool select_demultiplex_table::is_valid_handle(int handle) const {
+    if(handle == INVALID_HANDLE || handle > MAX_NUMBER_OF_HANDLE)
+        return false;
+    return true;
+}
 
 const long int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 
@@ -128,37 +145,60 @@ int select_reactor_impl::dispatch(int active_handle_count){
     return dispatch_io_handlers(active_handle_count, number_of_handles_dispatched);
 }
 
-void select_reactor_impl::register_handler(event_handler* handler, Event_Type type) {
+int select_reactor_impl::register_handler(event_handler* handler, Event_Type type) {
     (void)handler;
     (void)type;
 }
 
-void select_reactor_impl::unregister_handler(event_handler *handler, Event_Type type) {
+int select_reactor_impl::unregister_handler(event_handler *handler, Event_Type type) {
     (void)handler;
     (void)type;
 }
 
-void select_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type){
-    auto event_type_str = event_type_to_string(type);
-    LOG(INFO) << "registering handler for "  << "handle: " << handle << " event: "<< event_type_str;
+int select_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type){
+    LOG(INFO) << "registering handler for handle: " << handle << " event: "<< event_type_to_string(type);
     if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
         LOG(ERROR) << "handle error or registered type error...";
-        return;
+        return -1;
     }
-    if(type == event_handler::READ_EVENT || type == event_handler::ACCEPT_EVENT){
-        wait_sets_.read_set.set_bit(handle);
-    }else if(type == event_handler::WRITE_EVENT){
-        wait_sets_.write_set.set_bit(handle);
-    }else if(type == event_handler::EXCEPT_EVENT){
-        wait_sets_.exception_set.set_bit(handle);
+    switch (type) {
+        case event_handler::READ_EVENT:
+        case event_handler::ACCEPT_EVENT:
+            wait_sets_.read_set.set_bit(handle);
+            break;
+        case event_handler::WRITE_EVENT:
+            wait_sets_.write_set.set_bit(handle);
+            break;
+        case event_handler::EXCEPT_EVENT:   
+            wait_sets_.exception_set.set_bit(handle);
+            break;
+        default:
+            return -1;
     }
-    demux_table_.bind(handle, handler, type);
+    return demux_table_.bind(handle, handler, type);
 }
 
-void select_reactor_impl::unregister_handler(int handle, event_handler *handler, Event_Type type){
-    (void)handle;
-    (void)handler;
-    (void)type;
+int select_reactor_impl::unregister_handler(int handle, event_handler *handler, Event_Type type){
+    LOG(INFO) << "unregistering handler for handle: " << handle << " event: " << event_type_to_string(type);
+    if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
+        LOG(ERROR) << "handle error or registered type error...";
+        return -1;
+    }
+    switch (type) {
+        case event_handler::READ_EVENT:
+        case event_handler::ACCEPT_EVENT:
+            wait_sets_.read_set.unset_bit(handle);
+            break;
+        case event_handler::WRITE_EVENT:
+            wait_sets_.write_set.unset_bit(handle);
+            break;
+        case event_handler::EXCEPT_EVENT:
+            wait_sets_.exception_set.unset_bit(handle);
+            break;
+        default:
+            return -1;
+    }
+    return demux_table_.unbind(handle, handler, type);
 }
 
 //dispatch io_handlers read_set, write_set, exception_set
