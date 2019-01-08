@@ -53,6 +53,7 @@ public:
         { //! lock if you will modify the data
             LOG(INFO) << "data: " << *data;
         } //!
+        //! when multi threads read the fd together what will hanppen?
         if(this->peer_.read(static_cast<void*>(buffer_), 64, 0) <= 0){
             LOG(ERROR) << "read none..." ;
             return -1;
