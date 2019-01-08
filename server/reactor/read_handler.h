@@ -67,10 +67,8 @@ public:
 
     //? handle_close is invoked by the reactor thread
     virtual int handle_close(int handle) {
-        if(!this->is_handle_valid(handle)) {
-            return -1;
-        }
-        this->peer_.close();
+        (void)handle;
+        this->peer_.close_writer();
     }
 
 private:
