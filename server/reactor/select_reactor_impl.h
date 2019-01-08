@@ -25,9 +25,8 @@ struct select_reactor_handle_sets{
 //event tuple
 struct select_event_tuple{
     using Event_Type = event_handler::Event_Type;
-    select_event_tuple (int handle = INVALID_HANDLE) 
-    : handle(handle)
-    , types_and_handlers()
+    select_event_tuple () 
+    : types_and_handlers()
     , event_count(0) 
     { 
         types_and_handlers.resize(64);
@@ -37,7 +36,6 @@ struct select_event_tuple{
     }
 
     int bind_new(Event_Type type, event_handler* handler){
-        if(handle == INVALID_HANDLE) return -1;
         if(type == event_handler::NONE || handler == 0){
             LOG(WARNING) << "can't bind NONE event or handler is nullptr";
             return -1;
@@ -48,8 +46,7 @@ struct select_event_tuple{
     }
 
     int unbind(Event_Type type, const event_handler* handler){
-        if(handle == INVALID_HANDLE) return -1;
-        if(types_and_handlers[type] != nullptr) {
+        if(types_and_handlers[type] == nullptr) {
             LOG(WARNING) << "can't unbind, no this type of event";
             return -1;
         }
@@ -77,7 +74,6 @@ struct select_event_tuple{
 
     void clear() {types_and_handlers.clear(); }
 
-    int                                                         handle;
     //for handler and type
     //one handle:
     //one type of event, only have one handler, 如果可以有两个，那么事件发生的时候我调用谁呢?

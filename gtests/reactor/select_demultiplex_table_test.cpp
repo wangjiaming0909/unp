@@ -41,7 +41,9 @@ protected:
 TEST_F(select_demultiplex_table_test, test_bind_and_unbind){
     int handle1 = 1, handle2 = 2;
     unsigned int event_type1 = event_handler::READ_EVENT;
-    table_.bind(handle1, this->handler1_, event_type1);
+    int ret = table_.bind(handle1, this->handler1_, event_type1);
+    ASSERT_EQ(ret, 0);
+
     ASSERT_EQ(table_.get_current_max_handle_p_1(), 2);
 
     auto event_vector = table_.get_event_vector();
@@ -61,7 +63,8 @@ TEST_F(select_demultiplex_table_test, test_bind_and_unbind){
 
     //bind the second handle
     unsigned int event_type2 = event_handler::WRITE_EVENT;
-    table_.bind(handle2, this->handler2_, event_type2);
+    ret = table_.bind(handle2, this->handler2_, event_type2);
+    ASSERT_EQ(ret, 0);
 
     //table_ property
     ASSERT_EQ(table_.get_current_max_handle_p_1(), 3);
@@ -92,13 +95,14 @@ TEST_F(select_demultiplex_table_test, test_bind_and_unbind){
 
     //start unbinding
     //unbind handle2
-    table_.unbind(handle2, handler2_, event_type2);
+    ret = table_.unbind(handle2, handler2_, event_type2);
+    ASSERT_EQ(ret,  0);
     ASSERT_EQ(table_.get_current_max_handle_p_1(), 2);
     auto event_vector3 = table_.get_event_vector();
     ASSERT_EQ(8, event_vector3.size());
 
     //for handle2 parts should be empty
-    ASSERT_EQ(table_.get_handle(handle2, event_type2), nullptr);
+    ASSERT_EQ(table_.get_handler(handle2, event_type2), nullptr);
     ASSERT_EQ(event_vector3[handle2].types_and_handlers.size(), 64);
     ASSERT_EQ(event_vector3[handle2].types_and_handlers[event_type2], nullptr);
     ASSERT_EQ(event_vector3[handle2].event_count, 0);
