@@ -83,7 +83,7 @@ TEST_F(select_demultiplex_table_test, test_bind_and_unbind){
         ASSERT_EQ(event_vector2[handle].types_and_handlers[event_type2], nullptr);
     }
     //-------------------for handle2 parts
-    ASSERT_EQ(table_.get_handle(handle2, event_type2), this->handler2_);
+    ASSERT_EQ(table_.get_handler(handle2, event_type2), this->handler2_);
     //select_event_tuple shoule be right
     ASSERT_EQ(event_vector2[handle2].types_and_handlers.size(), 64);
     ASSERT_EQ(event_vector2[handle2].types_and_handlers[event_type2], this->handler2_);
