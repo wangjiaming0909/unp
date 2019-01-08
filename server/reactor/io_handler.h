@@ -32,6 +32,13 @@ public:
     // virtual int handle_signal(int handle);
     virtual int get_handle() const { return this->peer_.get_handle(); }
     // virtual void set_handle(int handle){ }
+    bool is_handle_valid(int handle){
+        if(handle != peer_.get_handle() || peer_.get_handle() == INVALID_HANDLE) {
+            LOG(ERROR) << "INVALID handle specified: " << handle << " existed: " << peer_.get_handle();
+            return false;
+        }
+        return true;
+    }
 
 protected:
     net::sock_stream peer_;

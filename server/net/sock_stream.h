@@ -7,6 +7,7 @@
 #include "unp.h"
 #include "macros.h"
 #include <boost/assert.hpp>
+#include "server/util/easylogging++.h"
 namespace net{
 
 //sock_stream does not contain the memory of the sock_fd

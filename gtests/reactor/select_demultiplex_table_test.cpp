@@ -38,10 +38,12 @@ protected:
     MockEventHandler	        *handler2_;
 };
 
-TEST_F(select_demultiplex_table_test, test_bind){
+TEST_F(select_demultiplex_table_test, test_bind_and_unbind){
     int handle1 = 1, handle2 = 2;
     unsigned int event_type1 = event_handler::READ_EVENT;
-    table_.bind(handle1, this->handler1_, event_type1);
+    int ret = table_.bind(handle1, this->handler1_, event_type1);
+    ASSERT_EQ(ret, 0);
+
     ASSERT_EQ(table_.get_current_max_handle_p_1(), 2);
 
     auto event_vector = table_.get_event_vector();
@@ -61,10 +63,12 @@ TEST_F(select_demultiplex_table_test, test_bind){
 
     //bind the second handle
     unsigned int event_type2 = event_handler::WRITE_EVENT;
-    table_.bind(handle2, this->handler2_, event_type2);
+    ret = table_.bind(handle2, this->handler2_, event_type2);
+    ASSERT_EQ(ret, 0);
 
     //table_ property
     ASSERT_EQ(table_.get_current_max_handle_p_1(), 3);
+    //can't use event_vector(which is for handle1), cause it's a copy of table_'s vector
     auto event_vector2 = table_.get_event_vector();
     ASSERT_EQ(8, event_vector2.size());
     //--------------for handle1 parts
@@ -76,10 +80,43 @@ TEST_F(select_demultiplex_table_test, test_bind){
     //--------------for handle1 parts
     for(int handle = 0; handle < event_vector2.size(); handle++){
         if(handle == 1 || handle == 2) continue;
-        ASSERT_EQ(event_vector[handle].types_and_handlers.size(), 64);
-        ASSERT_EQ(event_vector[handle].event_count, 0);
-        ASSERT_EQ(event_vector[handle].types_and_handlers[event_type1], nullptr);
+        ASSERT_EQ(event_vector2[handle].types_and_handlers.size(), 64);
+        ASSERT_EQ(event_vector2[handle].event_count, 0);
+        ASSERT_EQ(event_vector2[handle].types_and_handlers[event_type1], nullptr);
+        ASSERT_EQ(event_vector2[handle].types_and_handlers[event_type2], nullptr);
     }
+    //-------------------for handle2 parts
+    ASSERT_EQ(table_.get_handler(handle2, event_type2), this->handler2_);
+    //select_event_tuple shoule be right
+    ASSERT_EQ(event_vector2[handle2].types_and_handlers.size(), 64);
+    ASSERT_EQ(event_vector2[handle2].types_and_handlers[event_type2], this->handler2_);
+    ASSERT_EQ(event_vector2[handle2].event_count, 1);
+    //-------------------for handle2 parts
 
+    //start unbinding
+    //unbind handle2
+    ret = table_.unbind(handle2, handler2_, event_type2);
+    ASSERT_EQ(ret,  0);
+    ASSERT_EQ(table_.get_current_max_handle_p_1(), 2);
+    auto event_vector3 = table_.get_event_vector();
+    ASSERT_EQ(8, event_vector3.size());
 
+    //for handle2 parts should be empty
+    ASSERT_EQ(table_.get_handler(handle2, event_type2), nullptr);
+    ASSERT_EQ(event_vector3[handle2].types_and_handlers.size(), 64);
+    ASSERT_EQ(event_vector3[handle2].types_and_handlers[event_type2], nullptr);
+    ASSERT_EQ(event_vector3[handle2].event_count, 0);
+    for(int handle = 0; handle < event_vector3.size(); handle++){
+        if(handle == 1) continue;
+        ASSERT_EQ(event_vector3[handle].types_and_handlers.size(), 64);
+        ASSERT_EQ(event_vector3[handle].event_count, 0);
+        ASSERT_EQ(event_vector3[handle].types_and_handlers[event_type1], nullptr);
+        ASSERT_EQ(event_vector3[handle].types_and_handlers[event_type2], nullptr);
+    }
+    //for handle1 parts should be the same
+    ASSERT_EQ(table_.get_handler(handle1, event_type1), this->handler1_);//handler ptr
+    //select_event_tuple shoule be right
+    ASSERT_EQ(event_vector2[handle1].types_and_handlers.size(), 64);
+    ASSERT_EQ(event_vector2[handle1].types_and_handlers[event_type1], this->handler1_);
+    ASSERT_EQ(event_vector2[handle1].event_count, 1);
 }

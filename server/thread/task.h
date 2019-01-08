@@ -100,6 +100,7 @@ template <typename T>
 int task<T>::close(){
     int handle = this->get_handle();
     if(handle == INVALID_HANDLE) return -1;
+    this->msg_queue_p_->close();
     this->reactor_->unregister_handler(this->get_handle(), this, current_event_);
     return this->handle_close(0); // 0没有意义
 }
