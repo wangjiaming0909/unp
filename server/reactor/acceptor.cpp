@@ -34,15 +34,9 @@ int reactor_acceptor::handle_input(int handle){
     return 0;
 }
 
-int reactor_acceptor::handle_timeout(int handle){
-
-}
-int reactor_acceptor::handle_close(int handle){
-    
-}
-int reactor_acceptor::handle_signal(int handle){
-
-}
+int reactor_acceptor::handle_timeout(int handle){ }
+int reactor_acceptor::handle_close(int handle){ }
+int reactor_acceptor::handle_signal(int handle){ }
 
 void reactor_acceptor::activate_read_handler(){
     net::inet_addr peer{};
