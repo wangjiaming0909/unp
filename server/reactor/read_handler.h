@@ -70,6 +70,8 @@ public:
     virtual int handle_close(int handle) {
         (void)handle;
         this->peer_.close_writer();
+        this->peer_.close_reader();
+        this->peer_.close();
     }
 
 private:

@@ -97,7 +97,6 @@ inline void net::inet_sock::shut_down(int how){
 	if(handle_ != INVALID_HANDLE){
         LOG(INFO) << "shutdown a socket..." << handle_;
 		::shutdown(handle_, how);
-		handle_ = INVALID_HANDLE;
 	}
 }
 

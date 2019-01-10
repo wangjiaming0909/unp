@@ -41,6 +41,7 @@ public:
     virtual int handle_signal(int ){ return 0; }
     virtual int get_handle() const{ return 0; }
     virtual void set_handle(int ){}
+    virtual Reactor* get_reactor() const {return reactor_;}
 protected:
     virtual ~event_handler(){}
     Reactor* reactor_;

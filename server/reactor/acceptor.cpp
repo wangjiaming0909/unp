@@ -8,7 +8,8 @@ reactor_acceptor:: reactor_acceptor(Reactor& react, const net::inet_addr& local_
         , local_addr_(local_addr)
         , mq_()
         , pool_(1)
-        , read_handler_(react, mq_, pool_) { this->open(); }
+        , read_handler_(react, mq_, pool_)
+        , read_handlers_() { this->open(); }
 
 reactor_acceptor::~reactor_acceptor(){ }
 
@@ -40,14 +41,23 @@ int reactor_acceptor::handle_signal(int handle){ }
 
 void reactor_acceptor::activate_read_handler(){
     net::inet_addr peer{};
-    int ret = this->acceptor_.accept(read_handler_.get_sock_stream(), &peer);
+    ReadHandler<int> tmpHandler{*read_handler_.get_reactor(), *read_handler_.mq(), *read_handler_.th_pool()};
+    int ret = this->acceptor_.accept(tmpHandler.get_sock_stream(), &peer);
     if(ret == 0) 
         LOG(INFO) << "accepted...";
     if(ret != 0){
         LOG(ERROR) << "accept error..." << strerror(errno);
     }
-    if(ret != 0 && read_handler_.get_sock_stream().get_sock_fd().set_non_blocking() != 0){
-        LOG(WARNING) << "seting nonblock error";
+    int handle = tmpHandler.get_handle();
+    if(read_handlers_.size() < handle + 1){
+        read_handlers_.resize(handle + 1);
     }
-    read_handler_.open();
+    read_handlers_[handle].reset(new ReadHandler<int>(std::move(tmpHandler)));
+    if(ret != 0 && read_handlers_[handle]->get_sock_stream().get_sock_fd().set_non_blocking() != 0)
+        LOG(WARNING) << "setting nonblock error....";
+    read_handlers_[handle]->open();
+    // if(ret != 0 && read_handler_.get_sock_stream().get_sock_fd().set_non_blocking() != 0){
+    //     LOG(WARNING) << "setting nonblock error";
+    // }
+    // read_handler_.open();
 }

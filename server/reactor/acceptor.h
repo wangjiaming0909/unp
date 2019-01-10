@@ -43,7 +43,8 @@ private:
     message_queue<int>              mq_;
     thread_pool	                    pool_;
     ReadHandler<int>                read_handler_;
-    //TODO std::vector<ReadHandler<int>> read_handlers_; //for multi read_handler
+    //TODO 
+    std::vector<boost::shared_ptr<ReadHandler<int>>> read_handlers_; //for multi read_handler
 };
 }
 #endif // _UNP_REACTOR_ACCEPTOR_H_
