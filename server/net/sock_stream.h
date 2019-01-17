@@ -17,6 +17,10 @@ namespace net{
 class sock_stream{
 public:
 	sock_stream() : sock_fd_(new inet_sock()){}
+	sock_stream(sock_stream&& other) {
+		this->sock_fd_ = other.sock_fd_;
+		other.sock_fd_ = nullptr;
+	}
 	~sock_stream() { delete sock_fd_; }
 public:
 	void close_reader();
