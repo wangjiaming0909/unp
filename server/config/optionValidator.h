@@ -1,6 +1,3 @@
-
-
-
 #ifndef _H_OPTIONVALIDATOR_
 #define _H_OPTIONVALIDATOR_
 

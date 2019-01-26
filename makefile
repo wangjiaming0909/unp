@@ -18,13 +18,18 @@ OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES) )
 
 TARGET = $(BUILDDIR)/a.out
 LIBS = /boost_1_68_0/stage/lib
-INCLUDES = /boost_1_68_0 -I /home/jwang284/codes/unp
+INCLUDES = /boost_1_68_0 -I ~/codes/unp
 # LDFLAGS = -pthread -lboost_thread -lboost_system
-LDFLAGS = -pthread \
+
+TESTLDFLAG =  -pthread \
 		/boost_1_68_0/stage/lib/libboost_thread.a \
 		/boost_1_68_0/stage/lib/libboost_system.a \
 		/usr/local/lib/libgtest.a \
 		/usr/local/lib/libgmock.a
+
+LDFLAGS = -pthread \
+		/boost_1_68_0/stage/lib/libboost_thread.a \
+		/boost_1_68_0/stage/lib/libboost_system.a 
 		
 
 all: $(BUILDDIR) $(TARGET)
@@ -41,7 +46,7 @@ test: $(TEST_TARGET)
 
 
 $(TEST_TARGET): $(TEST_USED_OBJECTS) $(TEST_OBJS)
-	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -L $(LIBS) $(LDFLAGS) -o $@ 
+	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -L $(LIBS) $(TESTLDFLAG) -o $@ 
 
 $(TEST_OBJS):$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp 
 	$(CC) $(DEFINES) $(FLAGS) $< -I $(INCLUDES) -o $@
