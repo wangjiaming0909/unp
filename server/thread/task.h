@@ -33,7 +33,7 @@ public:
    //routine 会被 routine_run 自动调用
     virtual int routine() = 0;
    //decide which event you want to register
-    virtual void open() = 0;
+    virtual int open() = 0;
     //for closing the handler
     virtual int close();
     int routine_run();
@@ -56,7 +56,7 @@ task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q)
     : event_handler(react)
     , t_pool_p_(&t_pool)
     , msg_queue_p_(&msg_q)
-    , current_event_(0){ }
+    , current_event_(0) { }
 
 //pass routine_run to the threads
 template <typename T>

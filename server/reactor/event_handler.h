@@ -21,19 +21,24 @@ class event_handler{
 public:
     typedef unsigned int Event_Type;
     enum{
-        NONE = 0x000,
-        READ_EVENT = POLLIN,
-        EXCEPT_EVENT = POLLPRI,//0x2
-        WRITE_EVENT = POLLOUT,//0x4
-        ACCEPT_EVENT = 0x008,
-        TIMEOUT_EVENT = 0x010,
-        SIGNAL_EVENT = 0x020,
-        CLOSE_EVENT = 0x040,
+        NONE            = 0x000,
+        READ_EVENT      = POLLIN,
+        EXCEPT_EVENT    = POLLPRI,//0x2
+        WRITE_EVENT     = POLLOUT,//0x4
+        ACCEPT_EVENT    = 0x008,
+        TIMEOUT_EVENT   = 0x010,
+        SIGNAL_EVENT    = 0x020,
+        CLOSE_EVENT     = 0x040,
+        CONNECT_EVENT   = 0x080
     };
     event_handler(Reactor& react) : reactor_(&react) {}
     //these functions can't be pure virtual
     //because some handlers may not need to implement all of them
     //so the these handlers can be non-abstract classes
+    //** why give default implementation?
+    //** cause some subclasses will not implement some of them(and do not need them)
+    //** if do not give them default implementation,
+    //** subclasses have to implement some functions that they do not need 
     virtual int handle_input(int ){ return 0; }
     virtual int handle_output(int ){ return 0; }
     virtual int handle_timeout(int ){ return 0; }

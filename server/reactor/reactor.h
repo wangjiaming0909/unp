@@ -11,17 +11,17 @@ public:
     //should I alloc the memory of reactor_impl, new it in this constructor
     Reactor(reactor_implementation* reactor_impl = 0) : reactor_impl_(reactor_impl){}
     virtual ~Reactor(){}
-    virtual void register_handler(event_handler* handler, Event_Type type){
-        reactor_impl_->register_handler(handler, type);
+    virtual int register_handler(event_handler* handler, Event_Type type){
+        return reactor_impl_->register_handler(handler, type);
     }
-    virtual void register_handler(int handle, event_handler *handler, Event_Type type) {
-        reactor_impl_->register_handler(handle, handler, type);
+    virtual int register_handler(int handle, event_handler *handler, Event_Type type) {
+        return reactor_impl_->register_handler(handle, handler, type);
     }
-    virtual void unregister_handler(event_handler *handler, Event_Type type) {
-        reactor_impl_->unregister_handler(handler, type);
+    virtual int unregister_handler(event_handler *handler, Event_Type type) {
+        return reactor_impl_->unregister_handler(handler, type);
     }
-    virtual void unregister_handler(int handle, event_handler *handler, Event_Type type) {
-        reactor_impl_->unregister_handler(handle, handler, type);
+    virtual int unregister_handler(int handle, event_handler *handler, Event_Type type) {
+        return reactor_impl_->unregister_handler(handle, handler, type);
     }
     void handle_events(std::chrono::microseconds *timeout = 0){
         reactor_impl_->handle_events(timeout);
