@@ -15,8 +15,9 @@ public:
     using micro_seconds = std::chrono::microseconds; 
     using mq_type = message_queue<T>;
     using data_type = data_block<T>;
-    task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q);
-    thread_pool* th_pool() {return t_pool_p_; }
+    task(reactor::Reactor& react, thread_pool& t_pool, mq_type* msg_q);
+    virtual ~task();
+    thread_pool* pool() {return pool_p_; }
     message_queue<T>* mq() { return msg_queue_p_; }
 
     virtual int activate(int thread_count);
@@ -46,23 +47,38 @@ private:
 //    task(const task&) = delete;
 //    task& operator=(const task&) = delete;
 protected:
-    thread_pool*                t_pool_p_;
+    thread_pool*                pool_p_;
     mq_type*                    msg_queue_p_;
     Event_Type                  current_event_;
+    bool                        delete_message_queue_;
 };
 
 template <typename T>
-task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q) 
+task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type* msg_q) 
     : event_handler(react)
-    , t_pool_p_(&t_pool)
-    , msg_queue_p_(&msg_q)
-    , current_event_(0) { }
+    , pool_p_(&t_pool)
+    , msg_queue_p_(0)
+    , current_event_(0)
+    , delete_message_queue_(false) 
+{
+    if(msg_q == 0){
+        msg_queue_p_ = new message_queue();
+        delete_message_queue_ = true;
+    }
+    msg_queue_p_ = msg_q;
+}
+
+template <typename T>
+task<T>::~task(){
+    if(delete_message_queue_)
+        delete msg_queue_p_;
+}
 
 //pass routine_run to the threads
 template <typename T>
 int task<T>::activate(int thread_count){
     for(int i = 0; i < thread_count; i++){
-        t_pool_p_->add_task(std::bind(&task::routine_run, this));
+        pool_p_->add_task(std::bind(&task::routine_run, this));
     }
     return thread_count;
 }
@@ -76,13 +92,13 @@ int task<T>::put_data_and_activate(data_type data, const micro_seconds& timeout)
 
 template <typename T>
 int task<T>::wait(const micro_seconds* timeout){
-    t_pool_p_->wait(timeout);
+    pool_p_->wait(timeout);
     return 0;
 }
 
 template <typename T>
 void task<T>::cancel() {
-    if(!t_pool_p_->cancel()){
+    if(!pool_p_->cancel()){
         LOG(WARNING) << "cancel warning" << strerror(errno);
     }
 }

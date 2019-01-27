@@ -10,6 +10,7 @@
 #include "server/reactor/read_handler.h"
 #include "server/reactor/select_reactor_impl.h"
 #include "server/reactor/acceptor.h"
+#include "server/thread/thread_pool.h"
 
 
 // INITIALIZE_NULL_EASYLOGGINGPP
@@ -23,9 +24,12 @@ int main(int argc, char** argv){
     using namespace std;
     server_scoped_helper s_h{argc, argv};
 
+    thread_pool pool{10};
     reactor::Reactor rt{new reactor::select_reactor_impl{}};
-    inet_addr listen_addr{9000, "127.0.0.1"};
-    reactor_acceptor acceptor{rt, listen_addr};
+    inet_addr listen_addr{9000, "192.168.0.112"};
+
+
+    reactor_acceptor acceptor{rt, pool, listen_addr};
     
     rt.handle_events();
 

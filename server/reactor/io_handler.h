@@ -25,7 +25,7 @@ public:
     // virtual void open();
     // virtual int routine();
 
-   net::sock_stream& get_sock_stream() {return peer_;}
+    net::sock_stream& get_sock_stream() {return peer_;}
     
     // virtual int handle_input(int handle);
     // virtual int handle_output(int handle);
