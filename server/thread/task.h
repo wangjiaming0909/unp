@@ -15,7 +15,8 @@ public:
     using micro_seconds = std::chrono::microseconds; 
     using mq_type = message_queue<T>;
     using data_type = data_block<T>;
-    task(reactor::Reactor& react, thread_pool& t_pool, mq_type* msg_q);
+
+    task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q);
     virtual ~task();
     thread_pool* pool() {return pool_p_; }
     message_queue<T>* mq() { return msg_queue_p_; }
@@ -47,32 +48,23 @@ private:
 //    task(const task&) = delete;
 //    task& operator=(const task&) = delete;
 protected:
-    thread_pool*                pool_p_;
-    mq_type*                    msg_queue_p_;
+    thread_pool                 *pool_p_;
+    mq_type                     *msg_queue_p_;
     Event_Type                  current_event_;
-    bool                        delete_message_queue_;
+    bool                        delete_message_queue_;//do not need now
 };
 
 template <typename T>
-task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type* msg_q) 
+task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q) 
     : event_handler(react)
     , pool_p_(&t_pool)
-    , msg_queue_p_(0)
+    , msg_queue_p_(&msg_q)
     , current_event_(0)
     , delete_message_queue_(false) 
-{
-    if(msg_q == 0){
-        msg_queue_p_ = new message_queue();
-        delete_message_queue_ = true;
-    }
-    msg_queue_p_ = msg_q;
-}
+{ }
 
 template <typename T>
-task<T>::~task(){
-    if(delete_message_queue_)
-        delete msg_queue_p_;
-}
+task<T>::~task(){ }
 
 //pass routine_run to the threads
 template <typename T>
@@ -116,7 +108,7 @@ template <typename T>
 int task<T>::close(){
     int handle = this->get_handle();
     if(handle == INVALID_HANDLE) return -1;
-    this->msg_queue_p_->close();
+    // this->msg_queue_p_->close();// the mq is not only used by this task, donot need to close it
     this->reactor_->unregister_handler(this->get_handle(), this, current_event_);
     return this->handle_close(0); // 0没有意义
 }

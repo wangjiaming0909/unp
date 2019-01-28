@@ -10,7 +10,7 @@ reactor_acceptor:: reactor_acceptor(
         , local_addr_(local_addr)
         , mq_()
         , pool_(pool)
-        , read_handler_(react, mq_, pool_)
+        , read_handler_(react, pool_, mq_)
         , read_handlers_() { this->open(); }
 
 reactor_acceptor::~reactor_acceptor(){ }
@@ -35,7 +35,7 @@ int reactor_acceptor::handle_input(int handle){
 
 void reactor_acceptor::activate_read_handler(){
     net::inet_addr peer{};
-    ReadHandler<int> tmpHandler{*read_handler_.get_reactor(), *read_handler_.mq(), *read_handler_.pool()};
+    ReadHandler<int> tmpHandler{*read_handler_.get_reactor(), *read_handler_.pool(), *read_handler_.mq()};
     int ret = this->acceptor_.accept(tmpHandler.get_sock_stream(), &peer);
     if(ret == 0) 
         LOG(INFO) << "accepted...";

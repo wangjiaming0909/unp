@@ -13,8 +13,9 @@ public:
     using base = io_handler<data_type>;
     using mq_type = typename base::mq_type;
     using micro_seconds = typename base::micro_seconds;
-    ReadHandler(Reactor& react, mq_type& messageQueue, thread::thread_pool& threadPool)
-        : base(react, messageQueue, threadPool){
+
+    ReadHandler(Reactor& react, thread::thread_pool& threadPool, mq_type& messageQueue)
+        : base(react, threadPool, messageQueue){
         memset(buffer_, 0, 128);
         this->current_event_ = event_handler::READ_EVENT;
     }

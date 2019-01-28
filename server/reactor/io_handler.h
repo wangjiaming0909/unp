@@ -19,11 +19,9 @@ public:
     using base = thread::task<data_type>;
     using mq_type = typename base::mq_type;
     using micro_seconds = typename base::micro_seconds;
-    io_handler(Reactor& react, mq_type& messageQueue, thread::thread_pool& threadPool)
-        : base(react, threadPool, messageQueue)
-        , peer_() { }
-    // virtual void open();
-    // virtual int routine();
+
+    io_handler(Reactor& react, thread::thread_pool& threadPool, mq_type& messageQueue)
+        : base(react, threadPool, messageQueue) , peer_() { }
 
     net::sock_stream& get_sock_stream() {return peer_;}
     

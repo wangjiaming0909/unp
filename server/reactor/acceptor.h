@@ -24,10 +24,7 @@ class reactor_acceptor : public event_handler{
 public:
     //here use a inet_addr,
     //so that we can specify an interface and a port to listen
-    reactor_acceptor(
-        Reactor& react,
-        thread_pool& pool,
-        const net::inet_addr& local_addr);  
+    reactor_acceptor( Reactor& react, thread_pool& pool, const net::inet_addr& local_addr);  
     ~reactor_acceptor() override ;
     virtual int handle_input(int handle) override;
     //accept do not need output
@@ -35,7 +32,7 @@ public:
     virtual int handle_timeout(int handle) override;
     virtual int handle_close(int handle) override;
     virtual int handle_signal(int handle) override;
-    virtual int get_handle() const {return acceptor_.get_handle();}
+    virtual int get_handle() const override {return acceptor_.get_handle();}
 private:
     void activate_read_handler();
     int open();
@@ -43,10 +40,10 @@ private:
 private:
     net::sock_acceptor	            acceptor_;
     net::inet_addr                  local_addr_;
+    //if acceptor has a message_queue, then every ReadHandler will share the same mq
     message_queue<int>              mq_;
     thread_pool&	                pool_;
     ReadHandler<int>                read_handler_;
-    //TODO 
     std::vector<boost::shared_ptr<ReadHandler<int>>> read_handlers_; //for multi read_handler
 };
 }
