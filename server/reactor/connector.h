@@ -38,7 +38,7 @@ private:
 
 private:
     int open();
-    int make_handler();
+    Handler* make_handler();
     int activate_io_handler(int handle);
     int connect_i(const net::inet_addr& target_addr, const micro_seconds& timeout);
 private:
@@ -97,11 +97,14 @@ int reactor_connector<DataType, Handler>::connect_n(
 }
 
 template <typename DataType, typename Handler>
-int reactor_connector<DataType, Handler>::make_handler()
+Handler* reactor_connector<DataType, Handler>::make_handler()
 { 
-    auto* handler = new Handler(reactor_, *pool_, *mq_);
-    handlers_[handler->get_handle()].reset(handler);
-    return handler->get_handle();
+    //handler sock_stream
+    auto* handler = new Handler(*reactor_, *pool_, *mq_);
+    if(handler == 0) return nullptr;
+
+    // handlers_[handle].reset(handler);
+    // return handler->get_handle();
 }
 
 template <typename DataType, typename Handler>
@@ -111,7 +114,7 @@ int reactor_connector<DataType, Handler>::activate_io_handler(int handle)
     if(handlers_[handle]->get_sock_stream().get_sock_fd().set_non_blocking() != 0){
         LOG(WARNING) << "handle: " << handle << " setting non-blocking error" << strerror(errno);
         handlers_[handle]->close();
-        handlers_[handle].reset(0);
+        handlers_[handle].reset();
         return -1;
     }
 
@@ -119,7 +122,7 @@ int reactor_connector<DataType, Handler>::activate_io_handler(int handle)
     if(handlers_[handle]->open() != 0){
         LOG(WARNING) << "handle: " << handle << " open error" << strerror(errno);
         handlers_[handle]->close();
-        handlers_[handle].reset(0);
+        handlers_[handle].reset();
         return -1;
     }
     return 0;
@@ -129,15 +132,20 @@ template <typename DataType, typename Handler>
 int reactor_connector<DataType, Handler>::connect_i(const net::inet_addr& target_addr, const micro_seconds& timeout)
 {
     //make handler
-    int handle = make_handler();
+    auto* newHandler = make_handler();
     
-    //connect
-    if(connector_.connect(handlers_[handle]->get_sock_stream(), target_addr, timeout) != 0){
+    auto &stream = newHandler->get_sock_stream();
+    //connect will set the stream's fd
+    if(connector_.connect(stream, target_addr, &timeout, 1, 0) != 0){
         LOG(WARNING) << "connect to " << target_addr.get_address_string() << " error...";
-        handlers_[handle]->close();
-        handlers_[handle].reset(0);
+        newHandler->close();
         return -1;
     }
+
+    //record the handle in handlers_
+    int handle = stream.get_handle();
+    if(handlers_.size() < handle) handlers_.resize(handle * 2);
+    handlers_[handle].reset(newHandler);
 
     //activate handler: bind to reactor
     return activate_io_handler(handle);

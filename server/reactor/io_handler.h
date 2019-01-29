@@ -30,12 +30,14 @@ public:
     // virtual int handle_timeout(int handle);
 
     //? handle_close is invoked by the reactor thread
-    virtual int handle_close(int handle) {
+    virtual int handle_close(int handle) 
+    {
         (void)handle;
         this->peer_.close_writer();
         this->peer_.close_reader();
         this->peer_.close();
     }
+
     // virtual int handle_signal(int handle);
     virtual int get_handle() const { return this->peer_.get_handle(); }
     // virtual void set_handle(int handle){ }

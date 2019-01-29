@@ -1,16 +1,16 @@
-#include <exception>
-#include <cstdlib>
 #include "server/config/ServerConfig.h"
 #include "server/util/easylogging++.h"
 #include "server/thread/thread_pool.h"
-//#include "server/Server.h"
-//#include "server/net/sock_connector.h"
 #include "server/main_helper.h"
 #include "server/reactor/reactor.h"
 #include "server/reactor/read_handler.h"
 #include "server/reactor/select_reactor_impl.h"
 #include "server/reactor/acceptor.h"
 #include "server/thread/thread_pool.h"
+#include "server/reactor/connector.h"
+#include <exception>
+#include <cstdlib>
+#include <chrono>
 
 
 // INITIALIZE_NULL_EASYLOGGINGPP
@@ -18,6 +18,7 @@ INITIALIZE_EASYLOGGINGPP
 using namespace reactor;
 using namespace thread;
 using namespace net;
+using namespace std::chrono_literals;
 
 int main(int argc, char** argv){
 
@@ -25,13 +26,22 @@ int main(int argc, char** argv){
     server_scoped_helper s_h{argc, argv};
 
     thread_pool pool{10};
+    pool.start();
+    message_queue<int> mq{};
     reactor::Reactor rt{new reactor::select_reactor_impl{}};
-    inet_addr listen_addr{9000, "192.168.0.112"};
 
+    // //acceptor
+    // inet_addr listen_addr{9000, "192.168.0.112"};
+    // reactor_acceptor acceptor{rt, pool, listen_addr};
 
-    reactor_acceptor acceptor{rt, pool, listen_addr};
+    //connector
+    inet_addr remote_addr{80, "192.168.0.2"};
+    reactor_connector<int, ReadHandler<int>> connector{rt, pool, mq};
     
-    rt.handle_events();
+    connector.connect(remote_addr, 5s);
+    
+    std::chrono::microseconds timeout = 5s;
+    rt.handle_events(&timeout);
 
     /*
     net::sock_connector connector{};
