@@ -13,26 +13,38 @@ public:
     using base = io_handler<data_type>;
     using mq_type = typename base::mq_type;
     using micro_seconds = typename base::micro_seconds;
-    ReadHandler(Reactor& react, mq_type& messageQueue, thread::thread_pool& threadPool)
-        : base(react, messageQueue, threadPool){
+
+    ReadHandler(Reactor& react, thread::thread_pool& threadPool, mq_type& messageQueue)
+        : base(react, threadPool, messageQueue)
+    {
         memset(buffer_, 0, 128);
-        this->current_event_ = event_handler::READ_EVENT;       
+        this->current_event_ = event_handler::READ_EVENT;
     }
     
-    virtual void open() override {
+    virtual int open() override 
+    {
         LOG(INFO) << "opening ReadHandler...";
-        this->reactor_->register_handler(this->peer_.get_handle(), this, this->current_event_);
+        return this->reactor_->register_handler(this->peer_.get_handle(), this, this->current_event_);
     }
 
-    virtual int handle_input(int handle) {
-        if(!this->is_handle_valid(handle)) {
-            return -1;
-        }
+    virtual int handle_input(int handle) 
+    {
+        if(!this->is_handle_valid(handle)) return -1;
         data_block<data_type> data{new data_type, true};
         return this->put_data_and_activate(data);
     }
 
+    virtual int handle_close(int handle) 
+    {
+        (void)handle;
+        this->peer_.close_writer();
+//        TODO should read_handle close the fd
+//        this->peer_.close_reader();
+//        this->peer_.close();
+    }
+
     //! thread safty 存在race condition 当多个线程处理 在 get_data 之后, 并且 得到的是同一份数据时，并且对这份数据做了操作
+    //! 会得到同一份数据么???
     virtual int routine() override {
         //need to dequeue，为了使得没有消息时，该线程会被阻塞，如果不dequeue，就会read阻塞
         //虽然没有使用这个data
@@ -50,6 +62,7 @@ public:
             LOG(INFO) << "get data error";
             return -1;
         }
+        //!! 如果不会得到同一份数据, 那么就不需要枷锁了,随意修改这份数据
         { //! lock if you will modify the data
             LOG(INFO) << "data: " << *data;
         } //!
@@ -65,15 +78,6 @@ public:
         }
         return 0;
     }
-
-    //? handle_close is invoked by the reactor thread
-    virtual int handle_close(int handle) {
-        (void)handle;
-        this->peer_.close_writer();
-        this->peer_.close_reader();
-        this->peer_.close();
-    }
-
 private:
     char buffer_[128];
 };

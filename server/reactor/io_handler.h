@@ -19,16 +19,25 @@ public:
     using base = thread::task<data_type>;
     using mq_type = typename base::mq_type;
     using micro_seconds = typename base::micro_seconds;
-    io_handler(Reactor& react, mq_type& messageQueue, thread::thread_pool& threadPool);
-    // virtual void open();
-    // virtual int routine();
 
-   net::sock_stream& get_sock_stream() {return peer_;}
+    io_handler(Reactor& react, thread::thread_pool& threadPool, mq_type& messageQueue)
+        : base(react, threadPool, messageQueue) , peer_() { }
+
+    net::sock_stream& get_sock_stream() {return peer_;}
     
     // virtual int handle_input(int handle);
     // virtual int handle_output(int handle);
     // virtual int handle_timeout(int handle);
-    // virtual int handle_close(int handle);
+
+    //? handle_close is invoked by the reactor thread
+    virtual int handle_close(int handle) 
+    {
+        (void)handle;
+        this->peer_.close_writer();
+        this->peer_.close_reader();
+        this->peer_.close();
+    }
+
     // virtual int handle_signal(int handle);
     virtual int get_handle() const { return this->peer_.get_handle(); }
     // virtual void set_handle(int handle){ }
@@ -41,37 +50,7 @@ public:
     }
 
 protected:
-    net::sock_stream peer_;
+    net::sock_stream            peer_;
 };
-
-// template <typename data_type>
-// void io_handler<data_type>::open(){ }
-
-template <typename data_type>
-io_handler<data_type>::io_handler(
-        Reactor& react, 
-        mq_type& messageQueue, 
-        thread::thread_pool& threadPool)
-    : base(react, threadPool, messageQueue)
-    , peer_(){ }
-
-// template <typename data_type>
-// int io_handler<data_type>::handle_input(int handle){ }
-
-// template <typename data_type>
-// int io_handler<data_type>::handle_output(int handle){ }
-
-// template <typename data_type>
-// int io_handler<data_type>::handle_timeout(int ){ }
-
-// template <typename data_type>
-// int io_handler<data_type>::handle_close(int handle){ }
-
-// template <typename data_type>
-// int io_handler<data_type>::handle_signal(int ){ }
-
-// template <typename data_type>
-// int io_handler<data_type>::routine() { }
-
 }
 #endif // _UNP_IO_HANDLER_H_

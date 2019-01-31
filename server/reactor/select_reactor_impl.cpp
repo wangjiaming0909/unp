@@ -251,7 +251,7 @@ int select_reactor_impl::dispatch_io_set(
         if(handler == 0) return -1;
         int ret = (handler->*callback) (current_handle);
 
-        if(ret == -1){
+        if(ret < 0){
             //TODO ret handling
             auto event_type_str = event_type_to_string(type);
             LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_str;
