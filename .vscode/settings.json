@@ -2,6 +2,9 @@
     "files.associations": {
         "*.makefile": "makefile",
         "*.proj": "msbuild",
+        "*.cjson": "jsonc",
+        "*.wxss": "css",
+        "*.wxs": "javascript",
         "*.json": "json",
         "cerrno": "cpp",
         "exception": "cpp",
@@ -62,7 +65,8 @@
         "optional": "cpp",
         "string_view": "cpp",
         "future": "cpp",
-        "shared_mutex": "cpp"
+        "shared_mutex": "cpp",
+        "xstring": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false,
     "editor.quickSuggestionsDelay": 1,
