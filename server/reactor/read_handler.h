@@ -34,6 +34,15 @@ public:
         return this->put_data_and_activate(data);
     }
 
+    virtual int handle_close(int handle) 
+    {
+        (void)handle;
+        this->peer_.close_writer();
+//        TODO should read_handle close the fd
+//        this->peer_.close_reader();
+//        this->peer_.close();
+    }
+
     //! thread safty 存在race condition 当多个线程处理 在 get_data 之后, 并且 得到的是同一份数据时，并且对这份数据做了操作
     //! 会得到同一份数据么???
     virtual int routine() override {
