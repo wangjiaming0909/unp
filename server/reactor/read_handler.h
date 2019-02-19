@@ -1,8 +1,10 @@
 #ifndef _UNP_REACTOR_REAC_HANDLER_H_
 #define _UNP_REACTOR_REAC_HANDLER_H_
 #include "server/reactor/io_handler.h"
+#include <chrono>
 
 using namespace thread;
+using namespace std::chrono_literals;
 namespace reactor{
 
 //! One ReadHandler can only handle one fd, cause it only has one peer_
@@ -27,11 +29,15 @@ public:
         return this->reactor_->register_handler(this->peer_.get_handle(), this, this->current_event_);
     }
 
+/***    when the handle is ready to read, select or poll invoke handle_input,
+ *      here put data into the message_queue, and activate the thread to read the data,
+ *      thread routine is routine function
+***/
     virtual int handle_input(int handle) 
     {
         if(!this->is_handle_valid(handle)) return -1;
         data_block<data_type> data{new data_type, true};
-        return this->put_data_and_activate(data);
+        this->put_data_and_activate(data);
     }
 
     virtual int handle_close(int handle) 
@@ -67,7 +73,8 @@ public:
             LOG(INFO) << "data: " << *data;
         } //!
         //! when multi threads read the fd together what will hanppen?
-        if(this->peer_.read(static_cast<void*>(buffer_), 64, 0) <= 0){
+        std::chrono::microseconds timeout = 2s;
+        if(this->peer_.read(static_cast<void*>(buffer_), 64, &timeout) < 0){
             LOG(ERROR) << "read none..." ;
             return -1;
         }

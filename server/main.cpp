@@ -8,6 +8,7 @@
 #include "server/reactor/acceptor.h"
 #include "server/thread/thread_pool.h"
 #include "server/reactor/connector.h"
+#include "server/reactor/read_write_handler.h"
 #include <exception>
 #include <cstdlib>
 #include <chrono>
@@ -20,11 +21,18 @@ using namespace thread;
 using namespace net;
 using namespace std::chrono_literals;
 
-int main(int argc, char** argv){
+int set_reactor_acceptor(){
+    thread_pool pool{10};
+    pool.start();
+    message_queue<int> mq{};
+    reactor::Reactor rt{new reactor::select_reactor_impl{}};
+    inet_addr listen_addr{9000, "192.168.0.112"};
+    reactor_acceptor acceptor{rt, pool, listen_addr};
 
-    using namespace std;
-    server_scoped_helper s_h{argc, argv};
+    rt.handle_events();
+}
 
+int set_reactor_connector(){
     thread_pool pool{10};
     pool.start();
     message_queue<int> mq{};
@@ -35,13 +43,26 @@ int main(int argc, char** argv){
     // reactor_acceptor acceptor{rt, pool, listen_addr};
 
     //connector
-    inet_addr remote_addr{80, "192.168.0.2"};
-    reactor_connector<int, ReadHandler<int>> connector{rt, pool, mq};
+    inet_addr remote_addr{9000, "192.168.0.112"};
+    // reactor_connector<int, ReadHandler<int>> connector{rt, pool, mq};
+    reactor_connector<int, read_write_handler<int>> connector{rt, pool, mq};
     
-    connector.connect(remote_addr, 5s);
+    int ret = connector.connect(remote_addr, 5s);
+    if(ret != 0) return ret;
+
     
     std::chrono::microseconds timeout = 5s;
     rt.handle_events(&timeout);
+}
+
+int main(int argc, char** argv){
+
+    using namespace std;
+    server_scoped_helper s_h{argc, argv};
+
+    set_reactor_acceptor();
+    // set_reactor_connector();
+
 
     /*
     net::sock_connector connector{};
