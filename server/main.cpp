@@ -21,18 +21,18 @@ using namespace thread;
 using namespace net;
 using namespace std::chrono_literals;
 
-int set_reactor_acceptor(){
+int set_reactor_acceptor(const char* ipAddr, int port){
     thread_pool pool{10};
     pool.start();
     message_queue<int> mq{};
     reactor::Reactor rt{new reactor::select_reactor_impl{}};
-    inet_addr listen_addr{9000, "192.168.0.112"};
+    inet_addr listen_addr{port, ipAddr};
     reactor_acceptor acceptor{rt, pool, listen_addr};
 
     rt.handle_events();
 }
 
-int set_reactor_connector(){
+int set_reactor_connector(const char* ipAddr, int port){
     thread_pool pool{10};
     pool.start();
     message_queue<int> mq{};
@@ -43,7 +43,8 @@ int set_reactor_connector(){
     // reactor_acceptor acceptor{rt, pool, listen_addr};
 
     //connector
-    inet_addr remote_addr{9000, "192.168.0.112"};
+    // inet_addr remote_addr{9000, "192.168.0.112"};
+    inet_addr remote_addr{port, ipAddr};
     // reactor_connector<int, ReadHandler<int>> connector{rt, pool, mq};
     reactor_connector<int, read_write_handler<int>> connector{rt, pool, mq};
     
@@ -60,8 +61,19 @@ int main(int argc, char** argv){
     using namespace std;
     server_scoped_helper s_h{argc, argv};
 
-    set_reactor_acceptor();
-    // set_reactor_connector();
+    if(argc == 4){
+        const char* ipAddr = argv[2];
+        int port = atoi(argv[3]);
+        if(strcmp(argv[1], "-listen")){
+            set_reactor_acceptor(ipAddr, port);
+        }
+        if(strcmp(argv[1], "-connect")){
+            set_reactor_connector(ipAddr, port);
+        }
+    }else{
+        LOG(ERROR) << "args error.....";
+    }
+
 
 
     /*
