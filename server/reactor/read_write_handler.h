@@ -65,7 +65,7 @@ public:
         data_block<DataType> data{};
 
         int ret = this->get_data(&data);
-        if(ret != 0 ) 
+        if(ret != 0 ) {
             LOG(INFO) << "get data error";
             return -1;
         }
