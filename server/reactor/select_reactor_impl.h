@@ -141,16 +141,15 @@ private:
     select_reactor_handle_sets dispatch_sets_;
     //track handles that are waited for by <select>
     select_reactor_handle_sets wait_sets_;
-    //track handles that are currently suspended
+
+    //TODO track handles that are currently suspended
     // select_reactor_handle_sets suspend_set_;
-    //track handles we are interested in for various events that must be dispatched
-    //without going through <select>
+
+    //TODO handles in ready_sets_ will be dispatched before select
+    //track handles we are interested in for various events that must be dispatched without going through <select>
     select_reactor_handle_sets ready_sets_;
     select_demultiplex_table demux_table_;
-    // event_handler 
 };
-
-
 }
 
 #endif //_UNP_SELECT_REACTOR_IMPL_H_
