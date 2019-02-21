@@ -103,7 +103,7 @@ private:
     std::vector<select_event_tuple> event_vector_;
     int current_max_handle_p_1_ = INVALID_HANDLE + 1;
 public:
-    static const long int MAX_NUMBER_OF_HANDLE = FD_SETSIZE;
+    static const int MAX_NUMBER_OF_HANDLE = FD_SETSIZE;
 };
 
 typedef int (event_handler::*HANDLER)(int);

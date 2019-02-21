@@ -83,7 +83,7 @@ bool select_demultiplex_table::is_valid_handle(int handle) const {
     return true;
 }
 
-const long int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
+const int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 
 
 void select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
@@ -161,6 +161,7 @@ int select_reactor_impl::register_handler(int handle, event_handler *handler, Ev
         LOG(ERROR) << "handle error or registered type error...";
         return -1;
     }
+    //TODO what if the handler and event_type has been in the demux_table
     switch (type) {
         case event_handler::READ_EVENT:
         case event_handler::ACCEPT_EVENT:
