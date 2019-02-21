@@ -19,7 +19,10 @@ public:
     using IOHandlerType = Handler;
     using MessageQueueType = thread::message_queue<DataType>;
     using micro_seconds = std::chrono::microseconds;
+private:
+    using IOHandlerPtr = boost::shared_ptr<IOHandlerType>;
 
+public:
     reactor_connector(Reactor& react, thread::thread_pool& pool, MessageQueueType& mq);
     virtual ~reactor_connector() override;
     //got messages to read
@@ -32,10 +35,9 @@ public:
     // virtual int get_handle() const {}
     int connect(const net::inet_addr& target_addr, const micro_seconds& timeout);
     int connect_n(const net::inet_addr& target_addr, int n, const micro_seconds& timeout) ;
-    
-private:
-    using IOHandlerPtr = boost::shared_ptr<IOHandlerType>;
 
+    const std::vector<IOHandlerPtr>* get_handlers() const {return handlers_;}
+    
 private:
     int open();
     Handler* make_handler();
