@@ -25,11 +25,11 @@ public:
         READ_EVENT      = POLLIN,
         EXCEPT_EVENT    = POLLPRI,//0x2
         WRITE_EVENT     = POLLOUT,//0x4
-        ACCEPT_EVENT    = 0x008,
-        TIMEOUT_EVENT   = 0x010,
-        SIGNAL_EVENT    = 0x020,
-        CLOSE_EVENT     = 0x040,
-        CONNECT_EVENT   = 0x080
+        ACCEPT_EVENT    = 1 << 3,
+        TIMEOUT_EVENT   = 1 << 4,
+        SIGNAL_EVENT    = 1 << 5,
+        CLOSE_EVENT     = 1 << 6,
+        CONNECT_EVENT   = 1 << 7
     };
     event_handler(Reactor& react) : reactor_(&react) {}
     //these functions can't be pure virtual

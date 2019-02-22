@@ -89,7 +89,8 @@ const int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 void select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
     int n = 0;
     //TODO 在reactor中使用while, 这里只进行一次select
-    while((n = this->select(timeout)) >= 0){
+    if(n = this->select(timeout)) >= 0)
+    {
         LOG(INFO) << n << " fd ready...";
         dispatch(n);
     }

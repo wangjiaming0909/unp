@@ -5,7 +5,7 @@ poll_reactor_impl::poll_reactor_impl() : wait_pfds_(), demux_table_()
 
 }
 
-poll_reactor_impl::~poll_demultiplex_table(){}
+poll_reactor_impl::~poll_reactor_impl(){}
 
 void poll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
 {
@@ -25,6 +25,16 @@ int poll_reactor_impl::unregister_handler(event_handler *handler, Event_Type typ
 
 int  poll_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type)
 {
+    if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
+        LOG(ERROR) << "handle error or registered type error...";
+        return -1;
+    }
+    //already existed in the table
+    if(demux_table_.get_handler(handle, type) != 0)
+        LOG(WARNING) << "Already existed in the demultiplex table, handle: " 
+        << handle << " event: " << event_type_to_string(type);
+
+    // wait_pfds_.push_back(new )
 
 }
 

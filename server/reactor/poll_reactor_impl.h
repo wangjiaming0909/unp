@@ -45,7 +45,7 @@ public:
     poll_reactor_impl(const poll_reactor_impl&) = delete;
     poll_reactor_impl& operator=(const poll_reactor_impl&) = delete;
 private:
-    std::vector<struct pollfd>  wait_pfds_;
+    std::vector<boost::shared_ptr<struct pollfd>>  wait_pfds_;
     poll_demultiplex_table      demux_table_;
 };
 
@@ -66,6 +66,34 @@ public:
 private:
     epoll_demultiplex_table         demux_table_;
 };
+
+//0 poll, 1 epoll
+short reactor_event_to_poll_event(event_handler::Event_Type type, int poll_or_epoll )
+{
+    short events = 0;
+
+    if(type == event_handler::READ_EVENT || 
+        type == event_handler::ACCEPT_EVENT || 
+        type == event_handler::CONNECT_EVENT){
+        if(poll_or_epoll == 0) events |= POLLIN;
+        else events |= EPOLLIN;
+    }
+    if(type == event_handler::WRITE_EVENT || 
+        type == event_handler::CONNECT_EVENT){
+        if(poll_or_epoll == 0) events |= POLLOUT
+        else events |= EPOLLOUT;
+    }
+    return events;
+        // NONE            = 0x000,
+        // READ_EVENT      = POLLIN,
+        // EXCEPT_EVENT    = POLLPRI,//0x2
+        // WRITE_EVENT     = POLLOUT,//0x4
+        // ACCEPT_EVENT    = 1 << 3,
+        // TIMEOUT_EVENT   = 1 << 4,
+        // SIGNAL_EVENT    = 1 << 5,
+        // CLOSE_EVENT     = 1 << 6,
+        // CONNECT_EVENT   = 1 << 7
+}
 
 }
 #endif //_UNP_POLL_REACTOR_IMPL_H_
