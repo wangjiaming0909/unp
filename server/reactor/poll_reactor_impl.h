@@ -32,20 +32,40 @@ private:
     select_demultiplex_table demultiplex_table_;
 };
 
-class poll_reactor_iml : public reactor_implementation{
+class poll_reactor_impl : public reactor_implementation{
 public:
-    void handle_events(std::chrono::microseconds *timeout) override{ }
-    int register_handler(event_handler* handler, Event_Type type) override{ }
-    int register_handler(int handle, event_handler *handler, Event_Type type) override{ }
-    int unregister_handler(event_handler *handler, Event_Type type) override{ }
-    int unregister_handler(int handle, event_handler *handler, Event_Type type) override{ }
+    poll_reactor_impl();
+    ~poll_reactor_impl();
+    void handle_events(std::chrono::microseconds *timeout) override;
+    int register_handler(event_handler* handler, Event_Type type) override;
+    int register_handler(int handle, event_handler *handler, Event_Type type) override;
+    int unregister_handler(event_handler *handler, Event_Type type) override;
+    int unregister_handler(int handle, event_handler *handler, Event_Type type) override;
+
+    poll_reactor_impl(const poll_reactor_impl&) = delete;
+    poll_reactor_impl& operator=(const poll_reactor_impl&) = delete;
 private:
-    pollfd                      wait_pfds_[];
-    pollfd                      dispatch_pfds_[];
+    std::vector<struct pollfd>  wait_pfds_;
     poll_demultiplex_table      demux_table_;
 };
 
+class epoll_reactor_impl : public reactor_implementation 
+{
+public:
+    using epoll_demultiplex_table = poll_demultiplex_table;
+    epoll_reactor_impl();
+    ~epoll_reactor_impl();
+    void handle_events(std::chrono::microseconds *timeout) override;
+    int register_handler(event_handler* handler, Event_Type type) override;
+    int register_handler(int handle, event_handler *handler, Event_Type type) override;
+    int unregister_handler(event_handler *handler, Event_Type type) override;
+    int unregister_handler(int handle, event_handler *handler, Event_Type type) override;
 
+    epoll_reactor_impl(const epoll_reactor_impl&) = delete;
+    epoll_reactor_impl& operator=(const epoll_reactor_impl&) = delete;
+private:
+    epoll_demultiplex_table         demux_table_;
+};
 
 }
 #endif //_UNP_POLL_REACTOR_IMPL_H_
