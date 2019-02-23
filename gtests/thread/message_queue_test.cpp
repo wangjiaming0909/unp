@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "server/thread/message_queue.h"
 #include <string>   
+#include <poll.h>
+#include <vector>
 
 TEST(message_queue_test, test_constructor){
     thread::message_queue<std::string> mq{};

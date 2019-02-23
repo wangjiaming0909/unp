@@ -8,4 +8,5 @@ TEST(thread_pool_test, test_cancel){
 
     pool.start();
     pool.cancel();
+    ASSERT_EQ(1,1);
 }

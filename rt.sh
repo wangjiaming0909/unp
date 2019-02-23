@@ -1,3 +1,3 @@
 #!/bin/bash
 #run tests
-./gtests/test.out --gtest_filter=select_demultiplex_table_test.*
+./gtests/test.out --gtest_filter=test_pollfd_using_vector.*

@@ -5,7 +5,13 @@
 #include "server/util/easylogging++.h"
 #include "server/reactor/select_reactor_impl.h"
 #include "boost/shared_ptr.hpp"
+#include "boost/make_shared.hpp"
 #include <poll.h>
+#include <sys/epoll.h>
+#include <chrono>
+
+using namespace std::chrono_literals;
+
 namespace reactor{
 
 class poll_demultiplex_table {
@@ -45,7 +51,10 @@ public:
     poll_reactor_impl(const poll_reactor_impl&) = delete;
     poll_reactor_impl& operator=(const poll_reactor_impl&) = delete;
 private:
-    std::vector<boost::shared_ptr<struct pollfd>>  wait_pfds_;
+    int poll(std::chrono::microseconds* timeout);
+    int dispatch(int active_handle_count);
+private:
+    std::vector<struct pollfd>  wait_pfds_;
     poll_demultiplex_table      demux_table_;
 };
 
@@ -63,11 +72,13 @@ public:
 
     epoll_reactor_impl(const epoll_reactor_impl&) = delete;
     epoll_reactor_impl& operator=(const epoll_reactor_impl&) = delete;
+
 private:
     epoll_demultiplex_table         demux_table_;
 };
 
-//0 poll, 1 epoll
+#define USING_POLL 0
+#define USING_EPOLL 1
 short reactor_event_to_poll_event(event_handler::Event_Type type, int poll_or_epoll )
 {
     short events = 0;
@@ -75,13 +86,17 @@ short reactor_event_to_poll_event(event_handler::Event_Type type, int poll_or_ep
     if(type == event_handler::READ_EVENT || 
         type == event_handler::ACCEPT_EVENT || 
         type == event_handler::CONNECT_EVENT){
-        if(poll_or_epoll == 0) events |= POLLIN;
-        else events |= EPOLLIN;
+        if(poll_or_epoll == USING_POLL) 
+            events |= POLLIN;
+        else 
+            events |= EPOLLIN;
     }
     if(type == event_handler::WRITE_EVENT || 
         type == event_handler::CONNECT_EVENT){
-        if(poll_or_epoll == 0) events |= POLLOUT
-        else events |= EPOLLOUT;
+        if(poll_or_epoll == USING_EPOLL) 
+            events |= POLLOUT;
+        else 
+            events |= EPOLLOUT;
     }
     return events;
         // NONE            = 0x000,

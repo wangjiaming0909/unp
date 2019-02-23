@@ -89,12 +89,12 @@ const int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 void select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
     int n = 0;
     //TODO 在reactor中使用while, 这里只进行一次select
-    if(n = this->select(timeout)) >= 0)
+    if(n = this->select(timeout) > 0) // select > 0 再 dispatch
     {
         LOG(INFO) << n << " fd ready...";
         dispatch(n);
     }
-    LOG(WARNING) << "select returned -1: " << strerror(errno);
+    LOG(WARNING) << "select returned -1 or 0: " << strerror(errno);
 }
 
 //if returned value < 0, means error
@@ -129,14 +129,17 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
     if(number_of_active_handles < 0){
         return -1;
     }
+
     if(number_of_active_handles == 0 && timeout && timeout->count() != 0){
         errno = ETIMEDOUT;
         return -1;
     }
+
     //check the fds
     if(number_of_active_handles > 0){
         return number_of_active_handles;
     }
+
     //TODO what if number_of_active_handles == 0 and not timeout, will this happen
     return number_of_active_handles;
 }
