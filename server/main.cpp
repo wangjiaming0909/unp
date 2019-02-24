@@ -9,9 +9,12 @@
 #include "server/thread/thread_pool.h"
 #include "server/reactor/connector.h"
 #include "server/reactor/read_write_handler.h"
+#include "server/reactor/poll_reactor_impl.h"
 #include <exception>
 #include <cstdlib>
 #include <chrono>
+#include <vector>
+#include <unistd.h>
 
 
 // INITIALIZE_NULL_EASYLOGGINGPP
@@ -25,7 +28,8 @@ int set_reactor_acceptor(const char* ipAddr, int port){
     thread_pool pool{10};
     pool.start();
     message_queue<int> mq{};
-    reactor::Reactor rt{new reactor::select_reactor_impl{}};
+    // reactor::Reactor rt{new reactor::select_reactor_impl{}};
+    reactor::Reactor rt{new reactor::poll_reactor_impl{}};
     inet_addr listen_addr{port, ipAddr};
     reactor_acceptor acceptor{rt, pool, listen_addr};
 
@@ -46,7 +50,8 @@ int set_reactor_connector(const char* ipAddr, int port){
     thread_pool pool{10};
     pool.start();
     message_queue<int> mq{};
-    reactor::Reactor rt{new reactor::select_reactor_impl{}};
+    // reactor::Reactor rt{new reactor::select_reactor_impl{}};
+    reactor::Reactor rt{new reactor::poll_reactor_impl{}};
 
     // //acceptor
     // inet_addr listen_addr{9000, "192.168.0.112"};
@@ -68,6 +73,33 @@ int set_reactor_connector(const char* ipAddr, int port){
     }
 }
 
+int multi_connector(const char* ipAddr, int port, int sockets_count, int interval/*seconds*/){
+    thread_pool pool{10};
+    pool.start();
+    message_queue<int> mq{};
+    // reactor::Reactor rt{new reactor::select_reactor_impl{}};
+    reactor::Reactor rt{new reactor::poll_reactor_impl{}};
+
+    //connector
+    // inet_addr remote_addr{9000, "192.168.0.112"};
+    inet_addr remote_addr{port, ipAddr};
+    std::vector<reactor_connector<int, read_write_handler<int>>*> connectors{};
+
+    for(int i = 0; i < sockets_count; i++)
+    {
+        // ::sleep(interval);
+        auto* connector = new reactor_connector<int, read_write_handler<int>>{rt, pool, mq};
+        connectors.push_back(connector);
+        int ret = connector->connect(remote_addr, 5s);
+    }
+    
+    std::chrono::microseconds timeout = 5s;
+    while(true){
+        rt.handle_events(&timeout);
+    }
+    
+}
+
 int main(int argc, char** argv){
 
     using namespace std;
@@ -76,11 +108,12 @@ int main(int argc, char** argv){
     if(argc == 4){
         const char* ipAddr = argv[2];
         int port = atoi(argv[3]);
-        if(strcmp(argv[1], "-listen")){
+        if(strcmp(argv[1], "-listen")== 0){
             set_reactor_acceptor(ipAddr, port);
         }
-        if(strcmp(argv[1], "-connect")){
-            set_reactor_connector(ipAddr, port);
+        if(strcmp(argv[1], "-connect")== 0){
+            // set_reactor_connector(ipAddr, port);
+            multi_connector(ipAddr, port, 10, 1);
         }
     }else{
         LOG(ERROR) << "args error.....";

@@ -37,6 +37,8 @@ public:
     using Event_Type = event_handler::Event_Type;
     poll_demultiplex_table() : table_(), size_(0){}
     event_handler* get_handler(int handle, Event_Type type) const {
+        if(table_.size() < handle)
+            return nullptr;
         return table_[handle].get_handler(type);
     }
 
@@ -46,7 +48,7 @@ public:
 
     int bind(int handle, event_handler* handler, Event_Type type){
         if(handle > table_.size())
-            table_.resize(handle + handle/2);
+            table_.resize(handle*2);
         size_++;
         return table_[handle].bind_new(type, handler);
     }
@@ -116,36 +118,8 @@ private:
 
 #define USING_POLL 0
 #define USING_EPOLL 1
-short reactor_event_to_poll_event(event_handler::Event_Type type, int poll_or_epoll )
-{
-    short events = 0;
 
-    if(type == event_handler::READ_EVENT || 
-        type == event_handler::ACCEPT_EVENT || 
-        type == event_handler::CONNECT_EVENT){
-        if(poll_or_epoll == USING_POLL) 
-            events |= POLLIN;
-        else 
-            events |= EPOLLIN;
-    }
-    if(type == event_handler::WRITE_EVENT || 
-        type == event_handler::CONNECT_EVENT){
-        if(poll_or_epoll == USING_EPOLL) 
-            events |= POLLOUT;
-        else 
-            events |= EPOLLOUT;
-    }
-    return events;
-        // NONE            = 0x000,
-        // READ_EVENT      = POLLIN,
-        // EXCEPT_EVENT    = POLLPRI,//0x2
-        // WRITE_EVENT     = POLLOUT,//0x4
-        // ACCEPT_EVENT    = 1 << 3,
-        // TIMEOUT_EVENT   = 1 << 4,
-        // SIGNAL_EVENT    = 1 << 5,
-        // CLOSE_EVENT     = 1 << 6,
-        // CONNECT_EVENT   = 1 << 7
-}
+short reactor_event_to_poll_event(event_handler::Event_Type type, int poll_or_epoll );
 
 }
 #endif //_UNP_POLL_REACTOR_IMPL_H_

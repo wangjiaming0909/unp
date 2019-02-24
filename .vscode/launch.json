@@ -28,7 +28,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/a.out",
             "args": [
-                "listen",
+                "-listen",
                 "127.0.0.1",
                 "9000"
             ],
@@ -44,6 +44,26 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "attach listen",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceRoot}/build/a.out",
+            "MIMode": "gdb",
+            "processId":"${command:pickProcess}"
+        },
+        {
+            "name": "connect",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/a.out",
+            "args": [
+                "-connect",
+                "127.0.0.1",
+                "9000"
+            ],
+            "cwd": "${workspaceFolder}",
         }
     ]
 }

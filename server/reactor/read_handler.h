@@ -76,7 +76,7 @@ public:
         std::chrono::microseconds timeout = 2s;
         if(this->peer_.read(static_cast<void*>(buffer_), 64, &timeout) < 0){
             LOG(ERROR) << "read none..." << strerror(errno) ;
-            return -1;
+            return 0;
         }
         LOG(INFO) << "get data from peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();
         if(buffer_[0] == 'q') {

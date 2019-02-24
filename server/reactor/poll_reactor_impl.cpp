@@ -2,6 +2,37 @@
 
 using namespace reactor;
 
+short reactor::reactor_event_to_poll_event(event_handler::Event_Type type, int poll_or_epoll )
+{
+    short events = 0;
+
+    if(type == event_handler::READ_EVENT || 
+        type == event_handler::ACCEPT_EVENT || 
+        type == event_handler::CONNECT_EVENT){
+        if(poll_or_epoll == USING_POLL) 
+            events |= POLLIN;
+        else 
+            events |= EPOLLIN;
+    }
+    if(type == event_handler::WRITE_EVENT || 
+        type == event_handler::CONNECT_EVENT){
+        if(poll_or_epoll == USING_EPOLL) 
+            events |= POLLOUT;
+        else 
+            events |= EPOLLOUT;
+    }
+    return events;
+        // NONE            = 0x000,
+        // READ_EVENT      = POLLIN,
+        // EXCEPT_EVENT    = POLLPRI,//0x2
+        // WRITE_EVENT     = POLLOUT,//0x4
+        // ACCEPT_EVENT    = 1 << 3,
+        // TIMEOUT_EVENT   = 1 << 4,
+        // SIGNAL_EVENT    = 1 << 5,
+        // CLOSE_EVENT     = 1 << 6,
+        // CONNECT_EVENT   = 1 << 7
+}
+
 int poll_event_repo::bind_new(Event_Type type, event_handler* handler)
 {
     if(type == event_handler::NONE || handler == 0)
@@ -44,7 +75,7 @@ event_handler* poll_event_repo::get_handler(Event_Type type) const
     auto iter = this->find(type);
     if(iter == types_and_handlers_.end())
     {
-        LOG(WARNING) << "can't unbind, no this type of event";
+        // LOG(WARNING) << "can't unbind, no this type of event";
         return nullptr;
     }
     return iter->second;
@@ -52,10 +83,17 @@ event_handler* poll_event_repo::get_handler(Event_Type type) const
 
 std::vector<poll_event_repo::event_tuple>::const_iterator poll_event_repo::find(Event_Type type) const
 {
+    int size = types_and_handlers_.size();
     return std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(), 
         [&type] (const event_tuple& tuple) 
         {
-            return tuple.first == type;
+            if((tuple.first == event_handler::READ_EVENT || tuple.first == event_handler::ACCEPT_EVENT) 
+                && type == POLLIN)
+                return true;
+            if((tuple.first == event_handler::WRITE_EVENT || tuple.first == event_handler::CONNECT_EVENT)
+                && type == POLLOUT)
+                return true;
+            if((tuple.first == event_handler::EXCEPT_EVENT && type == POLLPRI)) return true;
         });
 }
 
@@ -133,14 +171,16 @@ int poll_reactor_impl::unregister_handler(int handle, event_handler *handler, Ev
 
 int poll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
 {
-    int n = 0;
-    if(this->poll(timeout) > 0)
+    int n = this->poll(timeout);
+    if(n <= 0)
     {
-        LOG(INFO) << n << "handles ready...";
-        int n = this->dispatch(n);
-        if(n != 0) LOG(WARNING) << "dispatch returned " << n;
+        LOG(WARNING) << "Poll returned 0 or -1" << strerror(errno);
+        return -1;
     }
-    LOG(WARNING) << "Poll returned 0 or -1" << strerror(errno);
+    LOG(INFO) << n << "handles ready...";
+    n = this->dispatch(n);
+    if(n != 0) LOG(WARNING) << "dispatch returned " << n;
+    return 0;
 }
 
 int poll_reactor_impl::poll(std::chrono::microseconds* timeout)
@@ -152,7 +192,7 @@ int poll_reactor_impl::poll(std::chrono::microseconds* timeout)
         LOG(WARNING) << "no wait pollfds...";
         return -1;
     } 
-    int ret = ::poll(&wait_pfds_[0], wait_pfds_.size(), timeout->count());
+    int ret = ::poll(&wait_pfds_[0], wait_pfds_.size(), timeout == 0 ? -1 : timeout->count());
 
     if(ret < 0)
     {
@@ -214,14 +254,20 @@ int poll_reactor_impl::dispatch_io_sets(int active_handlers, int& handles_dispat
             LOG(INFO) << "unbinding handle: " << pfd_dispatching->fd << " event: " << event_type_to_string(type);
             this->demux_table_.unbind(pfd_dispatching->fd, handler, type);
             handler->handle_close(pfd_dispatching->fd);
-            wait_pfds_.erase()
+            auto iter = std::find_if(wait_pfds_.begin(), wait_pfds_.end(), 
+                [&type, pfd_dispatching](struct pollfd& pfd)
+                {
+                    return (pfd.fd == pfd_dispatching->fd) && 
+                    (pfd.revents & reactor::reactor_event_to_poll_event(type, USING_POLL));
+                });
+            wait_pfds_.erase(iter);
         } 
         else
         {
             LOG(INFO) <<"keep listening on handle: " << pfd_dispatching->fd << " event: " << event_type_to_string(type);
         }
     }
-
+    return 0;
 }
 
 epoll_reactor_impl::epoll_reactor_impl()
