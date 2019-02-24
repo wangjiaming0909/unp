@@ -79,6 +79,11 @@ public:
             return 0;
         }
         LOG(INFO) << "get data from peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();
+        if(ret = this->peer_.send(static_cast<void*>(buffer_), strlen(buffer_), 0, 0) != 0)
+        {
+            LOG(WARNING) << "send error: " << strerror(errno);
+            return 0;
+        }
         if(buffer_[0] == 'q') {
             LOG(INFO) << "remote sended a quit, closing...";
             return -1;
