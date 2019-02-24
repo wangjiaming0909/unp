@@ -29,7 +29,17 @@ int set_reactor_acceptor(const char* ipAddr, int port){
     inet_addr listen_addr{port, ipAddr};
     reactor_acceptor acceptor{rt, pool, listen_addr};
 
-    rt.handle_events();
+    int ret = 0;
+    for(;;)
+    {
+        ret = rt.handle_events();
+        if(ret != 0)
+        {
+            LOG(ERROR) << "handle_events error...";
+            break;
+        }
+
+    }
 }
 
 int set_reactor_connector(const char* ipAddr, int port){

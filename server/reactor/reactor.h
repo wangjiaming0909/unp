@@ -23,8 +23,8 @@ public:
     virtual int unregister_handler(int handle, event_handler *handler, Event_Type type) {
         return reactor_impl_->unregister_handler(handle, handler, type);
     }
-    void handle_events(std::chrono::microseconds *timeout = 0){
-        reactor_impl_->handle_events(timeout);
+    int handle_events(std::chrono::microseconds *timeout = 0){
+        return reactor_impl_->handle_events(timeout);
     }
     // static boost::shared_ptr<Reactor> instance(){
     //     using boost::shared_ptr;

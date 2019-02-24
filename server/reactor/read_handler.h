@@ -75,7 +75,7 @@ public:
         //! when multi threads read the fd together what will hanppen?
         std::chrono::microseconds timeout = 2s;
         if(this->peer_.read(static_cast<void*>(buffer_), 64, &timeout) < 0){
-            LOG(ERROR) << "read none..." ;
+            LOG(ERROR) << "read none..." << strerror(errno) ;
             return -1;
         }
         LOG(INFO) << "get data from peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();

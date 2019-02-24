@@ -14,35 +14,70 @@ using namespace std::chrono_literals;
 
 namespace reactor{
 
+class poll_event_repo {
+public:
+    using event_tuple = std::pair<unsigned int, event_handler*>;
+    using Event_Type = event_handler::Event_Type;
+    poll_event_repo() : types_and_handlers_() {}
+    ~poll_event_repo() {}
+    int bind_new(Event_Type type, event_handler* handler);
+    int unbind(Event_Type type, const event_handler* handler);
+    void clear() {types_and_handlers_.clear();}
+    event_handler* get_handler(Event_Type type) const ;
+    int handle_count() const {return types_and_handlers_.size();};
+
+private:
+    std::vector<event_tuple>::const_iterator find(Event_Type type) const;
+private:
+    std::vector<event_tuple> types_and_handlers_;
+};
+
 class poll_demultiplex_table {
 public:
     using Event_Type = event_handler::Event_Type;
-    poll_demultiplex_table() : demultiplex_table_(){}
+    poll_demultiplex_table() : table_(), size_(0){}
     event_handler* get_handler(int handle, Event_Type type) const {
-        return demultiplex_table_.get_handler(handle, type);
+        return table_[handle].get_handler(type);
     }
-    const std::vector<select_event_tuple>& get_event_vector() const { 
-        return demultiplex_table_.get_event_vector(); 
+
+    const std::vector<poll_event_repo>& get_event_vector() const { 
+        return table_;
     }
+
     int bind(int handle, event_handler* handler, Event_Type type){
-        return demultiplex_table_.bind(handle, handler, type);
+        if(handle > table_.size())
+            table_.resize(handle + handle/2);
+        size_++;
+        return table_[handle].bind_new(type, handler);
     }
+
     //unbind掉绑定到这个handle的所有事件处理器
     int unbind(int handle){
-        return demultiplex_table_.unbind(handle);
+        int handle_count = table_[handle].handle_count();
+        if(handle_count <= 0)
+        {
+            LOG(WARNING) << "No handler bind to handle: " << handle;
+            return -1;
+        }
+        table_[handle].clear();
+        size_ -= handle_count;
+        return 0;
     }
     int unbind(int handle, const event_handler* handler, Event_Type type){
-        return demultiplex_table_.unbind(handle, handler, type);
+        return table_[handle].unbind(type, handler);
     }
 private:
-    select_demultiplex_table demultiplex_table_;
+    std::vector<poll_event_repo>    table_;
+    int                             size_;
 };
+
 
 class poll_reactor_impl : public reactor_implementation{
 public:
+    typedef int (event_handler::*HANDLER)(int);
     poll_reactor_impl();
     ~poll_reactor_impl();
-    void handle_events(std::chrono::microseconds *timeout) override;
+    int handle_events(std::chrono::microseconds *timeout) override;
     int register_handler(event_handler* handler, Event_Type type) override;
     int register_handler(int handle, event_handler *handler, Event_Type type) override;
     int unregister_handler(event_handler *handler, Event_Type type) override;
@@ -53,6 +88,8 @@ public:
 private:
     int poll(std::chrono::microseconds* timeout);
     int dispatch(int active_handle_count);
+    int dispatch_io_handlers(int active_handlers, int& handles_dispatched);
+    int dispatch_io_sets(int active_handlers, int& handlers_dispatched, Event_Type type, HANDLER callback);
 private:
     std::vector<struct pollfd>  wait_pfds_;
     poll_demultiplex_table      demux_table_;
@@ -64,7 +101,7 @@ public:
     using epoll_demultiplex_table = poll_demultiplex_table;
     epoll_reactor_impl();
     ~epoll_reactor_impl();
-    void handle_events(std::chrono::microseconds *timeout) override;
+    int handle_events(std::chrono::microseconds *timeout) override;
     int register_handler(event_handler* handler, Event_Type type) override;
     int register_handler(int handle, event_handler *handler, Event_Type type) override;
     int unregister_handler(event_handler *handler, Event_Type type) override;

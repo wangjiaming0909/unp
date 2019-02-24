@@ -26,13 +26,14 @@ struct select_reactor_handle_sets{
 struct select_event_tuple{
     using Event_Type = event_handler::Event_Type;
     select_event_tuple () 
-    : types_and_handlers()
-    , event_count(0) 
+    // : types_and_handlers()
+    : types_and_handlers_()
+    // , event_count(0) 
     { 
-        types_and_handlers.resize(64);
-        for(int i = 0; i < 64; i++){
-            types_and_handlers[i] = nullptr;
-        }
+        // types_and_handlers.resize(64);
+        // for(int i = 0; i < 64; i++){
+        //     types_and_handlers[i] = nullptr;
+        // }
     }
 
     int bind_new(Event_Type type, event_handler* handler){
@@ -40,47 +41,93 @@ struct select_event_tuple{
             LOG(WARNING) << "can't bind NONE event or handler is nullptr";
             return -1;
         }
-        types_and_handlers[type] = handler;
-        event_count++;
+        // types_and_handlers[type] = handler;
+        types_and_handlers_.push_back(std::make_pair(type, handler));
+        // event_count++;
         return 0;
     }
 
     int unbind(Event_Type type, const event_handler* handler){
-        if(types_and_handlers[type] == nullptr) {
+        if(type == event_handler::NONE || handler == 0)
+        {
+            LOG(WARNING) << "can't unbind NONE event or handler can't be nullptr";
+            return -1;
+        }
+
+        auto handler_find = std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(), 
+            [&type](const std::pair<unsigned int, event_handler*>& pair) 
+            {
+                return pair.first == type;
+            });
+
+        if(handler_find == types_and_handlers_.end())
+        {
             LOG(WARNING) << "can't unbind, no this type of event";
             return -1;
         }
-        if(types_and_handlers[type] != handler) {
+
+        if(handler_find->second != handler)
+        {
             LOG(WARNING) << "the handler you unbinded is not the same as you provided";
+            return -1;
         }
-        types_and_handlers[type] = nullptr;
-        event_count--;
+
+        //unbind the handler
+        types_and_handlers_.erase(handler_find);
         return 0;
+
+        // if(types_and_handlers[type] == nullptr) {
+        //     LOG(WARNING) << "can't unbind, no this type of event";
+        //     return -1;
+        // }
+        // if(types_and_handlers[type] != handler) {
+        //     LOG(WARNING) << "the handler you unbinded is not the same as you provided";
+        //     return -1;
+        // }
+        // types_and_handlers[type] = nullptr;
+        // event_count--;
+        // return 0;
     }
 
     event_handler* get_handler(Event_Type type) const {
-        if(types_and_handlers[type] == nullptr) {
-            if(type == event_handler::READ_EVENT){//因为 acceptor 的处理事件也是读事件，以accept_event查找handler时，可能找不到
+        auto handler_find = std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(), 
+            [&type](const std::pair<unsigned int, event_handler*>& pair) 
+            {
+                return pair.first == type;
+            });
+
+        if(handler_find == types_and_handlers_.end())
+        {
+            if(type == event_handler::READ_EVENT)
+            {
                 return get_handler(event_handler::ACCEPT_EVENT);
             }
-            // LOG(WARNING) 
-            //     << "handle " << handle 
-            //     << " has no handler for type " 
-            //     << event_type_to_string(type);
-            return nullptr;
         }
-        return types_and_handlers[type];
+
+        // if(types_and_handlers[type] == nullptr) {
+        //     if(type == event_handler::READ_EVENT){//因为 acceptor 的处理事件也是读事件，以accept_event查找handler时，可能找不到
+        //         return get_handler(event_handler::ACCEPT_EVENT);
+        //     }
+        //     // LOG(WARNING) 
+        //     //     << "handle " << handle 
+        //     //     << " has no handler for type " 
+        //     //     << event_type_to_string(type);
+        //     return nullptr;
+        // }
+        return handler_find->second;
     }
 
-    void clear() {types_and_handlers.clear(); }
+    void clear() {types_and_handlers_.clear(); }
+    int handler_count() const {return types_and_handlers_.size();}
 
     //for handler and type
     //one handle:
     //one type of event, only have one handler, 如果可以有两个，那么事件发生的时候我调用谁呢?
     //but one handler, 可以有多个事件与之对应,其实也很少见,总不能一个读的handler又处理读事件又处理写事件吧
     //使用vector，表示一个handler可以绑定到不同的event上，但是一个event只能有一个handler
-    std::vector<event_handler*>                                 types_and_handlers;
-    size_t                                                      event_count;
+    // std::vector<event_handler*>                                 types_and_handlers;
+    std::vector<std::pair<unsigned int, event_handler*>>        types_and_handlers_;
+    // size_t                                                      event_count;
 };
 
 class select_demultiplex_table{
@@ -118,7 +165,7 @@ public:
         , wait_sets_()
         , ready_sets_()
         , demux_table_(){}
-    void handle_events(std::chrono::microseconds *timeout) override;
+    int handle_events(std::chrono::microseconds *timeout) override;
     int register_handler(event_handler* handler, Event_Type type) override;
     int unregister_handler(event_handler *handler, Event_Type type) override;
     int register_handler(int handle, event_handler *handler, Event_Type type) override;

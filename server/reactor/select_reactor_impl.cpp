@@ -39,14 +39,14 @@ int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Typ
 }
 
 int select_demultiplex_table::unbind(int handle){
-    if(!is_handle_in_range(handle) || event_vector_[handle].event_count == 0){
+    if(!is_handle_in_range(handle) || event_vector_[handle].handler_count() == 0){
         LOG(WARNING) << "handle is not in the table or handle has no handler, handle: " << handle;
         return -1;
     }
     //if handle is the max_handle - 1
     int tmp = handle;
     if(current_max_handle_p_1_ == handle + 1){
-        while(--tmp != INVALID_HANDLE && event_vector_[tmp].event_count == 0);
+        while(--tmp != INVALID_HANDLE && event_vector_[tmp].handler_count() == 0);
         current_max_handle_p_1_ = tmp + 1;
     }
     event_vector_[handle].clear();
@@ -62,9 +62,9 @@ int select_demultiplex_table::unbind(int handle, const event_handler* handler, E
     int tmp = handle;
     int ret = event_vector_[handle].unbind(type, handler);
     //如果当前handle只有这一个handler存在，那么就需要重新寻找最大的fd，否则不需要
-    if(event_vector_[handle].event_count == 0){
+    if(event_vector_[handle].handler_count() == 0){
         if(handle + 1 == current_max_handle_p_1_){//find the next max handle
-            while(tmp-- != INVALID_HANDLE && event_vector_[tmp].event_count == 0);
+            while(tmp-- != INVALID_HANDLE && event_vector_[tmp].handler_count() == 0);
             current_max_handle_p_1_ = tmp + 1;
         }
     }
@@ -86,15 +86,17 @@ bool select_demultiplex_table::is_valid_handle(int handle) const {
 const int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 
 
-void select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
+int select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
     int n = 0;
     //TODO 在reactor中使用while, 这里只进行一次select
-    if(n = this->select(timeout) > 0) // select > 0 再 dispatch
+    n = this->select(timeout); // select > 0 再 dispatch
+    if(n <= 0)
     {
-        LOG(INFO) << n << " fd ready...";
-        dispatch(n);
+        LOG(WARNING) << "select returned -1 or 0: " << strerror(errno);
+        return -1;
     }
-    LOG(WARNING) << "select returned -1 or 0: " << strerror(errno);
+    LOG(INFO) << n << " fd ready...";
+    return dispatch(n);
 }
 
 //if returned value < 0, means error
@@ -152,11 +154,13 @@ int select_reactor_impl::dispatch(int active_handle_count){
 int select_reactor_impl::register_handler(event_handler* handler, Event_Type type) {
     (void)handler;
     (void)type;
+    return 0;
 }
 
 int select_reactor_impl::unregister_handler(event_handler *handler, Event_Type type) {
     (void)handler;
     (void)type;
+    return 0;
 }
 
 int select_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type){
@@ -245,7 +249,6 @@ int select_reactor_impl::dispatch_io_set(
         HANDLER callback){
     int current_handle = -1;
 
-
     //go throuth the handle_set, dispatch all the handles
     while(
         ((current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE) && 
@@ -259,8 +262,7 @@ int select_reactor_impl::dispatch_io_set(
 
         if(ret < 0){
             //TODO ret handling
-            auto event_type_str = event_type_to_string(type);
-            LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_str;
+            LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_to_string(type);
             this->demux_table_.unbind(current_handle);
             handler->handle_close(current_handle);
             dispatch_set.unset_bit(current_handle);

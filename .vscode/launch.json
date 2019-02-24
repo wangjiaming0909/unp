@@ -27,7 +27,11 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/a.out",
-            "args": [],
+            "args": [
+                "listen",
+                "127.0.0.1",
+                "9000"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
