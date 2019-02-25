@@ -57,6 +57,8 @@ ssize_t net::sock_stream::send_n(const void* buffer, size_t len, int flags,
 }
 */
 
+//TODO SIGPIPE and Segament fault
+
 ssize_t net::sock_stream::read_imp(void *buffer, size_t len,
                                    const micro_seconds *timeout) const
 {
