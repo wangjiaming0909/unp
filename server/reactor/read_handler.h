@@ -45,8 +45,8 @@ public:
         (void)handle;
         this->peer_.close_writer();
 //        TODO should read_handle close the fd
-//        this->peer_.close_reader();
-//        this->peer_.close();
+       this->peer_.close_reader();
+       this->peer_.close();
     }
 
     //! thread safty 存在race condition 当多个线程处理 在 get_data 之后, 并且 得到的是同一份数据时，并且对这份数据做了操作
@@ -74,9 +74,16 @@ public:
         } //!
         //! when multi threads read the fd together what will hanppen?
         std::chrono::microseconds timeout = 2s;
-        if(this->peer_.read(static_cast<void*>(buffer_), 64, &timeout) < 0){
+        ret = this->peer_.read(static_cast<void*>(buffer_), 64, &timeout);
+        if( ret < 0)
+        {
             LOG(ERROR) << "read none..." << strerror(errno) ;
             return 0;
+        }
+        if(ret == 0)
+        {
+            LOG(INFO) << "Read EOF...";
+            return -1;
         }
         LOG(INFO) << "get data from peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();
         if(ret = this->peer_.send(static_cast<void*>(buffer_), strlen(buffer_), 0, 0) < 0)

@@ -72,14 +72,23 @@ ssize_t net::sock_stream::read_imp(void *buffer, size_t len,
     {
         //TODO use nonblocking read, wait for timeout with poll
         auto milli_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(*timeout);
-        //if the handle is not read ready, we will wait for timeout, 
+        //?? if the handle is not read ready, we will wait for timeout
+        //?? if a connection is very busy(lots of data to read), 
+        //?? when we are waiting for the read event, the blocked thread will be waked up
+        //?? so the read return EAGAIN or EWOULDBLOCK will only happen at the last read
+
+        //?? if the timeout is very short, we will waste a lot of cpu time to handle read return -1
         unp::handle_read_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
         sock_fd_->set_non_blocking();
         ret = ::read(sock_fd_->get_handle(), static_cast<char *>(buffer), len);
-        if(ret >= 0) 
+        if(ret > 0) 
         {
             LOG(INFO) << "Read from: " << sock_fd_->get_handle() << " read: " << ret << "bytes";
         } 
+        else if(ret == 0)
+        {
+            LOG(INFO) << "Read a EOF: " << sock_fd_->get_handle();
+        }
         else
         {
             LOG(INFO) << "Read from: " << sock_fd_->get_handle() << " error: " << strerror(errno);
