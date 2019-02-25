@@ -177,7 +177,7 @@ int poll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
         LOG(WARNING) << "Poll returned 0 or -1" << strerror(errno);
         return -1;
     }
-    LOG(INFO) << n << "handles ready...";
+    LOG(INFO) << n << " handle(s) ready...";
     n = this->dispatch(n);
     if(n != 0) LOG(WARNING) << "dispatch returned " << n;
     return 0;
@@ -236,35 +236,37 @@ int poll_reactor_impl::dispatch_io_handlers(int active_handles, int& handles_dis
 int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatched, Event_Type type, HANDLER callback)
 {
     struct pollfd* pfd_dispatching = nullptr;
+    int current_fd = -1;
     int ret = 0;
     for(int i = 0; i < wait_pfds_.size(); i++)
     {
         pfd_dispatching = &wait_pfds_[i];
+        current_fd = pfd_dispatching->fd;
         if(!(pfd_dispatching->revents & type))
             continue;
 
         handles_dispatched++;
 
-        event_handler* handler = demux_table_.get_handler(pfd_dispatching->fd, type);
+        event_handler* handler = demux_table_.get_handler(current_fd, type);
         if(handler == 0) return -1;
-        ret = (handler->*callback)(pfd_dispatching->fd);
+        ret = (handler->*callback)(current_fd);
 
         if(ret < 0)
         {
-            LOG(INFO) << "unbinding handle: " << pfd_dispatching->fd << " event: " << event_type_to_string(type);
-            this->demux_table_.unbind(pfd_dispatching->fd, handler, type);
-            handler->handle_close(pfd_dispatching->fd);
+            LOG(INFO) << "unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
+            this->demux_table_.unbind(current_fd, handler, type);
+            handler->handle_close(current_fd);
             auto iter = std::find_if(wait_pfds_.begin(), wait_pfds_.end(), 
-                [&type, pfd_dispatching](struct pollfd& pfd)
+                [&type, current_fd](struct pollfd& pfd)
                 {
-                    return (pfd.fd == pfd_dispatching->fd) && 
+                    return (pfd.fd == current_fd) && 
                     (pfd.revents & reactor::reactor_event_to_poll_event(type, USING_POLL));
                 });
             wait_pfds_.erase(iter);
         } 
         else
         {
-            LOG(INFO) <<"keep listening on handle: " << pfd_dispatching->fd << " event: " << event_type_to_string(type);
+            LOG(INFO) <<"keep listening on handle: " << current_fd << " event: " << event_type_to_string(type);
         }
     }
     return 0;

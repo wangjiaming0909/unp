@@ -86,7 +86,7 @@ int net::sock_acceptor::accept(
         //and we write it to the remote_addr pointer
         if(ret != INVALID_HANDLE && remote_addr){
             remote_addr->set_size(len);
-            LOG(INFO) << "settings size and family " << len << " " << addr.sa_family;
+            // LOG(INFO) << "settings size and family " << len << " " << addr.sa_family;
             break;
         }
     }

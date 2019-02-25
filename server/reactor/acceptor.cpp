@@ -26,11 +26,11 @@ int reactor_acceptor::open(){
 }
 
 int reactor_acceptor::handle_input(int handle){
-    LOG(INFO) << "start to accepting a connection";
+    LOG(INFO) << "start to accept a connection";
     pool_.start();
     do{
         activate_read_handler();
-    }while(unp::handle_read_ready_using_poll(handle, 2s) == 1);
+    }while(unp::handle_read_ready_using_poll(handle, 2ms) == 1);
     // read_handler_.activate(1);
     return 0;
 }
