@@ -221,19 +221,19 @@ int poll_reactor_impl::dispatch(int active_handle_count)
     return 0;
 }
 
-int poll_reactor_impl::dispatch_io_handlers(int active_handlers, int& handles_dispatched)
+//TODO handle remote close event
+int poll_reactor_impl::dispatch_io_handlers(int active_handles, int& handles_dispatched)
 {
-
     int ret = 0;
-    ret = dispatch_io_sets(active_handlers, handles_dispatched, POLLIN, &event_handler::handle_input);
+    ret = dispatch_io_sets(active_handles, handles_dispatched, POLLIN, &event_handler::handle_input);
 
-    ret = dispatch_io_sets(active_handlers, handles_dispatched, POLLOUT, &event_handler::handle_output);
+    ret = dispatch_io_sets(active_handles, handles_dispatched, POLLOUT, &event_handler::handle_output);
 
-    ret = dispatch_io_sets(active_handlers, handles_dispatched, POLLERR, &event_handler::handle_output);
+    ret = dispatch_io_sets(active_handles, handles_dispatched, POLLERR, &event_handler::handle_output);
     return ret;
 }
 
-int poll_reactor_impl::dispatch_io_sets(int active_handlers, int& handles_dispatched, Event_Type type, HANDLER callback)
+int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatched, Event_Type type, HANDLER callback)
 {
     struct pollfd* pfd_dispatching = nullptr;
     int ret = 0;

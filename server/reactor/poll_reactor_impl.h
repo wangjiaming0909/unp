@@ -90,8 +90,8 @@ public:
 private:
     int poll(std::chrono::microseconds* timeout);
     int dispatch(int active_handle_count);
-    int dispatch_io_handlers(int active_handlers, int& handles_dispatched);
-    int dispatch_io_sets(int active_handlers, int& handlers_dispatched, Event_Type type, HANDLER callback);
+    int dispatch_io_handlers(int active_handles, int& handles_dispatched);
+    int dispatch_io_sets(int active_handles, int& handles_dispatched, Event_Type type, HANDLER callback);
 private:
     std::vector<struct pollfd>  wait_pfds_;
     poll_demultiplex_table      demux_table_;
@@ -100,6 +100,7 @@ private:
 class epoll_reactor_impl : public reactor_implementation 
 {
 public:
+    typedef int (event_handler::*HANDLER)(int);
     using epoll_demultiplex_table = poll_demultiplex_table;
     epoll_reactor_impl();
     ~epoll_reactor_impl();
@@ -111,6 +112,13 @@ public:
 
     epoll_reactor_impl(const epoll_reactor_impl&) = delete;
     epoll_reactor_impl& operator=(const epoll_reactor_impl&) = delete;
+
+private:
+    //TODO epoll 的精度是 microseconds 么?
+    int epoll_wait(std::chrono::microseconds* timeout);
+    int dispatch(int active_handle_count);
+    int dispatch_io_handlers(int active_handles, int& handles_dispatched, Event_Type type, HANDLER callback);
+    int dispatch_io_epoll_sets(int active_handles, int& handles_dispatched, Event_Type type, HANDLER callback);
 
 private:
     epoll_demultiplex_table         demux_table_;
