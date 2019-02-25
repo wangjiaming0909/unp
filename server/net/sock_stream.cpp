@@ -76,6 +76,9 @@ ssize_t net::sock_stream::read_imp(void *buffer, size_t len,
         //?? if a connection is very busy(lots of data to read), 
         //?? when we are waiting for the read event, the blocked thread will be waked up
         //?? so the read return EAGAIN or EWOULDBLOCK will only happen at the last read
+        //** when we have a lot of small data to read in a very short time,
+        //** cause we have more than one thread waiting for the read event
+        //** it will be much more fast
 
         //?? if the timeout is very short, we will waste a lot of cpu time to handle read return -1
         unp::handle_read_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
