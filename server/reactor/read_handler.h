@@ -73,7 +73,7 @@ public:
             LOG(INFO) << "data: " << *data;
         } //!
         //! when multi threads read the fd together what will hanppen?
-        std::chrono::microseconds timeout = 2us;
+        std::chrono::microseconds timeout = 2s;
         if(this->peer_.read(static_cast<void*>(buffer_), 64, &timeout) < 0){
             LOG(ERROR) << "read none..." << strerror(errno) ;
             return 0;

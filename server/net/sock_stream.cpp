@@ -72,7 +72,8 @@ ssize_t net::sock_stream::read_imp(void *buffer, size_t len,
     {
         //TODO use nonblocking read, wait for timeout with poll
         auto milli_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(*timeout);
-        // unp::handle_read_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
+        //if the handle is not read ready, we will wait for timeout, 
+        unp::handle_read_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
         sock_fd_->set_non_blocking();
         ret = ::read(sock_fd_->get_handle(), static_cast<char *>(buffer), len);
         if(ret >= 0) 
