@@ -83,7 +83,8 @@ ssize_t net::sock_stream::read_imp(void *buffer, size_t len,
         //** it will be much more fast
 
         //?? if the timeout is very short, we will waste a lot of cpu time to handle read return -1
-        unp::handle_read_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
+        ret = unp::handle_read_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
+        if(ret <= 0) return -1;
         sock_fd_->set_non_blocking();
         ret = ::read(sock_fd_->get_handle(), static_cast<char *>(buffer), len);
         if(ret > 0) 

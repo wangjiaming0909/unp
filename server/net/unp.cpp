@@ -59,6 +59,10 @@ int unp::handle_ready_using_poll(
         case -1: // we got here directly - select() returned -1.
             return -1;
         case 1: // Handle has data.
+            if(fds.revents & POLLHUP){
+                LOG(WARNING) << "Handle_ready_using_poll returned event POLLHUP...";
+                return -1;
+            } 
         /* FALLTHRU */
         default: // default is case result > 0; return a
             return result;
