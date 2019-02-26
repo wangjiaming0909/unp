@@ -172,7 +172,8 @@ int poll_reactor_impl::unregister_handler(int handle, event_handler *handler, Ev
 int poll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
 {
     int n = this->poll(timeout);
-    if(n <= 0)
+    if(n == 0) ::sleep(2);
+    if(n < 0)
     {
         LOG(WARNING) << "Poll returned 0 or -1" << strerror(errno);
         return -1;
@@ -245,8 +246,10 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
         if(!(pfd_dispatching->revents & type))
             continue;
 
+        
         handles_dispatched++;
 
+        LOG(INFO) << "Dispatching handle: " << current_fd << " event: " << event_type_to_string(type);
         event_handler* handler = demux_table_.get_handler(current_fd, type);
         if(handler == 0) return -1;
         ret = (handler->*callback)(current_fd);

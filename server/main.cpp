@@ -85,13 +85,10 @@ int multi_connector(const char* ipAddr, int port, int sockets_count, int interva
     inet_addr remote_addr{port, ipAddr};
     std::vector<reactor_connector<int, read_write_handler<int>>*> connectors{};
 
-    for(int i = 0; i < sockets_count; i++)
-    {
-        // ::sleep(interval);
+        //::sleep(interval);
         auto* connector = new reactor_connector<int, read_write_handler<int>>{rt, pool, mq};
         connectors.push_back(connector);
         int ret = connector->connect(remote_addr, 5s);
-    }
     
     std::chrono::microseconds timeout = 5s;
     while(true){
@@ -113,7 +110,7 @@ int main(int argc, char** argv){
         }
         if(strcmp(argv[1], "-connect")== 0){
             // set_reactor_connector(ipAddr, port);
-            multi_connector(ipAddr, port, 10, 1);
+            multi_connector(ipAddr, port, 4, 1);
         }
     }else{
         LOG(ERROR) << "args error.....";

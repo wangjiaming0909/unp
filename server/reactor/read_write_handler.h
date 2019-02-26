@@ -48,7 +48,7 @@ public:
         if(!this->is_handle_valid(handle)) return -1;
         data_block<DataType> data{new DataType, true};
         this->put_data_and_activate(data);
-        return -1;
+        return 0;
     }
 
     virtual int routine() override 
@@ -76,9 +76,11 @@ public:
             LOG(INFO) << "data: " << *data;
         } //!
         //?????????????????????????????????????????????????????
-        if(this->peer_.send(static_cast<const void*>("123"), 64, 0) <= 0){
-            LOG(ERROR) << "send none..." ;
-            return -1;
+        for(;;){
+            if(this->peer_.send(static_cast<const void*>("123"), 64, 0) <= 0){
+                LOG(ERROR) << "send none..." ;
+                return -1;
+            }
         }
         LOG(INFO) << "sending data to peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();
         return 0;
