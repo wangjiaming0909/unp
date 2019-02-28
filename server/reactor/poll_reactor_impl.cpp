@@ -258,7 +258,6 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
         {
             LOG(INFO) << "unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
             this->demux_table_.unbind(current_fd, handler, type);
-            handler->handle_close(current_fd);
             auto iter = std::find_if(wait_pfds_.begin(), wait_pfds_.end(), 
                 [&type, current_fd](struct pollfd& pfd)
                 {
@@ -266,6 +265,15 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
                     (pfd.revents & reactor::reactor_event_to_poll_event(type, USING_POLL));
                 });
             wait_pfds_.erase(iter);
+            iter = std::find_if(wait_pfds_.begin(), wait_pfds_.end(), 
+                [current_fd](struct pollfd& pfd)
+                {
+                    return (pfd.fd == current_fd);
+                });
+            if(iter == wait_pfds_.end())
+            {
+                handler->handle_close(current_fd);
+            }
         } 
         else
         {

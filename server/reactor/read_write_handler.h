@@ -2,6 +2,7 @@
 #define UNP_READ_WRITE_HANDLER_H_
 
 #include "server/reactor/io_handler.h"
+using namespace std::chrono_literals;
 
 namespace reactor{
 
@@ -24,15 +25,16 @@ public:
         LOG(INFO) << "register read_write_handler to reactor...";
         int ret = this->reactor_->register_handler(this->peer_.get_handle(), this, event_handler::WRITE_EVENT);
         if(ret != 0) return -1;
-        // ret = this->reactor_->register_handler(this->peer_.get_handle(), this, event_handler::READ_EVENT);
-        // if(ret != 0) return -1;
+        ret = this->reactor_->register_handler(this->peer_.get_handle(), this, event_handler::READ_EVENT);
+        if(ret != 0) return -1;
     }
 
     virtual int handle_input(int handle) override
     {
         if(!this->is_handle_valid(handle)) return -1;
         data_block<DataType> data{new DataType, true};
-        return this->put_data_and_activate(data);
+        // return this->put_data_and_activate(data);
+        return routine();
     }
 
     virtual int handle_close(int handle) override 
@@ -47,8 +49,20 @@ public:
     {
         if(!this->is_handle_valid(handle)) return -1;
         data_block<DataType> data{new DataType, true};
-        this->put_data_and_activate(data);
-        return 0;
+        // this->put_data_and_activate(data);
+        SendData("connected...");
+        return -2;
+    }
+
+    int SendData(const char* data)
+    {
+        int ret = this->peer_.send(static_cast<const void*>(data), strlen(data), 0);
+        if(ret <= 0)
+        {
+            LOG(ERROR) << "Send error..." << strerror(errno);
+            return -1;
+        }
+        return ret;
     }
 
     virtual int routine() override 
@@ -62,25 +76,39 @@ public:
         if(this->peer_.get_handle() == INVALID_HANDLE) {
             return -1;
         }
-        data_block<DataType> data{};
 
-        int ret = this->get_data(&data);
-        if(ret != 0 ) {
-            LOG(INFO) << "get data error";
-            return -1;
-        }
+        // data_block<DataType> data{};
+        // int ret = this->get_data(&data);
+        // if(ret != 0 ) {
+        //     LOG(INFO) << "get data error";
+        //     return -1;
+        // }
         //? 如果不会对相同事件进行多次分配,是否就不会存在竞争了?
         //?????????????????????????????????????????????????????
         //!! 如果不会得到同一份数据, 那么就不需要枷锁了,随意修改这份数据
         { //! lock if you will modify the data
-            LOG(INFO) << "data: " << *data;
+            // LOG(INFO) << "data: " << *data;
         } //!
         //?????????????????????????????????????????????????????
-        for(;;){
-            if(this->peer_.send(static_cast<const void*>("123"), 64, 0) <= 0){
-                LOG(ERROR) << "send none..." ;
-                return -1;
-            }
+
+        memset(buffer_, 0, 128);
+        std::chrono::microseconds timeout = 2s;
+        int ret = this->peer_.read(static_cast<void*>(buffer_), 64, &timeout);
+        if( ret < 0)
+        {
+            LOG(ERROR) << "read none..." << strerror(errno) ;
+            return 0;
+        }
+        if(ret == 0)
+        {
+            LOG(INFO) << "Read EOF...";
+            return -1;
+        }
+        LOG(INFO) << "get data from peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();
+
+        if(this->peer_.send(static_cast<const void*>(buffer_), 64, 0) <= 0){
+            LOG(ERROR) << "send none..." ;
+            return -1;
         }
         LOG(INFO) << "sending data to peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();
         return 0;

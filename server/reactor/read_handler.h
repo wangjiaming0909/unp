@@ -37,7 +37,9 @@ public:
     {
         if(!this->is_handle_valid(handle)) return -1;
         data_block<data_type> data{new data_type, true};
-        this->put_data_and_activate(data);
+        // this->put_data_and_activate(data);
+        //*let read and write thread is the same thread as poll thread
+        return routine();
     }
 
     virtual int handle_close(int handle) 
@@ -63,22 +65,24 @@ public:
         }
         data_block<data_type> data{};
 
-        int ret = this->get_data(&data);
-        if(ret != 0 ) {
-            LOG(INFO) << "get data error";
-            return -1;
-        }
-        //!! 如果不会得到同一份数据, 那么就不需要枷锁了,随意修改这份数据
-        { //! lock if you will modify the data
-            LOG(INFO) << "data: " << *data;
-        } //!
+        int ret = 0;
+        // int ret = this->get_data(&data);
+        // if(ret != 0 ) {
+        //     LOG(INFO) << "get data error";
+        //     return -1;
+        // }
+        // //!! 如果不会得到同一份数据, 那么就不需要枷锁了,随意修改这份数据
+        // { //! lock if you will modify the data
+        //     LOG(INFO) << "data: " << *data;
+        // } //!
         //! when multi threads read the fd together what will hanppen?
         std::chrono::microseconds timeout = 2s;
+        memset(buffer_, 0, 128);
         ret = this->peer_.read(static_cast<void*>(buffer_), 64, &timeout);
         if( ret < 0)
         {
             LOG(ERROR) << "read none..." << strerror(errno) ;
-            return 0;
+            return -1;
         }
         if(ret == 0)
         {

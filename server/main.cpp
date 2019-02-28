@@ -109,8 +109,8 @@ int main(int argc, char** argv){
             set_reactor_acceptor(ipAddr, port);
         }
         if(strcmp(argv[1], "-connect")== 0){
-            // set_reactor_connector(ipAddr, port);
-            multi_connector(ipAddr, port, 4, 1);
+            set_reactor_connector(ipAddr, port);
+            // multi_connector(ipAddr, port, 4, 1);
         }
     }else{
         LOG(ERROR) << "args error.....";
