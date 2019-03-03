@@ -6,6 +6,8 @@ gtests/*.o
 gtests/**/*.o
 gtests/*.out
 nbproject/**
+.vscode/**/*.ipch
+.vscode/**/*.bin
 **/tags
 *.files
 *.includes

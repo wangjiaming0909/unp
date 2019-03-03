@@ -36,13 +36,20 @@ class poll_demultiplex_table {
 public:
     using Event_Type = event_handler::Event_Type;
     poll_demultiplex_table() : table_(), size_(0){}
-    event_handler* get_handler(int handle, Event_Type type) const {
+    event_handler* get_handler(int handle, Event_Type type) const 
+    {
         if(table_.size() < handle)
             return nullptr;
         return table_[handle].get_handler(type);
     }
 
-    const std::vector<poll_event_repo>& get_event_vector() const { 
+    bool has_handle(int handle) const 
+    {
+        return table_.size() > handle && table_[handle].handle_count() > 0;
+    }
+
+    const std::vector<poll_event_repo>& get_event_vector() const 
+    { 
         return table_;
     }
 
@@ -114,14 +121,19 @@ public:
     epoll_reactor_impl& operator=(const epoll_reactor_impl&) = delete;
 
 private:
+    int open();
     //TODO epoll 的精度是 microseconds 么?
-    int epoll_wait(std::chrono::microseconds* timeout);
+    int epoll_wait(int milliseconds);
     int dispatch(int active_handle_count);
-    int dispatch_io_handlers(int active_handles, int& handles_dispatched, Event_Type type, HANDLER callback);
+    int dispatch_io_handlers(int active_handles, int& handles_dispatched);
     int dispatch_io_epoll_sets(int active_handles, int& handles_dispatched, Event_Type type, HANDLER callback);
 
 private:
-    epoll_demultiplex_table         demux_table_;
+    int                                 fd_count_;
+    int                                 epoll_fd_;
+    struct epoll_event                  cur_event_;
+    std::vector<struct epoll_event>     ret_events_;
+    epoll_demultiplex_table             demux_table_;
 };
 
 #define USING_POLL 0

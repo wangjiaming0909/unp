@@ -42,7 +42,27 @@ int set_reactor_acceptor(const char* ipAddr, int port){
             LOG(ERROR) << "handle_events error...";
             break;
         }
+    }
+}
 
+int set_reactor_acceptor_using_epoll(const char* ipAddr, int port){
+    thread_pool pool{10};
+    pool.start();
+    message_queue<int> mq{};
+    // reactor::Reactor rt{new reactor::select_reactor_impl{}};
+    reactor::Reactor rt{new reactor::epoll_reactor_impl{}};
+    inet_addr listen_addr{port, ipAddr};
+    reactor_acceptor acceptor{rt, pool, listen_addr};
+
+    int ret = 0;
+    for(;;)
+    {
+        ret = rt.handle_events();
+        if(ret != 0)
+        {
+            LOG(ERROR) << "handle_events error...";
+            break;
+        }
     }
 }
 
@@ -106,7 +126,8 @@ int main(int argc, char** argv){
         const char* ipAddr = argv[2];
         int port = atoi(argv[3]);
         if(strcmp(argv[1], "-listen")== 0){
-            set_reactor_acceptor(ipAddr, port);
+            // set_reactor_acceptor(ipAddr, port);
+            set_reactor_acceptor_using_epoll(ipAddr, port);
         }
         if(strcmp(argv[1], "-connect")== 0){
             set_reactor_connector(ipAddr, port);
