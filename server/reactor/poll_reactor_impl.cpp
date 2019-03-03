@@ -501,7 +501,7 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int& handles_
         if(ret < 0)
         {
             LOG(INFO) << "Unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
-            this->register_handler(current_fd, handler, type);
+            this->unregister_handler(current_fd, handler, type);
             if(!demux_table_.has_handle(current_fd))
             {
                 handler->handle_close(current_fd);
