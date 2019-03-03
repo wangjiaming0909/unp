@@ -56,11 +56,16 @@ public:
 
     int SendData(const char* data)
     {
-        int ret = this->peer_.send(static_cast<const void*>(data), strlen(data), 0);
-        if(ret <= 0)
+        int ret = 0;
+        for(int i = 0; i < 100; i++)
         {
-            LOG(ERROR) << "Send error..." << strerror(errno);
-            return -1;
+            //send could get SIGPIPE 
+            ret = this->peer_.send(static_cast<const void*>(data), strlen(data), 0);
+            if(ret <= 0)
+            {
+                LOG(ERROR) << "Send error..." << strerror(errno);
+                return -1;
+            }
         }
         return ret;
     }

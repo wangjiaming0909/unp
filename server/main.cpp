@@ -89,7 +89,8 @@ int set_reactor_connector(const char* ipAddr, int port){
     
     std::chrono::microseconds timeout = 5s;
     while(true){
-        rt.handle_events(&timeout);
+        ret = rt.handle_events(&timeout);
+        if(ret < 0) return -1;
     }
 }
 

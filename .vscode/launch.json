@@ -60,10 +60,10 @@
             "program": "${workspaceFolder}/build/a.out",
             "args": [
                 "-connect",
-                "192.168.0.112",
+                "192.168.0.2",
                 "9000"
             ],
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}"
         }
     ]
 }
