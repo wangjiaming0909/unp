@@ -47,7 +47,7 @@ int set_reactor_acceptor(const char* ipAddr, int port){
 
 int set_reactor_acceptor_using_epoll(const char* ipAddr, int port){
     thread_pool pool{10};
-    pool.start();
+    // pool.start();
     message_queue<int> mq{};
     // reactor::Reactor rt{new reactor::select_reactor_impl{}};
     reactor::Reactor rt{new reactor::epoll_reactor_impl{}};
