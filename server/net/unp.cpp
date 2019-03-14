@@ -5,6 +5,7 @@
 #include <time.h>
 #include <poll.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include "server/util/easylogging++.h"
 
 

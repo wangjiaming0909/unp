@@ -90,7 +90,7 @@ public:
             return -1;
         }
         LOG(INFO) << "get data from peer: " << buffer_ << " thread_id: " << std::this_thread::get_id();
-        ret = this->peer_.send(static_cast<void*>(buffer_), strlen(buffer_), 0, 0);
+        ret = this->peer_.send(static_cast<void*>(buffer_), strlen(buffer_), MSG_NOSIGNAL, 0);
         if(ret < 0)
         {
             LOG(WARNING) << "send error: " << strerror(errno);
