@@ -40,6 +40,7 @@ public:
     
 private:
     int open();
+	int close();
     Handler* make_handler();
     int activate_io_handler(int handle);
     int connect_i(const net::inet_addr& target_addr, const micro_seconds& timeout);
@@ -65,6 +66,12 @@ reactor_connector<DataType, Handler>::reactor_connector( Reactor& react
 
 template <typename DataType, typename Handler>
 int reactor_connector<DataType, Handler>::open(){}
+
+template <typename DataType, typename Handler>
+int reactor_connector<DataType, Handler>::close()
+{
+
+}
 
 template <typename DataType, typename Handler>
 reactor_connector<DataType, Handler>::~reactor_connector(){}
