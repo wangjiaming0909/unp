@@ -202,6 +202,16 @@ uint32_t buffer_chain::append(const buffer_chain& chain, uint32_t len, Iter star
     return len;
 }
 
+int64_t buffer_chain::append(const void* data, uint32_t data_len)
+{
+    if(data == 0 || data_len == 0) return -1;
+
+    if(chain_free_space() < data_len) return -1;
+
+    ::memcpy(buffer_ + off_, data, data_len);
+    off_ += data_len;
+}
+
 bool buffer_chain::validate_iter(Iter it) const
 {
     if( it.chain_ != this || 
@@ -544,9 +554,59 @@ int64_t buffer::append(buffer_chain &&chain)
     return chains_.back().size();//!!
 }
 
+int64_t buffer::append(const void* data, uint32_t data_len)
+{
+    if(data == 0 || data_len == 0) return -1;
+
+    buffer_chain* data_chain = expand_if_needed(data_len);
+    if(data_chain->chain_free_space() < data_len) return -1;//for expand error
+
+    data_chain->append(data, data_len);
+    total_len_ += data_len;
+    last_chain_with_data_ = data_chain;
+    return data_len;
+}
+
 int64_t buffer::append_printf(const char* fmt, ...)
 {
-    return 0;
+    if(fmt == 0)     {
+        LOG(WARNING) << "fmt error: " << fmt;
+        return -1;
+    }
+    int ret = 0;
+    buffer_chain* data_chain = expand_if_needed(64);
+    char* data_p = data_chain->buffer_ + data_chain->off_;
+    uint32_t data_size = data_chain->chain_free_space();
+
+    for(;;)
+    {
+        va_list va;
+        va_start(va, fmt);
+        int vs = vsnprintf(data_p, data_size, fmt, va);
+        va_end(va);
+
+        if(vs < 0) return vs;//vsnprintf return error
+
+        if(buffer_chain::MAXIMUM_CHAIN_SIZE < static_cast<u_int32_t>(vs))//fmt 字串太长
+        {
+            LOG(WARNING) << "Too long for a chain, size: " << vs;
+            return -1;
+        }
+
+        if((uint32_t)vs < data_size)//data_size可以塞下fmt字串
+        {
+            data_chain->off_ += static_cast<u_int32_t>(vs);
+            total_len_ += static_cast<u_int32_t>(vs);
+            ret = vs;
+            last_chain_with_data_ = data_chain;
+            break;
+        }
+
+        data_chain = expand_if_needed(static_cast<u_int32_t>(vs) + 1);
+        data_p = data_chain->buffer_ + data_chain->off_;
+        data_size = data_chain->chain_free_space();
+    }
+    return ret;
 }
 
 int64_t buffer::append_vprintf(const char* fmt, va_list ap)

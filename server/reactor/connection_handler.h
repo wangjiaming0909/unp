@@ -13,8 +13,11 @@ namespace reactor{
 class connection_handler : public event_handler{
 public:
     connection_handler(Reactor& reactor);
-    //read data from sock_stream into buffer input_buffer_, if input_buffer has space or below HIGH WATMARK
+    //read data from sock_stream into buffer input_buffer_, if input_buffer size is below HIGH WATMARK
     //???如果input_buffer已经达到HIGH WATMARK 或者已经达到buffer的最大大小了怎么办
+    //buffer do not have the maximum size, chain has
+    //when input_buffer's size >= HIGH_WATMARK, we do not read, wait for next to read,
+    //but when using edge trigger(default), handle_input will be invoked immediately
     virtual int handle_input(int ) override;
     //write data from output_buffer into sock_stream if output_buffer has data
     //当output_buffer 中的数据都flush了，那么也应该 disable writing
@@ -70,9 +73,9 @@ protected:
     buffer              output_buffer_;
     bool 				read_enabled_;
     bool 				write_enabled_;
+    static const unsigned int BUFFER_HIGH_WATER_MARK;
 };
 
-
-}
+}// namespace reactor
 #endif /* CONNECTION_H */
 
