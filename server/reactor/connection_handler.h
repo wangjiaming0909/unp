@@ -4,6 +4,8 @@
 #include "server/reactor/event_handler.h"
 #include "server/net/sock_stream.h"
 #include "server/reactor/buffer.h"
+#include "server/reactor/reactor.h"
+#include "server/util/easylogging++.h"
 
 namespace reactor{
 

@@ -21,26 +21,27 @@ void net::sock_stream::close()
         }
 }
 
-ssize_t net::sock_stream::read(void *buffer, size_t len,
-                               const micro_seconds *timeout) const
+ssize_t net::sock_stream::read(void *buffer, size_t len, const micro_seconds *timeout) const
 {
     return read_imp(buffer, len, timeout);
 }
 
-ssize_t net::sock_stream::readv(iovec iov[], int n,
-                                const micro_seconds *timeout) const
+ssize_t net::sock_stream::read(reactor::buffer& buf, size_t len, const microseconds* timeout = 0) const
+{
+
+}
+
+ssize_t net::sock_stream::readv(iovec iov[], int n, const micro_seconds *timeout) const
 {
     return readv_imp(iov, n, timeout);
 }
 
-ssize_t net::sock_stream::send(const void *buffer, size_t len, int flags,
-                               const micro_seconds *timeout) const
+ssize_t net::sock_stream::send(const void *buffer, size_t len, int flags, const micro_seconds *timeout) const
 {
     return send_imp(buffer, len, flags, timeout);
 }
 
-ssize_t net::sock_stream::writev(const iovec iov[], int n,
-                                 const micro_seconds *timeout) const
+ssize_t net::sock_stream::writev(const iovec iov[], int n, const micro_seconds *timeout) const
 {
     return writev_imp(iov, n, timeout);
 }
@@ -59,16 +60,16 @@ ssize_t net::sock_stream::send_n(const void* buffer, size_t len, int flags,
 
 //TODO SIGPIPE and Segament fault
 
-ssize_t net::sock_stream::read_imp(void *buffer, size_t len,
-                                   const micro_seconds *timeout) const
+ssize_t net::sock_stream::read_imp(void *buffer, size_t len, const micro_seconds *timeout) const
 {
     if (sock_fd_ == 0)
         return 0;
     int ret = 0;
     if (timeout == 0)
     {
-        return ret = ::read(sock_fd_->get_handle(), buffer, len);
+        ret = ::read(sock_fd_->get_handle(), buffer, len);
         LOG(INFO) << "Read from: " << sock_fd_->get_handle() << " read: " << ret << "bytes";
+        return ret;
     }
     else
     {

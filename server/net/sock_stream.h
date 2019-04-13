@@ -8,6 +8,7 @@
 #include "macros.h"
 #include <boost/assert.hpp>
 #include "server/util/easylogging++.h"
+#include "server/reactor/buffer.h"
 namespace net{
 
 //sock_stream does not contain the memory of the sock_fd
@@ -29,23 +30,18 @@ public:
 public:
     using micro_seconds = std::chrono::microseconds; 
 	//read version use system call read which has no flags 
-    ssize_t read( void* buffer, size_t len, 
-        const micro_seconds* timeout = 0) const;
+    ssize_t read( void* buffer, size_t len, const micro_seconds* timeout = 0) const;
+	ssize_t read(reactor::buffer& buf, size_t len, const microseconds* timeout = 0) const;
 	//TODO
-	ssize_t write(const void* buffer, size_t len, 
-		const micro_seconds* timeout = 0) const;
+	ssize_t write(const void* buffer, size_t len, const micro_seconds* timeout = 0) const;
 	//recv version use the system call recv which has a flags parameter
 
 	//TODO
-	ssize_t recv(void* buffer, size_t len, int flags,
-		const micro_seconds* timeout = 0) const;
-    ssize_t readv( iovec iov[], int n,
-        const micro_seconds* timeout = 0)const;
+	ssize_t recv(void* buffer, size_t len, int flags, const micro_seconds* timeout = 0) const;
+    ssize_t readv( iovec iov[], int n, const micro_seconds* timeout = 0)const;
 	//send alse has a flags parameter
-    ssize_t send( const void* buffer, size_t len, int flags,
-        const micro_seconds* timeout = 0)const;
-    ssize_t writev( const iovec iov[], int n,
-        const micro_seconds* timeout = 0) const;
+    ssize_t send( const void* buffer, size_t len, int flags, const micro_seconds* timeout = 0)const;
+    ssize_t writev( const iovec iov[], int n, const micro_seconds* timeout = 0) const;
 
 public:
 	int get_handle() const { return sock_fd_->get_handle(); }
