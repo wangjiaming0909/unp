@@ -123,40 +123,93 @@ int connection_handler::handle_signal(int )
 
 int connection_handler::get_handle() const
 {
-
+    return stream_.get_handle();
 }
 
 void connection_handler::set_handle(int )
 {
-
 }
 
-int connection_handler::open()
+int64_t connection_handler::read(char* data_out, uint32_t data_len)
+{
+    if(data_out == 0 || data_len == 0) return -1;
+
+    if(input_buffer_.buffer_length() == 0) return 0;
+
+    uint32_t buf_len = input_buffer_.buffer_length();
+    uint32_t len_gonna_pullup = data_len;
+    if(buf_len < data_len)
+    {
+        len_gonna_pullup = buf_len;
+    }
+
+    const unsigned char* buf_p = input_buffer_.pullup(len_gonna_pullup);
+    memcpy(data_out, buf_p, len_gonna_pullup);
+    return len_gonna_pullup;
+}
+
+int64_t connection_handler::read_line(char* data_out, uint32_t data_len, buffer_eol_style eol)
 {
 
 }
 
-int connection_handler::close()
+int64_t connection_handler::write(const char* data, uint32_t len)
 {
+    if(data == 0 || len == 0) return -1;
 
+    if(output_buffer_.buffer_length() >= BUFFER_HIGH_WATER_MARK)
+    {
+        LOG(WARNING) << "Output buffer length got to HIGH_WATER_MARK";
+        return 0;
+    }
+
+    if(!write_enabled_)
+    {
+        enable_writing();
+    }
+
+    return output_buffer_.append(data, len);
+}
+
+void connection_handler::open()
+{
+}
+
+void connection_handler::close()
+{
+    stream_.close();
+}
+
+void connection_handler::close_read()
+{
+    stream_.close_reader();
+}
+
+void connection_handler::close_write()
+{
+    stream_.close_writer();
 }
 
 int connection_handler::enable_reading()
 {
     return reactor_->register_handler(stream_.get_handle(), this, event_handler::READ_EVENT);
+    read_enabled_ = true;
 }
 
 int connection_handler::enable_writing()
 {
     return reactor_->register_handler(stream_.get_handle(), this, event_handler::WRITE_EVENT);
+    write_enabled_ = true;
 }
 
 int connection_handler::disable_reading()
 {
     return reactor_->unregister_handler(stream_.get_handle(), this, event_handler::READ_EVENT);
+    read_enabled_ = false;
 }
 
 int connection_handler::disable_writing()
 {
     return reactor_->unregister_handler(stream_.get_handle(), this, event_handler::WRITE_EVENT);
+    write_enabled_ = false;
 }
