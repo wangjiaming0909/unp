@@ -34,6 +34,8 @@ public:
     //read 只是从intput_buffer中读取数据，并不会从socket中读取
     //return bytes read
     int64_t read(char* data_out, uint32_t data_len);
+    //data_len means the length of data_out
+    //not the returned length of data_out
     int64_t read_line(char* data_out, uint32_t data_len, buffer_eol_style eol);
     //最初我们不注册 write事件，因为sock_stream一直都是可写，直到达到 socket 出缓冲区的 HIGH WATER MARK 为止
     //所以handle_output会被频繁调用

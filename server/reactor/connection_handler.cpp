@@ -150,7 +150,12 @@ int64_t connection_handler::read(char* data_out, uint32_t data_len)
 
 int64_t connection_handler::read_line(char* data_out, uint32_t data_len, buffer_eol_style eol)
 {
+    if(data_out == 0 || data_len == 0) return -1;
 
+    if(output_buffer_.buffer_length() == 0) return 0;
+    
+    uint32_t len = 0;
+    input_buffer_.search_eol(&len, eol, input_buffer_.begin());
 }
 
 int64_t connection_handler::write(const char* data, uint32_t len)
