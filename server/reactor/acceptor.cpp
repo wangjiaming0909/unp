@@ -64,3 +64,78 @@ void reactor_acceptor::activate_read_handler(){
 int reactor_acceptor::handle_timeout(int handle){ }
 int reactor_acceptor::handle_close(int handle){ }
 int reactor_acceptor::handle_signal(int handle){ }
+
+
+
+acceptor::acceptor(Reactor& react, const net::inet_addr& local_addr)
+    : event_handler(react)
+    , sock_acceptor_(local_addr)
+    , local_addr_(local_addr)
+    , read_handlers_()
+{
+    open();
+}
+
+int acceptor::handle_input(int handle)
+{
+    if(handle == INVALID_HANDLE || handle != sock_acceptor_.get_handle())
+    {
+        LOG(ERROR) << "Handler error...";
+        return -1;
+    }
+
+    make_read_handler();
+    activate_read_handler();
+    return 0;
+}
+int acceptor::handle_close(int handle)
+{
+    if(handle == INVALID_HANDLE || handle != sock_acceptor_.get_handle())
+    {
+        LOG(ERROR) << "Handler error...";
+        return -1;
+    }
+
+    return close();
+}
+int acceptor::open()
+{
+    if(sock_acceptor_.open(local_addr_) != 0)
+    {
+        LOG(ERROR) << "Opening a socket error..." << strerror(errno);
+        return -1;
+    }
+
+    return reactor_->register_handler(this, ACCEPT_EVENT);
+}
+int acceptor::close()
+{
+    if(sock_acceptor_.close() != 0)
+    {
+        LOG(ERROR) << "Close a socket error..." << strerror(errno);
+        return -1;
+    }
+
+    return reactor_->unregister_handler(this, ACCEPT_EVENT);
+}
+
+int acceptor::close_read_handler()
+{
+
+}
+
+int acceptor::close_all_handlers()
+{
+
+}
+
+int acceptor::make_read_handler()
+{
+    net::inet_addr peer{};
+    // read_handlers_.push_back(std::make_shared<connection_handler>(reactor_));
+}
+
+int acceptor::activate_read_handler()
+{
+
+}

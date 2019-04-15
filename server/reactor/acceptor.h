@@ -5,6 +5,7 @@
 #include "server/net/inet_addr.h"
 #include "server/reactor/reactor.h"
 #include "server/reactor/read_handler.h"
+#include "server/reactor/connection_handler.h"
 
 namespace reactor{
 
@@ -31,7 +32,7 @@ public:
 	//open a socket, bind to local_addr, listen, acceptor, and register to reactor
 	int open();
 	//unregister listen event from reactor, close the listen fd
-	//不关闭 read_handler, 当需要关闭时, 自己调用 invoke_all
+	//不关闭 read_handler, 当需要关闭时, 自己调用 close_all
 	int close();
 	//close one read_handler
 	int close_read_handler();
@@ -44,6 +45,9 @@ private:
 private:
 	net::sock_acceptor 				sock_acceptor_;
 	net::inet_addr 					local_addr_;
+    //TODO should use some other data structure
+    //TODO to ensure that all handlers are ative, if some handler is closed, we should rmeove it 
+    //TODO reuse the memory
     std::vector<std::shared_ptr<event_handler>> read_handlers_;
 };
 
