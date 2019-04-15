@@ -740,7 +740,7 @@ int64_t buffer::copy_out_from(void* data, uint32_t data_len, Iter start)
 
 int64_t buffer::read_line(char * read_out, uint32_t n, buffer_eol_style eol_style)
 {
-    if(read_out == nullptr) return -1;
+    if(read_out == nullptr || n == 0) return -1;
 
     uint32_t eol_len = 0;
     auto it = search_eol(&eol_len, eol_style, begin());

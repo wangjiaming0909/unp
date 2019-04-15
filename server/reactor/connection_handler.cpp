@@ -113,7 +113,8 @@ int connection_handler::handle_timeout(int )
 
 int connection_handler::handle_close(int )
 {
-
+	close();
+	return 0;
 }
 
 int connection_handler::handle_signal(int )
@@ -154,8 +155,7 @@ int64_t connection_handler::read_line(char* data_out, uint32_t data_len, buffer_
 
     if(output_buffer_.buffer_length() == 0) return 0;
     
-    uint32_t len = 0;
-    input_buffer_.search_eol(&len, eol, input_buffer_.begin());
+	return input_buffer_.read_line(data_out, data_len, eol);
 }
 
 int64_t connection_handler::write(const char* data, uint32_t len)
@@ -182,11 +182,15 @@ void connection_handler::open()
 
 void connection_handler::close()
 {
+	if(read_enabled_) disable_reading();
+	if(write_enabled_) disable_writing();
     stream_.close();
 }
 
 void connection_handler::close_read()
 {
+	if(read_enabled_) disable_reading();
+	if(write_enabled_) disable_writing();
     stream_.close_reader();
 }
 
