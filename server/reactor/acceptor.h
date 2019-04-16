@@ -6,6 +6,8 @@
 #include "server/reactor/reactor.h"
 #include "server/reactor/read_handler.h"
 #include "server/reactor/connection_handler.h"
+#include <memory>
+#include "server/util/min_heap.h"
 
 namespace reactor{
 
@@ -16,13 +18,14 @@ enum {
 
 class acceptor : public event_handler{
 public:
+    using min_heap_t = util::min_heap<uint32_t>;
+    using connection_handler_ptr_type = std::shared_ptr<connection_handler>;
+public:
 	acceptor(Reactor& react, const net::inet_addr& local_addr);
 	//close listen, close all read_handelrs
-	virtual ~acceptor() override
-	{
-		close();
-		close_all_handlers();
-	}
+    int destroy_acceptor();
+private:
+    virtual ~acceptor() override;
 
 public:
 	//new connection coming, make a conenction_handler, activate it
@@ -34,21 +37,19 @@ public:
 	//unregister listen event from reactor, close the listen fd
 	//不关闭 read_handler, 当需要关闭时, 自己调用 close_all
 	int close();
-	//close one read_handler
-	int close_read_handler();
+    //connection_handler do not need acceptor to close it, reactor will close it when the connection is over
+    //so here just remove all handler from read_handlers
+    void close_read_handler(int handle);
 	int close_all_handlers();
 
 private:
-	//make a read_handler, set into the vector
-	int make_read_handler();
-	int activate_read_handler();
+    //make a read_handler, insert into the vector
+    int make_read_handler();
+    int activate_read_handler(int index);
 private:
 	net::sock_acceptor 				sock_acceptor_;
 	net::inet_addr 					local_addr_;
-    //TODO should use some other data structure
-    //TODO to ensure that all handlers are ative, if some handler is closed, we should rmeove it 
-    //TODO reuse the memory
-    std::vector<std::shared_ptr<event_handler>> read_handlers_;
+    std::vector<connection_handler_ptr_type> read_handlers_;
 };
 
 

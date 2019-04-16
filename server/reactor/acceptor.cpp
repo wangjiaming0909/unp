@@ -71,9 +71,27 @@ acceptor::acceptor(Reactor& react, const net::inet_addr& local_addr)
     : event_handler(react)
     , sock_acceptor_(local_addr)
     , local_addr_(local_addr)
-    , read_handlers_()
+    , read_handlers_(128)
 {
     open();
+}
+
+int acceptor::destroy_acceptor()
+{
+    for (size_t i = 0; i < read_handlers_.size(); i++) {
+        if(read_handlers_[i] != nullptr)
+        {
+            LOG(WARNING) << "There are still connection active handle: " << i;
+            return -1;
+        }
+    }
+    delete this;
+    return 0;
+}
+
+acceptor::~acceptor(){
+    close_all_handlers();
+    close();
 }
 
 int acceptor::handle_input(int handle)
@@ -84,10 +102,10 @@ int acceptor::handle_input(int handle)
         return -1;
     }
 
-    make_read_handler();
-    activate_read_handler();
-    return 0;
+    int read_handle = make_read_handler();
+    return activate_read_handler(read_handle);
 }
+
 int acceptor::handle_close(int handle)
 {
     if(handle == INVALID_HANDLE || handle != sock_acceptor_.get_handle())
@@ -98,6 +116,7 @@ int acceptor::handle_close(int handle)
 
     return close();
 }
+
 int acceptor::open()
 {
     if(sock_acceptor_.open(local_addr_) != 0)
@@ -106,8 +125,9 @@ int acceptor::open()
         return -1;
     }
 
-    return reactor_->register_handler(this, ACCEPT_EVENT);
+    return reactor_->register_handler(sock_acceptor_.get_handle(), this, ACCEPT_EVENT);
 }
+
 int acceptor::close()
 {
     if(sock_acceptor_.close() != 0)
@@ -116,12 +136,16 @@ int acceptor::close()
         return -1;
     }
 
-    return reactor_->unregister_handler(this, ACCEPT_EVENT);
+    return reactor_->unregister_handler(sock_acceptor_.get_handle(), this, ACCEPT_EVENT);
 }
 
-int acceptor::close_read_handler()
+void acceptor::close_read_handler(int handle)
 {
-
+    if(handle > read_handlers_.size() || handle < 0)
+    {
+        LOG(ERROR) << "Close read Handler error, handle: " << handle;
+    }
+    read_handlers_[handle].reset();
 }
 
 int acceptor::close_all_handlers()
@@ -131,11 +155,52 @@ int acceptor::close_all_handlers()
 
 int acceptor::make_read_handler()
 {
-    net::inet_addr peer{};
-    // read_handlers_.push_back(std::make_shared<connection_handler>(reactor_));
+    if(read_handlers_.size() >= INT32_MAX)
+    {
+        LOG(WARNING) << "Too many connections... ";
+        return -1;
+    }
+
+    auto handler = std::make_shared<connection_handler>(*this->reactor_);
+//    handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
+
+    net::inet_addr peer_addr{};
+    int ret = sock_acceptor_.accept(handler->get_sock_stream(), &peer_addr);
+    if(ret != 0)
+    {
+        LOG(ERROR) << "Acceptor error..." << strerror(errno);
+        return -1;
+    }
+
+    int handle = handler->get_handle();
+    if(handle < 0)
+    {
+        LOG(ERROR) << "Handler errror" << strerror(errno);
+        return handle;
+    }
+
+    if(read_handlers_.size() < handle) read_handlers_.resize(handle + 1);
+    read_handlers_[static_cast<uint32_t>(handle)].swap(handler);
+
+    return handle;
 }
 
-int acceptor::activate_read_handler()
+int acceptor::activate_read_handler(int handle)
 {
+    assert(handle >= 0);
+    auto& handler = read_handlers_[static_cast<uint32_t>(handle)];
 
+
+    if(handler->get_sock_stream().get_sock_fd().set_non_blocking() != 0)
+    {
+        LOG(ERROR) << "Set nonblock error, handle : " << handle << " error: " << strerror(errno);
+        return -1;
+    }
+
+    if(handler->enable_reading() != 0)
+    {
+        LOG(ERROR) << "Registering error: " << strerror(errno);
+        return -1;
+    }
+    return 0;
 }

@@ -10,9 +10,6 @@
 #include "server/util/easylogging++.h"
 
 
-#ifndef uint32_t
-#define uint32_t unsigned int
-#endif
 
 namespace reactor
 {

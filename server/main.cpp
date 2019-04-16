@@ -10,12 +10,14 @@
 #include "server/reactor/connector.h"
 #include "server/reactor/read_write_handler.h"
 #include "server/reactor/poll_reactor_impl.h"
+#include "server/util/min_heap.h"
 #include <exception>
 #include <cstdlib>
 #include <chrono>
 #include <vector>
 #include <unistd.h>
 
+#include <queue>
 
 // INITIALIZE_NULL_EASYLOGGINGPP
 INITIALIZE_EASYLOGGINGPP
@@ -42,6 +44,28 @@ int set_reactor_acceptor(const char* ipAddr, int port){
             LOG(ERROR) << "handle_events error...";
             break;
         }
+    }
+}
+
+int set_reactor_acceptor_without_pool(const char* ipAddr, int port)
+{
+    reactor::Reactor rt{new reactor::select_reactor_impl{}};
+    inet_addr listen_addr{port, ipAddr};
+    reactor::acceptor* accptor = new acceptor{rt, listen_addr};
+
+    int ret = 0;
+    for (;;)
+    {
+        ret = rt.handle_events();
+        if(ret != 0)
+        {
+            LOG(ERROR) << "handle_events error...";
+            break;
+        }
+    }
+    while(accptor->destroy_acceptor() != 0)
+    {
+
     }
 }
 
@@ -123,12 +147,14 @@ int main(int argc, char** argv){
     using namespace std;
     server_scoped_helper s_h{argc, argv};
 
+
     if(argc == 4){
         const char* ipAddr = argv[2];
         int port = atoi(argv[3]);
         if(strcmp(argv[1], "-listen")== 0){
             // set_reactor_acceptor(ipAddr, port);
-            set_reactor_acceptor_using_epoll(ipAddr, port);
+//            set_reactor_acceptor_using_epoll(ipAddr, port);
+            set_reactor_acceptor_without_pool(ipAddr, port);
         }
         if(strcmp(argv[1], "-connect")== 0){
             set_reactor_connector(ipAddr, port);

@@ -6,6 +6,7 @@
 #include "server/reactor/buffer.h"
 #include "server/reactor/reactor.h"
 #include "server/util/easylogging++.h"
+#include <functional>
 
 namespace reactor{
 
@@ -62,14 +63,16 @@ protected:
     //如果enabled了，表明 正在flush 数据到sock_stream, 那么直接把数据添加到buffer中
 //    int write_i();
 
+    void check_and_invoke_close_callback();
 
-protected:
+public:
     //registering
     int enable_reading();
     //registering
     int enable_writing();
     int disable_reading();
     int disable_writing();
+    void set_closed_callback(const std::function<void(int)>& callback){closed_callback_ = callback;}
 protected:
 	net::sock_stream	stream_;
     buffer              input_buffer_;
@@ -77,6 +80,7 @@ protected:
     bool 				read_enabled_;
     bool 				write_enabled_;
     static const unsigned int BUFFER_HIGH_WATER_MARK;
+    std::function<void(int)>  closed_callback_;
 };
 
 template <typename T>
