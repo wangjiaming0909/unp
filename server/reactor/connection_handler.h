@@ -10,7 +10,8 @@
 
 namespace reactor{
 
-
+//TODO 增加一个字段, 指示此 connection_handler 是否应该被关闭了, 在handle_input 和 handle_output 中检查此字段,
+// return -1, 调用 handle_close
 class connection_handler : public event_handler{
 public:
     connection_handler(Reactor& reactor);

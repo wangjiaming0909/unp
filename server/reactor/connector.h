@@ -12,6 +12,7 @@
 #include <vector>
 #include <chrono>
 #include <map>
+#include <hash_map>
 
 namespace reactor {
 
@@ -20,6 +21,7 @@ class connector : public event_handler{
 public:
     using micro_seconds = std::chrono::microseconds;
 	using connection_handler_ptr_t = std::shared_ptr<connection_handler>;
+	using map_t = std::unordered_map<int, connection_handler_ptr_t>;
 	connector(Reactor& react) 
 		: event_handler(react)
 		, connector_()
@@ -39,7 +41,8 @@ private:
 private:
 	net::sock_connector 						connector_;
 	std::vector<connection_handler_ptr_t> 		handlers_;
-	std::map<int, connection_handler_ptr_t> 	connection_handlers_;
+	//key is the handle
+	map_t 										connection_handlers_;
 };
 
 template <typename DataType, typename Handler>
