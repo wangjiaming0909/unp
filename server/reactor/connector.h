@@ -8,10 +8,39 @@
 #include "server/thread/thread_pool.h"
 #include "server/util/easylogging++.h"
 #include "boost/shared_ptr.hpp"
+#include "connection_handler.h"
 #include <vector>
 #include <chrono>
+#include <map>
 
 namespace reactor {
+
+
+class connector : public event_handler{
+public:
+    using micro_seconds = std::chrono::microseconds;
+	using connection_handler_ptr_t = std::shared_ptr<connection_handler>;
+	connector(Reactor& react) 
+		: event_handler(react)
+		, connector_()
+		, handlers_()
+		, connection_handlers_()
+	{
+
+	}
+	virtual ~connector() override;
+    virtual int handle_input(int handle) override ;
+	
+    int connect(const net::inet_addr& target_addr, const micro_seconds& timeout);
+private:
+    int make_connection_handler();
+    int activate_connection_handler(int handle);
+	
+private:
+	net::sock_connector 						connector_;
+	std::vector<connection_handler_ptr_t> 		handlers_;
+	std::map<int, connection_handler_ptr_t> 	connection_handlers_;
+};
 
 template <typename DataType, typename Handler>
 class reactor_connector : public event_handler {

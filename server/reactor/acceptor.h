@@ -18,7 +18,6 @@ enum {
 
 class acceptor : public event_handler{
 public:
-    using min_heap_t = util::min_heap<uint32_t>;
     using connection_handler_ptr_type = std::shared_ptr<connection_handler>;
 public:
 	acceptor(Reactor& react, const net::inet_addr& local_addr);
@@ -34,6 +33,7 @@ public:
     virtual int get_handle() const override {return sock_acceptor_.get_handle();}
 	//open a socket, bind to local_addr, listen, acceptor, and register to reactor
 	int open();
+	//是否应该暴露 close 接口
 	//unregister listen event from reactor, close the listen fd
 	//不关闭 read_handler, 当需要关闭时, 自己调用 close_all
 	int close();
@@ -45,7 +45,7 @@ public:
 private:
     //make a read_handler, insert into the vector
     int make_read_handler();
-    int activate_read_handler(int index);
+    int activate_read_handler(int handle);
 private:
 	net::sock_acceptor 				sock_acceptor_;
 	net::inet_addr 					local_addr_;
