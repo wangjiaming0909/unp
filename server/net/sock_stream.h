@@ -23,6 +23,7 @@ public:
 		other.sock_fd_ = nullptr;
 	}
 	~sock_stream() { delete sock_fd_; }
+    sock_stream(const sock_stream& other) = delete ;
 public:
 	void close_reader();
 	void close_writer();

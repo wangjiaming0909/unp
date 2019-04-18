@@ -47,10 +47,10 @@ public:
     template <typename T>
     int write(const T& data);
 
-protected:
-    void open();
-
+    int open();
     void close();
+
+protected:
     void close_read();
     void close_write();
 
@@ -84,11 +84,11 @@ protected:
     std::function<void(int)>  closed_callback_;
 };
 
-template <typename T>
-int connection_handler::write(const T& data)
-{
+//template <typename T>
+//int connection_handler::write(const T& data)
+//{
 
-}
+//}
 
 }// namespace reactor
 #endif /* CONNECTION_H */

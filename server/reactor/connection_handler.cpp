@@ -176,8 +176,14 @@ int64_t connection_handler::write(const char* data, uint32_t len)
     return output_buffer_.append(data, len);
 }
 
-void connection_handler::open()
+int connection_handler::open()
 {
+    if(stream_.get_sock_fd().set_non_blocking() != 0)
+    {
+        LOG(ERROR) << "Setting non blocking error: " << strerror(errno);
+        return -1;
+    }
+    return enable_reading();
 }
 
 void connection_handler::close()
@@ -210,18 +216,21 @@ void connection_handler::check_and_invoke_close_callback()
 
 int connection_handler::enable_reading()
 {
+    if(read_enabled_ == true) return 0;
     read_enabled_ = true;
     return reactor_->register_handler(stream_.get_handle(), this, event_handler::READ_EVENT);
 }
 
 int connection_handler::enable_writing()
 {
+    if(write_enabled_ == true) return 0;
     write_enabled_ = true;
     return reactor_->register_handler(stream_.get_handle(), this, event_handler::WRITE_EVENT);
 }
 
 int connection_handler::disable_reading()
 {
+    if(read_enabled_ == false) return 0;
     read_enabled_ = false;
     int ret = reactor_->unregister_handler(stream_.get_handle(), this, event_handler::READ_EVENT);
 //    check_and_invoke_close_callback();
@@ -230,6 +239,7 @@ int connection_handler::disable_reading()
 
 int connection_handler::disable_writing()
 {
+    if(write_enabled_ == false) return 0;
     write_enabled_ = false;
     int ret = reactor_->unregister_handler(stream_.get_handle(), this, event_handler::WRITE_EVENT);
 //    check_and_invoke_close_callback();

@@ -12,7 +12,7 @@
 #include <vector>
 #include <chrono>
 #include <map>
-#include <hash_map>
+#include <unordered_map>
 
 namespace reactor {
 
@@ -25,7 +25,7 @@ public:
 	connector(Reactor& react) 
 		: event_handler(react)
 		, connector_()
-		, handlers_()
+//		, handlers_()
 		, connection_handlers_()
 	{
 
@@ -35,12 +35,13 @@ public:
 	
     int connect(const net::inet_addr& target_addr, const micro_seconds& timeout);
 private:
+    //return handle
     int make_connection_handler();
     int activate_connection_handler(int handle);
 	
 private:
 	net::sock_connector 						connector_;
-	std::vector<connection_handler_ptr_t> 		handlers_;
+//	std::vector<connection_handler_ptr_t> 		handlers_;
 	//key is the handle
 	map_t 										connection_handlers_;
 };
