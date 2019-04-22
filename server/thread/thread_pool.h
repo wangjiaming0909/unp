@@ -22,16 +22,19 @@
 namespace thread {
 class thread_pool{
 public:
-    typedef std::function<void ()> task;
+    using task = std::function<void ()>;
     using lock_gd = std::unique_lock<std::mutex>;
     using micro_seconds = std::chrono::microseconds;
-    thread_pool(size_t number_of_threads);
+
+public:
+    thread_pool(size_t number_of_threads = 0);
     ~thread_pool();
     void add_task(const task& t);
     void start();
     void wait(const micro_seconds* timeout);
     //cancel all the threads immediately
     int cancel();
+    void set_num_of_threads(size_t n){_n_of_threads = n;}
 private:
     //对当前线程调用
     int disable_cancellability();

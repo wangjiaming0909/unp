@@ -3,10 +3,26 @@
 namespace reactor
 {
 
+tcp_server::tcp_server(const net::inet_addr& local_addr)
+    : reactor_()
+    , acceptor_()
+    , pool_()
+    , local_addr_(local_addr)
+{
+}
 
-tcp_server::tcp_server()
+int tcp_server::open()
 {
 
 }
+
+int tcp_server::close()
+{
+
+}
+
+
+
+
 
 } //namespace reactor
