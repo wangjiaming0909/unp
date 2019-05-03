@@ -11,6 +11,7 @@
 #include "server/reactor/read_write_handler.h"
 #include "server/reactor/poll_reactor_impl.h"
 #include "server/util/min_heap.h"
+#include "server/reactor/tcp_server.h"
 #include <exception>
 #include <cstdlib>
 #include <chrono>
@@ -148,6 +149,11 @@ int main(int argc, char** argv){
     server_scoped_helper s_h{argc, argv};
 
 
+    inet_addr local_addr{9090, "127.0.0.1"};
+    reactor::tcp_server server{local_addr};
+
+    /*
+
     if(argc == 4){
         const char* ipAddr = argv[2];
         int port = atoi(argv[3]);
@@ -164,7 +170,7 @@ int main(int argc, char** argv){
         LOG(ERROR) << "args error.....";
     }
 
-
+    */
 
     /*
     net::sock_connector connector{};

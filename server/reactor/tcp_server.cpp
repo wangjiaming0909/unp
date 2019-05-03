@@ -13,7 +13,7 @@ tcp_server::tcp_server(const net::inet_addr& local_addr)
 
 int tcp_server::open()
 {
-
+    
 }
 
 int tcp_server::close()
