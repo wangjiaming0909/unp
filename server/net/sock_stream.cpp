@@ -15,11 +15,12 @@ void net::sock_stream::close_writer()
 
 void net::sock_stream::close()
 {
-    if (sock_fd_ != 0)
-        if (sock_fd_->close() != 0)
-        {
-            LOG(WARNING) << "lose error... " << strerror(errno);
-        }
+	if(sock_fd_ == nullptr) return;
+
+	if (sock_fd_->close() != 0)
+	{
+		LOG(WARNING) << "close error... " << strerror(errno);
+	}
 }
 
 ssize_t net::sock_stream::read(void *buffer, size_t len, const micro_seconds *timeout) const

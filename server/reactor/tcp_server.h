@@ -24,8 +24,8 @@ enum class reactor_imp_t_enum
 class tcp_server
 {
 public:
-    using reactor_ptr_t	= Reactor*;
-    using acceptor_ptr_t = std::shared_ptr<acceptor>;
+    using reactor_ptr_t	= std::shared_ptr<Reactor>;
+    using acceptor_ptr_t = acceptor*;
     using pool_ptr_t = std::shared_ptr<thread::thread_pool>;
     static const int DEFAULT_THREAD_NUM = 4;
 public:
@@ -34,18 +34,16 @@ public:
 
 public:
     //must call before open
-    void set_reactor_type(reactor_imp_t_enum reactor_t) {reactor_t_ = reactor_t;}
     void set_thread_num(size_t n);
 
     int open();
-    int close();
+    int close(bool force);
 
 private:
-    int make_reactor();
+	reactor_ptr_t make_reactor(reactor_imp_t_enum reactor_t);
     void make_acceptor();
 
 private:
-    reactor_imp_t_enum 			reactor_t_ = reactor_imp_t_enum::USING_EPOLL;
     size_t						thread_num_ = DEFAULT_THREAD_NUM;
 
 private:

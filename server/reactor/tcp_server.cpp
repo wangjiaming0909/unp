@@ -1,14 +1,14 @@
 #include "tcp_server.h"
 #include "select_reactor_impl.h"
 #include "poll_reactor_impl.h"
-#include "util/easylogging++.h"
+#include "server/util/easylogging++.h"
 
 namespace reactor
 {
 
 tcp_server::tcp_server(const net::inet_addr& local_addr)
     : reactor_(0)
-    , acceptor_()
+    , acceptor_(0)
     , pool_()
     , local_addr_(local_addr)
 {
@@ -16,47 +16,52 @@ tcp_server::tcp_server(const net::inet_addr& local_addr)
 
 tcp_server::~tcp_server()
 {
-    acceptor_.reset();
-    delete reactor_;
+	close(true);
 }
 
 int tcp_server::open()
 {
-    if(make_reactor() != 0)
-        return -1;
+	auto listen_reactor = make_reactor(reactor_imp_t_enum::USING_EPOLL);
+	if(listen_reactor.get() == nullptr)
+		return -1;
 
     make_acceptor();
     pool_ = std::make_shared<thread::thread_pool>(thread_num_);
 }
 
-int tcp_server::close()
+int tcp_server::close(bool force)
 {
-
+	if(!force)
+	{
+		int ret = acceptor_->destroy_acceptor();
+	}
 }
 
-int tcp_server::make_reactor()
+tcp_server::reactor_ptr_t tcp_server::make_reactor(reactor_imp_t_enum reactor_t)
 {
-    switch(reactor_t_)
+	reactor_ptr_t ret_ptr;
+	Reactor* reactor_ret = nullptr;
+    switch(reactor_t)
     {
         case reactor_imp_t_enum::USING_SELECT:
-            reactor_ = new Reactor(new select_reactor_impl{});
+            reactor_ret = new Reactor(new select_reactor_impl{});
             break;
         case reactor_imp_t_enum::USING_POLL:
-            reactor_ = new Reactor(new poll_reactor_impl{});
+            reactor_ret = new Reactor(new poll_reactor_impl{});
             break;
         case reactor_imp_t_enum::USING_EPOLL:
-            reactor_ = new Reactor(new epoll_reactor_impl{});
+            reactor_ret = new Reactor(new epoll_reactor_impl{});
             break;
         default:
-            reactor_ = 0;
-            return -1;
+			break;
     }
-    return 0;
+    ret_ptr.reset(reactor_ret);
+	return ret_ptr;
 }
 
 void tcp_server::make_acceptor()
 {
-    acceptor_ = std::make_shared<acceptor>(*reactor_, local_addr_);
+    acceptor_ = new acceptor (*reactor_, local_addr_);
 }
 
 void tcp_server::set_thread_num(size_t n)

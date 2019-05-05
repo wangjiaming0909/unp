@@ -102,7 +102,7 @@ int acceptor::handle_input(int handle)
         return -1;
     }
 
-    int read_handle = make_read_handler();
+    int read_handle = make_read_handler(*this->reactor_);
     return activate_read_handler(read_handle);
 }
 
@@ -146,6 +146,7 @@ void acceptor::close_read_handler(int handle)
         LOG(ERROR) << "Close read Handler error, handle: " << handle;
     }
 	//一般也不会有别人会获得这些 connection_handler 的指针,因此 reset 之后就会析构此 connection_handler
+	read_handlers_[handle]->close();
     read_handlers_[handle].reset();
 }
 
@@ -154,7 +155,7 @@ int acceptor::close_all_handlers()
 
 }
 
-int acceptor::make_read_handler()
+int acceptor::make_read_handler(Reactor& reactor_to_register)
 {
     if(read_handlers_.size() >= INT32_MAX)
     {
@@ -162,7 +163,7 @@ int acceptor::make_read_handler()
         return -1;
     }
 
-    auto handler = std::make_shared<connection_handler>(*this->reactor_);
+    auto handler = std::make_shared<connection_handler>(reactor_to_register);
 //    handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
 
     net::inet_addr peer_addr{};

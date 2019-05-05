@@ -44,7 +44,7 @@ public:
 
 private:
     //make a read_handler, insert into the vector
-    int make_read_handler();
+    int make_read_handler(Reactor& reactor_to_register);
     int activate_read_handler(int handle);
 private:
 	net::sock_acceptor 				sock_acceptor_;
