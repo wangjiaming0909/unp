@@ -41,15 +41,27 @@ public:
     //so here just remove all handler from read_handlers
     void close_read_handler(int handle);
 	int close_all_handlers();
+	void set_exernal_reactors_(std::vector<Reactor*> external_reactors)
+	{
+		external_reactors_ = external_reactors;
+	}
+	void increase_current_reactor_index();
 
 private:
     //make a read_handler, insert into the vector
+	//reactor_to_register specify the reactor that the new connection_handler will register on
     int make_read_handler(Reactor& reactor_to_register);
     int activate_read_handler(int handle);
 private:
 	net::sock_acceptor 				sock_acceptor_;
 	net::inet_addr 					local_addr_;
     std::vector<connection_handler_ptr_type> read_handlers_;
+
+private:
+	//external_reactors_ are reactors that the new connection_handlers will register on
+	//并且会轮流register, 如果可以做到: 查看 这些 reactor上的当前事件有多少,然后针对事件比较少的进行register就更好了
+	size_t current_reactor_index_to_register_;
+	std::vector<Reactor*> external_reactors_;
 };
 
 
@@ -72,6 +84,7 @@ public:
     virtual int handle_close(int handle) override;
     virtual int handle_signal(int handle) override;
     virtual int get_handle() const override {return acceptor_.get_handle();}
+
 private:
     void activate_read_handler();
     int open();

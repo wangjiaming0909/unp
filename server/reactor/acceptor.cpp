@@ -72,8 +72,10 @@ acceptor::acceptor(Reactor& react, const net::inet_addr& local_addr)
     , sock_acceptor_(local_addr)
     , local_addr_(local_addr)
     , read_handlers_(128)
+	, external_reactors_()
 {
     open();
+	this->current_reactor_index_to_register_ = 0;
 }
 
 int acceptor::destroy_acceptor()
@@ -102,8 +104,30 @@ int acceptor::handle_input(int handle)
         return -1;
     }
 
-    int read_handle = make_read_handler(*this->reactor_);
+	int read_handle = INVALID_HANDLE;
+	if(this->external_reactors_.size() == 0)
+	{
+		read_handle = make_read_handler(*reactor_);
+	}
+	else
+	{
+		read_handle = make_read_handler(*external_reactors_[current_reactor_index_to_register_]);
+		increase_current_reactor_index();
+	}
+
     return activate_read_handler(read_handle);
+}
+
+void acceptor::increase_current_reactor_index()
+{
+	if(current_reactor_index_to_register_ == external_reactors_.size() - 1)
+	{
+		current_reactor_index_to_register_ = 0;
+	}
+	else
+	{
+		current_reactor_index_to_register_++;
+	}
 }
 
 int acceptor::handle_close(int handle)
