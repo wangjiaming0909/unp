@@ -112,6 +112,7 @@ public:
     epoll_reactor_impl();
     ~epoll_reactor_impl();
     int handle_events(std::chrono::microseconds *timeout) override;
+
     int register_handler(event_handler* handler, Event_Type type) override;
     int register_handler(int handle, event_handler *handler, Event_Type type) override;
     int unregister_handler(event_handler *handler, Event_Type type) override;

@@ -164,6 +164,7 @@ int poll_reactor_impl::unregister_handler(int handle, event_handler *handler, Ev
             (pfd_r.events & reactor_event_to_poll_event(type, USING_POLL)))
         {
             wait_pfds_.erase(wait_pfds_.begin() + i);
+            break;
         }
     }
 

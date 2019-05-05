@@ -11,6 +11,10 @@ public:
     //should I alloc the memory of reactor_impl, new it in this constructor
     Reactor(reactor_implementation* reactor_impl = 0) : reactor_impl_(reactor_impl){}
     virtual ~Reactor(){}
+
+    //此4个方法都是对wait_fds操作
+    //TODO在多线程环境下，都是由acceptor的线程操作的, 而handle_events中肯定需要读取该wait_fds ，因此可能需要对wait_fds加锁
+    //可能第一线程正在修改该wait_fds,因此它正处于中间状态，此时不应该对其调用poll 或者select
     virtual int register_handler(event_handler* handler, Event_Type type){
         return reactor_impl_->register_handler(handler, type);
     }

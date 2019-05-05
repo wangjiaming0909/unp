@@ -217,17 +217,18 @@ int acceptor::activate_read_handler(int handle)
     assert(handle >= 0);
     auto& handler = read_handlers_[static_cast<uint32_t>(handle)];
 
+    return handler->open();
 
-    if(handler->get_sock_stream().get_sock_fd().set_non_blocking() != 0)
-    {
-        LOG(ERROR) << "Set nonblock error, handle : " << handle << " error: " << strerror(errno);
-        return -1;
-    }
+    // if(handler->get_sock_stream().get_sock_fd().set_non_blocking() != 0)
+    // {
+    //     LOG(ERROR) << "Set nonblock error, handle : " << handle << " error: " << strerror(errno);
+    //     return -1;
+    // }
 
-    if(handler->enable_reading() != 0)
-    {
-        LOG(ERROR) << "Registering error: " << strerror(errno);
-        return -1;
-    }
-    return 0;
+    // if(handler->enable_reading() != 0)
+    // {
+    //     LOG(ERROR) << "Registering error: " << strerror(errno);
+    //     return -1;
+    // }
+    // return 0;
 }
