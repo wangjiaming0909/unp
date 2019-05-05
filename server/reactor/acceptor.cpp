@@ -80,6 +80,7 @@ acceptor::acceptor(Reactor& react, const net::inet_addr& local_addr)
 
 int acceptor::destroy_acceptor()
 {
+    close();
     for (size_t i = 0; i < read_handlers_.size(); i++) {
         if(read_handlers_[i] != nullptr)
         {

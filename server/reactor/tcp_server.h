@@ -47,10 +47,12 @@ private:
     size_t						thread_num_ = DEFAULT_THREAD_NUM;
 
 private:
-    reactor_ptr_t				reactor_;
+    reactor_ptr_t				first_reactor_;
     acceptor_ptr_t 				acceptor_;
     pool_ptr_t          		pool_;
     net::inet_addr 				local_addr_;
+
+    std::vector<reactor_ptr_t>  connection_reactors_;
 };
 
 } //namespace reactor
