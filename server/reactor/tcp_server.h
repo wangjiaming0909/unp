@@ -23,7 +23,12 @@ enum class reactor_imp_t_enum
     TODO 如何某个线程的reactor正处于poll_wait 状态，那么当有新的连接到达时，假如正好被注册到此reactor上，那么如何唤醒此reactor，并注册上去呢?
         1, 一种方案是： 将每一个reactor上都注册一个自己造的事件，用此事件来唤醒reactor，当更改了demultiplex_table的时候，就往该伪造的fd上写数据，唤醒reactor
             并且有此fd以及它对应的事件可以防止首次将此reactor放入某个线程时该线程不阻塞， 因为可能并没有事件在此reactor上注册
-        TODO 还有其他的方法么
+ 			可以使用eventfd 或者pipe
+        2, 还有其他的方法么, 可以使用signal 中断poll等系统调用,然后在poll的返回时重新启动
+ * epoll中可以直接在其他线程添加events,并且epoll_wait的线程也会得到此消息,见man page
+ * 	但是如此的话当把epoll的reactor添加到线程中的时候,并不会阻塞,因为可能还没有事件注册
+ * 	给epoll 的 reactor 添加 锁和 condition_variable, 没有事件时,等待在 condition_variable 上 
+ * select和poll并不具有此功能,因此可以使用以上的两种中的一种
 
     TODO reactor内部的线程安全性问题
         reactor 的register, unregister等操作都是在第一线程中完成的
