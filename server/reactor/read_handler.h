@@ -49,6 +49,7 @@ public:
 //        TODO should read_handle close the fd
        this->peer_.close_reader();
        this->peer_.close();
+	   return 0;
     }
 
     //! thread safty 存在race condition 当多个线程处理 在 get_data 之后, 并且 得到的是同一份数据时，并且对这份数据做了操作

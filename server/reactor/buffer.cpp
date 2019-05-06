@@ -210,6 +210,7 @@ int64_t buffer_chain::append(const void* data, uint32_t data_len)
 
     ::memcpy(buffer_ + off_, data, data_len);
     off_ += data_len;
+	return data_len;
 }
 
 bool buffer_chain::validate_iter(Iter it) const
@@ -611,11 +612,16 @@ int64_t buffer::append_printf(const char* fmt, ...)
 
 int64_t buffer::append_vprintf(const char* fmt, va_list ap)
 {
+	(void)fmt;
+	(void)ap;
     return 0;
 }
 
 int buffer::prepend(const buffer& other, uint32_t data_len, Iter start)
 {
+	(void)other;
+	(void)data_len;
+	(void)start;
     return 0;
 }
 
@@ -695,7 +701,7 @@ int64_t buffer::remove(/*out*/void* data, uint32_t data_len)
             //remove this chain
             assert(current_chain != nullptr);
             assert(current_chain->size() > 0);
-            ::memcpy(data + dest_start_pos, current_chain->get_start_buffer(), current_chain->size());
+            ::memcpy(static_cast<char*>(data) + dest_start_pos, current_chain->get_start_buffer(), current_chain->size());
             remain_to_remove -= current_chain->size();
             dest_start_pos += current_chain->size();
 //            assert(last_chain_with_data_ != current_chain);//不一定，可能当前chain就是最后一个有data 的 chain，remain_to_remove 就等于 size
@@ -712,7 +718,7 @@ int64_t buffer::remove(/*out*/void* data, uint32_t data_len)
         }
 
         //remain data to remove && 当前 remove  到 当前 chain 结束, 并且当前chain 不是全部remove
-        ::memcpy(data + dest_start_pos, current_chain->get_start_buffer(), remain_to_remove);
+        ::memcpy(static_cast<char*>(data) + dest_start_pos, current_chain->get_start_buffer(), remain_to_remove);
         current_chain->misalign_ += remain_to_remove;
         total_len_ -= remain_to_remove;
         break;
@@ -891,7 +897,10 @@ buffer_iter buffer::search_eol(uint32_t* eol_len_out, buffer_eol_style eol_style
 
 int buffer::peek(std::vector<const buffer_iovec*> vec_out, uint32_t len, Iter start)
 {
-    return 0;
+	(void)vec_out;
+	(void)len;
+	(void)start;
+	return 0;
 }
 
 inline bool buffer::is_last_chain_with_data(const buffer_chain* current_chain) const

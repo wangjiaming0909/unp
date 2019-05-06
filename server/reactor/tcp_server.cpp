@@ -30,7 +30,7 @@ int tcp_server::open()
     make_acceptor();
     pool_ = std::make_shared<thread::thread_pool>(thread_num_);
 
-    for(int i = 0; i < thread_num_; i++)
+    for(size_t i = 0; i < thread_num_; i++)
     {
         auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_EPOLL);
         if(connection_reactor.get() == nullptr) return -1;
@@ -52,10 +52,10 @@ int tcp_server::close(bool force)
 {
 	if(!force)
 	{
-		int ret = acceptor_->destroy_acceptor();
+		acceptor_->destroy_acceptor();
 	}
     
-    acceptor_->destroy_acceptor();
+    return acceptor_->destroy_acceptor();
 }
 
 tcp_server::reactor_ptr_t tcp_server::make_reactor(reactor_imp_t_enum reactor_t)

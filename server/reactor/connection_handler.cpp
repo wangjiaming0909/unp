@@ -108,7 +108,7 @@ int connection_handler::handle_output(int handle)
 
 int connection_handler::handle_timeout(int )
 {
-
+	return 0;
 }
 
 int connection_handler::handle_close(int )
@@ -119,7 +119,7 @@ int connection_handler::handle_close(int )
 
 int connection_handler::handle_signal(int )
 {
-
+	return 0;
 }
 
 int connection_handler::get_handle() const

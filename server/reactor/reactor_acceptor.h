@@ -130,6 +130,7 @@ int ReactorAcceptor<DataType, Handler>::handle_close(int handle){
     (void)handle;
     this->acceptor_.close();
     this->pool_->stop(5s);
+	return 0;
 }
 
 // template <typename DataType>

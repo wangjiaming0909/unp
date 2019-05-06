@@ -38,14 +38,14 @@ public:
     poll_demultiplex_table() : table_(), size_(0){}
     event_handler* get_handler(int handle, Event_Type type) const 
     {
-        if(table_.size() < handle)
+        if(table_.size() < static_cast<size_t>(handle))
             return nullptr;
         return table_[handle].get_handler(type);
     }
 
     bool has_handle(int handle) const 
     {
-        return table_.size() > handle && table_[handle].handle_count() > 0;
+        return table_.size() > static_cast<size_t>(handle) && table_[handle].handle_count() > 0;
     }
 
     const std::vector<poll_event_repo>& get_event_vector() const 
@@ -54,7 +54,7 @@ public:
     }
 
     int bind(int handle, event_handler* handler, Event_Type type){
-        if(handle > table_.size())
+        if(static_cast<size_t>(handle) > table_.size())
             table_.resize(handle*2);
         size_++;
         return table_[handle].bind_new(type, handler);

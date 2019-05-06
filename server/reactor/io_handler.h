@@ -36,6 +36,7 @@ public:
         this->peer_.close_writer();
         this->peer_.close_reader();
         this->peer_.close();
+		return 0;
     }
 
     // virtual int handle_signal(int handle);

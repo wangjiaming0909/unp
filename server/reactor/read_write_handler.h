@@ -27,6 +27,7 @@ public:
         if(ret != 0) return -1;
         ret = this->reactor_->register_handler(this->peer_.get_handle(), this, event_handler::READ_EVENT);
         if(ret != 0) return -1;
+		return 0;
     }
 
     virtual int handle_input(int handle) override
@@ -43,6 +44,7 @@ public:
         this->peer_.close_writer();
         this->peer_.close_reader();
         this->peer_.close();
+		return 0;
     }
 
     virtual int handle_output(int handle) override

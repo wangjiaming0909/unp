@@ -46,9 +46,10 @@ int set_reactor_acceptor(const char* ipAddr, int port){
             break;
         }
     }
+	return 0;
 }
 
-int set_reactor_acceptor_without_pool(const char* ipAddr, int port)
+int set_reactor_acceptor_without_pool(const char* ipAddr, in_port_t port)
 {
     reactor::Reactor rt{new reactor::select_reactor_impl{}};
     inet_addr listen_addr{port, ipAddr};
@@ -68,6 +69,7 @@ int set_reactor_acceptor_without_pool(const char* ipAddr, int port)
     {
 
     }
+	return 0;
 }
 
 int set_reactor_acceptor_using_epoll(const char* ipAddr, int port){
@@ -89,9 +91,10 @@ int set_reactor_acceptor_using_epoll(const char* ipAddr, int port){
             break;
         }
     }
+	return 0;
 }
 
-int set_reactor_connector(const char* ipAddr, int port){
+int set_reactor_connector(const char* ipAddr, in_port_t port){
     thread_pool pool{10};
     pool.start();
     message_queue<int> mq{};
@@ -119,7 +122,10 @@ int set_reactor_connector(const char* ipAddr, int port){
     }
 }
 
-int multi_connector(const char* ipAddr, int port, int sockets_count, int interval/*seconds*/){
+int multi_connector(const char* ipAddr, in_port_t port, int sockets_count, int interval/*seconds*/){
+	(void)sockets_count;
+	(void)interval;
+	
     thread_pool pool{10};
     pool.start();
     message_queue<int> mq{};
@@ -134,7 +140,7 @@ int multi_connector(const char* ipAddr, int port, int sockets_count, int interva
         //::sleep(interval);
         auto* connector = new reactor_connector<int, read_write_handler<int>>{rt, pool, mq};
         connectors.push_back(connector);
-        int ret = connector->connect(remote_addr, 5s);
+        connector->connect(remote_addr, 5s);
     
     std::chrono::microseconds timeout = 5s;
     while(true){

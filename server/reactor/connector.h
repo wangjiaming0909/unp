@@ -98,12 +98,12 @@ reactor_connector<DataType, Handler>::reactor_connector( Reactor& react
 }
 
 template <typename DataType, typename Handler>
-int reactor_connector<DataType, Handler>::open(){}
+int reactor_connector<DataType, Handler>::open(){return 0;}
 
 template <typename DataType, typename Handler>
 int reactor_connector<DataType, Handler>::close()
 {
-
+	return 0;
 }
 
 template <typename DataType, typename Handler>
@@ -111,16 +111,16 @@ reactor_connector<DataType, Handler>::~reactor_connector(){}
 
 //connect succeed
 template <typename DataType, typename Handler>
-int reactor_connector<DataType, Handler>::handle_input(int handle) {}
+int reactor_connector<DataType, Handler>::handle_input(int) {return 0;}
 
 template <typename DataType, typename Handler>
-int reactor_connector<DataType, Handler>::handle_timeout(int handle) {}
+int reactor_connector<DataType, Handler>::handle_timeout(int) {return 0;}
 
 template <typename DataType, typename Handler>
-int reactor_connector<DataType, Handler>::handle_close(int handle) {}
+int reactor_connector<DataType, Handler>::handle_close(int) {return 0;}
 
 template <typename DataType, typename Handler>
-int reactor_connector<DataType, Handler>::handle_signal(int handle) {}
+int reactor_connector<DataType, Handler>::handle_signal(int) {return 0;}
 
 template <typename DataType, typename Handler>
 int reactor_connector<DataType, Handler>::connect(
@@ -135,7 +135,10 @@ int reactor_connector<DataType, Handler>::connect_n(
     const net::inet_addr& target_addr, 
     int n, const micro_seconds& timeout)
 {
-
+	(void)target_addr;
+	(void)n;
+	(void)timeout;
+	return 0;
 }
 
 template <typename DataType, typename Handler>
@@ -147,6 +150,7 @@ Handler* reactor_connector<DataType, Handler>::make_handler()
 
     // handlers_[handle].reset(handler);
     // return handler->get_handle();
+	return handler;
 }
 
 template <typename DataType, typename Handler>

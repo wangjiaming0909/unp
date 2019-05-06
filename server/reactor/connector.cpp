@@ -9,7 +9,7 @@ connector::~connector()
 
 int connector::handle_input(int)
 {
-
+	return 0;
 }
 
 int connector::connect(const net::inet_addr& target_addr, const micro_seconds& timeout)

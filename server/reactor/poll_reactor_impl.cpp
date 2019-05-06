@@ -84,7 +84,7 @@ event_handler* poll_event_repo::get_handler(Event_Type type) const
 
 std::vector<poll_event_repo::event_tuple>::const_iterator poll_event_repo::find(Event_Type type) const
 {
-    int size = types_and_handlers_.size();
+//    size_t size = types_and_handlers_.size();
     return std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(), 
         [&type] (const event_tuple& tuple) 
         {
@@ -106,12 +106,14 @@ int poll_reactor_impl::register_handler(event_handler* handler, Event_Type type)
 { 
     (void)handler;
     (void)type;
+	return 0;
 }
 
 int poll_reactor_impl::unregister_handler(event_handler *handler, Event_Type type) 
 { 
     (void)handler;
     (void)type;
+	return 0;
 }
 
 int  poll_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type)
@@ -157,7 +159,7 @@ int poll_reactor_impl::unregister_handler(int handle, event_handler *handler, Ev
         return -1;
     }
 
-    for(int i = 0; i < wait_pfds_.size(); i++)
+    for(size_t i = 0; i < wait_pfds_.size(); i++)
     {
         struct pollfd& pfd_r = wait_pfds_[i];
         if(pfd_r.fd == handle && 
@@ -245,10 +247,11 @@ int poll_reactor_impl::dispatch_io_handlers(int active_handles, int& handles_dis
 
 int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatched, Event_Type type, HANDLER callback)
 {
+	(void)active_handles;
     struct pollfd* pfd_dispatching = nullptr;
     int current_fd = -1;
     int ret = 0;
-    for(int i = 0; i < wait_pfds_.size(); i++)
+    for(size_t i = 0; i < wait_pfds_.size(); i++)
     {
         pfd_dispatching = &wait_pfds_[i];
         current_fd = pfd_dispatching->fd;
@@ -346,12 +349,14 @@ int epoll_reactor_impl::register_handler(event_handler* handler, Event_Type type
 {
     (void)handler;
     (void)type;
+	return 0;
 }
 
 int epoll_reactor_impl::unregister_handler(event_handler *handler, Event_Type type)
 {
     (void)handler;
     (void)type;
+	return 0;
 }
 
 int epoll_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type)
@@ -485,7 +490,7 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int& handles_
     epoll_event* ep_event_dispatching = nullptr;
     int current_fd = -1;
     int ret = 0;
-    for(int i = 0; i < ret_events_.size(); i++)
+    for(size_t i = 0; i < ret_events_.size(); i++)
     {
         ep_event_dispatching = &ret_events_[i];
         current_fd = ep_event_dispatching->data.fd;

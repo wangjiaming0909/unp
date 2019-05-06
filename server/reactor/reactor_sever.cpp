@@ -13,6 +13,7 @@ reactor_sever::reactor_sever() {
 }
 
 reactor_sever::reactor_sever(const reactor_sever& orig) {
+	(void)orig;
 }
 
 reactor_sever::~reactor_sever() {

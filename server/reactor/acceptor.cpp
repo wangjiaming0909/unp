@@ -46,7 +46,7 @@ void reactor_acceptor::activate_read_handler(){
     }
 
     int handle = tmpHandler.get_handle();
-    if(read_handlers_.size() < handle + 1){
+    if(read_handlers_.size() < static_cast<size_t>(handle + 1)){
         read_handlers_.resize(handle + 1);
     }
 
@@ -61,9 +61,9 @@ void reactor_acceptor::activate_read_handler(){
 }
 
 
-int reactor_acceptor::handle_timeout(int handle){ }
-int reactor_acceptor::handle_close(int handle){ }
-int reactor_acceptor::handle_signal(int handle){ }
+int reactor_acceptor::handle_timeout(int){ return 0;}
+int reactor_acceptor::handle_close(int){ return 0; }
+int reactor_acceptor::handle_signal(int){ return 0;}
 
 
 
@@ -166,7 +166,7 @@ int acceptor::close()
 
 void acceptor::close_read_handler(int handle)
 {
-    if(handle > read_handlers_.size() || handle < 0)
+    if(handle < 0 || static_cast<size_t>(handle) > read_handlers_.size())
     {
         LOG(ERROR) << "Close read Handler error, handle: " << handle;
     }
@@ -177,7 +177,7 @@ void acceptor::close_read_handler(int handle)
 
 int acceptor::close_all_handlers()
 {
-
+	return 0;
 }
 
 int acceptor::make_read_handler(Reactor& reactor_to_register)
@@ -206,7 +206,7 @@ int acceptor::make_read_handler(Reactor& reactor_to_register)
         return handle;
     }
 
-    if(read_handlers_.size() < handle) read_handlers_.resize(handle + 1);
+    if(read_handlers_.size() < static_cast<size_t>(handle)) read_handlers_.resize(handle + 1);
     read_handlers_[static_cast<uint32_t>(handle)].swap(handler);
 
     return handle;
