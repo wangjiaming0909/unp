@@ -26,8 +26,16 @@ public:
     }
     virtual int register_handler(int handle, event_handler *handler, Event_Type type) {
         int ret = reactor_impl_->register_handler(handle, handler, type);
-        if(reactor_impl_->isWaiting())
-		    eventFd_.wakeup();
+        //TODO when to wake up need more attention
+        if(handle != eventFd_.getEventFD() && reactor_impl_->isWaiting())
+        {
+            LOG(INFO) << "current handle is not the event fd... the reactor will be waked up";
+            eventFd_.wakeup();
+        }
+        else
+        {
+            LOG(INFO) << "current handle is event fd, won't wake up anything";
+        }
 		return ret;
     }
     virtual int unregister_handler(event_handler *handler, Event_Type type) {

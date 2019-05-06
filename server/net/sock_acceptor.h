@@ -18,7 +18,7 @@ public:
                 int protocol = 0);
     ~sock_acceptor();
     int open(const inet_addr& local_addr,
-                int reuse_addr = 0,
+                int reuse_addr = 1,
                 int protocol_family = AF_INET,
                 int backlog = DEFAULT_BACKLOG,
                 int protocol = 0);
