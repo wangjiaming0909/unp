@@ -85,17 +85,12 @@ bool select_demultiplex_table::is_valid_handle(int handle) const {
 
 const int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 
-
-int select_reactor_impl::handle_count()
-{
-	return demux_table_.get_event_vector()->
-		
-}
-
 int select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
     int n = 0;
     //TODO 在reactor中使用while, 这里只进行一次select
+
     n = this->select(timeout); // select > 0 再 dispatch
+
     if(n <= 0)
     {
         LOG(WARNING) << "select returned -1 or 0: " << strerror(errno);
@@ -128,11 +123,16 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
         return -1;
     }
 
+    isWaiting_ = true;
+
     int number_of_active_handles = ::select(width, 
                      dispatch_sets_.read_set.get_select_fd_set_ptr(),
                      dispatch_sets_.write_set.get_select_fd_set_ptr(),
                      dispatch_sets_.exception_set.get_select_fd_set_ptr(),
                      timeout_timeval.get());
+
+    isWaiting_ = false;
+
     //!could be interrupted, restart?
     if(number_of_active_handles < 0){
         return -1;

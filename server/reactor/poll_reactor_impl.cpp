@@ -205,7 +205,12 @@ int poll_reactor_impl::poll(std::chrono::microseconds* timeout)
         LOG(WARNING) << "no wait pollfds...";
         return -1;
     } 
+
+    isWaiting_ = true;
+
     int ret = ::poll(&wait_pfds_[0], wait_pfds_.size(), timeout == 0 ? -1 : timeout->count());
+
+    isWaiting_ = false;
 
     if(ret < 0)
     {
@@ -321,11 +326,16 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
     if(timeout != 0)
     {
         std::chrono::milliseconds timeout_milli = std::chrono::duration_cast<std::chrono::milliseconds>(*timeout);
+
+        isWaiting_ = true;
         n = this->epoll_wait(timeout_milli.count());
+        isWaiting_ = false;
     }
     else
     {
-        n = this->epoll_wait(0);
+        isWaiting_ = true;
+        n = this->epoll_wait(-1);
+        isWaiting_ = false;
     }
     
     if(n == 0) 

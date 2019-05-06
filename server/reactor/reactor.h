@@ -26,7 +26,8 @@ public:
     }
     virtual int register_handler(int handle, event_handler *handler, Event_Type type) {
         int ret = reactor_impl_->register_handler(handle, handler, type);
-		eventFd_.wakeup();
+        if(reactor_impl_->isWaiting())
+		    eventFd_.wakeup();
 		return ret;
     }
     virtual int unregister_handler(event_handler *handler, Event_Type type) {

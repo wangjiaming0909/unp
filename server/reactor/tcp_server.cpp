@@ -35,17 +35,35 @@ int tcp_server::open()
         auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_EPOLL);
         if(connection_reactor.get() == nullptr) return -1;
         connection_reactors_.push_back(connection_reactor);
+        pool_->add_task(
+        [&]()
+        {
+            while(true)
+            {
+                auto ret = connection_reactors_.back()->handle_events();
+                if(ret != 0)
+                {
+                    LOG(ERROR) << "handle events error";
+                    break;
+                }
+            }
+        });
     }
-    if(thread_num_ > 1)
+    if(thread_num_ > 0)
         acceptor_->set_external_reactors_(connection_reactors_);
 
-    if(acceptor_->open() != 0)
+    pool_->start();
+    while(true)
     {
-        return -1;
+        auto ret = first_reactor_->handle_events();
+        if(ret != 0)
+        {
+            LOG(ERROR) << "handle events error";
+            break;
+        }
     }
 
-
-    return 0;
+    return -1;
 }
 
 int tcp_server::close(bool force)

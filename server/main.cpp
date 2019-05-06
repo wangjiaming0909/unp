@@ -155,13 +155,13 @@ int main(int argc, char** argv){
     server_scoped_helper s_h{argc, argv};
 
 
-//    inet_addr local_addr{9090, "192.168.0.142"};
-//    reactor::tcp_server server{local_addr};
-//    server.set_thread_num(1);
-//    server.open();
+    inet_addr local_addr{9090, "192.168.0.112"};
+    reactor::tcp_server server{local_addr};
+    server.set_thread_num(1);
+    server.open();
 
 
-//    /*
+    /*
     if(argc == 4){
         const char* ipAddr = argv[2];
         int port = atoi(argv[3]);
@@ -177,7 +177,7 @@ int main(int argc, char** argv){
     }else{
         LOG(ERROR) << "args error.....";
     }
-//    */
+    */
 
     /*
     net::sock_connector connector{};

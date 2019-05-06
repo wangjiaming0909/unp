@@ -15,7 +15,9 @@ public:
     virtual int register_handler(int handle, event_handler *handler, Event_Type type) = 0;
     virtual int unregister_handler(event_handler *handler, Event_Type type) = 0;
     virtual int unregister_handler(int handle, event_handler *handler, Event_Type type) = 0;
-	virtual int handle_count() {return 0;}
+    bool isWaiting() const {return isWaiting_;}
+protected:
+    bool isWaiting_ = false;
 };
 
 }
