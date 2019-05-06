@@ -3,13 +3,19 @@
 
 #include <boost/shared_ptr.hpp>
 #include "reactor_implementation.h"
+#include "server/reactor/EventFD.h"
 
 namespace reactor {
 class Reactor{
 public:
     using Event_Type = event_handler::Event_Type;
     //should I alloc the memory of reactor_impl, new it in this constructor
-    Reactor(reactor_implementation* reactor_impl = 0) : reactor_impl_(reactor_impl){}
+    Reactor(reactor_implementation* reactor_impl = 0) 
+		: reactor_impl_(reactor_impl)
+		, eventFd_()
+	{
+		eventFd_.registerInto(*this);
+	}
     virtual ~Reactor(){}
 
     //此4个方法都是对wait_fds操作
@@ -19,7 +25,9 @@ public:
         return reactor_impl_->register_handler(handler, type);
     }
     virtual int register_handler(int handle, event_handler *handler, Event_Type type) {
-        return reactor_impl_->register_handler(handle, handler, type);
+        int ret = reactor_impl_->register_handler(handle, handler, type);
+		eventFd_.wakeup();
+		return ret;
     }
     virtual int unregister_handler(event_handler *handler, Event_Type type) {
         return reactor_impl_->unregister_handler(handler, type);
@@ -39,6 +47,7 @@ public:
     // }
 private:
     boost::shared_ptr<reactor_implementation> reactor_impl_;
+	EventFD eventFd_;
     //static shared_ptr, means that this object will not be deleted
     // static boost::shared_ptr<Reactor> reactor_ptr_;
 };

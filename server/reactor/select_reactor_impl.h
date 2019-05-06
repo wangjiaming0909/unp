@@ -164,12 +164,15 @@ public:
         , dispatch_sets_()
         , wait_sets_()
         , ready_sets_()
-        , demux_table_(){}
+        , demux_table_()
+	{
+	}
     int handle_events(std::chrono::microseconds *timeout) override;
     int register_handler(event_handler* handler, Event_Type type) override;
     int unregister_handler(event_handler *handler, Event_Type type) override;
     int register_handler(int handle, event_handler *handler, Event_Type type) override;
     int unregister_handler(int handle, event_handler *handler, Event_Type type) override;
+	int handle_count() override;
 private:
     int select(std::chrono::microseconds* timeout);
     int dispatch(int active_handle_count);

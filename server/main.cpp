@@ -27,7 +27,7 @@ using namespace thread;
 using namespace net;
 using namespace std::chrono_literals;
 
-int set_reactor_acceptor(const char* ipAddr, int port){
+int set_reactor_acceptor(const char* ipAddr, in_port_t port){
     thread_pool pool{10};
     pool.start();
     message_queue<int> mq{};
@@ -72,7 +72,7 @@ int set_reactor_acceptor_without_pool(const char* ipAddr, in_port_t port)
 	return 0;
 }
 
-int set_reactor_acceptor_using_epoll(const char* ipAddr, int port){
+int set_reactor_acceptor_using_epoll(const char* ipAddr, in_port_t port){
     thread_pool pool{10};
     // pool.start();
     message_queue<int> mq{};
@@ -155,18 +155,18 @@ int main(int argc, char** argv){
     server_scoped_helper s_h{argc, argv};
 
 
-    inet_addr local_addr{9090, "192.168.0.142"};
-    reactor::tcp_server server{local_addr};
-    server.set_thread_num(1);
-    server.open();
+//    inet_addr local_addr{9090, "192.168.0.142"};
+//    reactor::tcp_server server{local_addr};
+//    server.set_thread_num(1);
+//    server.open();
 
 
-    /*
+//    /*
     if(argc == 4){
         const char* ipAddr = argv[2];
         int port = atoi(argv[3]);
         if(strcmp(argv[1], "-listen")== 0){
-            // set_reactor_acceptor(ipAddr, port);
+//             set_reactor_acceptor(ipAddr, port);
 //            set_reactor_acceptor_using_epoll(ipAddr, port);
             set_reactor_acceptor_without_pool(ipAddr, port);
         }
@@ -177,7 +177,7 @@ int main(int argc, char** argv){
     }else{
         LOG(ERROR) << "args error.....";
     }
-    */
+//    */
 
     /*
     net::sock_connector connector{};

@@ -190,7 +190,7 @@ int reactor_connector<DataType, Handler>::connect_i(const net::inet_addr& target
 
     //record the handle in handlers_
     int handle = stream.get_handle();
-    if(handlers_.size() < handle) handlers_.resize(handle * 2);
+    if(handlers_.size() < static_cast<size_t>(handle)) handlers_.resize(handle * 2);
     handlers_[handle].reset(newHandler);
 
     //activate handler: bind to reactor

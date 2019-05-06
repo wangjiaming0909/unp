@@ -49,6 +49,10 @@ public:
 
     int open();
     void close();
+	void clear_input_buffer()
+	{
+		input_buffer_.drain(1);
+	}
 
 protected:
     void close_read();

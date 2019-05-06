@@ -95,6 +95,7 @@ std::vector<poll_event_repo::event_tuple>::const_iterator poll_event_repo::find(
                 && type == POLLOUT)
                 return true;
             if((tuple.first == event_handler::EXCEPT_EVENT && type == POLLPRI)) return true;
+			return false;
         });
 }
 
@@ -378,7 +379,7 @@ int epoll_reactor_impl::register_handler(int handle, event_handler *handler, Eve
     cur_event_.events = reactor_event_to_poll_event(type, USING_EPOLL);
     void *p_fd = &cur_event_.data.u64;
     *(int*)p_fd = handle;
-    *(unsigned int*)(p_fd + 4) = type;
+    *(unsigned int*)(static_cast<char*>(p_fd) + 4) = type;
     // cur_event_.data.u64 = (uint64_t)handle << 32 + type;
 
     int ret = 0;
@@ -417,7 +418,7 @@ int epoll_reactor_impl::unregister_handler(int handle, event_handler *handler, E
 
     memset(&cur_event_, 0, sizeof(struct epoll_event));
     cur_event_.events = reactor_event_to_poll_event(type, USING_EPOLL);
-    cur_event_.data.u64 = uint64_t((uint64_t)handle << 32 + type);
+    cur_event_.data.u64 = uint64_t(((uint64_t)handle << 32) + type);
     int ret = ::epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, handle, &cur_event_);
     if(ret < 0)
     {
