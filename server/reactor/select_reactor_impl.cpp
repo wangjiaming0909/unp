@@ -88,7 +88,7 @@ const int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 
 int select_reactor_impl::handle_count()
 {
-	return demux_table_.get_event_vector()
+	return demux_table_.get_event_vector()->
 		
 }
 
