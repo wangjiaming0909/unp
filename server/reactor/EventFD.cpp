@@ -29,7 +29,8 @@ void EventFD::wakeup()
 {
 	handler_->clear_input_buffer();
 	uint64_t one = 1;
-	handler_->write(reinterpret_cast<const char*>(&one), sizeof(one));
+	handler_->get_sock_stream().write(&one, sizeof(one), 0);
+//	handler_->write(reinterpret_cast<const char*>(&one), sizeof(one));
 }
 
 int EventFD::registerInto(Reactor& reactor)
