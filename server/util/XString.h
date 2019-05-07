@@ -202,7 +202,7 @@ public:
             memcpy(ptr, m_ptr, m_length);
         }
         int value = ::atoi(ptr);
-        delete ptr;
+        delete[] ptr;
         return value;
     }
 

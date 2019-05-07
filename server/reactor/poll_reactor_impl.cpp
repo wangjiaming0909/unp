@@ -138,7 +138,7 @@ int  poll_reactor_impl::register_handler(int handle, event_handler *handler, Eve
     pfd.revents = 0;
 
     //TODO 虽然 demultiplex table 中没有这个 handle， 但是 pollfd 的 vector 中可能有
-    wait_pfds_.push_back(std::move(pfd));
+    wait_pfds_.push_back(pfd);
 
     //bind to the demultiplex table
     return this->demux_table_.bind(handle, handler, type);
