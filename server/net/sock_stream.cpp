@@ -55,6 +55,27 @@ ssize_t net::sock_stream::send(const void *buffer, size_t len, int flags, const 
     return send_imp(buffer, len, flags, timeout);
 }
 
+ssize_t net::sock_stream::write(const void* buffer, size_t len, const micro_seconds* timeout) const
+{
+	if(sock_fd_ == 0) return 0;
+	int write_len = 0;
+	if(timeout == nullptr)
+	{
+		write_len = ::write(sock_fd_->get_handle(), buffer, len);
+		LOG(INFO) << "Write to handle: " << sock_fd_->get_handle() << " " << write_len << " bytes";
+		return write_len;
+	}
+
+	auto milli_seconds = std::chrono::duration_cast<std::chrono::milliseconds>(*timeout);
+	unp::handle_write_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
+	sock_fd_->set_non_blocking();
+	write_len = ::write(sock_fd_->get_handle(), buffer, len);
+	LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
+	sock_fd_->restore_blocking();
+
+	return write_len;
+}
+
 ssize_t net::sock_stream::writev(const iovec iov[], int n, const micro_seconds *timeout) const
 {
     return writev_imp(iov, n, timeout);

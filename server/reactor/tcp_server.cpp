@@ -22,17 +22,21 @@ tcp_server::~tcp_server()
 
 int tcp_server::open()
 {
-    auto listen_reactor = make_reactor(reactor_imp_t_enum::USING_POLL);
+    auto listen_reactor = make_reactor(reactor_imp_t_enum::USING_EPOLL);
 	if(listen_reactor.get() == nullptr)
 		return -1;
     first_reactor_.swap(listen_reactor);
 
     make_acceptor();
+	if(acceptor_->open() != 0)
+	{
+		return -1;
+	}
     pool_ = std::make_shared<thread::thread_pool>(thread_num_);
 
     for(size_t i = 0; i < thread_num_; i++)
     {
-        auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_POLL);
+        auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_EPOLL);
         if(connection_reactor.get() == nullptr) return -1;
         connection_reactors_.push_back(connection_reactor);
         pool_->add_task(
@@ -62,6 +66,9 @@ int tcp_server::open()
             break;
         }
     }
+
+	std::chrono::microseconds timeout = 2s;
+	pool_->wait(&timeout);
 
     return -1;
 }

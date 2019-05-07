@@ -155,7 +155,7 @@ int main(int argc, char** argv){
     server_scoped_helper s_h{argc, argv};
 
 
-    inet_addr local_addr{9090, "192.168.0.112"};
+    inet_addr local_addr{9090, "127.0.0.1"};
     reactor::tcp_server server{local_addr};
     server.set_thread_num(1);
     server.open();
