@@ -36,6 +36,7 @@ int tcp_server::open()
 
     for(size_t i = 0; i < thread_num_; i++)
     {
+        //这些在单独线程中跑的reactor都必须是线程安全的，因为主线程也会访问此reactor(新联接到达时，会向上面注册新的connection_handler)
         auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_POLL);
         if(connection_reactor.get() == nullptr) return -1;
         connection_reactors_.push_back(connection_reactor);
