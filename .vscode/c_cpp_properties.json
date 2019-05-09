@@ -9,6 +9,8 @@
             ],
             "browse": {
                 "path": [
+                    "${workspaceFolder}/**",
+                    "/usr/local/include",
                     "/boost_1_68_0"
                 ]
             },
