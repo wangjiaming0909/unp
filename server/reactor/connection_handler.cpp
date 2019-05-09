@@ -36,14 +36,16 @@ int connection_handler::handle_input(int handle)
 
     int recv_buf_size = 0;
     // socklen_t optlen = sizeof(recv_buf_size);
+	/*
     int ret = getsockopt(handle, SOL_SOCKET, SO_RCVBUF, &recv_buf_size, 0);
     if(ret != 0)
     {
         LOG(ERROR) << "Get Rcv_buf size error: " << strerror(errno);
     }
+	 */
     recv_buf_size = recv_buf_size == 0 ? 4096 : recv_buf_size;
 
-    ret = stream_.read(input_buffer_, recv_buf_size, &timeout);
+    int ret = stream_.read(input_buffer_, recv_buf_size, &timeout);
     if(ret < 0)
     {
         LOG(ERROR) << "Read error: " << strerror(errno);
@@ -178,11 +180,11 @@ int64_t connection_handler::write(const char* data, uint32_t len)
 
 int connection_handler::open()
 {
-    if(stream_.get_sock_fd().set_non_blocking() != 0)
-    {
-        LOG(ERROR) << "Setting non blocking error: " << strerror(errno);
-        return -1;
-    }
+//    if(stream_.get_sock_fd().set_non_blocking() != 0)
+//    {
+//        LOG(ERROR) << "Setting non blocking error: " << strerror(errno);
+//        return -1;
+//    }
     return enable_reading();
 }
 

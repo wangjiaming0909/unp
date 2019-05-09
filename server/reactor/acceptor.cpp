@@ -74,7 +74,7 @@ acceptor::acceptor(Reactor& react, const net::inet_addr& local_addr)
     , read_handlers_(128)
 	, external_reactors_()
 {
-    open();
+//    open();
 	this->current_reactor_index_to_register_ = 0;
 }
 

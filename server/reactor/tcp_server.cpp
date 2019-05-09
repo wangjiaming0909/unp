@@ -28,6 +28,10 @@ int tcp_server::open()
     first_reactor_.swap(listen_reactor);
 
     make_acceptor();
+	if(acceptor_->open() != 0)
+	{
+		return -1;
+	}
     pool_ = std::make_shared<thread::thread_pool>(thread_num_);
 
     for(size_t i = 0; i < thread_num_; i++)
@@ -62,6 +66,9 @@ int tcp_server::open()
             break;
         }
     }
+
+	std::chrono::microseconds timeout = 2s;
+	pool_->wait(&timeout);
 
     return -1;
 }
