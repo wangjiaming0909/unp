@@ -3,16 +3,15 @@
     "configurations": [
         {
             "name": "test",
-            "type": "cppdbg",
-            "request": "launch",
+            "type":"cppdbg",
+            "request":"launch",
             "program": "${workspaceFolder}/gtests/test.out ",
-            "args": ["--gtest_filter=io_handler_test.*"],
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/",
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": true,
             "MIMode": "gdb",
-            "internalConsoleOptions":"neverOpen",
+            "internalConsoleOptions":"openOnSessionStart",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -20,7 +19,6 @@
                     "ignoreFailures": true
                 }
             ]
-            
         },
         {
             "name": "a.out",
