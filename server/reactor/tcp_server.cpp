@@ -22,7 +22,7 @@ tcp_server::~tcp_server()
 
 int tcp_server::open()
 {
-    auto listen_reactor = make_reactor(reactor_imp_t_enum::USING_POLL);
+    auto listen_reactor = make_reactor(reactor_imp_t_enum::USING_SELECT);
 	if(listen_reactor.get() == nullptr)
 		return -1;
     first_reactor_.swap(listen_reactor);
@@ -36,7 +36,7 @@ int tcp_server::open()
 
     for(size_t i = 0; i < thread_num_; i++)
     {
-        auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_POLL);
+        auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_EPOLL);
         if(connection_reactor.get() == nullptr) return -1;
         connection_reactors_.push_back(connection_reactor);
         pool_->add_task(

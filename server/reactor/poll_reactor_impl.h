@@ -9,14 +9,25 @@
 #include <poll.h>
 #include <sys/epoll.h>
 #include <chrono>
+#include <mutex>
 
 using namespace std::chrono_literals;
 
 namespace reactor{
 
+struct event_pair
+{
+    event_pair() : handle(0), handler(nullptr){}
+    event_pair(unsigned int handle, event_handler* handler)
+        : handle(handle), handler(handler){}
+    unsigned int handle;
+    event_handler* handler;
+};
+
 class poll_event_repo {
 public:
-    using event_tuple = std::pair<unsigned int, event_handler*>;
+    // using event_tuple = std::pair<unsigned int, event_handler*>;
+    using event_tuple = event_pair;
     using Event_Type = event_handler::Event_Type;
     poll_event_repo() : types_and_handlers_() {}
     ~poll_event_repo() {}
@@ -38,7 +49,7 @@ public:
     poll_demultiplex_table() : table_(), size_(0){}
     event_handler* get_handler(int handle, Event_Type type) const 
     {
-        if(table_.size() < static_cast<size_t>(handle))
+        if(table_.size() <= static_cast<size_t>(handle))
             return nullptr;
         return table_[handle].get_handler(type);
     }
@@ -54,9 +65,14 @@ public:
     }
 
     int bind(int handle, event_handler* handler, Event_Type type){
-        if(static_cast<size_t>(handle) > table_.size())
-            table_.resize(handle*2);
+        if(static_cast<size_t>(handle) >= table_.size())
+        {
+            LOG(INFO) << "resizing table to size: " << handle + 10;
+            table_.resize(handle + 10);
+        }
         size_++;
+        LOG(INFO) << "demultiplex table size: " << size_;
+        LOG(INFO) << "current handle is: " << handle;
         return table_[handle].bind_new(type, handler);
     }
 
@@ -135,6 +151,7 @@ private:
     struct epoll_event                  cur_event_;
     std::vector<struct epoll_event>     ret_events_;
     epoll_demultiplex_table             demux_table_;
+    std::mutex                          mutex_;
 };
 
 static const int USING_POLL = 0;
