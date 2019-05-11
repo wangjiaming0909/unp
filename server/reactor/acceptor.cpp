@@ -206,7 +206,7 @@ int acceptor::make_read_handler(Reactor& reactor_to_register)
         return handle;
     }
 
-    if(read_handlers_.size() < static_cast<size_t>(handle)) read_handlers_.resize(handle + 1);
+    if(read_handlers_.size() <= static_cast<size_t>(handle)) read_handlers_.resize(handle + 10);
     read_handlers_[static_cast<uint32_t>(handle)].swap(handler);
 
     return handle;
