@@ -36,15 +36,16 @@ int tcp_server::open()
 
     for(size_t i = 0; i < thread_num_; i++)
     {
-        auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_EPOLL);
+        auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_POLL);
         if(connection_reactor.get() == nullptr) return -1;
         connection_reactors_.push_back(connection_reactor);
+        auto current_reactor = connection_reactors_.back();
         pool_->add_task(
-        [&]()
+        [=]()
         {
             while(true)
             {
-                auto ret = connection_reactors_.back()->handle_events();
+                auto ret = current_reactor->handle_events();
                 if(ret != 0)
                 {
                     LOG(ERROR) << "handle events error";

@@ -132,6 +132,7 @@ int  poll_reactor_impl::register_handler(int handle, event_handler *handler, Eve
     {
         LOG(WARNING) << "Already existed in the demultiplex table, handle: " 
         << handle << " event: " << event_type_to_string(type);
+        return -1;
     }
 
     struct pollfd pfd{};
@@ -275,8 +276,15 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
 
         if(ret < 0)
         {
-            LOG(INFO) << "Unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
+            // LOG(INFO) << "Unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
             this->unregister_handler(current_fd, handler, type);
+            if(type == event_handler::READ_EVENT)
+            {
+                handler->close_read(current_fd);
+            }else if(type == event_handler::WRITE_EVENT)
+            {
+                handler->close_write(current_fd);
+            }
 
             auto iter = std::find_if(wait_pfds_.begin(), wait_pfds_.end(), 
                 [current_fd](struct pollfd& pfd)
@@ -469,7 +477,7 @@ int epoll_reactor_impl::epoll_wait(int millisecnnds)
     if(ret < 0)
     {
         LOG(WARNING) << "Epoll error " << strerror(errno);
-        return -1;
+        return 0;
     }
 
     if(ret == 0 && millisecnnds != 0)

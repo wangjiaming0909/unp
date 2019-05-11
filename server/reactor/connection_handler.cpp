@@ -79,19 +79,22 @@ int connection_handler::handle_output(int handle)
 #endif
 
     for (;try_times > 0; try_times--) {
-        auto data_p = output_buffer_.pullup(DEFAULT_SEND_SIZE);
-        int bytes_send = stream_.send(static_cast<const void*>(data_p), DEFAULT_SEND_SIZE, 0);
+        //行为： 最多pullup 4096 bytes
+        size_t pullupSize = DEFAULT_SEND_SIZE > output_buffer_.buffer_length() ? output_buffer_.buffer_length() : DEFAULT_SEND_SIZE;
+        auto data_p = output_buffer_.pullup(pullupSize);
+        int bytes_send = stream_.send(static_cast<const void*>(data_p), pullupSize, 0);
         if(bytes_send <= 0)
         {
             LOG(ERROR) << "Send error: " << strerror(errno);
-            return -1;
+            LOG(INFO) << "retrying... " << try_times + 1 << " time";
+            continue;
         }
 
         //socket send buffer could be full, try 3 times, if can't send also, give up
         output_buffer_.drain(bytes_send);
         //although, we give up here
         //if using edge trigger, handle_output will be invoked immediately
-        if(output_buffer_.buffer_length())
+        if(output_buffer_.buffer_length() == 0)
         {
             break;
         }
@@ -113,7 +116,7 @@ int connection_handler::handle_timeout(int )
 	return 0;
 }
 
-int connection_handler::handle_close(int )
+int connection_handler::handle_close(int)
 {
 	close();
 	return 0;
@@ -146,8 +149,7 @@ int64_t connection_handler::read(char* data_out, uint32_t data_len)
         len_gonna_pullup = buf_len;
     }
 
-    const unsigned char* buf_p = input_buffer_.pullup(len_gonna_pullup);
-    memcpy(data_out, buf_p, len_gonna_pullup);
+    input_buffer_.remove(data_out, len_gonna_pullup);
     return len_gonna_pullup;
 }
 

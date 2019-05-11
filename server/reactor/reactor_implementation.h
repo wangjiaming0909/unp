@@ -3,6 +3,7 @@
 
 #include "server/reactor/event_handler.h"
 #include <chrono>
+#include <atomic>
 namespace reactor{
 
 class reactor_implementation{
@@ -17,7 +18,7 @@ public:
     virtual int unregister_handler(int handle, event_handler *handler, Event_Type type) = 0;
     bool isWaiting() const {return isWaiting_;}
 protected:
-    bool isWaiting_ = false;
+    std::atomic_bool isWaiting_ = false;
 };
 
 }

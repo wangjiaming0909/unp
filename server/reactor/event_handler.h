@@ -43,6 +43,8 @@ public:
     virtual int handle_output(int ){ return 0; }
     virtual int handle_timeout(int ){ return 0; }
     virtual int handle_close(int ){ return 0; }
+    virtual int close_read(int){ return 0; }
+    virtual int close_write(int){ return 0; }
     virtual int handle_signal(int ){ return 0; }
     virtual int get_handle() const{ return 0; }
     virtual void set_handle(int ){}
