@@ -11,7 +11,7 @@ net::sock_acceptor::sock_acceptor(
             int protocol_family,
             int backlog,
             int protocol){
-    sock_fd_ = boost::make_shared<inet_sock>();
+    sock_fd_ = std::make_shared<inet_sock>();
     (void)reuse_addr;
     (void)protocol_family;
     (void)backlog;

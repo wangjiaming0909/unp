@@ -68,12 +68,10 @@ public:
     int bind(int handle, event_handler* handler, Event_Type type){
         if(static_cast<size_t>(handle) >= table_.size())
         {
-            LOG(INFO) << "resizing table to size: " << handle + 10;
             table_.resize(handle + 10);
         }
         size_++;
-        LOG(INFO) << "demultiplex table size: " << size_;
-        LOG(INFO) << "current handle is: " << handle;
+        LOG(INFO) << "size_: " << size_;
         return table_[handle].bind_new(type, handler);
     }
 
@@ -87,6 +85,7 @@ public:
         }
         table_[handle].clear();
         size_ -= handle_count;
+        LOG(INFO) << "unbinding size_: " << size_;
         return 0;
     }
     int unbind(int handle, const event_handler* handler, Event_Type type){

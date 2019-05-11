@@ -583,9 +583,11 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int& handles_
             // this->unregister_handler(current_fd, handler, type);
             if(type == event_handler::READ_EVENT)
             {
+                //TODO NOT IMPLEMENTED
                 handler->close_read(current_fd);
             }else if(type == event_handler::WRITE_EVENT)
             {
+                //TODO NOT IMPLEMENTED
                 handler->close_write(current_fd);
             }
 

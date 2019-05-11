@@ -51,7 +51,7 @@ int set_reactor_acceptor(const char* ipAddr, in_port_t port){
 
 int set_reactor_acceptor_without_pool(const char* ipAddr, in_port_t port)
 {
-    reactor::Reactor rt{new reactor::select_reactor_impl{}};
+    reactor::Reactor rt{new reactor::poll_reactor_impl{}};
     inet_addr listen_addr{port, ipAddr};
     reactor::acceptor* accptor = new acceptor{rt, listen_addr};
 
@@ -155,10 +155,11 @@ int main(int argc, char** argv){
     server_scoped_helper s_h{argc, argv};
 
 
-    inet_addr local_addr{9090, "127.0.0.1"};
+    inet_addr local_addr{9090, "192.168.0.112"};
     reactor::tcp_server server{local_addr};
-    server.set_thread_num(1);
+    server.set_thread_num(8);
     server.open();
+    // set_reactor_acceptor_without_pool("192.168.0.112", 9090);
 
 
     /*

@@ -13,8 +13,7 @@
 #include <chrono>
 #include "XString.h"
 #include <sys/time.h>
-#include <boost/shared_array.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 using namespace std::chrono;
 
@@ -71,13 +70,13 @@ timeval duration_to_timeval(const DURATION& dura){
 }
 
 template<typename DURATION>
-boost::shared_ptr<timeval> duration_to_timeval(const DURATION* dura){
+std::shared_ptr<timeval> duration_to_timeval(const DURATION* dura){
     if(dura == 0){//means wait forever
-        return boost::shared_ptr<timeval>{nullptr};
+        return std::shared_ptr<timeval>{nullptr};
     }
     seconds s = duration_cast<seconds>(*dura);
     microseconds ms = duration_cast<microseconds>(*dura);
-    boost::shared_ptr<timeval> ret_ptr{new timeval()};
+    std::shared_ptr<timeval> ret_ptr{new timeval()};
     ret_ptr->tv_sec = s.count();
     ret_ptr->tv_usec = ms.count() - duration_cast<microseconds>(s).count();
     return ret_ptr;
@@ -89,11 +88,11 @@ DURATION timeval_to_duration(const timeval& time_val){
     return duration_cast<DURATION>(us);
 }
 template <typename DURATION>
-boost::shared_ptr<DURATION> timeval_to_duration(const timeval* time_val){
+std::shared_ptr<DURATION> timeval_to_duration(const timeval* time_val){
     if(time_val == 0)
-        return boost::make_shared<DURATION>(0);
+        return std::make_shared<DURATION>(0);
     microseconds us{time_val->tv_sec * 1000 * 1000 + time_val->tv_usec};
-    auto ret_duration_ptr = boost::make_shared<DURATION>(new DURATION());
+    auto ret_duration_ptr = std::make_shared<DURATION>(new DURATION());
     *ret_duration_ptr = duration_cast<DURATION>(us);
     return ret_duration_ptr;
 }

@@ -16,7 +16,7 @@
 #include "addr.h"
 #include <netinet/in.h>
 #include "server/util/XString.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/scoped_array.hpp>
 
 namespace net{
@@ -42,8 +42,8 @@ public:
 	int set_address(const char* address);
 	int set_addr(const char* addr_port);
 	sockaddr_in get_sockaddr_in() const;
-	boost::shared_ptr<sockaddr_in> get_sockaddr_in_ptr()const;
-	boost::shared_ptr<sockaddr> get_sockaddr_ptr() const;
+	std::shared_ptr<sockaddr_in> get_sockaddr_in_ptr()const;
+	std::shared_ptr<sockaddr> get_sockaddr_ptr() const;
 	int set_port_number(host_byte_order_port port);
 	ushort get_port_number()const{return ntohs(in4_.sin_port);}
 	util::string get_address_string() const;

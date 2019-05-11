@@ -7,10 +7,10 @@
 #include "server/net/sock_acceptor.h"
 #include "server/reactor/read_handler.h"
 #include "server/thread/message_queue.h"
-#include "boost/shared_ptr.hpp"
 #include "server/reactor/reactor.h"
 #include "server/reactor/acceptor.h"
 #include <vector>
+#include <memory>
 
 using namespace std::chrono_literals;
 
@@ -39,7 +39,7 @@ private:
     int close(){ return acceptor_.close(); }
 
 private:
-    using RHandlerPtr = boost::shared_ptr<RHandlerType>;
+    using RHandlerPtr = std::shared_ptr<RHandlerType>;
 
 private:
     mqType                          *mq_;

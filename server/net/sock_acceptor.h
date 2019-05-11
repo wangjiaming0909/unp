@@ -3,7 +3,7 @@
 
 #include "inet_addr.h"
 #include "sock_stream.h"
-#include <boost/make_shared.hpp>
+#include <memory>
 
 namespace net{
 #define DEFAULT_BACKLOG 5
@@ -39,7 +39,7 @@ protected:
                     bool in_blocking_mode) const;
 private:
     // inet_sock * sock_fd_;
-    boost::shared_ptr<inet_sock> sock_fd_;
+    std::shared_ptr<inet_sock> sock_fd_;
 
 };
 }

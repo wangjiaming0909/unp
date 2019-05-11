@@ -1,7 +1,7 @@
 #ifndef _UNP_REACTOR_H_
 #define _UNP_REACTOR_H_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "reactor_implementation.h"
 #include "server/reactor/EventFD.h"
 
@@ -72,7 +72,7 @@ public:
     //     return Reactor::reactor_ptr_;
     // }
 private:
-    boost::shared_ptr<reactor_implementation> reactor_impl_;
+    std::shared_ptr<reactor_implementation> reactor_impl_;
 	EventFD eventFd_;
     //static shared_ptr, means that this object will not be deleted
     // static boost::shared_ptr<Reactor> reactor_ptr_;
