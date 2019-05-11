@@ -42,9 +42,7 @@ int poll_event_repo::bind_new(Event_Type type, event_handler* handler)
         return -1;
     }
 
-    LOG(INFO) << "types_and_handlers size is: " << types_and_handlers_.size();
     types_and_handlers_.push_back(event_pair{type, handler});
-    LOG(INFO) << "after push_back types_and_handlers size is: " << types_and_handlers_.size();
     return 0;
 }
 
@@ -88,7 +86,7 @@ std::vector<poll_event_repo::event_tuple>::const_iterator poll_event_repo::find(
 {
 //    size_t size = types_and_handlers_.size();
     return std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(), 
-        [&type] (const event_tuple& tuple) 
+        [type] (const event_tuple& tuple) 
         {
             if((tuple.handle == event_handler::READ_EVENT || tuple.handle == event_handler::ACCEPT_EVENT) 
                 && type == POLLIN)
@@ -312,28 +310,19 @@ epoll_reactor_impl::epoll_reactor_impl()
     , ret_events_()
     , demux_table_()
     , mutex_()
+    , epoller_()
 {
     this->open();
 }
 
 epoll_reactor_impl::~epoll_reactor_impl()
 {
-    int ret = ::close(epoll_fd_);
-    if(ret < 0)
-    {
-        LOG(ERROR) << "Close epoll_fd error... " << strerror(errno);
-    }
+    int ret = epoller_.close();
 }
 
 int epoll_reactor_impl::open()
 {
-    epoll_fd_ = epoll_create1(0);
-    if(epoll_fd_ < 0)
-    {
-        LOG(ERROR) << "Open epoll_fd error... " << strerror(errno);
-    }
-
-    return epoll_fd_;
+    return epoller_.open();
 }
 
 int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
@@ -343,15 +332,11 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
     {
         std::chrono::milliseconds timeout_milli = std::chrono::duration_cast<std::chrono::milliseconds>(*timeout);
 
-        isWaiting_ = true;
         n = this->epoll_wait(timeout_milli.count());
-        isWaiting_ = false;
     }
     else
     {
-        isWaiting_ = true;
         n = this->epoll_wait(-1);
-        isWaiting_ = false;
     }
     
     if(n == 0) 
@@ -388,7 +373,7 @@ int epoll_reactor_impl::unregister_handler(event_handler *handler, Event_Type ty
 
 int epoll_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type)
 {
-    std::lock_guard<std::mutex> guard(mutex_);
+    // std::lock_guard<std::mutex> guard(mutex_);
 
     LOG(INFO) << "Registering handler, handle: " << handle << " event: " << event_type_to_string(type);
     if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
@@ -401,21 +386,31 @@ int epoll_reactor_impl::register_handler(int handle, event_handler *handler, Eve
     {
         LOG(WARNING) << "Already existed in the demultiplex table, handle: " 
         << handle << " event: " << event_type_to_string(type);
+        return -1;
     }
 
-    memset(&cur_event_, 0, sizeof(struct epoll_event));
-    cur_event_.events = reactor_event_to_poll_event(type, USING_EPOLL);
-    void *p_fd = &cur_event_.data.u64;
-    *(int*)p_fd = handle;
-    *(unsigned int*)(static_cast<char*>(p_fd) + 4) = type;
-    // cur_event_.data.u64 = (uint64_t)handle << 32 + type;
+    int ret = epoller_.add(handle, reactor_event_to_poll_event(type, USING_EPOLL));
+
+    // memset(&cur_event_, 0, sizeof(struct epoll_event));
+
+    // if(type & event_handler::READ_EVENT)
+    // {
+
+    // }
+    // else if(type & event_handler::WRITE_EVENT)
+
+    // cur_event_.events = reactor_event_to_poll_event(type, USING_EPOLL);
+    // void *p_fd = &cur_event_.data.u64;
+    // *(int*)p_fd = handle;
+    // *(unsigned int*)(static_cast<char*>(p_fd) + 4) = type;
+    // // cur_event_.data.u64 = (uint64_t)handle << 32 + type;
 
 
-    int ret = 0;
-    if(!demux_table_.has_handle(handle))
-        ret = ::epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, handle, &cur_event_);
-    else
-        ret = ::epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, handle, &cur_event_);
+    // int ret = 0;
+    // if(!demux_table_.has_handle(handle))
+    //     ret = ::epoll_ctl(epoll_fd_, EPOLL_CTL_ADD, handle, &cur_event_);
+    // else
+    //     ret = ::epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, handle, &cur_event_);
 
     if(ret < 0)
     {
@@ -431,7 +426,7 @@ int epoll_reactor_impl::register_handler(int handle, event_handler *handler, Eve
 
 int epoll_reactor_impl::unregister_handler(int handle, event_handler *handler, Event_Type type)
 {
-    std::lock_guard<std::mutex> guard(mutex_);
+    // std::lock_guard<std::mutex> guard(mutex_);
 
     LOG(INFO) << "Unregistering handler, handle: " << handle << " event: " << event_type_to_string(type);
     if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
@@ -447,10 +442,40 @@ int epoll_reactor_impl::unregister_handler(int handle, event_handler *handler, E
         return -1;
     }
 
-    memset(&cur_event_, 0, sizeof(struct epoll_event));
-    cur_event_.events = reactor_event_to_poll_event(type, USING_EPOLL);
-    cur_event_.data.u64 = uint64_t(((uint64_t)handle << 32) + type);
-    int ret = ::epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, handle, &cur_event_);
+    // memset(&cur_event_, 0, sizeof(struct epoll_event));
+    // //type is a read_event
+    // cur_event_.data.u64 = uint64_t(((uint64_t)handle << 32) + type);
+
+    // int ret = 0;
+    // if(type & event_handler::READ_EVENT)
+    // {
+    //     if(demux_table_.get_handler(handle, event_handler::WRITE_EVENT) == nullptr)
+    //     {
+    //         cur_event_.events = reactor_event_to_poll_event(type, USING_EPOLL);
+    //         ret = ::epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, handle, &cur_event_);
+    //     }
+    //     else//has write event
+    //     {
+    //         cur_event_.events = reactor_event_to_poll_event(event_handler::WRITE_EVENT, USING_EPOLL);
+    //         ret = ::epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, handle, &cur_event_);
+    //     }
+    // }
+    // else if (type & event_handler::WRITE_EVENT)
+    // {
+    //     if(demux_table_.get_handler(handle, event_handler::READ_EVENT) == nullptr)
+    //     {
+    //         cur_event_.events = reactor_event_to_poll_event(type, USING_EPOLL);
+    //         ret = ::epoll_ctl(epoll_fd_, EPOLL_CTL_DEL, handle, &cur_event_);
+    //     }
+    //     else//has read event
+    //     {
+    //         cur_event_.events = reactor_event_to_poll_event(event_handler::READ_EVENT, USING_EPOLL);
+    //         ret = ::epoll_ctl(epoll_fd_, EPOLL_CTL_MOD, handle, &cur_event_);
+    //     }
+    // }
+
+    int ret = epoller_.del(handle, reactor_event_to_poll_event(type, USING_EPOLL));
+
     if(ret < 0)
     {
         LOG(ERROR) << "Epoll_ctl del handle error... " << strerror(errno);
@@ -463,16 +488,17 @@ int epoll_reactor_impl::unregister_handler(int handle, event_handler *handler, E
     return ret;
 }
 
-int epoll_reactor_impl::epoll_wait(int millisecnnds)
+int epoll_reactor_impl::epoll_wait(int milliseconds)
 {
     LOG(INFO) << "Epoll waiting...";
     {
-        std::lock_guard<std::mutex> guard(mutex_);
+        // std::lock_guard<std::mutex> guard(mutex_);
         ret_events_.clear();
         ret_events_.resize(fd_count_);
     }
 
-    int ret = ::epoll_wait(epoll_fd_, &ret_events_[0], fd_count_, millisecnnds == 0 ? -1 : millisecnnds);
+    // int ret = ::epoll_wait(epoll_fd_, &ret_events_[0], fd_count_, milliseconds == 0 ? -1 : milliseconds);
+    int ret = epoller_.epoll_wait(&ret_events_[0], fd_count_, milliseconds == 0 ? -1 : milliseconds);
 
     if(ret < 0)
     {
@@ -480,7 +506,7 @@ int epoll_reactor_impl::epoll_wait(int millisecnnds)
         return 0;
     }
 
-    if(ret == 0 && millisecnnds != 0)
+    if(ret == 0 && milliseconds != 0)
     {
         LOG(WARNING) << "Poll timed out...";
         return 0;
@@ -530,13 +556,13 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int& handles_
     for(size_t i = 0; i < ret_events_.size(); i++)
     {
 
-        mutex_.lock();
+        // mutex_.lock();
 
         ep_event_dispatching = &ret_events_[i];
         current_fd = ep_event_dispatching->data.fd;
         if(!(ep_event_dispatching->events & type))
         {
-            mutex_.unlock();
+            // mutex_.unlock();
             continue;
         }
         
@@ -549,17 +575,24 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int& handles_
         if(handler == 0) return -1;
         ret = (handler->*callback)(current_fd);
 
-        mutex_.unlock();
+        // mutex_.unlock();
 
         if(ret < 0)
         {
             LOG(INFO) << "Unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
-            this->unregister_handler(current_fd, handler, type);
+            // this->unregister_handler(current_fd, handler, type);
+            if(type == event_handler::READ_EVENT)
+            {
+                handler->close_read(current_fd);
+            }else if(type == event_handler::WRITE_EVENT)
+            {
+                handler->close_write(current_fd);
+            }
 
             bool isHasHandle = false;
-            mutex_.lock();
+            // mutex_.lock();
             isHasHandle = demux_table_.has_handle(current_fd);
-            mutex_.unlock();
+            // mutex_.unlock();
             if(!isHasHandle)
             {
                 handler->handle_close(current_fd);

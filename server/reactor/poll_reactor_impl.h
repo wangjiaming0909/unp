@@ -10,6 +10,7 @@
 #include <sys/epoll.h>
 #include <chrono>
 #include <mutex>
+#include "server/reactor/epoller.h"
 
 using namespace std::chrono_literals;
 
@@ -152,6 +153,7 @@ private:
     std::vector<struct epoll_event>     ret_events_;
     epoll_demultiplex_table             demux_table_;
     std::mutex                          mutex_;
+    epoller                             epoller_;
 };
 
 static const int USING_POLL = 0;
