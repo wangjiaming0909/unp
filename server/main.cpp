@@ -1,4 +1,5 @@
 #include "server/config/ServerConfig.h"
+
 #include "server/util/easylogging++.h"
 #include "server/thread/thread_pool.h"
 #include "server/main_helper.h"
@@ -155,9 +156,11 @@ int main(int argc, char** argv){
     server_scoped_helper s_h{argc, argv};
 
 
-    inet_addr local_addr{9090, "192.168.0.112"};
+    // inet_addr local_addr{9090, "192.168.0.112"};//big pc
+    inet_addr local_addr{9090, "192.168.0.142"};//pc
+
     reactor::tcp_server server{local_addr};
-    server.set_thread_num(8);
+    server.set_thread_num(1);
     server.open();
     // set_reactor_acceptor_without_pool("192.168.0.112", 9090);
 
