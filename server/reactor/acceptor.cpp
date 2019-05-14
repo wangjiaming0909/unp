@@ -188,11 +188,12 @@ int acceptor::make_read_handler(Reactor& reactor_to_register)
         return -1;
     }
 
-    std::shared_ptr<connection_handler> handler = std::make_shared<echo_connection_handler>(reactor_to_register);
-//    handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
+    std::shared_ptr<connection_handler> handler{new echo_connection_handler{reactor_to_register}};
+   handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
 
-    net::inet_addr peer_addr{};
-    int ret = sock_acceptor_.accept(handler->get_sock_stream(), &peer_addr);
+    // net::inet_addr peer_addr{};
+
+    int ret = sock_acceptor_.accept(handler->get_sock_stream(), 0);
     if(ret != 0)
     {
         LOG(ERROR) << "Acceptor error..." << strerror(errno);
@@ -206,8 +207,8 @@ int acceptor::make_read_handler(Reactor& reactor_to_register)
         return handle;
     }
 
-    if(read_handlers_.size() <= static_cast<size_t>(handle)) read_handlers_.resize(handle + 10);
-    read_handlers_[static_cast<uint32_t>(handle)].swap(handler);
+    // if(read_handlers_.size() <= static_cast<size_t>(handle)) read_handlers_.resize(handle + 10);
+    read_handlers_[static_cast<uint32_t>(handle)] = handler;
 
     return handle;
 }

@@ -1,3 +1,5 @@
+#ifndef ECHO_CONNECTION_HANDLER_H_
+#define ECHO_CONNECTION_HANDLER_H_
 #include "server/reactor/connection_handler.h"
 
 namespace reactor
@@ -11,6 +13,9 @@ namespace reactor
         echo_connection_handler(Reactor& reactor);
         virtual ~echo_connection_handler();
         virtual int handle_input(int handle) override;
+    private:
+        static int i;
     };
     
 }
+#endif

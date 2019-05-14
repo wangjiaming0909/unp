@@ -22,7 +22,7 @@ tcp_server::~tcp_server()
 
 int tcp_server::open()
 {
-    auto listen_reactor = make_reactor(reactor_imp_t_enum::USING_SELECT);
+    auto listen_reactor = make_reactor(reactor_imp_t_enum::USING_POLL);
 	if(listen_reactor.get() == nullptr)
 		return -1;
     first_reactor_.swap(listen_reactor);
@@ -58,7 +58,6 @@ int tcp_server::open()
         acceptor_->set_external_reactors_(connection_reactors_);
 
     pool_->start();
-    int i = 10;
     while(1)
     {
         auto ret = first_reactor_->handle_events();
@@ -67,7 +66,6 @@ int tcp_server::open()
             LOG(ERROR) << "handle events error";
             break;
         }
-        i--;
     }
 
 	std::chrono::microseconds timeout = 2s;

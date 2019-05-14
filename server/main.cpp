@@ -55,6 +55,7 @@ int set_reactor_acceptor_without_pool(const char* ipAddr, in_port_t port)
     reactor::Reactor rt{new reactor::poll_reactor_impl{}};
     inet_addr listen_addr{port, ipAddr};
     reactor::acceptor* accptor = new acceptor{rt, listen_addr};
+    accptor->open();
 
     int ret = 0;
     for (;;)
@@ -157,32 +158,30 @@ int main(int argc, char** argv){
 
 
     // inet_addr local_addr{9090, "192.168.0.112"};//big pc
-    // inet_addr local_addr{9090, "192.168.0.142"};//pc
-    inet_addr local_addr{9090, "127.0.0.1"};// dell
+    inet_addr local_addr{9090, "192.168.0.142"};//pc
+    // inet_addr local_addr{9090, "127.0.0.1"};// dell
 
     reactor::tcp_server server{local_addr};
-    server.set_thread_num(4);
+    server.set_thread_num(8);
     server.open();
     // set_reactor_acceptor_without_pool("192.168.0.112", 9090);
 
 
-    /*
-    if(argc == 4){
-        const char* ipAddr = argv[2];
-        int port = atoi(argv[3]);
-        if(strcmp(argv[1], "-listen")== 0){
-//             set_reactor_acceptor(ipAddr, port);
-//            set_reactor_acceptor_using_epoll(ipAddr, port);
-            set_reactor_acceptor_without_pool(ipAddr, port);
-        }
-        if(strcmp(argv[1], "-connect")== 0){
-            set_reactor_connector(ipAddr, port);
-            // multi_connector(ipAddr, port, 4, 1);
-        }
-    }else{
-        LOG(ERROR) << "args error.....";
-    }
-    */
+//     if(argc == 4){
+//         const char* ipAddr = argv[2];
+//         int port = atoi(argv[3]);
+//         if(strcmp(argv[1], "-listen")== 0){
+// //             set_reactor_acceptor(ipAddr, port);
+// //            set_reactor_acceptor_using_epoll(ipAddr, port);
+//             set_reactor_acceptor_without_pool(ipAddr, port);
+//         }
+//         if(strcmp(argv[1], "-connect")== 0){
+//             set_reactor_connector(ipAddr, port);
+//             // multi_connector(ipAddr, port, 4, 1);
+//         }
+//     }else{
+//         LOG(ERROR) << "args error.....";
+//     }
 
     /*
     net::sock_connector connector{};

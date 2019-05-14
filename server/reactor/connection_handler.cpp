@@ -192,6 +192,7 @@ int connection_handler::open()
 
 void connection_handler::close()
 {
+    check_and_invoke_close_callback();
 	if(read_enabled_) disable_reading();
 	if(write_enabled_) disable_writing();
     stream_.close();
@@ -200,22 +201,22 @@ void connection_handler::close()
 void connection_handler::close_read()
 {
 	if(read_enabled_) disable_reading();
-    stream_.close_reader();
+    // stream_.close_reader();
 }
 
 void connection_handler::close_write()
 {
     if(write_enabled_) disable_writing();
-    stream_.close_writer();
+    // stream_.close_writer();
 }
 
 void connection_handler::check_and_invoke_close_callback()
 {
-    if(!read_enabled_ && !write_enabled_)
-    {
-        if(closed_callback_)
-            closed_callback_(stream_.get_handle());
-    }
+    // if(!read_enabled_ && !write_enabled_)
+    // {
+        // if(closed_callback_)
+            // closed_callback_(stream_.get_handle());
+    // }
 }
 
 int connection_handler::enable_reading()
