@@ -71,7 +71,7 @@ acceptor::acceptor(Reactor& react, const net::inet_addr& local_addr)
     : event_handler(react)
     , sock_acceptor_(local_addr)
     , local_addr_(local_addr)
-    , read_handlers_(128)
+    , read_handlers_(1024)
 	, external_reactors_()
 {
 //    open();

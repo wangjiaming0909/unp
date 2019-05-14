@@ -69,16 +69,27 @@ std::vector<poll_event_repo::event_tuple>::const_iterator poll_event_repo::find(
         });
 }
 
+poll_demultiplex_table::poll_demultiplex_table() 
+    : table_()
+    , size_(0)
+    , mutex_()
+    {
+        table_.resize(1000);
+    }
 
 event_handler* poll_demultiplex_table::get_handler(int handle, Event_Type type) const 
 {
+    lock_guard_t guard{mutex_};
     if(table_.size() <= static_cast<size_t>(handle))
         return nullptr;
+
     return table_[handle].get_handler(type);
 }
 
 int poll_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
-    if(static_cast<size_t>(handle) >= table_.size())
+    lock_guard_t guard{mutex_};
+    int64_t table_size = static_cast<int64_t>(table_.size());
+    if((handle) >= (table_size - 5))
     {
         table_.resize(handle + 10);
     }
@@ -89,6 +100,7 @@ int poll_demultiplex_table::bind(int handle, event_handler* handler, Event_Type 
 
 //unbind掉绑定到这个handle的所有事件处理器
 int poll_demultiplex_table::unbind(int handle){
+    lock_guard_t guard{mutex_};
     int handle_count = table_[handle].handle_count();
     if(handle_count <= 0)
     {

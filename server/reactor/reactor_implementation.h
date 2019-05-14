@@ -9,7 +9,6 @@ namespace reactor{
 class reactor_implementation{
 public:
     using Event_Type = event_handler::Event_Type;
-    using mutex_t = std::mutex;
     reactor_implementation() = default;
     virtual ~reactor_implementation(){}
     virtual int handle_events(std::chrono::microseconds *timeout) = 0;
@@ -20,7 +19,6 @@ public:
     bool isWaiting() const {return isWaiting_;}
 protected:
     bool        isWaiting_ = false;
-    mutex_t     mutex_;
 };
 }
 #endif //_UNP_REACTOR_IMPLEMENTATION_H_
