@@ -9,8 +9,9 @@
             ],
             "browse": {
                 "path": [
-                    "/boost_1_68_0",
-                    "${workspaceFolder}"
+                    "${workspaceFolder}/**",
+                    "/usr/local/include",
+                    "/boost_1_68_0"
                 ]
             },
             "defines": [],
