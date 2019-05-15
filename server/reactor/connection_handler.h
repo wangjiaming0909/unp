@@ -55,8 +55,8 @@ public:
 	}
 
 protected:
-    void close_read();
-    void close_write();
+    virtual int close_read(int) override;
+    virtual int close_write(int) override;
 
     //check input_buffer, 
     //1, if input_buffer has enough data
@@ -77,7 +77,7 @@ public:
     int enable_writing();
     int disable_reading();
     int disable_writing();
-    void set_closed_callback(const std::function<void(int)>& callback){closed_callback_ = callback;}
+    void set_closed_callback(std::function<void(int)> callback){closed_callback_ = std::move(callback);}
 protected:
 	net::sock_stream	stream_;
     buffer              input_buffer_;

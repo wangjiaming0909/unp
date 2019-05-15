@@ -15,3 +15,5 @@ nbproject/**
 *.config
 *.user
 log
+unp.log
+myeasylog.log

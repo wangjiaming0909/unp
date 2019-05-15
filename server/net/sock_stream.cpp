@@ -30,7 +30,7 @@ ssize_t net::sock_stream::read(void *buffer, size_t len, const micro_seconds *ti
 
 ssize_t net::sock_stream::read(reactor::buffer& buf, size_t len, const microseconds* timeout) const
 {
-    char* data_p = static_cast<char*>(::calloc(len + 1, 1));
+    char* const data_p = static_cast<char*>(::calloc(len + 1, 1));
     int read_len = read_imp(data_p, len, timeout);
     if(read_len > 0 )
     {

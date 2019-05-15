@@ -1,7 +1,7 @@
 #ifndef _UNP_REACTOR_H_
 #define _UNP_REACTOR_H_
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "reactor_implementation.h"
 #include "server/reactor/EventFD.h"
 
@@ -35,15 +35,24 @@ public:
 		 * 因此enable_writing并不会被reactor发现(当过滤条件设置了只要是eventfd就不唤醒时),也就是唤醒失败,
 		 * 因此过滤条件因包括eventfd的write事件,如此反复循环,并没有效果
 		 */
-        if(handle != eventFd_.getEventFD() && reactor_impl_->isWaiting())
+
+        // 如果是event fd的read事件，那么不唤醒
+        // 如果是event fd的write事件， 如果没有event fd的write事件就唤醒，有event fd的write就不唤醒
+        if(handle == eventFd_.getEventFD() && 
+            type == event_handler::WRITE_EVENT && 
+            reactor_impl_->register_handler(handle, handler, type) == -1 &&
+            reactor_impl_->isWaiting())
         {
-            LOG(INFO) << "current handle is not the event fd... the reactor will be waked up";
+            LOG(INFO) << "eventfd write event";
             eventFd_.wakeup();
         }
-        else
+
+        if(handle != eventFd_.getEventFD() && reactor_impl_->isWaiting())
         {
-            LOG(INFO) << "current handle is event fd, won't wake up anything";
+            LOG(INFO) << "current handle is not the event fd... the reactor will be waked up handle: " << handle;
+            eventFd_.wakeup();
         }
+
 		return ret;
     }
     virtual int unregister_handler(event_handler *handler, Event_Type type) {
@@ -63,7 +72,7 @@ public:
     //     return Reactor::reactor_ptr_;
     // }
 private:
-    boost::shared_ptr<reactor_implementation> reactor_impl_;
+    std::shared_ptr<reactor_implementation> reactor_impl_;
 	EventFD eventFd_;
     //static shared_ptr, means that this object will not be deleted
     // static boost::shared_ptr<Reactor> reactor_ptr_;

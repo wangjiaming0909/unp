@@ -11,7 +11,7 @@ net::sock_acceptor::sock_acceptor(
             int protocol_family,
             int backlog,
             int protocol){
-    sock_fd_ = boost::make_shared<inet_sock>();
+    sock_fd_ = std::make_shared<inet_sock>();
     (void)reuse_addr;
     (void)protocol_family;
     (void)backlog;
@@ -59,12 +59,11 @@ int net::sock_acceptor::accept(
     if(ret  == -1) return -1;
 
     socklen_t len = 0;
-    socklen_t *len_ptr = 0;
-    sockaddr addr;
+    socklen_t *len_ptr = &len;
+    struct sockaddr addr;
     // sockaddr* addr = 0;
     if(remote_addr ){
         len = remote_addr->get_size();
-        len_ptr = &len;
         memcpy(&addr, (sockaddr*)remote_addr->get_sockaddr_in_ptr().get(), sizeof(sockaddr));
         // addr = (sockaddr*)remote_addr->get_sockaddr_in_ptr().get();//!ERROR
     }
@@ -87,8 +86,9 @@ int net::sock_acceptor::accept(
         if(ret != INVALID_HANDLE && remote_addr){
             remote_addr->set_size(len);
             // LOG(INFO) << "settings size and family " << len << " " << addr.sa_family;
-            break;
         }
+        if(ret != INVALID_HANDLE)
+            break;
     }
 
     return shared_accept_finish(client_stream, in_blocking_mode);

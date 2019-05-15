@@ -53,7 +53,7 @@ public:
     using MessageQueueType = thread::message_queue<DataType>;
     using micro_seconds = std::chrono::microseconds;
 private:
-    using IOHandlerPtr = boost::shared_ptr<IOHandlerType>;
+    using IOHandlerPtr = std::shared_ptr<IOHandlerType>;
 
 public:
     reactor_connector(Reactor& react, thread::thread_pool& pool, MessageQueueType& mq);

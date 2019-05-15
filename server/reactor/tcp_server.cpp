@@ -22,10 +22,9 @@ tcp_server::~tcp_server()
 
 int tcp_server::open()
 {
-    auto listen_reactor = make_reactor(reactor_imp_t_enum::USING_POLL);
-	if(listen_reactor.get() == nullptr)
+    first_reactor_ = make_reactor(reactor_imp_t_enum::USING_POLL);
+	if(first_reactor_.get() == nullptr)
 		return -1;
-    first_reactor_.swap(listen_reactor);
 
     make_acceptor();
 	if(acceptor_->open() != 0)
@@ -39,12 +38,13 @@ int tcp_server::open()
         auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_POLL);
         if(connection_reactor.get() == nullptr) return -1;
         connection_reactors_.push_back(connection_reactor);
+        auto current_reactor = connection_reactors_.back();
         pool_->add_task(
-        [&]()
+        [=]()
         {
             while(true)
             {
-                auto ret = connection_reactors_.back()->handle_events();
+                auto ret = current_reactor->handle_events();
                 if(ret != 0)
                 {
                     LOG(ERROR) << "handle events error";
@@ -57,7 +57,7 @@ int tcp_server::open()
         acceptor_->set_external_reactors_(connection_reactors_);
 
     pool_->start();
-    while(true)
+    while(1)
     {
         auto ret = first_reactor_->handle_events();
         if(ret != 0)

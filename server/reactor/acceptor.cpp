@@ -71,7 +71,7 @@ acceptor::acceptor(Reactor& react, const net::inet_addr& local_addr)
     : event_handler(react)
     , sock_acceptor_(local_addr)
     , local_addr_(local_addr)
-    , read_handlers_(128)
+    , read_handlers_(1024)
 	, external_reactors_()
 {
 //    open();
@@ -171,7 +171,7 @@ void acceptor::close_read_handler(int handle)
         LOG(ERROR) << "Close read Handler error, handle: " << handle;
     }
 	//一般也不会有别人会获得这些 connection_handler 的指针,因此 reset 之后就会析构此 connection_handler
-	read_handlers_[handle]->close();
+	// read_handlers_[handle]->close();
     read_handlers_[handle].reset();
 }
 
@@ -188,11 +188,12 @@ int acceptor::make_read_handler(Reactor& reactor_to_register)
         return -1;
     }
 
-    auto handler = std::make_shared<connection_handler>(reactor_to_register);
-//    handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
+    std::shared_ptr<connection_handler> handler{new echo_connection_handler{reactor_to_register}};
+   handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
 
-    net::inet_addr peer_addr{};
-    int ret = sock_acceptor_.accept(handler->get_sock_stream(), &peer_addr);
+    // net::inet_addr peer_addr{};
+
+    int ret = sock_acceptor_.accept(handler->get_sock_stream(), 0);
     if(ret != 0)
     {
         LOG(ERROR) << "Acceptor error..." << strerror(errno);
@@ -206,8 +207,8 @@ int acceptor::make_read_handler(Reactor& reactor_to_register)
         return handle;
     }
 
-    if(read_handlers_.size() < static_cast<size_t>(handle)) read_handlers_.resize(handle + 1);
-    read_handlers_[static_cast<uint32_t>(handle)].swap(handler);
+    // if(read_handlers_.size() <= static_cast<size_t>(handle)) read_handlers_.resize(handle + 10);
+    read_handlers_[static_cast<uint32_t>(handle)] = handler;
 
     return handle;
 }
