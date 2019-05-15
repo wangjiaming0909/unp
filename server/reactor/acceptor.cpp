@@ -171,7 +171,7 @@ void acceptor::close_read_handler(int handle)
         LOG(ERROR) << "Close read Handler error, handle: " << handle;
     }
 	//一般也不会有别人会获得这些 connection_handler 的指针,因此 reset 之后就会析构此 connection_handler
-	read_handlers_[handle]->close();
+	// read_handlers_[handle]->close();
     read_handlers_[handle].reset();
 }
 

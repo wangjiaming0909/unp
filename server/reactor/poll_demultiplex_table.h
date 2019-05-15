@@ -60,6 +60,7 @@ public:
     int unbind(int handle, const event_handler *handler, Event_Type type)
     {
         lock_guard_t guard{mutex_};
+        size_--;
         return table_[handle].unbind(type, handler);
     }
 private:

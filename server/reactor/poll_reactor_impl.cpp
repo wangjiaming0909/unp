@@ -145,7 +145,18 @@ int poll_reactor_impl::poll(std::chrono::microseconds* timeout)
 
     isWaiting_ = true;
 
-    int ret = ::poll(&wait_pfds_[0], wait_pfds_.size(), timeout == 0 ? -1 : timeout->count());
+    std::vector<struct pollfd> waits{};
+    for(auto& fd : wait_pfds_)
+    {
+        waits.push_back(fd);
+    }
+
+    int ret = ::poll(&waits[0], waits.size(), timeout == 0 ? -1 : timeout->count());
+
+    for (size_t i = 0; i < waits.size(); i++)
+    {
+        wait_pfds_[i].revents = waits[i].revents;
+    }
 
     isWaiting_ = false;
 
@@ -211,7 +222,7 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
         if(ret < 0)
         {
             // LOG(INFO) << "Unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
-            this->unregister_handler(current_fd, handler, type);
+            // this->unregister_handler(current_fd, handler, type);
             if(type == event_handler::READ_EVENT)
             {
                 handler->close_read(current_fd);
@@ -220,20 +231,20 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
                 handler->close_write(current_fd);
             }
 
-            auto iter = std::find_if(wait_pfds_.begin(), wait_pfds_.end(), 
-                [current_fd](struct pollfd& pfd)
-                {
-                    return (pfd.fd == current_fd);
-                });
-            //如果再次查找的時候, 已經到了最後位置了，說明已不存在當前handle的其他事件監聽了，因此，調用handle_close
-            if(iter == wait_pfds_.end())
-            {
-                handler->handle_close(current_fd);
-            }
         } 
         else
         {
             LOG(INFO) <<"Keep listening on handle: " << current_fd << " event: " << event_type_to_string(type);
+        }
+        auto iter = std::find_if(wait_pfds_.begin(), wait_pfds_.end(), 
+            [current_fd](struct pollfd& pfd)
+            {
+                return (pfd.fd == current_fd);
+            });
+        //如果再次查找的時候, 已經到了最後位置了，說明已不存在當前handle的其他事件監聽了，因此，調用handle_close
+        if(iter == wait_pfds_.end())
+        {
+            handler->handle_close(current_fd);
         }
     }
     return 0;

@@ -22,10 +22,9 @@ tcp_server::~tcp_server()
 
 int tcp_server::open()
 {
-    auto listen_reactor = make_reactor(reactor_imp_t_enum::USING_POLL);
-	if(listen_reactor.get() == nullptr)
+    first_reactor_ = make_reactor(reactor_imp_t_enum::USING_POLL);
+	if(first_reactor_.get() == nullptr)
 		return -1;
-    first_reactor_.swap(listen_reactor);
 
     make_acceptor();
 	if(acceptor_->open() != 0)

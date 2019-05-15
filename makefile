@@ -1,9 +1,9 @@
 CC = g++
-FLAGS = -Wall -Wextra -std=c++17 -c -ggdb -Wfatal-errors -O0
+FLAGS = -Wall -Wextra -std=c++17 -c -ggdb -Wfatal-errors -O0 
 #HEADERS = include/unp.h
 
-# DEFS = ELPP_THREAD_SAFE ELPP_NO_DEFAULT_LOG_FILE USING_PTHREAD
-DEFS = ELPP_DISABLE_LOGS USING_PTHREAD
+DEFS = ELPP_THREAD_SAFE ELPP_NO_DEFAULT_LOG_FILE USING_PTHREAD
+# DEFS = ELPP_DISABLE_LOGS USING_PTHREAD
 DEFINES = $(patsubst %, -D%, $(DEFS))
 
 SOURCEDIR = ./server

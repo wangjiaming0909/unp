@@ -70,11 +70,10 @@ std::vector<poll_event_repo::event_tuple>::const_iterator poll_event_repo::find(
 }
 
 poll_demultiplex_table::poll_demultiplex_table() 
-    : table_()
-    , size_(0)
+    : table_(1024)
+    , size_()
     , mutex_()
     {
-        table_.resize(1000);
     }
 
 event_handler* poll_demultiplex_table::get_handler(int handle, Event_Type type) const 

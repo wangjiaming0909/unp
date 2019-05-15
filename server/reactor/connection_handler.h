@@ -55,8 +55,8 @@ public:
 	}
 
 protected:
-    void close_read();
-    void close_write();
+    virtual int close_read(int) override;
+    virtual int close_write(int) override;
 
     //check input_buffer, 
     //1, if input_buffer has enough data
