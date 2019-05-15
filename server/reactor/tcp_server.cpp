@@ -23,7 +23,7 @@ tcp_server::~tcp_server()
 
 int tcp_server::open()
 {
-    first_reactor_ = make_reactor(reactor_imp_t_enum::USING_POLL);
+    first_reactor_ = make_reactor(reactor_imp_t_enum::USING_EPOLL);
 	if(first_reactor_.get() == nullptr)
 		return -1;
 
@@ -36,7 +36,7 @@ int tcp_server::open()
 
     for(size_t i = 0; i < thread_num_; i++)
     {
-        auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_POLL);
+        auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_EPOLL);
         if(connection_reactor.get() == nullptr) return -1;
         connection_reactors_.push_back(connection_reactor);
         auto current_reactor = connection_reactors_.back();
@@ -55,9 +55,9 @@ int tcp_server::open()
         });
     }
     if(thread_num_ > 0)
-        acceptor_->set_external_reactors_(connection_reactors_);
+        // acceptor_->set_external_reactors_(connection_reactors_);
 
-    pool_->start();
+    // pool_->start();
     while(1)
     {
         auto ret = first_reactor_->handle_events();

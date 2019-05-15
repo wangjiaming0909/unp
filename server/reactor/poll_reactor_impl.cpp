@@ -29,6 +29,7 @@ int  poll_reactor_impl::register_handler(int handle, event_handler *handler, Eve
     pfd.revents = 0;
 
     //TODO 虽然 demultiplex table 中没有这个 handle， 但是 pollfd 的 vector 中可能有
+    //TODO thread safty of wait_pfds_??
     wait_pfds_.push_back(pfd);
 
     //bind to the demultiplex table
@@ -147,9 +148,9 @@ int poll_reactor_impl::dispatch_io_handlers(int active_handles, int& handles_dis
     int ret = 0;
     ret = dispatch_io_sets(active_handles, handles_dispatched, POLLIN, &event_handler::handle_input);
 
-    ret = ret && dispatch_io_sets(active_handles, handles_dispatched, POLLOUT, &event_handler::handle_output);
+    ret = ret && dispatch_io_sets(ret, handles_dispatched, POLLOUT, &event_handler::handle_output);
 
-    ret = ret && dispatch_io_sets(active_handles, handles_dispatched, POLLERR, &event_handler::handle_output);
+    ret = ret && dispatch_io_sets(ret, handles_dispatched, POLLERR, &event_handler::handle_output);
     return ret;
 }
 

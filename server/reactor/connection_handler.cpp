@@ -192,9 +192,9 @@ int connection_handler::open()
 
 void connection_handler::close()
 {
+	if(read_enabled_) disable_reading();
+	if(write_enabled_) disable_writing();
     check_and_invoke_close_callback();
-	// if(read_enabled_) disable_reading();
-	// if(write_enabled_) disable_writing();
     // stream_.close();
 }
 
