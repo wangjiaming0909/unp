@@ -12,7 +12,6 @@
 #include "server/reactor/read_write_handler.h"
 #include "server/reactor/poll_reactor_impl.h"
 #include "server/reactor/epoll_reactor_impl.h"
-#include "server/util/min_heap.h"
 #include "server/reactor/tcp_server.h"
 #include <exception>
 #include <cstdlib>
