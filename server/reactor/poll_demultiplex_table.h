@@ -1,3 +1,6 @@
+#ifndef POLL_DEMULTIPLEX_TABLE_H_
+#define POLL_DEMULTIPLEX_TABLE_H_
+
 #include "server/reactor/event_handler.h"
 #include <mutex>
 
@@ -70,8 +73,5 @@ private:
 
 };
 
-
-
-
-    
 } // namespace reactor
+#endif // POLL_DEMULTIPLEX_TABLE_H_

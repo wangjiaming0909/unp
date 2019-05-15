@@ -1,6 +1,7 @@
 #include "tcp_server.h"
-#include "select_reactor_impl.h"
-#include "poll_reactor_impl.h"
+#include "server/reactor/select_reactor_impl.h"
+#include "server/reactor/poll_reactor_impl.h"
+#include "server/reactor/epoll_reactor_impl.h"
 #include "server/util/easylogging++.h"
 
 namespace reactor

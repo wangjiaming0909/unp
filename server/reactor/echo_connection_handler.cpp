@@ -5,20 +5,20 @@
 
 using namespace reactor;
 
-int echo_connection_handler::i = 0;
+// int echo_connection_handler::i = 0;
 
 echo_connection_handler::echo_connection_handler(Reactor& reactor) : connection_handler(reactor)
 {
     // util::string time = util::Time::now().toString();
-    std::cout << "constructing echo connectin handler " << i << std::endl;
-    i++;
+    // std::cout << "constructing echo connectin handler " << i << std::endl;
+    // i++;
 }
 
 echo_connection_handler::~echo_connection_handler()
 {
     // util::string time = util::Time::now().toString();
-    std::cout << "destructing echo connection handler "<< i << std::endl;
-    i--;
+    // std::cout << "destructing echo connection handler "<< i << std::endl;
+    // i--;
 }
 
 int echo_connection_handler::handle_input(int handle)

@@ -11,6 +11,7 @@
 #include "server/reactor/connector.h"
 #include "server/reactor/read_write_handler.h"
 #include "server/reactor/poll_reactor_impl.h"
+#include "server/reactor/epoll_reactor_impl.h"
 #include "server/util/min_heap.h"
 #include "server/reactor/tcp_server.h"
 #include <exception>
@@ -158,11 +159,11 @@ int main(int argc, char** argv){
 
 
     // inet_addr local_addr{9090, "192.168.0.112"};//big pc
-    // inet_addr local_addr{9090, "192.168.0.142"};//pc
-    inet_addr local_addr{9090, "127.0.0.1"};// dell
+    inet_addr local_addr{9090, "192.168.0.142"};//pc
+    // inet_addr local_addr{9090, "127.0.0.1"};// dell
 
     reactor::tcp_server server{local_addr};
-    server.set_thread_num(8);
+    server.set_thread_num(4);
     server.open();
     // set_reactor_acceptor_without_pool("192.168.0.112", 9090);
 

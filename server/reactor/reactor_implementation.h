@@ -20,5 +20,11 @@ public:
 protected:
     bool        isWaiting_ = false;
 };
-}
+
+static const int USING_EPOLL = 1;
+static const int USING_POLL = 0;
+
+short reactor_event_to_poll_event(event_handler::Event_Type type, int poll_or_epoll);
+
+} // namespace reactor
 #endif //_UNP_REACTOR_IMPLEMENTATION_H_

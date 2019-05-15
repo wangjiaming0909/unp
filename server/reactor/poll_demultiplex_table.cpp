@@ -70,7 +70,7 @@ std::vector<poll_event_repo::event_tuple>::const_iterator poll_event_repo::find(
 }
 
 poll_demultiplex_table::poll_demultiplex_table() 
-    : table_(1024)
+    : table_()
     , size_()
     , mutex_()
     {
@@ -88,9 +88,9 @@ event_handler* poll_demultiplex_table::get_handler(int handle, Event_Type type) 
 int poll_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
     lock_guard_t guard{mutex_};
     int64_t table_size = static_cast<int64_t>(table_.size());
-    if((handle) >= (table_size - 5))
+    if((handle) >= (table_size))
     {
-        table_.resize(handle + 10);
+        table_.resize(handle + 4);
     }
     size_++;
     LOG(INFO) << "size_: " << size_;

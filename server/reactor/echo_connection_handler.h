@@ -14,7 +14,7 @@ namespace reactor
         virtual ~echo_connection_handler();
         virtual int handle_input(int handle) override;
     private:
-        static int i;
+        // static int i;
     };
     
 }
