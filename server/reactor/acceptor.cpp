@@ -201,7 +201,7 @@ int acceptor::make_read_handler(Reactor& reactor_to_register)
     }
 
     int handle = handler->get_handle();
-    // LOG(INFO) << "connection from: " << peer_addr.get_address_string() << " handle: " << handle;
+    LOG(INFO) << "connection from: " << peer_addr.get_address_string() << " handle: " << handle;
     if(handle < 0)
     {
         LOG(ERROR) << "Handler errror" << strerror(errno);

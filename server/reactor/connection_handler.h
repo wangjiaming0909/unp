@@ -47,7 +47,7 @@ public:
     template <typename T>
     int write(const T& data);
 
-    int open();
+    virtual int open();
     void close();
 	void clear_input_buffer()
 	{

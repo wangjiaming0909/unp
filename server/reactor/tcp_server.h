@@ -3,6 +3,7 @@
 
 #include "server/thread/thread_pool.h"
 #include "server/net/inet_addr.h"
+#include "server/net/unp.h"
 #include <memory>
 
 namespace reactor
@@ -10,11 +11,6 @@ namespace reactor
 
 class Reactor;
 class acceptor;
-
-enum class reactor_imp_t_enum
-{
-    USING_SELECT, USING_POLL, USING_EPOLL
-};
 
 /*
     reactor的个数应该与 thread 的个数相同，因为每个thread里会放一个reactor
@@ -57,7 +53,7 @@ public:
     int close(bool force);
 
 private:
-	reactor_ptr_t make_reactor(reactor_imp_t_enum reactor_t);
+	reactor_ptr_t make_reactor(unp::reactor_imp_t_enum reactor_t);
     void make_acceptor();
 
 private:

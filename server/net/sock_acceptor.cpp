@@ -69,7 +69,7 @@ int net::sock_acceptor::accept(
     }
 
     for(;;){
-        // LOG(INFO) << "invoking accept...";
+        LOG(INFO) << "invoking accept...";
         int client_fd = ::accept(sock_fd_->get_handle(), &addr, len_ptr);
         //restart set and accept failed and it was interrupted, then continue
         if(restart && client_fd == -1 && errno == EINTR){
@@ -79,7 +79,7 @@ int net::sock_acceptor::accept(
         ret = client_stream.set_handle(client_fd);
         if(remote_addr) {
             auto addr_string = remote_addr->get_address_string();
-            // LOG(INFO) << "accepted a connection..." << addr_string;
+            LOG(INFO) << "accepted a connection..." << addr_string;
         }
         //accept returned successfully, remote addr was set, addrlen was set too
         //and we write it to the remote_addr pointer
@@ -105,7 +105,7 @@ int net::sock_acceptor::shared_open(
     }
     auto addr_str = local_sap.get_address_string();
     auto port = local_sap.get_port_number();
-    // LOG(INFO) << "trying to bind to: " << addr_str << ":" << port << "..." ;
+    LOG(INFO) << "trying to bind to: " << addr_str << ":" << port << "..." ;
     int ret = ::bind(sock_fd_->get_handle(), 
         local_sap.get_sockaddr_ptr().get(), 
         local_sap.get_size());
@@ -113,7 +113,7 @@ int net::sock_acceptor::shared_open(
         LOG(ERROR) << "bind error: " << strerror(errno);
         return ret;
     }
-    // LOG(INFO) << "listening on: " << addr_str << ":" << port << "...";
+    LOG(INFO) << "listening on: " << addr_str << ":" << port << "...";
     ret = ::listen(sock_fd_->get_handle(), backlog);
     if(ret != 0){
         LOG(ERROR) << "listen error: " << strerror(errno);

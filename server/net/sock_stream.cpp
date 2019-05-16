@@ -147,7 +147,7 @@ ssize_t net::sock_stream::send_imp(const void *buffer, size_t len, int flags, co
     int read_len = 0;
     if (timeout == 0)
     {
-        // LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
+        LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
         return ::send(sock_fd_->get_handle(), buffer, len, flags);
     }
     else
@@ -156,7 +156,7 @@ ssize_t net::sock_stream::send_imp(const void *buffer, size_t len, int flags, co
         unp::handle_write_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
         sock_fd_->set_non_blocking();
         read_len = ::send(sock_fd_->get_handle(), buffer, len, flags);
-        // LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
+        LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
         sock_fd_->restore_blocking();
     }
     return read_len;

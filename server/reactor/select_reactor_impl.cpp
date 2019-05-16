@@ -22,8 +22,8 @@ event_handler* select_demultiplex_table::get_handler(int handle, Event_Type type
 }
 
 int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
-    // auto event_type_str = event_type_to_string(type);
-    // LOG(INFO) << "bind handle: " << handle << " type: " << event_type_str;
+    auto event_type_str = event_type_to_string(type);
+    LOG(INFO) << "bind handle: " << handle << " type: " << event_type_str;
     if(!is_valid_handle(handle) || handler == 0) {
         LOG(ERROR) << "handle is not in range or handler is null handle: " 
                     << handle << " handler: " << handler;

@@ -26,7 +26,7 @@ tcp_server::~tcp_server()
 int tcp_server::open()
 {
     LOG(INFO) << "Starting server on " << local_addr_.get_address_string();
-    first_reactor_ = make_reactor(reactor_imp_t_enum::USING_EPOLL);
+    first_reactor_ = make_reactor(unp::reactor_imp_t_enum::USING_EPOLL);
     if(first_reactor_.get() == nullptr)
 		return -1;
 
@@ -39,7 +39,7 @@ int tcp_server::open()
 
     for(size_t i = 0; i < thread_num_; i++)
     {
-        auto connection_reactor = make_reactor(reactor_imp_t_enum::USING_EPOLL);
+        auto connection_reactor = make_reactor(unp::reactor_imp_t_enum::USING_EPOLL);
         if(connection_reactor.get() == nullptr) return -1;
         connection_reactors_.push_back(connection_reactor);
         auto current_reactor = connection_reactors_.back();
@@ -87,19 +87,19 @@ int tcp_server::close(bool force)
     return acceptor_->destroy_acceptor();
 }
 
-tcp_server::reactor_ptr_t tcp_server::make_reactor(reactor_imp_t_enum reactor_t)
+tcp_server::reactor_ptr_t tcp_server::make_reactor(unp::reactor_imp_t_enum reactor_t)
 {
 	reactor_ptr_t ret_ptr;
 	Reactor* reactor_ret = nullptr;
     switch(reactor_t)
     {
-        case reactor_imp_t_enum::USING_SELECT:
+        case unp::reactor_imp_t_enum::USING_SELECT:
             reactor_ret = new Reactor(new select_reactor_impl{}, true);
             break;
-        case reactor_imp_t_enum::USING_POLL:
+        case unp::reactor_imp_t_enum::USING_POLL:
             reactor_ret = new Reactor(new poll_reactor_impl{}, true);
             break;
-        case reactor_imp_t_enum::USING_EPOLL:
+        case unp::reactor_imp_t_enum::USING_EPOLL:
             reactor_ret = new Reactor(new epoll_reactor_impl{}, false);
             break;
         default:

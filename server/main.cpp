@@ -13,6 +13,7 @@
 #include "server/reactor/poll_reactor_impl.h"
 #include "server/reactor/epoll_reactor_impl.h"
 #include "server/reactor/tcp_server.h"
+#include "server/reactor/tcp_client.h"
 #include <exception>
 #include <cstdlib>
 #include <chrono>
@@ -157,6 +158,8 @@ int main(int argc, char** argv){
     server_scoped_helper s_h{argc, argv};
 
 
+/*
+
     // inet_addr local_addr{9090, "192.168.0.112"};//big pc
     inet_addr local_addr{9090, "192.168.0.142"};//pc
     // inet_addr local_addr{9090, "127.0.0.1"};// dell
@@ -166,22 +169,30 @@ int main(int argc, char** argv){
     server.open();
     // set_reactor_acceptor_without_pool("192.168.0.112", 9090);
 
+*/
 
-//     if(argc == 4){
-//         const char* ipAddr = argv[2];
-//         int port = atoi(argv[3]);
-//         if(strcmp(argv[1], "-listen")== 0){
-// //             set_reactor_acceptor(ipAddr, port);
-// //            set_reactor_acceptor_using_epoll(ipAddr, port);
-//             set_reactor_acceptor_without_pool(ipAddr, port);
-//         }
-//         if(strcmp(argv[1], "-connect")== 0){
-//             set_reactor_connector(ipAddr, port);
-//             // multi_connector(ipAddr, port, 4, 1);
-//         }
-//     }else{
-//         LOG(ERROR) << "args error.....";
-//     }
+    inet_addr target_addr{9090, "192.168.0.2"};
+    // inet_addr target_addr{9090, "192.168.0.142"};
+    reactor::tcp_client client{};
+    client.open(unp::reactor_imp_t_enum::USING_EPOLL);
+    std::chrono::microseconds timeout = 2s;
+    client.connect(target_addr, timeout);
+
+    //     if(argc == 4){
+    //         const char* ipAddr = argv[2];
+    //         int port = atoi(argv[3]);
+    //         if(strcmp(argv[1], "-listen")== 0){
+    // //             set_reactor_acceptor(ipAddr, port);
+    // //            set_reactor_acceptor_using_epoll(ipAddr, port);
+    //             set_reactor_acceptor_without_pool(ipAddr, port);
+    //         }
+    //         if(strcmp(argv[1], "-connect")== 0){
+    //             set_reactor_connector(ipAddr, port);
+    //             // multi_connector(ipAddr, port, 4, 1);
+    //         }
+    //     }else{
+    //         LOG(ERROR) << "args error.....";
+    //     }
 
     /*
     net::sock_connector connector{};

@@ -6,6 +6,11 @@
 using namespace std::chrono;
 
 namespace unp{
+enum class reactor_imp_t_enum
+{
+    USING_SELECT, USING_POLL, USING_EPOLL
+};
+
 
 int handle_ready_using_select(
     int handle,

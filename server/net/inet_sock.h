@@ -71,7 +71,7 @@ inline int net::inet_sock::get_option(int level, int option, void *opt_val, sock
 
 inline int net::inet_sock::open(int family, sock_type type, int protocol, int reuse_addr){
     this->handle_ = ::socket(family, (int)type, protocol);
-    // LOG(INFO) << "opening a socket..." << handle_; 
+    LOG(INFO) << "opening a socket..." << handle_; 
 	int one = 1;
 	if(handle_ == INVALID_HANDLE){
 		return -1;
@@ -86,7 +86,7 @@ inline int net::inet_sock::open(int family, sock_type type, int protocol, int re
 inline int net::inet_sock::close(){
     int ret = 0;
     if(this->handle_ != INVALID_HANDLE){
-        // LOG(INFO) << "closing a socket..." << handle_;
+        LOG(INFO) << "closing a socket..." << handle_;
         ret = ::close(this->handle_);
         this->handle_ = INVALID_HANDLE;
     }
@@ -95,14 +95,14 @@ inline int net::inet_sock::close(){
 
 inline void net::inet_sock::shut_down(int how){
 	if(handle_ != INVALID_HANDLE){
-        // LOG(INFO) << "shutdown a socket..." << handle_;
+        LOG(INFO) << "shutdown a socket..." << handle_;
 		::shutdown(handle_, how);
 	}
 }
 
 inline int net::inet_sock::set_non_blocking() const{
     if(handle_ == INVALID_HANDLE) return -1;
-    // LOG(INFO) << "set socket to non-blocking mode..." << handle_;
+    LOG(INFO) << "set socket to non-blocking mode..." << handle_;
     auto flags = fcntl(F_GETFL, 0);
     SET_BIT(flags, O_NONBLOCK);
     return fcntl(F_SETFL, flags);
@@ -110,7 +110,7 @@ inline int net::inet_sock::set_non_blocking() const{
 
 inline int net::inet_sock::restore_blocking() const{
     if(handle_ == INVALID_HANDLE) return -1;
-    // LOG(INFO) << "restore socket to blcoking mode...";
+    LOG(INFO) << "restore socket to blcoking mode...";
     auto flags = fcntl(F_GETFL, 0);
     CLR_BIT(flags, O_NONBLOCK);
     return fcntl(F_SETFL, flags);

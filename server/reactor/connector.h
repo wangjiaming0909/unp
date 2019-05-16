@@ -7,7 +7,6 @@
 #include "server/reactor/io_handler.h"
 #include "server/thread/thread_pool.h"
 #include "server/util/easylogging++.h"
-#include "boost/shared_ptr.hpp"
 #include "connection_handler.h"
 #include <vector>
 #include <chrono>
@@ -34,9 +33,10 @@ public:
     virtual int handle_input(int handle) override ;
 	
     int connect(const net::inet_addr& target_addr, const micro_seconds& timeout);
+
 private:
     //return handle
-    int make_connection_handler();
+    connection_handler_ptr_t make_connection_handler();
     int activate_connection_handler(int handle);
 	
 private:

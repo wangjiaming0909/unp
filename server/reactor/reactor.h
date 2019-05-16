@@ -43,13 +43,13 @@ public:
             reactor_impl_->register_handler(handle, handler, type) == -1 &&
             reactor_impl_->isWaiting())
         {
-            // LOG(INFO) << "eventfd write event";
+            LOG(INFO) << "eventfd write event";
             eventFd_ptr_->wakeup();
         }
 
         if(handle != eventFd_ptr_->getEventFD() && reactor_impl_->isWaiting())
         {
-            // LOG(INFO) << "current handle is not the event fd... the reactor will be waked up handle: " << handle;
+            LOG(INFO) << "current handle is not the event fd... the reactor will be waked up handle: " << handle;
             eventFd_ptr_->wakeup();
         }
 		return ret;
