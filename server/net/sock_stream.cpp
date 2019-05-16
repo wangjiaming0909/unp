@@ -37,7 +37,7 @@ ssize_t net::sock_stream::read(reactor::buffer& buf, size_t len, const microseco
         auto data_appended = buf.append(data_p, read_len);
         if(data_appended != read_len)
         {
-            LOG(WARNING) << "Read data from socket len: " << read_len << " appended into buffer len: " << data_appended;
+            // LOG(WARNING) << "Read data from socket len: " << read_len << " appended into buffer len: " << data_appended;
             return -1;
         }
     }
@@ -62,7 +62,7 @@ ssize_t net::sock_stream::write(const void* buffer, size_t len, const micro_seco
 	if(timeout == nullptr)
 	{
 		write_len = ::write(sock_fd_->get_handle(), buffer, len);
-		LOG(INFO) << "Write to handle: " << sock_fd_->get_handle() << " " << write_len << " bytes";
+		// LOG(INFO) << "Write to handle: " << sock_fd_->get_handle() << " " << write_len << " bytes";
 		return write_len;
 	}
 
@@ -70,7 +70,7 @@ ssize_t net::sock_stream::write(const void* buffer, size_t len, const micro_seco
 	unp::handle_write_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
 	sock_fd_->set_non_blocking();
 	write_len = ::write(sock_fd_->get_handle(), buffer, len);
-	LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
+	// LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
 	sock_fd_->restore_blocking();
 
 	return write_len;
@@ -103,7 +103,7 @@ ssize_t net::sock_stream::read_imp(void *buffer, size_t len, const micro_seconds
     if (timeout == 0)
     {
         read_len = ::read(sock_fd_->get_handle(), buffer, len);
-        LOG(INFO) << "Read from: " << sock_fd_->get_handle() << " read: " << read_len << "bytes";
+        // LOG(INFO) << "Read from: " << sock_fd_->get_handle() << " read: " << read_len << "bytes";
         return read_len;
     }
     else
@@ -125,11 +125,11 @@ ssize_t net::sock_stream::read_imp(void *buffer, size_t len, const micro_seconds
         read_len = ::read(sock_fd_->get_handle(), static_cast<char *>(buffer), len);
         if(read_len > 0) 
         {
-            LOG(INFO) << "Read from: " << sock_fd_->get_handle() << " read: " << read_len << "bytes";
+            // LOG(INFO) << "Read from: " << sock_fd_->get_handle() << " read: " << read_len << "bytes";
         } 
         else if(read_len == 0)
         {
-            LOG(INFO) << "Read a EOF: " << sock_fd_->get_handle();
+            // LOG(INFO) << "Read a EOF: " << sock_fd_->get_handle();
         }
         else
         {
@@ -147,7 +147,7 @@ ssize_t net::sock_stream::send_imp(const void *buffer, size_t len, int flags, co
     int read_len = 0;
     if (timeout == 0)
     {
-        LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
+        // LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
         return ::send(sock_fd_->get_handle(), buffer, len, flags);
     }
     else
@@ -156,7 +156,7 @@ ssize_t net::sock_stream::send_imp(const void *buffer, size_t len, int flags, co
         unp::handle_write_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
         sock_fd_->set_non_blocking();
         read_len = ::send(sock_fd_->get_handle(), buffer, len, flags);
-        LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
+        // LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
         sock_fd_->restore_blocking();
     }
     return read_len;
@@ -170,7 +170,7 @@ ssize_t net::sock_stream::readv_imp(iovec iov[], int n, const micro_seconds *tim
     if (timeout == 0)
     {
         return ::readv(sock_fd_->get_handle(), iov, n);
-        LOG(INFO) << "Readv from: " << sock_fd_->get_handle();
+        // LOG(INFO) << "Readv from: " << sock_fd_->get_handle();
     }
     else
     {
@@ -178,7 +178,7 @@ ssize_t net::sock_stream::readv_imp(iovec iov[], int n, const micro_seconds *tim
         unp::handle_read_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
         sock_fd_->set_non_blocking();
         read_len = ::readv(sock_fd_->get_handle(), iov, n);
-        LOG(INFO) << "Readv from: " << sock_fd_->get_handle();
+        // LOG(INFO) << "Readv from: " << sock_fd_->get_handle();
         sock_fd_->restore_blocking();
     }
     return read_len;
@@ -191,7 +191,7 @@ ssize_t net::sock_stream::writev_imp(const iovec iov[], int n, const micro_secon
     int read_len = 0;
     if (timeout == 0)
     {
-        LOG(INFO) << "Writev to: " << sock_fd_->get_handle();
+        // LOG(INFO) << "Writev to: " << sock_fd_->get_handle();
         return ::writev(sock_fd_->get_handle(), iov, n);
     }
     else
@@ -200,7 +200,7 @@ ssize_t net::sock_stream::writev_imp(const iovec iov[], int n, const micro_secon
         unp::handle_read_ready_using_poll(sock_fd_->get_handle(), milli_seconds);
         sock_fd_->set_non_blocking();
         read_len = ::writev(sock_fd_->get_handle(), iov, n);
-        LOG(INFO) << "Writev to: " << sock_fd_->get_handle();
+        // LOG(INFO) << "Writev to: " << sock_fd_->get_handle();
         sock_fd_->restore_blocking();
     }
     return read_len;

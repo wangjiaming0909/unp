@@ -99,7 +99,7 @@ acceptor::~acceptor(){
 
 int acceptor::handle_input(int handle)
 {
-    if(handle == INVALID_HANDLE || handle != sock_acceptor_.get_handle())
+    if (handle == INVALID_HANDLE || handle != sock_acceptor_.get_handle())
     {
         LOG(ERROR) << "Handler error...";
         return -1;
@@ -191,16 +191,17 @@ int acceptor::make_read_handler(Reactor& reactor_to_register)
     std::shared_ptr<connection_handler> handler{new echo_connection_handler{reactor_to_register}};
    handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
 
-    // net::inet_addr peer_addr{};
+    net::inet_addr peer_addr{};
 
-    int ret = sock_acceptor_.accept(handler->get_sock_stream(), 0);
-    if(ret != 0)
+    int ret = sock_acceptor_.accept(handler->get_sock_stream(), &peer_addr);
+    if (ret != 0)
     {
         LOG(ERROR) << "Acceptor error..." << strerror(errno);
         return -1;
     }
 
     int handle = handler->get_handle();
+    // LOG(INFO) << "connection from: " << peer_addr.get_address_string() << " handle: " << handle;
     if(handle < 0)
     {
         LOG(ERROR) << "Handler errror" << strerror(errno);

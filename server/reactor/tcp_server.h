@@ -1,15 +1,15 @@
 #ifndef TCP_SERVER_H
 #define TCP_SERVER_H
 
-#include "server/reactor/acceptor.h"
 #include "server/thread/thread_pool.h"
-#include "server/thread/message_queue.h"
-#include "server/net/addr.h"
-#include "server/reactor/reactor.h"
+#include "server/net/inet_addr.h"
 #include <memory>
 
 namespace reactor
 {
+
+class Reactor;
+class acceptor;
 
 enum class reactor_imp_t_enum
 {

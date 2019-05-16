@@ -16,6 +16,7 @@ echo_connection_handler::echo_connection_handler(Reactor& reactor) : connection_
 
 echo_connection_handler::~echo_connection_handler()
 {
+    LOG(INFO) << "closing a connection handle: " << this->get_handle();
     // util::string time = util::Time::now().toString();
     // std::cout << "destructing echo connection handler "<< i << std::endl;
     // i--;
@@ -47,7 +48,7 @@ int echo_connection_handler::handle_input(int handle)
     }
     if(ret == 0)
     {
-        LOG(INFO) << "Read EOF";
+        // LOG(INFO) << "Read EOF";
         return -1;
     }
 

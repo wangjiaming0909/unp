@@ -35,7 +35,7 @@ private:
     int epoll_wait(int milliseconds);
     int dispatch(int active_handle_count);
     int dispatch_io_handlers(int active_handles, int& handles_dispatched);
-    int dispatch_io_epoll_sets(int active_handles, int& handles_dispatched, Event_Type type, HANDLER callback);
+    int dispatch_io_epoll_sets(int active_handles, int handles_dispatched, Event_Type type, HANDLER callback);
 
 private:
     int                                 fd_count_;

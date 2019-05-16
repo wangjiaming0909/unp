@@ -93,7 +93,6 @@ int poll_demultiplex_table::bind(int handle, event_handler* handler, Event_Type 
         table_.resize(handle + 4);
     }
     size_++;
-    LOG(INFO) << "size_: " << size_;
     return table_[handle].bind_new(type, handler);
 }
 
@@ -108,7 +107,6 @@ int poll_demultiplex_table::unbind(int handle){
     }
     table_[handle].clear();
     size_ -= handle_count;
-    LOG(INFO) << "unbinding size_: " << size_;
     return 0;
 }
 

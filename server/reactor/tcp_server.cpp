@@ -3,6 +3,8 @@
 #include "server/reactor/poll_reactor_impl.h"
 #include "server/reactor/epoll_reactor_impl.h"
 #include "server/util/easylogging++.h"
+#include "server/reactor/acceptor.h"
+
 
 namespace reactor
 {
@@ -23,8 +25,9 @@ tcp_server::~tcp_server()
 
 int tcp_server::open()
 {
+    LOG(INFO) << "Starting server on " << local_addr_.get_address_string();
     first_reactor_ = make_reactor(reactor_imp_t_enum::USING_EPOLL);
-	if(first_reactor_.get() == nullptr)
+    if(first_reactor_.get() == nullptr)
 		return -1;
 
     make_acceptor();
@@ -91,13 +94,13 @@ tcp_server::reactor_ptr_t tcp_server::make_reactor(reactor_imp_t_enum reactor_t)
     switch(reactor_t)
     {
         case reactor_imp_t_enum::USING_SELECT:
-            reactor_ret = new Reactor(new select_reactor_impl{});
+            reactor_ret = new Reactor(new select_reactor_impl{}, true);
             break;
         case reactor_imp_t_enum::USING_POLL:
-            reactor_ret = new Reactor(new poll_reactor_impl{});
+            reactor_ret = new Reactor(new poll_reactor_impl{}, true);
             break;
         case reactor_imp_t_enum::USING_EPOLL:
-            reactor_ret = new Reactor(new epoll_reactor_impl{});
+            reactor_ret = new Reactor(new epoll_reactor_impl{}, false);
             break;
         default:
 			break;
