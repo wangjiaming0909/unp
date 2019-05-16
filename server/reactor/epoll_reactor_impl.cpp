@@ -248,19 +248,15 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int& handles_
             {
                 handler->close_write(current_fd);
             }
-
-            bool isHasHandle = false;
-            // mutex_.lock();
-            isHasHandle = demux_table_.has_handle(current_fd);
-            // mutex_.unlock();
-            if(!isHasHandle)
-            {
-                handler->handle_close(current_fd);
-            }
         } 
         else
         {
             LOG(INFO) <<"Keep listening on handle: " << current_fd << " event: " << event_type_to_string(type);
+        }
+        bool isHasHandle = demux_table_.has_handle(current_fd);
+        if(!isHasHandle && (handler != nullptr))
+        {
+            handler->handle_close(current_fd);
         }
     }
     return active_handles - handles_dispatched;
