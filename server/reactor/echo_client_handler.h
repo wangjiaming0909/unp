@@ -16,6 +16,12 @@ public:
     virtual int open()
     {
         this->enable_reading();
+        return write_data();
+    }
+
+public:
+    int write_data()
+    {
         const char *data = "GET / HTTP/1.1\r\n\
 Host: 192.168.0.2:8080\r\n\
 Connection: keep-alive\r\n\
@@ -31,7 +37,7 @@ Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7";
            LOG(WARNING) << "write error";
            return -1;
        }
-       return 0;
+        return ret;
     }
 };
 
