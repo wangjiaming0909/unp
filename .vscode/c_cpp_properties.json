@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/boost_1_68_0",
-                "/usr/local/include"
+                "/usr/local/include",
+                "/usr/include/c++/7"
             ],
             "browse": {
                 "path": [
