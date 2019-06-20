@@ -3,7 +3,7 @@
 namespace http
 {
 
-HttpMessage::HttpMessage(/* args */)
+HttpMessage::HttpMessage() : startTime_(util::Time::now())
 {
 }
 

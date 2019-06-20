@@ -8,7 +8,7 @@
 
 namespace http
 {
-struct http_request
+struct HttpRequest
 {
     using addr_t = net::inet_addr;
     using string_t = std::string;

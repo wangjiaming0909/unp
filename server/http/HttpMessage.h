@@ -3,6 +3,9 @@
 
 #include "server/http/HttpRequest.h"
 #include "server/http/HttpResponse.h"
+#include "server/http/HttpHeaders.h"
+#include "server/util/unp_time.h"
+#include <variant>
 
 namespace http{
 
@@ -12,14 +15,18 @@ public:
     using addr_t = net::inet_addr;
     using string_t = util::string;
 public:
-    HttpMessage(/* args */);
+    HttpMessage();
     ~HttpMessage();
 
 private:
+    std::variant<std::monostate, HttpRequest, HttpResponse> message_;
+
+    HttpHeaders     headers_;
+    util::Time      startTime_;
+
     addr_t          dstAddress_;
     string_t        dstIP_; 
     string_t        dstPort_;
-
     string_t        localIP_;
     string_t        versionStr_;
 };
