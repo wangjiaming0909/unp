@@ -3,6 +3,7 @@
 #include "server/thread/thread_pool.h"
 #include "server/thread/message_queue.h"
 #include "server/reactor/event_handler.h"
+#include "server/reactor/reactor.h"
 #include <boost/shared_ptr.hpp>
 
 using namespace std::chrono_literals;

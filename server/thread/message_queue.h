@@ -135,7 +135,7 @@ public:
     }
 
     data_block& operator=(const data_block& other) {
-        if(&other == 0) return *this;
+        if(&other == this) return *this;
         msg_data_ = other.msg_data_;
         count_ = other.count_;
         return *this;
@@ -272,7 +272,6 @@ int message_queue<T>::enqueue_tail(message_block_type message, const micro_secon
 template <typename T>
 int message_queue<T>::dequeue_head(message_block_type* first_message, const micro_seconds& timeout){
     guard_type _{mutex_};
-    int result = 0;
     if(wait_not_empty_condition(timeout) != 0)//timeout
         return -1;
     *first_message = deque_ptr_->front();

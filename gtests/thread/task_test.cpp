@@ -23,6 +23,7 @@ public:
             lock_guard<std::mutex> _{lock_};
             data_ptr.operator*()++;
         }
+        return 0;
     }
     // virtual void open() override {}
 

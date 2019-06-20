@@ -197,6 +197,7 @@ int epoll_reactor_impl::dispatch(int active_handle_count)
 
 int epoll_reactor_impl::dispatch_io_handlers(int active_handles, int& handles_dispatched)
 {
+    (void)handles_dispatched;
     int remain = 0;
     remain = this->dispatch_io_epoll_sets(active_handles, 0, EPOLLIN, &event_handler::handle_input);
 
