@@ -1,0 +1,107 @@
+%{
+#include "HttpCommomHeadersHash.h"
+
+namespace http{
+
+%}
+struct HttpHeader
+{
+    const char* headerName;
+    HttpHeaderCode headerCode;
+};
+%%
+:Authority, HttpHeaderCode::HTTP_HEADER_COLON_AUTHORITY
+:Method, HttpHeaderCode::HTTP_HEADER_COLON_METHOD
+:Path, HttpHeaderCode::HTTP_HEADER_COLON_PATH
+:Scheme, HttpHeaderCode::HTTP_HEADER_COLON_SCHEME
+:Status, HttpHeaderCode::HTTP_HEADER_COLON_STATUS
+:Protocol, HttpHeaderCode::HTTP_HEADER_COLON_PROTOCOL
+Accept, HttpHeaderCode::HTTP_HEADER_ACCEPT
+Accept-Charset, HttpHeaderCode::HTTP_HEADER_ACCEPT_CHARSET
+Accept-Datetime, HttpHeaderCode::HTTP_HEADER_ACCEPT_DATETIME
+Accept-Encoding, HttpHeaderCode::HTTP_HEADER_ACCEPT_ENCODING
+Accept-Language, HttpHeaderCode::HTTP_HEADER_ACCEPT_LANGUAGE
+Accept-Ranges, HttpHeaderCode::HTTP_HEADER_ACCEPT_RANGES
+Access-Control-Allow-Credentials, HttpHeaderCode::HTTP_HEADER_ACCESS_CONTROL_ALLOW_CREDENTIALS
+Access-Control-Allow-Headers, HttpHeaderCode::HTTP_HEADER_ACCESS_CONTROL_ALLOW_HEADERS
+Access-Control-Allow-Methods, HttpHeaderCode::HTTP_HEADER_ACCESS_CONTROL_ALLOW_METHODS
+Access-Control-Allow-Origin, HttpHeaderCode::HTTP_HEADER_ACCESS_CONTROL_ALLOW_ORIGIN
+Access-Control-Expose-Headers, HttpHeaderCode::HTTP_HEADER_ACCESS_CONTROL_EXPOSE_HEADERS
+Access-Control-Max-Age, HttpHeaderCode::HTTP_HEADER_ACCESS_CONTROL_MAX_AGE
+Access-Control-Request-Headers, HttpHeaderCode::HTTP_HEADER_ACCESS_CONTROL_REQUEST_HEADERS
+Access-Control-Request-Method, HttpHeaderCode::HTTP_HEADER_ACCESS_CONTROL_REQUEST_METHOD
+Age, HttpHeaderCode::HTTP_HEADER_AGE
+Allow, HttpHeaderCode::HTTP_HEADER_ALLOW
+Alt-Svc, HttpHeaderCode::HTTP_HEADER_ALT_SVC
+Authorization, HttpHeaderCode::HTTP_HEADER_AUTHORIZATION
+Cache-Control, HttpHeaderCode::HTTP_HEADER_CACHE_CONTROL
+Connection, HttpHeaderCode::HTTP_HEADER_CONNECTION
+Content-Disposition, HttpHeaderCode::HTTP_HEADER_CONTENT_DISPOSITION
+Content-Encoding, HttpHeaderCode::HTTP_HEADER_CONTENT_ENCODING
+Content-Language, HttpHeaderCode::HTTP_HEADER_CONTENT_LANGUAGE
+Content-Length, HttpHeaderCode::HTTP_HEADER_CONTENT_LENGTH
+Content-Location, HttpHeaderCode::HTTP_HEADER_CONTENT_LOCATION
+Content-MD5, HttpHeaderCode::HTTP_HEADER_CONTENT_MD5
+Content-Range, HttpHeaderCode::HTTP_HEADER_CONTENT_RANGE
+Content-Type, HttpHeaderCode::HTTP_HEADER_CONTENT_TYPE
+Cookie, HttpHeaderCode::HTTP_HEADER_COOKIE
+DNT, HttpHeaderCode::HTTP_HEADER_DNT
+Date, HttpHeaderCode::HTTP_HEADER_DATE
+ETag, HttpHeaderCode::HTTP_HEADER_ETAG
+Expect, HttpHeaderCode::HTTP_HEADER_EXPECT
+Expires, HttpHeaderCode::HTTP_HEADER_EXPIRES
+From, HttpHeaderCode::HTTP_HEADER_FROM
+Front-End-Https, HttpHeaderCode::HTTP_HEADER_FRONT_END_HTTPS
+Host, HttpHeaderCode::HTTP_HEADER_HOST
+If-Match, HttpHeaderCode::HTTP_HEADER_IF_MATCH
+If-Modified-Since, HttpHeaderCode::HTTP_HEADER_IF_MODIFIED_SINCE
+If-None-Match, HttpHeaderCode::HTTP_HEADER_IF_NONE_MATCH
+If-Range, HttpHeaderCode::HTTP_HEADER_IF_RANGE
+If-Unmodified-Since, HttpHeaderCode::HTTP_HEADER_IF_UNMODIFIED_SINCE
+Keep-Alive, HttpHeaderCode::HTTP_HEADER_KEEP_ALIVE
+Last-Modified, HttpHeaderCode::HTTP_HEADER_LAST_MODIFIED
+Link, HttpHeaderCode::HTTP_HEADER_LINK
+Location, HttpHeaderCode::HTTP_HEADER_LOCATION
+Max-Forwards, HttpHeaderCode::HTTP_HEADER_MAX_FORWARDS
+Origin, HttpHeaderCode::HTTP_HEADER_ORIGIN
+P3P, HttpHeaderCode::HTTP_HEADER_P3P
+Pragma, HttpHeaderCode::HTTP_HEADER_PRAGMA
+Proxy-Authenticate, HttpHeaderCode::HTTP_HEADER_PROXY_AUTHENTICATE
+Proxy-Authorization, HttpHeaderCode::HTTP_HEADER_PROXY_AUTHORIZATION
+Proxy-Connection, HttpHeaderCode::HTTP_HEADER_PROXY_CONNECTION
+Range, HttpHeaderCode::HTTP_HEADER_RANGE
+Referer, HttpHeaderCode::HTTP_HEADER_REFERER
+Refresh, HttpHeaderCode::HTTP_HEADER_REFRESH
+Retry-After, HttpHeaderCode::HTTP_HEADER_RETRY_AFTER
+Sec-WebSocket-Key, HttpHeaderCode::HTTP_HEADER_SEC_WEBSOCKET_KEY
+Sec-WebSocket-Accept, HttpHeaderCode::HTTP_HEADER_SEC_WEBSOCKET_ACCEPT
+Server, HttpHeaderCode::HTTP_HEADER_SERVER
+Set-Cookie, HttpHeaderCode::HTTP_HEADER_SET_COOKIE
+Sec-Token-Binding, HttpHeaderCode::HTTP_HEADER_SEC_TOKEN_BINDING
+Strict-Transport-Security, HttpHeaderCode::HTTP_HEADER_STRICT_TRANSPORT_SECURITY
+TE, HttpHeaderCode::HTTP_HEADER_TE
+Timestamp, HttpHeaderCode::HTTP_HEADER_TIMESTAMP
+Trailer, HttpHeaderCode::HTTP_HEADER_TRAILER
+Transfer-Encoding, HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING
+Upgrade, HttpHeaderCode::HTTP_HEADER_UPGRADE
+User-Agent, HttpHeaderCode::HTTP_HEADER_USER_AGENT
+VIP, HttpHeaderCode::HTTP_HEADER_VIP
+Vary, HttpHeaderCode::HTTP_HEADER_VARY
+Via, HttpHeaderCode::HTTP_HEADER_VIA
+WWW-Authenticate, HttpHeaderCode::HTTP_HEADER_WWW_AUTHENTICATE
+Warning, HttpHeaderCode::HTTP_HEADER_WARNING
+X-Accel-Redirect, HttpHeaderCode::HTTP_HEADER_X_ACCEL_REDIRECT
+X-Content-Security-Policy-Report-Only, HttpHeaderCode::HTTP_HEADER_X_CONTENT_SECURITY_POLICY_REPORT_ONLY
+X-Content-Type-Options, HttpHeaderCode::HTTP_HEADER_X_CONTENT_TYPE_OPTIONS
+X-Forwarded-For, HttpHeaderCode::HTTP_HEADER_X_FORWARDED_FOR
+X-Forwarded-Proto, HttpHeaderCode::HTTP_HEADER_X_FORWARDED_PROTO
+X-Frame-Options, HttpHeaderCode::HTTP_HEADER_X_FRAME_OPTIONS
+X-Powered-By, HttpHeaderCode::HTTP_HEADER_X_POWERED_BY
+X-Real-IP, HttpHeaderCode::HTTP_HEADER_X_REAL_IP
+X-Requested-With, HttpHeaderCode::HTTP_HEADER_X_REQUESTED_WITH
+X-Thrift-Protocol, HttpHeaderCode::HTTP_HEADER_X_THRIFT_PROTOCOL
+X-UA-Compatible, HttpHeaderCode::HTTP_HEADER_X_UA_COMPATIBLE
+X-Wap-Profile, HttpHeaderCode::HTTP_HEADER_X_WAP_PROFILE
+X-XSS-Protection, HttpHeaderCode::HTTP_HEADER_X_XSS_PROTECTION
+%%
+} //namespace 

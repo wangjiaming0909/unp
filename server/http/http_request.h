@@ -3,7 +3,7 @@
 
 #include "server/net/inet_addr.h"
 #include "server/util/XString.h"
-#include "server/http/http_method.h"
+#include "server/http/HttpMethod.h"
 #include <variant>
 
 namespace http
@@ -15,7 +15,7 @@ struct http_request
     addr_t      clientAddr_; 
     string_t    clientIP_;
     string_t    clientPort_;
-    std::variant<string_t, http_method> method_;
+    std::variant<string_t, HTTPMethod> method_;
     string_t    path_;
     string_t    query_;
     string_t    utl_;

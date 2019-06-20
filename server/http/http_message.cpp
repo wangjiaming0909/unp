@@ -1,4 +1,4 @@
-#include "server/http/http_message.h"
+#include "http_message.h"
 
 namespace http
 {
