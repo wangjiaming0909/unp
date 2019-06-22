@@ -18,7 +18,7 @@ OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES) )
 
 
 TARGET = $(BUILDDIR)/a.out
-LIBS = /boost_1_68_0/stage/lib
+LIBS = /boost_1_70_0/stage/lib
 INCLUDES = /boost_1_68_0 -I ~/codes/unp
 # LDFLAGS = -pthread -lboost_thread -lboost_system
 

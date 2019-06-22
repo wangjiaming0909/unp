@@ -5,7 +5,7 @@
 #include "server/http/HttpResponse.h"
 #include "server/http/HttpHeaders.h"
 #include "server/util/unp_time.h"
-#include <variant>
+#include <boost/variant/variant.hpp>
 
 namespace http{
 
@@ -19,7 +19,7 @@ public:
     ~HttpMessage();
 
 private:
-    std::variant<std::monostate, HttpRequest, HttpResponse> message_;
+    boost::variant<boost::blank, HttpRequest, HttpResponse> message_;
 
     HttpHeaders     headers_;
     util::Time      startTime_;

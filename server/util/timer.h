@@ -1,6 +1,6 @@
 #ifndef _UTIL_TIMER_H_
 #define _UTIL_TIMER_H_
-#include <boost/timer.hpp>
+#include <boost/timer/timer.hpp>
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -15,12 +15,12 @@ public:
     ~timer() {
         cout 
             << std::left << std::setw(48) << s_ 
-            << std::left << std::setw(24) << std::fixed << timer_.elapsed() 
+            << std::left << std::setw(24) << std::fixed << timer_.format()
             << endl;
     }
 
 private:
-    boost::timer timer_;
+    boost::timer::cpu_timer timer_;
     string s_;
 };
 }

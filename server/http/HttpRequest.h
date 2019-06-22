@@ -3,8 +3,8 @@
 
 #include "server/net/inet_addr.h"
 #include "server/http/HttpMethod.h"
+#include <boost/variant/variant.hpp> 
 #include <string>
-#include <variant>
 
 namespace http
 {
@@ -21,7 +21,7 @@ struct HttpRequest
     string_t                                utl_;
     uint16_t                                pushStatus_;
     string_t                                pushStatusStr_;
-    std::variant<string_t, HTTPMethod>      method_;
+    boost::variant<string_t, HTTPMethod>      method_;
 };
 }
 #endif //_HTTP_REQUEST_H_
