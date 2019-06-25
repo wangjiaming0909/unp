@@ -19,7 +19,7 @@ public:
     Reactor(reactor_implementation* reactor_impl = 0, bool needWakeUp = false)
 		: reactor_impl_(reactor_impl)
 	{
-        if(needWakeUp)
+        if (needWakeUp) //connector and epoll do not need weakup, poll select need it
         {
             eventFd_ptr_ = std::make_shared<EventFD>();
             eventFd_ptr_->registerInto(*this);
