@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <gtest/gtest.h>
 
-#include "server/http/gperf/HttpCommomHeadersHash.h"
+#include "http/gperf/HttpCommomHeadersHash.h"
 
 using namespace std;
 
@@ -18,7 +18,7 @@ void _2()
 //test run folder should be in unp folder
 TEST(gperf, test_all)
 {
-    const char* fileName = "server/http/gperf/HttpCommomHeaders.txt";
+    const char* fileName = "http/gperf/HttpCommomHeaders.txt";
     ifstream ifs{fileName, ifs.in};
     if(!ifs.is_open())
     {

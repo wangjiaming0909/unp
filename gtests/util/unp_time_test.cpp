@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../server/util/unp_time.h"
+#include "util/unp_time.h"
 #include <chrono>
 
 class unp_time_test : public ::testing::Test{

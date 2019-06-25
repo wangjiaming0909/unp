@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "server/thread/message_queue.h"
+#include "thread/message_queue.h"
 #include <string>   
 #include <poll.h>
 #include <vector>

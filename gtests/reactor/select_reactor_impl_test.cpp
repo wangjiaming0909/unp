@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "server/reactor/select_reactor_impl.h"
-#include "server/reactor/event_handler.h"
-#include "server/reactor/reactor.h"
+#include "reactor/select_reactor_impl.h"
+#include "reactor/event_handler.h"
+#include "reactor/reactor.h"
 
 TEST(select_reactor_impl_test, test_max_number_of_handles){
     long int number_of_handles = reactor::select_demultiplex_table::MAX_NUMBER_OF_HANDLE;

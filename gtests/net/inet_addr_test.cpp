@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../../server/net/inet_addr.h"
+#include "net/inet_addr.h"
 #include <boost/scoped_array.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>

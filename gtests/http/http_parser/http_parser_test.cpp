@@ -1,8 +1,8 @@
 #include <iostream>
-#include "server/http/http_parser/http_parser.h"
+#include "http/http_parser/http_parser.h"
 #include "boost/range.hpp"
 #include <vector>
-#include "server/http/http_parser/URLParser.h"
+#include "http/http_parser/URLParser.h"
 #include <gtest/gtest.h>
 
 using namespace std;

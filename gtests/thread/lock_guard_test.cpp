@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "server/thread/lock_guard.h"
+#include "thread/lock_guard.h"
 #include <mutex>
 
 TEST(lock_guard_test, test_lock_guard_constructors){

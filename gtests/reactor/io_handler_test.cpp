@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "server/reactor/read_handler.h"
-#include "server/reactor/select_reactor_impl.h"
+#include "reactor/read_handler.h"
+#include "reactor/select_reactor_impl.h"
 
 using namespace reactor;
 using namespace thread;

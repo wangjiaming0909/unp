@@ -1,6 +1,6 @@
 
 #include "string_tests.h"
-#include "../server/util/XString.h"
+#include "util/XString.h"
 #include <cstdlib>
 using namespace TEST;
 

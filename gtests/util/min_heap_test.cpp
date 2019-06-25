@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "server/util/min_heap.h"
+#include "util/min_heap.h"
 
 TEST(min_heap_test, min_heap_test_){
     util::min_heap<int> mh{};

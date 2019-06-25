@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "server/http/HttpMethod.h"
+#include "http/HttpMethod.h"
 
 using namespace http;
 

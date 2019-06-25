@@ -17,4 +17,9 @@
     > 3. 那么第一线程上的reactor只是注册acceptor事件，不做 make_handler, activate_handler等事件,可以将acceptor更加精简
 
 ### TODO LIST with priority
-- 1. tcp client
+- 1. delete eventfd in reactor, add eventfd to reactor implementation
+- 2. add timer class
+- 3. add timer timeout handlers in select/poll/epoll
+- 4. when to wake up reactor???
+    > 1. when deleting one event in the reactor
+    > 2. 

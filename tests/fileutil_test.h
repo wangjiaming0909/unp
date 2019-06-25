@@ -1,7 +1,7 @@
 #ifndef FILEUTIL_TEST_H
 #define FILEUTIL_TEST_H
-#include "../server/config/ServerConfig.h"
-#include "./tests_macros.h"
+#include "config/ServerConfig.h"
+#include "tests_macros.h"
 #include <typeinfo>
 
 namespace TEST {
