@@ -4,14 +4,14 @@
             "name": "Linux",
             "includePath": [
                 "${workspaceFolder}/src",
-                "/boost_1_68_0",
+                "/boost_1_70_0",
                 "/usr/local/include"
             ],
             "browse": {
                 "path": [
                     "${workspaceFolder}/src",
                     "/usr/local/include",
-                    "/boost_1_68_0"
+                    "/boost_1_70_0"
                 ]
             },
             "defines": [],

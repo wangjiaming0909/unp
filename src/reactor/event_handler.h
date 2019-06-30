@@ -41,7 +41,7 @@ public:
     //** subclasses have to implement some functions that they do not need 
     virtual int handle_input(int ){ return 0; }
     virtual int handle_output(int ){ return 0; }
-    virtual int handle_timeout(int ){ return 0; }
+    virtual int handle_timeout(int ) noexcept { return 0; }
     virtual int handle_close(int ){ return 0; }
     virtual int close_read(int){ return 0; }
     virtual int close_write(int){ return 0; }
@@ -89,7 +89,7 @@ public:
         LOG(INFO) << "handle_output: " << handle << "...";
         return 0;
     }
-    virtual int handle_timeout(int handle) override {
+    virtual int handle_timeout(int handle) noexcept override {
         LOG(INFO) << "handle_timeout: " << handle << "...";
         return 0;
     }
