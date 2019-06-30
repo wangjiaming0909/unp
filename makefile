@@ -19,19 +19,19 @@ OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES) )
 
 TARGET = $(BUILDDIR)/a.out
 LIBS = /boost_1_70_0/stage/lib
-INCLUDES = /boost_1_70_0 -I ~/codes/unp/src
+INCLUDES = /boost_1_70_0 -I $(SOURCEDIR)
 # LDFLAGS = -pthread -lboost_thread -lboost_system
 
+# /boost_1_70_0/stage/lib/libboost_thread.a 
 TESTLDFLAG =  -pthread \
-		/boost_1_70_0/stage/lib/libboost_thread.a \
 		/boost_1_70_0/stage/lib/libboost_system.a \
 		/boost_1_70_0/stage/lib/libboost_timer.a \
 		/boost_1_70_0/stage/lib/libboost_chrono.a \
 		/usr/local/lib/libgtest.a \
 		/usr/local/lib/libgmock.a
 
+# /boost_1_70_0/stage/lib/libboost_thread.a 
 LDFLAGS = -pthread \
-		/boost_1_70_0/stage/lib/libboost_thread.a \
 		/boost_1_70_0/stage/lib/libboost_timer.a \
 		/boost_1_70_0/stage/lib/libboost_chrono.a \
 		/boost_1_70_0/stage/lib/libboost_system.a 
