@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "server/thread/thread_pool.h"
+#include "thread/thread_pool.h"
 
 using namespace thread;
 

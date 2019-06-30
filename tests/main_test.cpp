@@ -9,7 +9,7 @@
 #include "server_test.h"
 #include "pmutex_test.h"
 #include "pthread_test.h"
-#include "../server/util/easylogging++.h"
+#include "util/easylogging++.h"
 
 void setupLogger();
 

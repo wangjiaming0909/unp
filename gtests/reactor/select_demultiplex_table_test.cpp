@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include "server/reactor/select_reactor_impl.h"
-#include "server/reactor/event_handler.h"
-#include "server/reactor/select_reactor_impl.h"
-#include "server/reactor/reactor.h"
+#include "reactor/select_reactor_impl.h"
+#include "reactor/event_handler.h"
+#include "reactor/select_reactor_impl.h"
+#include "reactor/reactor.h"
 #include <gmock/gmock.h>
 
 using namespace reactor;

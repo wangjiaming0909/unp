@@ -1,7 +1,7 @@
 #include "pmutex_test.h"
 
 using namespace TEST;
-#include "../server/thread/pmutex.h"
+#include "thread/pmutex.h"
 #include <boost/function.hpp>
 #include <iostream>
 #include <unistd.h>

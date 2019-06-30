@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "server/http/HttpCommomHeaders.h"
+#include "http/HttpCommomHeaders.h"
 
 using namespace http;
 

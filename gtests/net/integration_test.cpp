@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
-#include "../../server/net/sock_connector.h"
-#include "../../server/net/sock_acceptor.h"
+#include "net/sock_connector.h"
+#include "net/sock_acceptor.h"
 
 using namespace net;
 class client : public testing::Test{

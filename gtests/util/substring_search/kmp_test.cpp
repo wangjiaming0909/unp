@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
-#include "server/util/substring_search/KMP.h"
-#include "server/util/timer.h"
+#include "util/substring_search/KMP.h"
+#include "util/timer.h"
 #include <random>
 
 namespace kmp_test

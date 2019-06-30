@@ -9,7 +9,7 @@
 #define _SERVER_CONF_TEST_H
 #include "./tests_macros.h"
 #include <typeinfo>
-#include "../server/config/ServerConfig.h"
+#include "config/ServerConfig.h"
 
 namespace TEST{
 class SERVER_CONFIG_TEST{

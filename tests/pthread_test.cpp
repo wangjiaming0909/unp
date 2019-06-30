@@ -1,7 +1,7 @@
 
 #include "pthread_test.h"
 #include <boost/thread.hpp>
-#include "../server/util/easylogging++.h"
+#include "util/easylogging++.h"
 
 using namespace TEST;
 

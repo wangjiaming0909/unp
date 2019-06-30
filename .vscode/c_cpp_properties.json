@@ -3,16 +3,15 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "/boost_1_68_0",
-                "/usr/local/include",
-                "/usr/include/c++/7"
+                "${workspaceFolder}/src",
+                "/boost_1_70_0",
+                "/usr/local/include"
             ],
             "browse": {
                 "path": [
-                    "${workspaceFolder}/**",
+                    "${workspaceFolder}/src",
                     "/usr/local/include",
-                    "/boost_1_68_0"
+                    "/boost_1_70_0"
                 ]
             },
             "defines": [],

@@ -2,7 +2,7 @@
 #define SERVER_TEST_H
 
 #include "tests_macros.h"
-#include "../server/Server.h"
+#include "Server.h"
 namespace TEST{
 
 class SERVER_TEST

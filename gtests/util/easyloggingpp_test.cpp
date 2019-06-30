@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "server/util/easylogging++.h"
+#include "util/easylogging++.h"
 #include <thread>
 
 

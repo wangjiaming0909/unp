@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "../server/util/easylogging++.h"
+#include "util/easylogging++.h"
 
 void setupLogger();
 INITIALIZE_EASYLOGGINGPP
