@@ -1,11 +1,13 @@
 #ifndef _UNP_REACTOR_EVENT_HANDLER_H_
 #define _UNP_REACTOR_EVENT_HANDLER_H_
 
-#include "util/easylogging++.h"
 #include <poll.h>
 #include <unistd.h>
+
+#include "util/easylogging++.h"
 #include "net/macros.h"
 #include "util/XString.h"
+#include "boost/noncopyable.hpp"
 
 namespace reactor
 {
@@ -17,7 +19,7 @@ class Reactor;
     2, event_handler need a reactor pointer as a parameter of the constructor, and a member of reactor*
     3, all the handle_* function can't be pure virtual
 */
-class event_handler{
+class event_handler : private boost::noncopyable{
 public:
     typedef unsigned int Event_Type;
     enum{

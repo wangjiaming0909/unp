@@ -11,7 +11,7 @@ HHWheelTimer::~HHWheelTimer()
 {
 }
 
-void HHWheelTimer::scheduleTimeout(reactor::event_handler &handler, time_t timeout)
+void HHWheelTimer::scheduleTimeout(reactor::TimeoutHandler &handler, time_t timeout)
 {
     
 }
