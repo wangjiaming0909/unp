@@ -4,6 +4,7 @@
 #include <chrono>
 #include "reactor/TimeoutHandler.h"
 #include "boost/intrusive/list.hpp"
+#include "util/easylogging++.h"
 
 namespace reactor
 {
@@ -34,6 +35,7 @@ public:
 protected:
     virtual ~HHWheelTimer();
 private:
+    // register the handlers in the first List of first bucket
     void registerIntoReactor();
 
 private:
@@ -63,9 +65,15 @@ void HHWheelTimer::scheduleTimeout(Fn f, time_t timeout)
             : TimeoutHandler(reactor), fn_(std::move(f)){}
         int handle_timeout(int) noexcept override
         {
-            try{ fn_(); }
-            catch(const std::exception& e) { throw; }
-            catch(...){ throw; }//for noexcept
+            try{ fn_(); } //for noexcept
+            catch(const std::exception& e) 
+            {
+                LOG(WARNING) << "TimeoutHandlerWrapper throw an exception: " << e.what();
+            }
+            catch(...)
+            {
+                LOG(WARNING) << "TimeoutHandlerWrapper throw a unknow exception: ";
+            } 
             delete this;
         }
         Fn fn_;
@@ -80,5 +88,5 @@ HHWheelTimer::time_point_t getCurTime()
     return std::chrono::steady_clock::now();
 }
 
-}//util
+}//reactor
 #endif // _UTIL_HHWHEELTIMER_H_
