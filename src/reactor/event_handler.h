@@ -19,7 +19,7 @@ class Reactor;
     2, event_handler need a reactor pointer as a parameter of the constructor, and a member of reactor*
     3, all the handle_* function can't be pure virtual
 */
-class event_handler : private boost::noncopyable{
+class event_handler{
 public:
     typedef unsigned int Event_Type;
     enum{
