@@ -24,6 +24,15 @@ void HHWheelTimer::scheduleTimeout(TimeoutHandler &handler, time_t timeout)
     
 }
 
+void HHWheelTimer::timeoutExpired() noexcept 
+{
+
+}
+size_t HHWheelTimer::cancelTimeoutsFromList(intrusive_list_t& handlers)
+{
+
+}
+
 void HHWheelTimer::registerIntoReactor()
 {
 
