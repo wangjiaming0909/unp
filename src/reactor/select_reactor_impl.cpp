@@ -12,7 +12,7 @@ select_demultiplex_table::select_demultiplex_table(size_t size) : event_vector_(
     } else event_vector_.resize(size);
 }
 
-event_handler* select_demultiplex_table::get_handler(int handle, Event_Type type) const{
+EventHandler* select_demultiplex_table::get_handler(int handle, Event_Type type) const{
     if(!is_handle_in_range(handle)){
         //
         //LOG(WARNING) << "handle is not in range, handle: " << handle;
@@ -21,7 +21,7 @@ event_handler* select_demultiplex_table::get_handler(int handle, Event_Type type
     return event_vector_[handle].get_handler(type);
 }
 
-int select_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
+int select_demultiplex_table::bind(int handle, EventHandler* handler, Event_Type type){
     auto event_type_str = event_type_to_string(type);
     LOG(INFO) << "bind handle: " << handle << " type: " << event_type_str;
     if(!is_valid_handle(handle) || handler == 0) {
@@ -54,7 +54,7 @@ int select_demultiplex_table::unbind(int handle){
     return 0;
 }
 
-int select_demultiplex_table::unbind(int handle, const event_handler* handler, Event_Type type){
+int select_demultiplex_table::unbind(int handle, const EventHandler* handler, Event_Type type){
     if(!is_handle_in_range(handle) || event_vector_[handle].get_handler(type) == nullptr){
         LOG(WARNING) << "handle is not in the table or handle has no handler, handle: " << handle;
         return -1;
@@ -157,34 +157,34 @@ int select_reactor_impl::dispatch(int active_handle_count){
     return dispatch_io_handlers(active_handle_count, number_of_handles_dispatched);
 }
 
-int select_reactor_impl::register_handler(event_handler* handler, Event_Type type) {
+int select_reactor_impl::register_handler(EventHandler* handler, Event_Type type) {
     (void)handler;
     (void)type;
     return 0;
 }
 
-int select_reactor_impl::unregister_handler(event_handler *handler, Event_Type type) {
+int select_reactor_impl::unregister_handler(EventHandler *handler, Event_Type type) {
     (void)handler;
     (void)type;
     return 0;
 }
 
-int select_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type){
+int select_reactor_impl::register_handler(int handle, EventHandler *handler, Event_Type type){
     LOG(INFO) << "registering handler for handle: " << handle << " event: "<< event_type_to_string(type);
-    if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
+    if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "handle error or registered type error...";
         return -1;
     }
     //TODO what if the handler and event_type has been in the demux_table
     switch (type) {
-        case event_handler::READ_EVENT:
-        case event_handler::ACCEPT_EVENT:
+        case EventHandler::READ_EVENT:
+        case EventHandler::ACCEPT_EVENT:
             wait_sets_.read_set.set_bit(handle);
             break;
-        case event_handler::WRITE_EVENT:
+        case EventHandler::WRITE_EVENT:
             wait_sets_.write_set.set_bit(handle);
             break;
-        case event_handler::EXCEPT_EVENT:   
+        case EventHandler::EXCEPT_EVENT:   
             wait_sets_.exception_set.set_bit(handle);
             break;
         default:
@@ -193,21 +193,21 @@ int select_reactor_impl::register_handler(int handle, event_handler *handler, Ev
     return demux_table_.bind(handle, handler, type);
 }
 
-int select_reactor_impl::unregister_handler(int handle, event_handler *handler, Event_Type type){
+int select_reactor_impl::unregister_handler(int handle, EventHandler *handler, Event_Type type){
     LOG(INFO) << "unregistering handler for handle: " << handle << " event: " << event_type_to_string(type);
-    if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
+    if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "handle error or registered type error...";
         return -1;
     }
     switch (type) {
-        case event_handler::READ_EVENT:
-        case event_handler::ACCEPT_EVENT:
+        case EventHandler::READ_EVENT:
+        case EventHandler::ACCEPT_EVENT:
             wait_sets_.read_set.unset_bit(handle);
             break;
-        case event_handler::WRITE_EVENT:
+        case EventHandler::WRITE_EVENT:
             wait_sets_.write_set.unset_bit(handle);
             break;
-        case event_handler::EXCEPT_EVENT:
+        case EventHandler::EXCEPT_EVENT:
             wait_sets_.exception_set.unset_bit(handle);
             break;
         default:
@@ -221,26 +221,26 @@ int select_reactor_impl::dispatch_io_handlers(int active_handle_count, int& io_h
     int ret = dispatch_io_set(
         active_handle_count, 
         io_handles_dispatched, 
-        event_handler::READ_EVENT, 
+        EventHandler::READ_EVENT, 
         this->dispatch_sets_.read_set,
         this->ready_sets_.read_set,
-        &event_handler::handle_input);
+        &EventHandler::handle_input);
     //TODO check ret
     ret = dispatch_io_set(
         active_handle_count, 
         io_handles_dispatched, 
-        event_handler::WRITE_EVENT, 
+        EventHandler::WRITE_EVENT, 
         this->dispatch_sets_.write_set,
         this->ready_sets_.write_set,
-        &event_handler::handle_output);
+        &EventHandler::handle_output);
     //TODO check ret
     ret = dispatch_io_set(
         active_handle_count, 
         io_handles_dispatched, 
-        event_handler::EXCEPT_EVENT, 
+        EventHandler::EXCEPT_EVENT, 
         this->dispatch_sets_.exception_set,
         this->ready_sets_.exception_set,
-        &event_handler::handle_output);
+        &EventHandler::handle_output);
     //TODO check ret
     return ret;
 }
@@ -249,7 +249,7 @@ int select_reactor_impl::dispatch_io_handlers(int active_handle_count, int& io_h
 int select_reactor_impl::dispatch_io_set(
         int number_of_active_handles, 
         int& number_of_handles_dispatched,
-        event_handler::Event_Type type,//can tell us what we are doing: handling read, write or exception events
+        EventHandler::Event_Type type,//can tell us what we are doing: handling read, write or exception events
         unp::handle_set& dispatch_set,
         unp::handle_set& ready_set,
         HANDLER callback){
@@ -262,7 +262,7 @@ int select_reactor_impl::dispatch_io_set(
     {
         LOG(INFO) << "dispatching... handle: " << current_handle << " event: " << event_type_to_string(type);
         ++number_of_handles_dispatched;
-        event_handler* handler = this->demux_table_.get_handler(current_handle, type);
+        EventHandler* handler = this->demux_table_.get_handler(current_handle, type);
         if(handler == 0) return -1;
         int ret = (handler->*callback) (current_handle);
 

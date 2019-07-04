@@ -1,7 +1,7 @@
 #ifndef UNP_REACTOR_ACCEPTOR_H_
 #define UNP_REACTOR_ACCEPTOR_H_
 
-#include "reactor/event_handler.h"
+#include "reactor/EventHandler.h"
 #include "thread/thread_pool.h"
 #include "net/inet_addr.h"
 #include "net/sock_acceptor.h"
@@ -17,7 +17,7 @@ using namespace std::chrono_literals;
 namespace reactor{
 
 template <typename DataType, typename Handler>
-class ReactorAcceptor : public event_handler
+class ReactorAcceptor : public EventHandler
 {
 public:
     using mqType = message_queue<DataType>;
@@ -54,7 +54,7 @@ ReactorAcceptor<DataType, Handler>:: ReactorAcceptor( Reactor& react
     , thread::thread_pool& pool
     , message_queue<DataType>& mq
     , const net::inet_addr& local_addr)
-    : event_handler(react)
+    : EventHandler(react)
     , mq_(&mq)
     , pool_(&pool)
     , acceptor_(local_addr)
@@ -76,7 +76,7 @@ int ReactorAcceptor<DataType, Handler>::open()
         return ret;
     }
     //open succeed, register to the reactor
-    return reactor_->register_handler(acceptor_.get_handle(), this, event_handler::ACCEPT_EVENT);
+    return reactor_->register_handler(acceptor_.get_handle(), this, EventHandler::ACCEPT_EVENT);
 }
 
 template <typename DataType, typename Handler>

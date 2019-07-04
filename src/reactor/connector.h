@@ -1,7 +1,7 @@
 #ifndef _UNP_REACTOR_CONNECTOR_H_
 #define _UNP_REACTOR_CONNECTOR_H_
 
-#include "reactor/event_handler.h"
+#include "reactor/EventHandler.h"
 #include "net/sock_connector.h"
 #include "thread/message_queue.h"
 #include "reactor/io_handler.h"
@@ -16,14 +16,14 @@
 namespace reactor
 {
 
-class connector : public event_handler
+class connector : public EventHandler
 {
 public:
     using micro_seconds = std::chrono::microseconds;
     using connection_handler_ptr_t = std::shared_ptr<connection_handler>;
     using map_t = std::unordered_map<int, connection_handler_ptr_t>;
     connector(Reactor &react)
-        : event_handler(react), connector_()
+        : EventHandler(react), connector_()
           //		, handlers_()
           ,
           connection_handlers_()
@@ -47,7 +47,7 @@ private:
 };
 
 template <typename DataType, typename Handler>
-class reactor_connector : public event_handler
+class reactor_connector : public EventHandler
 {
 public:
     using IOHandlerType = Handler;
@@ -89,7 +89,7 @@ private:
 
 template <typename DataType, typename Handler>
 reactor_connector<DataType, Handler>::reactor_connector(Reactor &react, thread::thread_pool &pool, MessageQueueType &mq)
-    : event_handler(react), pool_(&pool), mq_(&mq), connector_(), handlers_()
+    : EventHandler(react), pool_(&pool), mq_(&mq), connector_(), handlers_()
 {
     this->open();
 }

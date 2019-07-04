@@ -5,7 +5,7 @@
 namespace reactor{
 
 class Reactor;
-class event_handler;
+class EventHandler;
 class connection_handler;
 
 class EventFD {

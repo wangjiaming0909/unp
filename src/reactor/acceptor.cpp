@@ -5,7 +5,7 @@ using namespace reactor;
 reactor_acceptor::reactor_acceptor(
     Reactor &react, thread_pool &pool,
     const net::inet_addr &local_addr)
-    : event_handler(react), acceptor_(local_addr), local_addr_(local_addr), mq_(), pool_(pool), read_handler_(react, pool_, mq_), read_handlers_() { this->open(); }
+    : EventHandler(react), acceptor_(local_addr), local_addr_(local_addr), mq_(), pool_(pool), read_handler_(react, pool_, mq_), read_handlers_() { this->open(); }
 
 reactor_acceptor::~reactor_acceptor() {}
 
@@ -18,7 +18,7 @@ int reactor_acceptor::open()
         return ret;
     }
     //open succeed, register to the reactor
-    return reactor_->register_handler(acceptor_.get_handle(), this, event_handler::ACCEPT_EVENT);
+    return reactor_->register_handler(acceptor_.get_handle(), this, EventHandler::ACCEPT_EVENT);
 }
 
 int reactor_acceptor::handle_input(int handle)
@@ -66,7 +66,7 @@ int reactor_acceptor::handle_close(int) { return 0; }
 int reactor_acceptor::handle_signal(int) { return 0; }
 
 acceptor::acceptor(Reactor &react, const net::inet_addr &local_addr)
-    : event_handler(react), sock_acceptor_(local_addr), local_addr_(local_addr), read_handlers_(1024), external_reactors_()
+    : EventHandler(react), sock_acceptor_(local_addr), local_addr_(local_addr), read_handlers_(1024), external_reactors_()
 {
     //    open();
     this->current_reactor_index_to_register_ = 0;

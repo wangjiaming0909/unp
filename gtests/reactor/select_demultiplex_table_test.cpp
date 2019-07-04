@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "reactor/select_reactor_impl.h"
-#include "reactor/event_handler.h"
+#include "reactor/EventHandler.h"
 #include "reactor/select_reactor_impl.h"
 #include "reactor/reactor.h"
 #include <gmock/gmock.h>
@@ -12,9 +12,9 @@ public:
     MockReactor() : Reactor() {}
 };
 
-class MockEventHandler : public event_handler {
+class MockEventHandler : public EventHandler {
 public:
-    MockEventHandler(Reactor& react) : event_handler(react) {}
+    MockEventHandler(Reactor& react) : EventHandler(react) {}
 };
 
 class select_demultiplex_table_test : public ::testing::Test{
@@ -41,7 +41,7 @@ protected:
 /*
 TEST_F(select_demultiplex_table_test, test_bind_and_unbind){
     int handle1 = 1, handle2 = 2;
-    unsigned int event_type1 = event_handler::READ_EVENT;
+    unsigned int event_type1 = EventHandler::READ_EVENT;
     int ret = table_.bind(handle1, this->handler1_, event_type1);
     ASSERT_EQ(ret, 0);
 
@@ -63,7 +63,7 @@ TEST_F(select_demultiplex_table_test, test_bind_and_unbind){
     }
 
     //bind the second handle
-    unsigned int event_type2 = event_handler::WRITE_EVENT;
+    unsigned int event_type2 = EventHandler::WRITE_EVENT;
     ret = table_.bind(handle2, this->handler2_, event_type2);
     ASSERT_EQ(ret, 0);
 

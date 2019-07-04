@@ -7,7 +7,7 @@
 
 namespace reactor{
 
-//1, io_handler is an event_handler
+//1, io_handler is an EventHandler
 //2, io_handler is used to handle sock_stream events
     //like read/write from/to sock_stream
     //io_handler will be created by acceptor

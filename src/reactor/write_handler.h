@@ -16,7 +16,7 @@ public:
     WriteHandler(Reactor& react, thread::thread_pool& pool, mq_type& mq)
         : base(react, pool, mq), buffer_()
     {
-        this->current_event_ = event_handler::WRITE_EVENT;
+        this->current_event_ = EventHandler::WRITE_EVENT;
     }
 
     virtual ~WriteHandler()

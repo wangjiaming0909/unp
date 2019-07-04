@@ -57,26 +57,26 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
     return 0;
 }
 
-int epoll_reactor_impl::register_handler(event_handler* handler, Event_Type type)
+int epoll_reactor_impl::register_handler(EventHandler* handler, Event_Type type)
 {
     (void)handler;
     (void)type;
 	return 0;
 }
 
-int epoll_reactor_impl::unregister_handler(event_handler *handler, Event_Type type)
+int epoll_reactor_impl::unregister_handler(EventHandler *handler, Event_Type type)
 {
     (void)handler;
     (void)type;
 	return 0;
 }
 
-int epoll_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type)
+int epoll_reactor_impl::register_handler(int handle, EventHandler *handler, Event_Type type)
 {
     // std::lock_guard<std::mutex> guard(mutex_);
 
     LOG(INFO) << "Registering handler, handle: " << handle << " event: " << event_type_to_string(type);
-    if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
+    if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "Handle error or registered type error...";
         return -1;
     }
@@ -93,11 +93,11 @@ int epoll_reactor_impl::register_handler(int handle, event_handler *handler, Eve
 
     // memset(&cur_event_, 0, sizeof(struct epoll_event));
 
-    // if(type & event_handler::READ_EVENT)
+    // if(type & EventHandler::READ_EVENT)
     // {
 
     // }
-    // else if(type & event_handler::WRITE_EVENT)
+    // else if(type & EventHandler::WRITE_EVENT)
 
     // cur_event_.events = reactor_event_to_poll_event(type, USING_EPOLL);
     // void *p_fd = &cur_event_.data.u64;
@@ -124,12 +124,12 @@ int epoll_reactor_impl::register_handler(int handle, event_handler *handler, Eve
     return ret;
 }
 
-int epoll_reactor_impl::unregister_handler(int handle, event_handler *handler, Event_Type type)
+int epoll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Event_Type type)
 {
     // std::lock_guard<std::mutex> guard(mutex_);
 
     LOG(INFO) << "Unregistering handler, handle: " << handle << " event: " << event_type_to_string(type);
-    if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
+    if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "Handle error or unregistered type error...";
         return -1;
     }
@@ -199,13 +199,13 @@ int epoll_reactor_impl::dispatch_io_handlers(int active_handles, int& handles_di
 {
     (void)handles_dispatched;
     int remain = 0;
-    remain = this->dispatch_io_epoll_sets(active_handles, 0, EPOLLIN, &event_handler::handle_input);
+    remain = this->dispatch_io_epoll_sets(active_handles, 0, EPOLLIN, &EventHandler::handle_input);
 
     if (remain > 0)
-        remain = this->dispatch_io_epoll_sets(remain, 0, EPOLLOUT, &event_handler::handle_output);
+        remain = this->dispatch_io_epoll_sets(remain, 0, EPOLLOUT, &EventHandler::handle_output);
 
     if(remain > 0)
-        remain = this->dispatch_io_epoll_sets(remain, 0, EPOLLERR, &event_handler::handle_output);
+        remain = this->dispatch_io_epoll_sets(remain, 0, EPOLLERR, &EventHandler::handle_output);
 
     return remain;
 }
@@ -237,7 +237,7 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
         LOG(INFO) << "Dispatching handle: " << current_fd << " event: " << event_type_to_string(type);
 
 
-        event_handler* handler = demux_table_.get_handler(current_fd, type);
+        EventHandler* handler = demux_table_.get_handler(current_fd, type);
         if(handler != nullptr) ret = (handler->*callback)(current_fd);
 
         // mutex_.unlock();
@@ -246,10 +246,10 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
         {
             LOG(INFO) << "Unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
 
-            if(type == event_handler::READ_EVENT)
+            if(type == EventHandler::READ_EVENT)
             {
                 handler->close_read(current_fd);
-            }else if(type == event_handler::WRITE_EVENT)
+            }else if(type == EventHandler::WRITE_EVENT)
             {
                 handler->close_write(current_fd);
             }

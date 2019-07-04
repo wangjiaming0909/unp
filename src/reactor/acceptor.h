@@ -1,6 +1,6 @@
 #ifndef _UNP_REACTOR_ACCEPTOR_H_
 #define _UNP_REACTOR_ACCEPTOR_H_
-#include "reactor/event_handler.h"
+#include "reactor/EventHandler.h"
 #include "net/sock_acceptor.h"
 #include "net/inet_addr.h"
 #include "reactor/reactor.h"
@@ -18,7 +18,7 @@ enum
     REUSE_ADDR = 1
 };
 
-class acceptor : public event_handler
+class acceptor : public EventHandler
 {
 public:
     using connection_handler_ptr_type = std::shared_ptr<connection_handler>;
@@ -74,9 +74,9 @@ private:
     1, reactor_acceptor has a inet_addr to identify the interface and port of listen fd
     2, reactor_acceptor do not need a set_handle() function, because the sock_acceptor already has a handle in it
     3, reactor_acceptor do not need to override output, because an acceptor do not need to write anything
-    4, reactor_acceptor need to create a event_handler of io_handler to handle the I/O events of the accepted fd
+    4, reactor_acceptor need to create a EventHandler of io_handler to handle the I/O events of the accepted fd
 */
-class reactor_acceptor : public event_handler
+class reactor_acceptor : public EventHandler
 {
 public:
     //here use a inet_addr,

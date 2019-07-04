@@ -18,14 +18,14 @@ public:
         : base(react, pool, mq)
     {
         memset(buffer_, 0, 128);
-        this->current_event_ = event_handler::READ_EVENT;
+        this->current_event_ = EventHandler::READ_EVENT;
     }
 
     virtual int open() override {
         LOG(INFO) << "register read_write_handler to reactor...";
-        int ret = this->reactor_->register_handler(this->peer_.get_handle(), this, event_handler::WRITE_EVENT);
+        int ret = this->reactor_->register_handler(this->peer_.get_handle(), this, EventHandler::WRITE_EVENT);
         if(ret != 0) return -1;
-        ret = this->reactor_->register_handler(this->peer_.get_handle(), this, event_handler::READ_EVENT);
+        ret = this->reactor_->register_handler(this->peer_.get_handle(), this, EventHandler::READ_EVENT);
         if(ret != 0) return -1;
 		return 0;
     }

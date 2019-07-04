@@ -1,5 +1,5 @@
-#ifndef _UNP_REACTOR_EVENT_HANDLER_H_
-#define _UNP_REACTOR_EVENT_HANDLER_H_
+#ifndef _UNP_REACTOR_EventHandler_H_
+#define _UNP_REACTOR_EventHandler_H_
 
 #include <poll.h>
 #include <unistd.h>
@@ -13,13 +13,13 @@ namespace reactor
 {
 class Reactor;
 
-//class event_handler
+//class EventHandler
 /*
-    1, event_handler do not has handle member in it
-    2, event_handler need a reactor pointer as a parameter of the constructor, and a member of reactor*
+    1, EventHandler do not has handle member in it
+    2, EventHandler need a reactor pointer as a parameter of the constructor, and a member of reactor*
     3, all the handle_* function can't be pure virtual
 */
-class event_handler{
+class EventHandler{
 public:
     typedef unsigned int Event_Type;
     enum{
@@ -33,7 +33,8 @@ public:
         CLOSE_EVENT     = 1 << 6,
         CONNECT_EVENT   = 1 << 7
     };
-    event_handler(Reactor& react) : reactor_(&react) {}
+    EventHandler() : reactor_(nullptr){}
+    EventHandler(Reactor& react) : reactor_(&react) {}
     //these functions can't be pure virtual
     //because some handlers may not need to implement all of them
     //so the these handlers can be non-abstract classes
@@ -50,37 +51,40 @@ public:
     virtual int handle_signal(int ){ return 0; }
     virtual int get_handle() const{ return 0; }
     virtual void set_handle(int ){}
-    virtual Reactor* get_reactor() const {return reactor_;}
+    Reactor* get_reactor() const {return reactor_;}
+    void setReactor(Reactor& reactor) {reactor_ = &reactor;}
+    bool isAttachedToReactor() const {return reactor_ != nullptr;}
+
 protected:
-    virtual ~event_handler(){}
+    virtual ~EventHandler(){}
     Reactor* reactor_;
 };
 
-inline util::string event_type_to_string(event_handler::Event_Type type){
+inline util::string event_type_to_string(EventHandler::Event_Type type){
     switch(type){
-        case event_handler::NONE:
+        case EventHandler::NONE:
             return util::string("NONE");
-        case event_handler::READ_EVENT:
+        case EventHandler::READ_EVENT:
             return util::string("READ_EVENT");
-        case event_handler::SIGNAL_EVENT:
+        case EventHandler::SIGNAL_EVENT:
             return util::string("SIGNAL_EVENT");
-        case event_handler::TIMEOUT_EVENT:
+        case EventHandler::TIMEOUT_EVENT:
             return util::string("TIMEOUT_EVENT");
-        case event_handler::WRITE_EVENT:
+        case EventHandler::WRITE_EVENT:
             return util::string("WRITE_EVENT");
-        case event_handler::ACCEPT_EVENT:
+        case EventHandler::ACCEPT_EVENT:
             return util::string("ACCEPT_EVENT");
-        case event_handler::CLOSE_EVENT:
+        case EventHandler::CLOSE_EVENT:
             return util::string("CLOSE_EVENT");
         default:
             return util::string();
     }
 }
 
-class default_event_handler : public event_handler{
+class default_EventHandler : public EventHandler{
 public:
-    default_event_handler(Reactor& react) : event_handler(react) {}
-    ~default_event_handler(){}
+    default_EventHandler(Reactor& react) : EventHandler(react) {}
+    ~default_EventHandler(){}
     virtual int handle_input(int handle) override {
         char buffer[32] = {};
         int reads = ::read(handle, buffer, 32);
@@ -108,4 +112,4 @@ public:
 
 
 
-#endif // _UNP_REACTOR_EVENT_HANDLER_H_
+#endif // _UNP_REACTOR_EventHandler_H_

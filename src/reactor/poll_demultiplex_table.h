@@ -1,7 +1,7 @@
 #ifndef POLL_DEMULTIPLEX_TABLE_H_
 #define POLL_DEMULTIPLEX_TABLE_H_
 
-#include "reactor/event_handler.h"
+#include "reactor/EventHandler.h"
 #include <mutex>
 
 namespace reactor
@@ -10,23 +10,23 @@ namespace reactor
 struct event_pair
 {
     event_pair() : event(0), handler(nullptr){}
-    event_pair(uint32_t event, event_handler* handler)
+    event_pair(uint32_t event, EventHandler* handler)
         : event(event), handler(handler){}
     uint32_t event;
-    event_handler* handler;
+    EventHandler* handler;
 };
 
 class poll_event_repo {
 public:
     using event_tuple = event_pair;
-    using Event_Type = event_handler::Event_Type;
+    using Event_Type = EventHandler::Event_Type;
     poll_event_repo() : types_and_handlers_() {}
     ~poll_event_repo() {}
 
-    int bind_new(Event_Type type, event_handler* handler);
-    int unbind(Event_Type type, const event_handler* handler);
+    int bind_new(Event_Type type, EventHandler* handler);
+    int unbind(Event_Type type, const EventHandler* handler);
     void clear() {types_and_handlers_.clear();}
-    event_handler* get_handler(Event_Type type) const ;
+    EventHandler* get_handler(Event_Type type) const ;
     int handle_count() const {return types_and_handlers_.size();};
 
 private:
@@ -37,12 +37,12 @@ private:
 
 class poll_demultiplex_table {
 public:
-    using Event_Type = event_handler::Event_Type;
+    using Event_Type = EventHandler::Event_Type;
     using mutex_t = std::mutex;
     using lock_guard_t = std::lock_guard<mutex_t>;
 
     poll_demultiplex_table();
-    event_handler *get_handler(int handle, Event_Type type) const;
+    EventHandler *get_handler(int handle, Event_Type type) const;
 
     bool has_handle(int handle) const 
     {
@@ -56,11 +56,11 @@ public:
         return table_;
     }
 
-    int bind(int handle, event_handler *handler, Event_Type type);
+    int bind(int handle, EventHandler *handler, Event_Type type);
 
     //unbind掉绑定到这个handle的所有事件处理器
     int unbind(int handle);
-    int unbind(int handle, const event_handler *handler, Event_Type type)
+    int unbind(int handle, const EventHandler *handler, Event_Type type)
     {
         lock_guard_t guard{mutex_};
         size_--;

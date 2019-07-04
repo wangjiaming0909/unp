@@ -4,9 +4,9 @@ namespace reactor
 {
 
 
-int poll_event_repo::bind_new(Event_Type type, event_handler* handler)
+int poll_event_repo::bind_new(Event_Type type, EventHandler* handler)
 {
-    if(type == event_handler::NONE || handler == 0)
+    if(type == EventHandler::NONE || handler == 0)
     {
         LOG(WARNING) << "can't bind NONE event or handler is nullptr";
         return -1;
@@ -16,9 +16,9 @@ int poll_event_repo::bind_new(Event_Type type, event_handler* handler)
     return 0;
 }
 
-int poll_event_repo::unbind(Event_Type type, const event_handler* handler)
+int poll_event_repo::unbind(Event_Type type, const EventHandler* handler)
 {
-    if(type == event_handler::NONE || handler == 0)
+    if(type == EventHandler::NONE || handler == 0)
     {
         LOG(WARNING) << "can't unbind NONE event or handler can't be nullptr";
         return -1;
@@ -41,7 +41,7 @@ int poll_event_repo::unbind(Event_Type type, const event_handler* handler)
     return 0;
 }
 
-event_handler* poll_event_repo::get_handler(Event_Type type) const 
+EventHandler* poll_event_repo::get_handler(Event_Type type) const 
 {
     auto iter = this->find(type);
     if(iter == types_and_handlers_.end())
@@ -58,13 +58,13 @@ std::vector<poll_event_repo::event_tuple>::const_iterator poll_event_repo::find(
     return std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(), 
         [type] (const event_tuple& tuple) 
         {
-            if((tuple.event == event_handler::READ_EVENT || tuple.event == event_handler::ACCEPT_EVENT) 
+            if((tuple.event == EventHandler::READ_EVENT || tuple.event == EventHandler::ACCEPT_EVENT) 
                 && type == POLLIN)
                 return true;
-            if((tuple.event == event_handler::WRITE_EVENT || tuple.event == event_handler::CONNECT_EVENT)
+            if((tuple.event == EventHandler::WRITE_EVENT || tuple.event == EventHandler::CONNECT_EVENT)
                 && type == POLLOUT)
                 return true;
-            if((tuple.event == event_handler::EXCEPT_EVENT && type == POLLPRI)) return true;
+            if((tuple.event == EventHandler::EXCEPT_EVENT && type == POLLPRI)) return true;
 			return false;
         });
 }
@@ -76,7 +76,7 @@ poll_demultiplex_table::poll_demultiplex_table()
     {
     }
 
-event_handler* poll_demultiplex_table::get_handler(int handle, Event_Type type) const 
+EventHandler* poll_demultiplex_table::get_handler(int handle, Event_Type type) const 
 {
     lock_guard_t guard{mutex_};
     if(table_.size() <= static_cast<size_t>(handle))
@@ -85,7 +85,7 @@ event_handler* poll_demultiplex_table::get_handler(int handle, Event_Type type) 
     return table_[handle].get_handler(type);
 }
 
-int poll_demultiplex_table::bind(int handle, event_handler* handler, Event_Type type){
+int poll_demultiplex_table::bind(int handle, EventHandler* handler, Event_Type type){
     lock_guard_t guard{mutex_};
     int64_t table_size = static_cast<int64_t>(table_.size());
     if((handle) >= (table_size))

@@ -5,7 +5,7 @@
 #include "util/easylogging++.h"
 #include "net/macros.h"
 #include "net/handle_set.h"
-#include "event_handler.h"
+#include "EventHandler.h"
 #include <sys/select.h>
 #include <unordered_map>
 #include <vector>
@@ -24,7 +24,7 @@ struct select_reactor_handle_sets{
 
 //event tuple
 struct select_event_tuple{
-    using Event_Type = event_handler::Event_Type;
+    using Event_Type = EventHandler::Event_Type;
     select_event_tuple () 
     // : types_and_handlers()
     : types_and_handlers_()
@@ -36,8 +36,8 @@ struct select_event_tuple{
         // }
     }
 
-    int bind_new(Event_Type type, event_handler* handler){
-        if(type == event_handler::NONE || handler == 0){
+    int bind_new(Event_Type type, EventHandler* handler){
+        if(type == EventHandler::NONE || handler == 0){
             LOG(WARNING) << "can't bind NONE event or handler is nullptr";
             return -1;
         }
@@ -47,15 +47,15 @@ struct select_event_tuple{
         return 0;
     }
 
-    int unbind(Event_Type type, const event_handler* handler){
-        if(type == event_handler::NONE || handler == 0)
+    int unbind(Event_Type type, const EventHandler* handler){
+        if(type == EventHandler::NONE || handler == 0)
         {
             LOG(WARNING) << "can't unbind NONE event or handler can't be nullptr";
             return -1;
         }
 
         auto handler_find = std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(), 
-            [&type](const std::pair<unsigned int, event_handler*>& pair) 
+            [&type](const std::pair<unsigned int, EventHandler*>& pair) 
             {
                 return pair.first == type;
             });
@@ -89,24 +89,24 @@ struct select_event_tuple{
         // return 0;
     }
 
-    event_handler* get_handler(Event_Type type) const {
+    EventHandler* get_handler(Event_Type type) const {
         auto handler_find = std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(), 
-            [&type](const std::pair<unsigned int, event_handler*>& pair) 
+            [&type](const std::pair<unsigned int, EventHandler*>& pair) 
             {
                 return pair.first == type;
             });
 
         if(handler_find == types_and_handlers_.end())
         {
-            if(type == event_handler::READ_EVENT)
+            if(type == EventHandler::READ_EVENT)
             {
-                return get_handler(event_handler::ACCEPT_EVENT);
+                return get_handler(EventHandler::ACCEPT_EVENT);
             }
         }
 
         // if(types_and_handlers[type] == nullptr) {
-        //     if(type == event_handler::READ_EVENT){//因为 acceptor 的处理事件也是读事件，以accept_event查找handler时，可能找不到
-        //         return get_handler(event_handler::ACCEPT_EVENT);
+        //     if(type == EventHandler::READ_EVENT){//因为 acceptor 的处理事件也是读事件，以accept_event查找handler时，可能找不到
+        //         return get_handler(EventHandler::ACCEPT_EVENT);
         //     }
         //     // LOG(WARNING) 
         //     //     << "handle " << handle 
@@ -125,21 +125,21 @@ struct select_event_tuple{
     //one type of event, only have one handler, 如果可以有两个，那么事件发生的时候我调用谁呢?
     //but one handler, 可以有多个事件与之对应,其实也很少见,总不能一个读的handler又处理读事件又处理写事件吧
     //使用vector，表示一个handler可以绑定到不同的event上，但是一个event只能有一个handler
-    // std::vector<event_handler*>                                 types_and_handlers;
-    std::vector<std::pair<unsigned int, event_handler*>>        types_and_handlers_;
+    // std::vector<EventHandler*>                                 types_and_handlers;
+    std::vector<std::pair<unsigned int, EventHandler*>>        types_and_handlers_;
     // size_t                                                      event_count;
 };
 
 class select_demultiplex_table{
 public:
-    using Event_Type = event_handler::Event_Type;
+    using Event_Type = EventHandler::Event_Type;
     select_demultiplex_table(size_t capacity = 8);
-    event_handler* get_handler(int handle, Event_Type type) const;
+    EventHandler* get_handler(int handle, Event_Type type) const;
     const std::vector<select_event_tuple>& get_event_vector() const { return event_vector_; }
-    int bind(int handle, event_handler* handler, Event_Type type);
+    int bind(int handle, EventHandler* handler, Event_Type type);
     //unbind掉绑定到这个handle的所有事件处理器
     int unbind(int handle);
-    int unbind(int handle, const event_handler* handler, Event_Type type);
+    int unbind(int handle, const EventHandler* handler, Event_Type type);
     int get_current_max_handle_p_1() const { return current_max_handle_p_1_;}
 private:
     bool is_handle_in_range(int handle) const ;
@@ -153,7 +153,7 @@ public:
     static const int MAX_NUMBER_OF_HANDLE = FD_SETSIZE;
 };
 
-typedef int (event_handler::*HANDLER)(int);
+typedef int (EventHandler::*HANDLER)(int);
 
 //?how to test it when using a system call select?
 //* select_reactor_impl 不是线程安全的
@@ -168,10 +168,10 @@ public:
 	{
 	}
     int handle_events(std::chrono::microseconds *timeout) override;
-    int register_handler(event_handler* handler, Event_Type type) override;
-    int unregister_handler(event_handler *handler, Event_Type type) override;
-    int register_handler(int handle, event_handler *handler, Event_Type type) override;
-    int unregister_handler(int handle, event_handler *handler, Event_Type type) override;
+    int register_handler(EventHandler* handler, Event_Type type) override;
+    int unregister_handler(EventHandler *handler, Event_Type type) override;
+    int register_handler(int handle, EventHandler *handler, Event_Type type) override;
+    int unregister_handler(int handle, EventHandler *handler, Event_Type type) override;
 private:
     int select(std::chrono::microseconds* timeout);
     int dispatch(int active_handle_count);

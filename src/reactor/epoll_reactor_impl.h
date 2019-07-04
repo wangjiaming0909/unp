@@ -15,16 +15,16 @@ namespace reactor
 class epoll_reactor_impl : public reactor_implementation 
 {
 public:
-    typedef int (event_handler::*HANDLER)(int);
+    typedef int (EventHandler::*HANDLER)(int);
     using epoll_demultiplex_table = poll_demultiplex_table;
     epoll_reactor_impl();
     ~epoll_reactor_impl();
     int handle_events(std::chrono::microseconds *timeout) override;
 
-    int register_handler(event_handler* handler, Event_Type type) override;
-    int register_handler(int handle, event_handler *handler, Event_Type type) override;
-    int unregister_handler(event_handler *handler, Event_Type type) override;
-    int unregister_handler(int handle, event_handler *handler, Event_Type type) override;
+    int register_handler(EventHandler* handler, Event_Type type) override;
+    int register_handler(int handle, EventHandler *handler, Event_Type type) override;
+    int unregister_handler(EventHandler *handler, Event_Type type) override;
+    int unregister_handler(int handle, EventHandler *handler, Event_Type type) override;
 
     epoll_reactor_impl(const epoll_reactor_impl&) = delete;
     epoll_reactor_impl& operator=(const epoll_reactor_impl&) = delete;

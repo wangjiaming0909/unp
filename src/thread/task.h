@@ -2,7 +2,7 @@
 #define _UNP_THREAD_TASK_H_
 #include "thread/thread_pool.h"
 #include "thread/message_queue.h"
-#include "reactor/event_handler.h"
+#include "reactor/EventHandler.h"
 #include "reactor/reactor.h"
 #include <boost/shared_ptr.hpp>
 
@@ -11,7 +11,7 @@ namespace thread{
 
 //type T is the type of data
 template <typename T>
-class task : public reactor::event_handler{
+class task : public reactor::EventHandler{
 public:
     using micro_seconds = std::chrono::microseconds; 
     using mq_type = message_queue<T>;
@@ -57,7 +57,7 @@ protected:
 
 template <typename T>
 task<T>::task(reactor::Reactor& react, thread_pool& t_pool, mq_type& msg_q) 
-    : event_handler(react)
+    : EventHandler(react)
     , pool_p_(&t_pool)
     , msg_queue_p_(&msg_q)
     , current_event_(0)

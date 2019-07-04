@@ -7,10 +7,10 @@ poll_reactor_impl::poll_reactor_impl() : wait_pfds_(), demux_table_() { }
 
 poll_reactor_impl::~poll_reactor_impl(){}
 
-int  poll_reactor_impl::register_handler(int handle, event_handler *handler, Event_Type type)
+int  poll_reactor_impl::register_handler(int handle, EventHandler *handler, Event_Type type)
 {
     LOG(INFO) << "Registering handler, handle: " << handle << " event: " << event_type_to_string(type);
-    if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
+    if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "Handle error or registered type error...";
         return -1;
     }
@@ -36,10 +36,10 @@ int  poll_reactor_impl::register_handler(int handle, event_handler *handler, Eve
     return this->demux_table_.bind(handle, handler, type);
 }
 
-int poll_reactor_impl::unregister_handler(int handle, event_handler *handler, Event_Type type)
+int poll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Event_Type type)
 {
     LOG(INFO) << "Unregistering handler, handle: " << handle << " event: " << event_type_to_string(type);
-    if(handle == INVALID_HANDLE || handler == 0 || type == event_handler::NONE){
+    if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "Handle error or unregistered type error...";
         return -1;
     }
@@ -146,11 +146,11 @@ int poll_reactor_impl::dispatch(int active_handle_count)
 int poll_reactor_impl::dispatch_io_handlers(int active_handles, int& handles_dispatched)
 {
     int ret = 0;
-    ret = dispatch_io_sets(active_handles, handles_dispatched, POLLIN, &event_handler::handle_input);
+    ret = dispatch_io_sets(active_handles, handles_dispatched, POLLIN, &EventHandler::handle_input);
 
-    ret = ret && dispatch_io_sets(ret, handles_dispatched, POLLOUT, &event_handler::handle_output);
+    ret = ret && dispatch_io_sets(ret, handles_dispatched, POLLOUT, &EventHandler::handle_output);
 
-    ret = ret && dispatch_io_sets(ret, handles_dispatched, POLLERR, &event_handler::handle_output);
+    ret = ret && dispatch_io_sets(ret, handles_dispatched, POLLERR, &EventHandler::handle_output);
     return ret;
 }
 
@@ -169,7 +169,7 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
         handles_dispatched++;
 
         LOG(INFO) << "Dispatching handle: " << current_fd << " event: " << event_type_to_string(type);
-        event_handler* handler = demux_table_.get_handler(current_fd, type);
+        EventHandler* handler = demux_table_.get_handler(current_fd, type);
 
         if(handler != nullptr) ret = (handler->*callback)(current_fd);
         active_handles--;
@@ -178,11 +178,11 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
         {
             LOG(INFO) << "Unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
             // this->unregister_handler(current_fd, handler, type);
-            if(type == event_handler::READ_EVENT)
+            if(type == EventHandler::READ_EVENT)
             {
                 handler->close_read(current_fd);
             }
-            else if(type == event_handler::WRITE_EVENT)
+            else if(type == EventHandler::WRITE_EVENT)
             {
                 handler->close_write(current_fd);
             }
@@ -206,14 +206,14 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
 }
 
 
-int poll_reactor_impl::register_handler(event_handler* handler, Event_Type type) 
+int poll_reactor_impl::register_handler(EventHandler* handler, Event_Type type) 
 { 
     (void)handler;
     (void)type;
 	return 0;
 }
 
-int poll_reactor_impl::unregister_handler(event_handler *handler, Event_Type type) 
+int poll_reactor_impl::unregister_handler(EventHandler *handler, Event_Type type) 
 { 
     (void)handler;
     (void)type;

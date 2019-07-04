@@ -20,7 +20,7 @@ public:
         : base(react, threadPool, messageQueue)
     {
         memset(buffer_, 0, 128);
-        this->current_event_ = event_handler::READ_EVENT;
+        this->current_event_ = EventHandler::READ_EVENT;
     }
     
     virtual int open() override 
