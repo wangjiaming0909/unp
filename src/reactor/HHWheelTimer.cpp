@@ -8,7 +8,6 @@ HHWheelTimer::HHWheelTimer(Reactor& reactor, time_t interval, time_t defaultTime
     : interval_(interval)
     , defaultTimeout_(defaultTimeout)
     , currentTick_(1)
-    , nextTick_(1)
     , timerCount_(0)
     , startTime_(getCurTime())
     , handlers_()
@@ -20,7 +19,6 @@ HHWheelTimer::HHWheelTimer( time_t interval , time_t defaultTimeout )
     : interval_(interval)
     , defaultTimeout_(defaultTimeout)
     , currentTick_(1)
-    , nextTick_(1)
     , timerCount_(0)
     , startTime_(getCurTime())
     , handlers_()
@@ -48,9 +46,18 @@ size_t HHWheelTimer::cancelTimeoutsFromList(intrusive_list_t& handlers)
 
 }
 
+/**
+ * schedule timeout时, 当前timeout所放的位置与什么有关?
+ * 1, 与当前时间所在的tick有关 
+ * 2, 与所指定的timeout有关
+ * */
 void HHWheelTimer::scheduleTimeoutImpl_(time_t timeout)
 {
-    auto ticksOfTimeout = timeout.count() / interval_.count();
+    auto tickOfTimeout = getTickFromDuration(timeout);
+    /**
+     * scheduleTimeout时可能有几种情况:
+     * 1, 可能schedule的timeout正好在当前时间所在的tick上, 也就是所传递的timeout与curTime在同一个interval中
+     */
 
 }
 
@@ -73,9 +80,9 @@ void HHWheelTimer::scheduleInReactor_(TimeoutHandler& handler)
     // reactor_->register_handler();
 }
 
-inline int64_t HHWheelTimer::ticksOfDuration(time_t timeout)
+inline int64_t  HHWheelTimer::tickOfCurTime() const
 {
-    return timeout.count() / interval_.count();
+    return (getCurTime() - startTime_) / interval_;
 }
 
 } // reactor

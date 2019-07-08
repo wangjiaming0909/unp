@@ -47,13 +47,13 @@ private:
     void scheduleInReactor_(TimeoutHandler& handler);
     // find the right place to put the timeout
     void scheduleTimeoutImpl_(time_t timeout);
-    int64_t ticksOfDuration(time_t timeout);
+    int64_t getTickFromDuration(time_t duration) { return duration.count() / interval_.count(); }
+    int64_t tickOfCurTime() const;
 
 private:
     time_t interval_; // the interval of one tick
     time_t defaultTimeout_;
     int64_t currentTick_;
-    int64_t nextTick_;
     size_t timerCount_;
     time_point_t startTime_;
 
@@ -95,10 +95,7 @@ void HHWheelTimer::scheduleTimeout(Fn f, time_t timeout)
     scheduleTimeout(*handler, timeout);
 }
 
-HHWheelTimer::time_point_t getCurTime()
-{
-    return std::chrono::steady_clock::now();
-}
+HHWheelTimer::time_point_t getCurTime() { return std::chrono::steady_clock::now(); }
 
 }//reactor
 #endif // _UTIL_HHWHEELTIMER_H_
