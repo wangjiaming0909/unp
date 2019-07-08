@@ -43,14 +43,17 @@ public:
 protected:
     virtual ~HHWheelTimer();
 private:
-    // register the handlers in the first List of first bucket
+    //find the right timeout and register the handlers into the reactor
     void scheduleInReactor_(TimeoutHandler& handler);
+    // find the right place to put the timeout
     void scheduleTimeoutImpl_(time_t timeout);
+    int64_t ticksOfDuration(time_t timeout);
 
 private:
     time_t interval_; // the interval of one tick
     time_t defaultTimeout_;
     int64_t currentTick_;
+    int64_t nextTick_;
     size_t timerCount_;
     time_point_t startTime_;
 

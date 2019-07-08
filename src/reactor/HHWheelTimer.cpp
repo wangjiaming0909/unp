@@ -8,6 +8,7 @@ HHWheelTimer::HHWheelTimer(Reactor& reactor, time_t interval, time_t defaultTime
     : interval_(interval)
     , defaultTimeout_(defaultTimeout)
     , currentTick_(1)
+    , nextTick_(1)
     , timerCount_(0)
     , startTime_(getCurTime())
     , handlers_()
@@ -19,6 +20,7 @@ HHWheelTimer::HHWheelTimer( time_t interval , time_t defaultTimeout )
     : interval_(interval)
     , defaultTimeout_(defaultTimeout)
     , currentTick_(1)
+    , nextTick_(1)
     , timerCount_(0)
     , startTime_(getCurTime())
     , handlers_()
@@ -33,6 +35,7 @@ HHWheelTimer::~HHWheelTimer()
 void HHWheelTimer::scheduleTimeout(TimeoutHandler &handler, time_t timeout)
 {
     scheduleTimeoutImpl_(timeout);
+    if(!isScheduled()) return;//add timeouts into the HHWheelTimer and schedule it later(maybe)
     scheduleInReactor_(handler);
 }
 
@@ -47,6 +50,7 @@ size_t HHWheelTimer::cancelTimeoutsFromList(intrusive_list_t& handlers)
 
 void HHWheelTimer::scheduleTimeoutImpl_(time_t timeout)
 {
+    auto ticksOfTimeout = timeout.count() / interval_.count();
 
 }
 
@@ -67,6 +71,11 @@ void HHWheelTimer::scheduleInReactor_(TimeoutHandler& handler)
     else handler.setReactor(*reactor_);
 
     // reactor_->register_handler();
+}
+
+inline int64_t HHWheelTimer::ticksOfDuration(time_t timeout)
+{
+    return timeout.count() / interval_.count();
 }
 
 } // reactor
