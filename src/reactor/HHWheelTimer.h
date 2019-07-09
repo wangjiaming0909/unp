@@ -46,23 +46,23 @@ private:
     //find the right timeout and register the handlers into the reactor
     void scheduleInReactor_(TimeoutHandler& handler);
     // find the right place to put the timeout
-    void scheduleTimeoutImpl_(time_t timeout);
+    void scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTick, time_t timeout);
     int64_t getTickFromDuration(time_t duration) { return duration.count() / interval_.count(); }
     int64_t tickOfCurTime() const;
 
 private:
     time_t interval_; // the interval of one tick
     time_t defaultTimeout_;
-    int64_t currentTick_;
     size_t timerCount_;
     time_point_t startTime_;
+    int64_t expireTick_{0};
 
     static constexpr int WHEEL_BUCKETS = 4;
     static constexpr int WHEEL_BITS = 8;
     static constexpr unsigned int WHEEL_SIZE = (1 << WHEEL_BITS);
-    static int DEFAULT_TICK_INTERVAL;
+    static constexpr int DEFAULT_TICK_INTERVAL = 10;
     // static constexpr unsigned int WHEEL_MASK = (WHEEL_SIZE - 1);
-    // static constexpr uint32_t LARGEST_SLOT = 0xffffffffUL;
+    static constexpr uint32_t LARGEST_SLOT = 0xffffffffUL;
 
     intrusive_list_t handlers_[WHEEL_BUCKETS][WHEEL_SIZE];
     Reactor* reactor_;

@@ -4,19 +4,27 @@
 #include "reactor/EventHandler.h"
 #include "boost/intrusive/list_hook.hpp"
 #include "boost/intrusive/list_hook.hpp"
+#include <chrono>
 
 namespace reactor
 {
+class HHWheelTimer;
 class TimeoutHandler;
+
 using boost_list_base_hook_t = boost::intrusive::list_base_hook<boost::intrusive::link_mode<boost::intrusive::auto_unlink>>;
 class TimeoutHandler : public EventHandler, public boost_list_base_hook_t, public boost::noncopyable
 {
+    friend class HHWheelTimer;
 public:
     TimeoutHandler() = default;
     TimeoutHandler(Reactor& reactor);
     virtual ~TimeoutHandler();
+
+    void setSheduled(HHWheelTimer* wheel, std::chrono::microseconds timeout);
 private:
-    
+    int posInBucket{-1};
+    HHWheelTimer *wheel_{nullptr};
+    std::chrono::steady_clock::time_point expiration_{}; 
 };
 
 }
