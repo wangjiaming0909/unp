@@ -6,6 +6,9 @@
 #include "net/macros.h"
 #include "net/handle_set.h"
 #include "EventHandler.h"
+#include "util/min_heap.h"
+#include "reactor/TimeoutHandler.h"
+
 #include <sys/select.h>
 #include <unordered_map>
 #include <vector>
@@ -132,6 +135,7 @@ struct select_event_tuple{
 
 class select_demultiplex_table{
 public:
+    friend class select_reactor_impl;
     using Event_Type = EventHandler::Event_Type;
     select_demultiplex_table(size_t capacity = 8);
     EventHandler* get_handler(int handle, Event_Type type) const;
@@ -141,6 +145,12 @@ public:
     int unbind(int handle);
     int unbind(int handle, const EventHandler* handler, Event_Type type);
     int get_current_max_handle_p_1() const { return current_max_handle_p_1_;}
+
+    //for timeout handlers
+    TimeoutHandler *getTimeoutHandler() const;
+    int bindTimeoutEvent(TimeoutHandler &handler);
+    int unbindTimeoutEvent(TimeoutHandler &handler);
+
 private:
     bool is_handle_in_range(int handle) const ;
     bool is_valid_handle(int handle) const ;
@@ -149,6 +159,8 @@ private:
     //the size of table_ is meaningless
     std::vector<select_event_tuple> event_vector_;
     int current_max_handle_p_1_ = INVALID_HANDLE + 1;
+    util::min_heap<TimeoutHandler *> timeoutHandlersMinHeap_;
+
 public:
     static const int MAX_NUMBER_OF_HANDLE = FD_SETSIZE;
 };
@@ -173,7 +185,7 @@ public:
     int register_handler(int handle, EventHandler *handler, Event_Type type) override;
     int unregister_handler(int handle, EventHandler *handler, Event_Type type) override;
 private:
-    int select(std::chrono::microseconds* timeout);
+    int select(std::chrono::microseconds timeout);
     int dispatch(int active_handle_count);
 
 //for io_dispatching
@@ -185,6 +197,10 @@ private:
         unp::handle_set& dispatch_set,
         unp::handle_set& ready_set,
         HANDLER callback);
+
+//for timeout_dispatching
+    int dispatchTimeoutHandlers();
+
 private:
     //track handles that are currently ready for dispatch
     select_reactor_handle_sets dispatch_sets_;

@@ -35,10 +35,24 @@ void HHWheelTimer::scheduleTimeout(TimeoutHandler &handler, time_t timeout)
     scheduleInReactor_(handler);
 }
 
+/**
+ * A little different from HHWheelTimer in folly
+ * When registering timeouts into the reactor, 
+ * for folly, HHWheelTimer inherts from AsyncTimeout, so timeoutExpired method is the default callback of timeout event
+ * but, for here, we have TimeoutHandler for handling events, so at default, the reactor (or EventBase) will invoke the handler's callback in the handler, not here
+ * Here is to do some clean up thing for the HHWheelTimer
+ * 
+ * 
+ * So what should we do when one timeout is expired
+ * 1, remove the timeouts from the wheel
+ * 2, cascade timeouts which are not in the first bucket
+ */
 void HHWheelTimer::timeoutExpired() noexcept 
 {
+    auto curTick = tickOfCurTime();
 
 }
+
 size_t HHWheelTimer::cancelTimeoutsFromList(intrusive_list_t& handlers)
 {
 
@@ -103,12 +117,14 @@ void HHWheelTimer::scheduleInReactor_(TimeoutHandler& handler)
     else handler.setReactor(*reactor_);
     expireTick_ = handler.posInBucket;
 
-    // reactor_->register_handler();
+    reactor_->register_handler(&handler, TimeoutHandler::TIMEOUT_EVENT);
 }
 
 inline int64_t  HHWheelTimer::tickOfCurTime() const
 {
     return (getCurTime() - startTime_) / interval_;
 }
+
+inline HHWheelTimer::time_point_t getCurTime() { return std::chrono::steady_clock::now(); }
 
 } // reactor

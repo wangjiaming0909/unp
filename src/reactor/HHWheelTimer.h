@@ -6,6 +6,9 @@
 #include "reactor/TimeoutHandler.h"
 #include "boost/intrusive/list.hpp"
 #include "util/easylogging++.h"
+#include "reactor/reactor.h"
+
+#define DEFAULT_TICK_INTERVAL 10
 
 namespace reactor
 {
@@ -16,6 +19,7 @@ namespace reactor
      * Questions:
      * 1, Can we schedule timeouts in different reactors(EventBases)? Will it be a problem?
      */
+
 class HHWheelTimer : boost::noncopyable
 {
 public:
@@ -60,7 +64,7 @@ private:
     static constexpr int WHEEL_BUCKETS = 4;
     static constexpr int WHEEL_BITS = 8;
     static constexpr unsigned int WHEEL_SIZE = (1 << WHEEL_BITS);
-    static constexpr int DEFAULT_TICK_INTERVAL = 10;
+    // static constexpr int DEFAULT_TICK_INTERVAL = 10;
     // static constexpr unsigned int WHEEL_MASK = (WHEEL_SIZE - 1);
     static constexpr uint32_t LARGEST_SLOT = 0xffffffffUL;
 
@@ -95,7 +99,7 @@ void HHWheelTimer::scheduleTimeout(Fn f, time_t timeout)
     scheduleTimeout(*handler, timeout);
 }
 
-HHWheelTimer::time_point_t getCurTime() { return std::chrono::steady_clock::now(); }
+HHWheelTimer::time_point_t getCurTime();
 
 }//reactor
 #endif // _UTIL_HHWHEELTIMER_H_

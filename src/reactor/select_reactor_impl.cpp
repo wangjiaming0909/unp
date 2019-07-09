@@ -3,7 +3,10 @@
 
 using namespace reactor;
 
-select_demultiplex_table::select_demultiplex_table(size_t size) : event_vector_(){
+select_demultiplex_table::select_demultiplex_table(size_t size) 
+    : event_vector_()
+    , timeoutHandlersMinHeap_{}
+{
     if(size > MAX_NUMBER_OF_HANDLE) {
         LOG(ERROR) << "select_demultiplex_table size specified is " 
                    << size << ", bigger than " 
@@ -19,6 +22,13 @@ EventHandler* select_demultiplex_table::get_handler(int handle, Event_Type type)
         return nullptr;
     }
     return event_vector_[handle].get_handler(type);
+}
+
+TimeoutHandler *select_demultiplex_table::getTimeoutHandler() const
+{
+    if(timeoutHandlersMinHeap_.empty())
+        return nullptr;
+    return timeoutHandlersMinHeap_.top();
 }
 
 int select_demultiplex_table::bind(int handle, EventHandler* handler, Event_Type type){
@@ -71,6 +81,19 @@ int select_demultiplex_table::unbind(int handle, const EventHandler* handler, Ev
     return ret;
 }
 
+int select_demultiplex_table::bindTimeoutEvent(TimeoutHandler &handler)
+{
+    timeoutHandlersMinHeap_.push(&handler);
+}
+
+int select_demultiplex_table::unbindTimeoutEvent(TimeoutHandler &handler)
+{
+    if(timeoutHandlersMinHeap_.empty() || timeoutHandlersMinHeap_.top() != &handler)
+        return -1;
+    timeoutHandlersMinHeap_.pop();
+    return 0;
+}
+
 bool select_demultiplex_table::is_handle_in_range(int handle) const {
     if(handle < 0 || ((handle + 1) > current_max_handle_p_1_)) 
         return false;
@@ -87,11 +110,10 @@ const int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 
 int select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
     int n = 0;
-    //TODO 在reactor中使用while, 这里只进行一次select
 
-    n = this->select(timeout); // select > 0 再 dispatch
+    n = this->select(*timeout); // select > 0 再 dispatch
 
-    if(n <= 0)
+    if(n <= 0 && errno != ETIMEDOUT)
     {
         LOG(WARNING) << "select returned -1 or 0: " << strerror(errno);
         return -1;
@@ -103,12 +125,19 @@ int select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
 //if returned value < 0, means error
 //if returned value == 0, means ?
 //if returned value > 0, means n fd(s) are ready
-int select_reactor_impl::select(std::chrono::microseconds* timeout){
+int select_reactor_impl::select(std::chrono::microseconds timeout){
     LOG(INFO) << "preparing to select...";
     const int width = this->demux_table_.get_current_max_handle_p_1();
     dispatch_sets_.read_set = this->wait_sets_.read_set;
     dispatch_sets_.write_set = this->wait_sets_.write_set;
     dispatch_sets_.exception_set = this->wait_sets_.exception_set;
+
+    if(!demux_table_.timeoutHandlersMinHeap_.empty())
+    {
+        auto timeoutOfFirstTimer = demux_table_.timeoutHandlersMinHeap_.top()->expirationTimePoint() - std::chrono::steady_clock::now();
+        timeout = std::min(std::chrono::duration_cast<std::chrono::microseconds>(timeoutOfFirstTimer), timeout);
+    }
+
     auto timeout_timeval = util::duration_to_timeval<std::chrono::microseconds>(timeout);
 
 //    LOG(INFO) << "trying to wait on " << width << " fds...";
@@ -129,7 +158,7 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
                      dispatch_sets_.read_set.get_select_fd_set_ptr(),
                      dispatch_sets_.write_set.get_select_fd_set_ptr(),
                      dispatch_sets_.exception_set.get_select_fd_set_ptr(),
-                     timeout_timeval.get());
+                     &timeout_timeval);
 
     isWaiting_ = false;
 
@@ -138,9 +167,9 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
         return -1;
     }
 
-    if(number_of_active_handles == 0 && timeout && timeout->count() != 0){
+    if(number_of_active_handles == 0 && timeout.count() != 0){
         errno = ETIMEDOUT;
-        return -1;
+        return 0;
     }
 
     //check the fds
@@ -153,14 +182,24 @@ int select_reactor_impl::select(std::chrono::microseconds* timeout){
 }
 
 int select_reactor_impl::dispatch(int active_handle_count){
-    int number_of_handles_dispatched = 0;
-    return dispatch_io_handlers(active_handle_count, number_of_handles_dispatched);
+    if(active_handle_count == 0) {
+        dispatchTimeoutHandlers();
+    }
+    else
+    {
+        int number_of_handles_dispatched = 0;
+        return dispatch_io_handlers(active_handle_count, number_of_handles_dispatched);
+    }
 }
 
 int select_reactor_impl::register_handler(EventHandler* handler, Event_Type type) {
-    (void)handler;
-    (void)type;
-    return 0;
+    if(handler == nullptr || type != EventHandler::TIMEOUT_EVENT) 
+    {
+        LOG(ERROR) << "Registering non-timeout event and didn't give handle or handler is null";
+        return -1;
+    }
+
+    return demux_table_.bindTimeoutEvent(*dynamic_cast<TimeoutHandler*>(handler));
 }
 
 int select_reactor_impl::unregister_handler(EventHandler *handler, Event_Type type) {
@@ -278,4 +317,11 @@ int select_reactor_impl::dispatch_io_set(
         }
     }
     return 0;
+}
+
+int select_reactor_impl::dispatchTimeoutHandlers()
+{
+    auto timeoutHandler = demux_table_.getTimeoutHandler();
+    timeoutHandler->handle_timeout(0);
+    return demux_table_.unbindTimeoutEvent(*timeoutHandler);
 }

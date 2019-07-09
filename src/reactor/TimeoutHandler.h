@@ -21,10 +21,15 @@ public:
     virtual ~TimeoutHandler();
 
     void setSheduled(HHWheelTimer* wheel, std::chrono::microseconds timeout);
-private:
+    std::chrono::steady_clock::time_point expirationTimePoint() const { return expiration_; }
+
+protected:
     int posInBucket{-1};
     HHWheelTimer *wheel_{nullptr};
     std::chrono::steady_clock::time_point expiration_{}; 
+
+public: //for std::greater
+    bool operator>(const TimeoutHandler &other) const { return expiration_ > other.expiration_; }
 };
 
 }
