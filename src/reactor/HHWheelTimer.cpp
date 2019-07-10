@@ -128,6 +128,11 @@ void HHWheelTimer::scheduleInReactor_(TimeoutHandler& handler)
      * we do not register it into the reactor, wait until the first timeout and invoke timeoutExpired, than schedule the soonest timeout
      */
 
+    if(reactor_->hasEvent(EventHandler::TIMEOUT_EVENT))// we assert that the timeouts event in the reactor are registered by this wheel
+    {
+        // if()
+    }
+
     expireTick_ = handler.posInBucket;
 
     reactor_->register_handler(&handler, TimeoutHandler::TIMEOUT_EVENT);

@@ -55,7 +55,7 @@ TEST(HHWheelTimer, scheduleTimeout_usingFunction)
 
     //schedule timeout using function
     int state = -1;
-    timer->scheduleTimeoutFn([&](){state = 1;}, 2s);
+    timer->scheduleTimeoutFn([&](){state = 1;}, 1s);
     ASSERT_EQ(timer->getTimerCount(), 1);
 
     auto timeout = 200000000000000us;

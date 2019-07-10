@@ -20,8 +20,11 @@ public:
     TimeoutHandler(Reactor& reactor);
     virtual ~TimeoutHandler();
 
+    //timeout handler specific functions
     void setSheduled(HHWheelTimer* wheel, std::chrono::microseconds timeout);
     std::chrono::steady_clock::time_point expirationTimePoint() const { return expiration_; }
+    bool isScheduled() const {return wheel_ != nullptr;}
+    bool isRegistered() const {return reactor_->hasEvent(EventHandler::TIMEOUT_EVENT);}
 
 protected:
     int posInBucket{-1};

@@ -63,6 +63,11 @@ public:
     int handle_events(std::chrono::microseconds *timeout = 0){
         return reactor_impl_->handle_events(timeout);
     }
+
+    bool hasEvent(EventHandler::Event_Type type)
+    {
+        return reactor_impl_->hasEvent(type);
+    }
 private:
     std::shared_ptr<reactor_implementation> reactor_impl_;
 	std::shared_ptr<EventFD> eventFd_ptr_;

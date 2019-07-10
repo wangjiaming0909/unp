@@ -67,9 +67,9 @@ public:
         return table_[handle].unbind(type, handler);
     }
 private:
-    std::vector<poll_event_repo>    table_;
-    int                             size_;
-    mutable mutex_t                 mutex_;
+    std::vector<poll_event_repo>        table_;
+    int                                                 size_;
+    mutable mutex_t                             mutex_;
 
 };
 

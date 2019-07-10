@@ -24,6 +24,11 @@ EventHandler* select_demultiplex_table::get_handler(int handle, Event_Type type)
     return event_vector_[handle].get_handler(type);
 }
 
+inline bool select_demultiplex_table::hasEvent(Event_Type type) const
+{
+    return false;
+}
+
 TimeoutHandler *select_demultiplex_table::getTimeoutHandler() const
 {
     if(timeoutHandlersMinHeap_.empty())

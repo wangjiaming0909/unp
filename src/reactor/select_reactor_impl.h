@@ -145,6 +145,7 @@ public:
     int unbind(int handle);
     int unbind(int handle, const EventHandler* handler, Event_Type type);
     int get_current_max_handle_p_1() const { return current_max_handle_p_1_;}
+    inline bool hasEvent(Event_Type type) const ;
 
     //for timeout handlers
     TimeoutHandler *getTimeoutHandler() const;
@@ -184,6 +185,8 @@ public:
     int unregister_handler(EventHandler *handler, Event_Type type) override;
     int register_handler(int handle, EventHandler *handler, Event_Type type) override;
     int unregister_handler(int handle, EventHandler *handler, Event_Type type) override;
+
+    inline bool hasEvent(Event_Type type) const override {return demux_table_.hasEvent(type);}
 private:
     int select(std::chrono::microseconds timeout);
     int dispatch(int active_handle_count);

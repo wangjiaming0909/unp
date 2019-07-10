@@ -17,6 +17,8 @@ public:
     virtual int unregister_handler(EventHandler *handler, Event_Type type) = 0;
     virtual int unregister_handler(int handle, EventHandler *handler, Event_Type type) = 0;
     bool isWaiting() const {return isWaiting_;}
+
+    virtual bool hasEvent(EventHandler::Event_Type type) const = 0;
 protected:
     bool        isWaiting_ = false;
 };
