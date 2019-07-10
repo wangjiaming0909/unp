@@ -1,7 +1,6 @@
+#include <sys/eventfd.h>
 #include "EventFD.h"
 #include "util/easylogging++.h"
-#include <sys/eventfd.h>
-#include <future>
 #include "reactor/reactor.h"
 #include "reactor/connection_handler.h"
 

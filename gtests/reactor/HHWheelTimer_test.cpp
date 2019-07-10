@@ -33,9 +33,33 @@ TEST(HHWheelTimer, normal_test)
     ASSERT_TRUE(timer != nullptr);
 
     timer->scheduleTimeout(*handler, 1s);
+    ASSERT_EQ(timer->getTimerCount(), 1);
+    ASSERT_EQ(timer->isScheduled(), true);
+
 
     auto timeout = 200000000000000us;
     react.handle_events(&timeout);
+    ASSERT_EQ(timer->getTimerCount(), 0);
 
     ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler)->state, 0);
+}
+
+TEST(HHWheelTimer, scheduleTimeout_usingFunction)
+{
+    using namespace reactor;
+    Reactor react{new select_reactor_impl{}, true};
+    TimeoutHandler *handler = new FakeTimeoutHandler{react};
+
+    HHWheelTimer *timer = new HHWheelTimer{react};
+    ASSERT_TRUE(timer != nullptr);
+
+    //schedule timeout using function
+    int state = -1;
+    timer->scheduleTimeoutFn([&](){state = 1;}, 2s);
+    ASSERT_EQ(timer->getTimerCount(), 1);
+
+    auto timeout = 200000000000000us;
+    react.handle_events(&timeout);
+    ASSERT_EQ(timer->getTimerCount(), 0);
+    ASSERT_EQ(state, 1);
 }

@@ -49,6 +49,7 @@ void HHWheelTimer::scheduleTimeout(TimeoutHandler &handler, time_t timeout)
  */
 void HHWheelTimer::timeoutExpired() noexcept 
 {
+    timerCount_--;
     auto curTick = tickOfCurTime();
 
 }
@@ -98,6 +99,7 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTic
         pos = &handlers_[3][ticksToGo >> (3 * WHEEL_BITS)];
     }
     pos->push_back(handler);
+    timerCount_++;
 }
 
 void HHWheelTimer::scheduleInReactor_(TimeoutHandler& handler)
@@ -115,6 +117,17 @@ void HHWheelTimer::scheduleInReactor_(TimeoutHandler& handler)
 
     if(handler.isAttachedToReactor()) reactor_ = handler.get_reactor();
     else handler.setReactor(*reactor_);
+
+    /** 
+     * Everytime schedule a timeout in the wheel, sometimes we donot need to register it into the reactor
+     * There are some situations:
+     * 1, There is no timeout event registered into the reactor(EventBase)
+     * 2, Already registered timeout events into the reactor, The timeout we are scheduling is sooner than the expire time of last timeout
+     *  if we do not register this sooner timer into the reactor, we'll miss it
+     * 3, Already registered timeout events into the reactor, and the timer we are scheduling is later than last timeout, 
+     * we do not register it into the reactor, wait until the first timeout and invoke timeoutExpired, than schedule the soonest timeout
+     */
+
     expireTick_ = handler.posInBucket;
 
     reactor_->register_handler(&handler, TimeoutHandler::TIMEOUT_EVENT);

@@ -38,11 +38,12 @@ public:
     time_t getInterval() const { return interval_; }
     void setDefaultTimeout(time_t &defaultTimeout) { defaultTimeout_ = defaultTimeout; }
     template <typename Fn>
-    void scheduleTimeout(Fn f, time_t timeout);
+    void scheduleTimeoutFn(Fn f, time_t timeout);
     void scheduleTimeout(TimeoutHandler &handler, time_t timeout);
     void timeoutExpired() noexcept ;
     size_t cancelTimeoutsFromList(intrusive_list_t& handlers);
     bool isScheduled() const {return reactor_ != nullptr;}
+    size_t getTimerCount() const {return timerCount_;}
 
 protected:
     virtual ~HHWheelTimer();
@@ -73,12 +74,11 @@ private:
 };
 
 template <typename Fn>
-void HHWheelTimer::scheduleTimeout(Fn f, time_t timeout)
+void HHWheelTimer::scheduleTimeoutFn(Fn f, time_t timeout)
 {
     struct TimeoutHandlerWrapper : public TimeoutHandler
     {
-        TimeoutHandlerWrapper(Fn f) 
-            : TimeoutHandler(), fn_(std::move(f)){}
+        TimeoutHandlerWrapper(Fn f) : TimeoutHandler(), fn_(std::move(f)){}
         int handle_timeout(int) noexcept override
         {
             try{ fn_(); } //for noexcept
@@ -90,12 +90,13 @@ void HHWheelTimer::scheduleTimeout(Fn f, time_t timeout)
             {
                 LOG(WARNING) << "TimeoutHandlerWrapper throw a unknow exception: ";
             } 
+            wheel_->timeoutExpired();
             delete this;
         }
         Fn fn_;
     };
 
-    TimeoutHandlerWrapper *handler = new TimeoutHandlerWrapper(f);
+    TimeoutHandlerWrapper *handler = new TimeoutHandlerWrapper(std::move(f));
     scheduleTimeout(*handler, timeout);
 }
 

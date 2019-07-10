@@ -138,6 +138,8 @@ int select_reactor_impl::select(std::chrono::microseconds timeout){
         timeout = std::min(std::chrono::duration_cast<std::chrono::microseconds>(timeoutOfFirstTimer), timeout);
     }
 
+    //!What if the timeout has missed, timeout will be negative
+    //We also have to let every timeout event be handled, 不能丢event, 即便几个timeout event在很短的时间间隔内超时
     auto timeout_timeval = util::duration_to_timeval<std::chrono::microseconds>(timeout);
 
 //    LOG(INFO) << "trying to wait on " << width << " fds...";
