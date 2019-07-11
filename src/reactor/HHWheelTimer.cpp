@@ -39,7 +39,7 @@ void HHWheelTimer::scheduleTimeout(TimeoutHandler &handler, time_t timeout)
     if(!isScheduled()) return;//add timeouts into the HHWheelTimer and schedule it later(maybe)
 
     // 不一定是当前的这个timeout 会被 放到reactor中
-    scheduleNextTimeoutInReactor_(thisTimerExpireTick);
+    scheduleNextTimeoutInReactor_(baseTick);
 }
 
 /**
@@ -109,7 +109,7 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTic
     timerCount_++;
 }
 
-void HHWheelTimer::scheduleNextTimeoutInReactor_(int64_t thisTimerExipreTick)
+void HHWheelTimer::scheduleNextTimeoutInReactor_(int64_t baseTick)
 {
     if(!isScheduled())
     {
@@ -133,14 +133,17 @@ void HHWheelTimer::scheduleNextTimeoutInReactor_(int64_t thisTimerExipreTick)
     //min heap 中没有timeout 说明第一个bucket中没有timeout, 是否需要cascade?
     if(registeredSlotsInFirstbucket_.size() == 0)
     {
-        //!
+        //!! 如果第一个bucket中没有timeout, 但是有其他更晚的timeout, 
+        //那么我们 注册一个相对较晚的timeout 作为默认timeout并且有默认的handler, 
+        //用于唤醒自己来cascade timeouts 并且注册到时候已经位于第一个bucket中的timeouts
+        // baseTick = 
     }
 
     auto posInbucket = registeredSlotsInFirstbucket_.top();
     auto firstSlot = &handlers_[0][posInbucket];
     registeredSlotsInFirstbucket_.pop();
 
-    if(!reactor_->hasEvent(EventHandler::TIMEOUT_EVENT) || expireTick_ >=  thisTimerExipreTick)
+    if(!reactor_->hasEvent(EventHandler::TIMEOUT_EVENT) || expireTick_ >=  baseTick)
     {
         for(auto &timeoutHandler : *firstSlot)
         {

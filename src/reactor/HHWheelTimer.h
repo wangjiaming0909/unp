@@ -50,7 +50,7 @@ protected:
     virtual ~HHWheelTimer();
 private:
     //find the right timeout and register the handlers into the reactor
-    void scheduleNextTimeoutInReactor_(int64_t thisTimerexpireTick);
+    void scheduleNextTimeoutInReactor_(int64_t baseTick);
     // find the right place to put the timeout
     void scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTick, int64_t thisTimerExpireTick);
     int64_t getTickFromDuration(time_t duration) { return duration.count() / interval_.count(); }
