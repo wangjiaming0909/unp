@@ -1,4 +1,5 @@
 #include "HHWheelTimer.h"
+#include "reactor/reactor.h"
 
 namespace reactor{
 
@@ -9,6 +10,7 @@ HHWheelTimer::HHWheelTimer(Reactor& reactor, time_t interval, time_t defaultTime
     , startTime_(getCurTime())
     , handlers_()
     , reactor_(&reactor)
+    , registeredSlotsInFirstbucket_{}
 {
 }
 
@@ -19,6 +21,7 @@ HHWheelTimer::HHWheelTimer( time_t interval , time_t defaultTimeout )
     , startTime_(getCurTime())
     , handlers_()
     , reactor_(nullptr)
+    , registeredSlotsInFirstbucket_{}
 { 
 }
 
@@ -29,10 +32,14 @@ HHWheelTimer::~HHWheelTimer()
 void HHWheelTimer::scheduleTimeout(TimeoutHandler &handler, time_t timeout)
 {
     auto baseTick = tickOfCurTime();
-    scheduleTimeoutImpl_(handler, baseTick, timeout);
+    auto thisTimerExpireTick = getTickFromDuration(timeout);
+    scheduleTimeoutImpl_(handler, baseTick, thisTimerExpireTick);
     handler.setSheduled(this, timeout);
+
     if(!isScheduled()) return;//add timeouts into the HHWheelTimer and schedule it later(maybe)
-    scheduleInReactor_(handler);
+
+    // 不一定是当前的这个timeout 会被 放到reactor中
+    scheduleNextTimeoutInReactor_(thisTimerExpireTick);
 }
 
 /**
@@ -64,10 +71,9 @@ size_t HHWheelTimer::cancelTimeoutsFromList(intrusive_list_t& handlers)
  * 1, 与当前时间所在的tick有关 
  * 2, 与所指定的timeout有关
  * */
-void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTick, time_t timeout)
+void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTick, int64_t thisTimerExpireTick)
 {
-    auto tickOfTimeout = getTickFromDuration(timeout);
-    auto ticksToGo = tickOfTimeout - baseTick;
+    auto ticksToGo = thisTimerExpireTick - baseTick;
     intrusive_list_t *pos;
     /**
      * scheduleTimeout时可能有几种情况:
@@ -80,6 +86,7 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTic
     }else if(ticksToGo < WHEEL_SIZE)
     {
         pos = &handlers_[0][ticksToGo];
+        registeredSlotsInFirstbucket_.push(static_cast<uint8_t>(ticksToGo));
         handler.posInBucket = ticksToGo;
     }
     else if(ticksToGo < (1 << 2 * WHEEL_SIZE))
@@ -102,21 +109,13 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTic
     timerCount_++;
 }
 
-void HHWheelTimer::scheduleInReactor_(TimeoutHandler& handler)
+void HHWheelTimer::scheduleNextTimeoutInReactor_(int64_t thisTimerExipreTick)
 {
-    if(!handler.isAttachedToReactor() && !isScheduled())
+    if(!isScheduled())
     {
-        LOG(WARNING) << "No reactor is attached to the timeout handler";
+        LOG(WARNING) << "No reactor is attached to the HHWheelTimer";
         return;
     }
-
-    if(handler.isAttachedToReactor() && isScheduled())
-    {
-        assert(handler.get_reactor() == reactor_);
-    }
-
-    if(handler.isAttachedToReactor()) reactor_ = handler.get_reactor();
-    else handler.setReactor(*reactor_);
 
     /** 
      * Everytime schedule a timeout in the wheel, sometimes we donot need to register it into the reactor
@@ -127,15 +126,27 @@ void HHWheelTimer::scheduleInReactor_(TimeoutHandler& handler)
      * 3, Already registered timeout events into the reactor, and the timer we are scheduling is later than last timeout, 
      * we do not register it into the reactor, wait until the first timeout and invoke timeoutExpired, than schedule the soonest timeout
      */
+    // we assert that the timeouts event in the reactor are registered by this wheel if reactor has timeout events
 
-    if(reactor_->hasEvent(EventHandler::TIMEOUT_EVENT))// we assert that the timeouts event in the reactor are registered by this wheel
+    // Find the timeouts that will expire first in the wheel
+    if(timerCount_ == 0) return;
+    //min heap 中没有timeout 说明第一个bucket中没有timeout, 是否需要cascade?
+    if(registeredSlotsInFirstbucket_.size() == 0)
     {
-        // if()
+        //!
     }
 
-    expireTick_ = handler.posInBucket;
+    auto posInbucket = registeredSlotsInFirstbucket_.top();
+    auto firstSlot = &handlers_[0][posInbucket];
+    registeredSlotsInFirstbucket_.pop();
 
-    reactor_->register_handler(&handler, TimeoutHandler::TIMEOUT_EVENT);
+    if(!reactor_->hasEvent(EventHandler::TIMEOUT_EVENT) || expireTick_ >=  thisTimerExipreTick)
+    {
+        for(auto &timeoutHandler : *firstSlot)
+        {
+            reactor_->register_handler(&timeoutHandler, EventHandler::TIMEOUT_EVENT);
+        }
+    }
 }
 
 inline int64_t  HHWheelTimer::tickOfCurTime() const

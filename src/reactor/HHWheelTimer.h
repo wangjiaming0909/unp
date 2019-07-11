@@ -7,6 +7,7 @@
 #include "boost/intrusive/list.hpp"
 #include "util/easylogging++.h"
 #include "reactor/reactor.h"
+#include "util/min_heap.h"
 
 #define DEFAULT_TICK_INTERVAL 10
 
@@ -49,9 +50,9 @@ protected:
     virtual ~HHWheelTimer();
 private:
     //find the right timeout and register the handlers into the reactor
-    void scheduleInReactor_(TimeoutHandler& handler);
+    void scheduleNextTimeoutInReactor_(int64_t thisTimerexpireTick);
     // find the right place to put the timeout
-    void scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTick, time_t timeout);
+    void scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTick, int64_t thisTimerExpireTick);
     int64_t getTickFromDuration(time_t duration) { return duration.count() / interval_.count(); }
     int64_t tickOfCurTime() const;
 
@@ -71,6 +72,8 @@ private:
 
     intrusive_list_t handlers_[WHEEL_BUCKETS][WHEEL_SIZE];
     Reactor* reactor_;
+
+    util::min_heap<uint8_t> registeredSlotsInFirstbucket_;
 };
 
 template <typename Fn>

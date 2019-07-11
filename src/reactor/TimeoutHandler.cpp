@@ -1,4 +1,5 @@
 #include "reactor/TimeoutHandler.h"
+#include "reactor/reactor.h"
 
 namespace reactor
 {
@@ -17,6 +18,11 @@ void TimeoutHandler::setSheduled(HHWheelTimer* wheel, std::chrono::microseconds 
     assert(wheel != nullptr);
     wheel_ = wheel;
     expiration_ = std::chrono::steady_clock::now() + timeout;
+}
+
+inline bool TimeoutHandler::isRegistered() const 
+{
+    return reactor_->hasEvent(EventHandler::TIMEOUT_EVENT);
 }
 
 }
