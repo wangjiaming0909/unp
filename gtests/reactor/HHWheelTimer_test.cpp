@@ -32,7 +32,7 @@ TEST(HHWheelTimer, normal_test)
     HHWheelTimer *timer = new HHWheelTimer{react};
     ASSERT_TRUE(timer != nullptr);
 
-    timer->scheduleTimeout(*handler, 1s);
+    timer->scheduleTimeout(*handler, 2s);
     ASSERT_EQ(timer->getTimerCount(), 1);
     ASSERT_EQ(timer->isScheduled(), true);
 
@@ -62,4 +62,62 @@ TEST(HHWheelTimer, scheduleTimeout_usingFunction)
     react.handle_events(&timeout);
     ASSERT_EQ(timer->getTimerCount(), 0);
     ASSERT_EQ(state, 1);
+}
+
+TEST(BucketsAndSlots, constuctor)
+{
+    using namespace reactor;
+    size_t bucketSize = 4;
+    Buckets buckets{bucketSize};
+    ASSERT_EQ(buckets.buckets_.size(), bucketSize);
+    ASSERT_EQ(buckets.unsetBuckets_.size(), bucketSize);
+
+    for(auto &minHeap : buckets.buckets_)
+    {
+        ASSERT_EQ(minHeap.size(), 0);
+    }
+
+    //unsetBuckets should be initialized properly
+    for(auto& v : buckets.unsetBuckets_)
+    {
+        ASSERT_EQ(v.size(), (1 << (sizeof(Buckets::SlotSize_t) * 8)));
+    }
+}
+
+TEST(BucketsAndSlots, setRegister)
+{
+    using namespace reactor;
+    size_t bucketSize = 4;
+    Buckets b{bucketSize};
+
+    b.setRegistered(0, 11);
+    ASSERT_EQ(b.buckets_[0].top(), 11);
+    ASSERT_EQ(b.buckets_[0].size(), 1);
+    b.setRegistered(0, 10);
+    ASSERT_EQ(b.buckets_[0].top(), 10);
+    ASSERT_EQ(b.buckets_[0].size(), 2);
+
+    for(auto& v : b.unsetBuckets_)
+    {
+        ASSERT_EQ(v.size(), (1 << (sizeof(Buckets::SlotSize_t) *8)));
+    }
+}
+
+TEST(BucketsAndSlots, unsetRegister)
+{
+    using namespace reactor;
+    size_t bucketSize = 4;
+    Buckets b{bucketSize};
+
+    b.setRegistered(0, 11);
+    b.setRegistered(0, 10);
+
+    ASSERT_EQ(b.buckets_[0].top(), 10);
+    b.unsetRegistered(0, 10);
+    auto slot = b.findFirst();
+    ASSERT_EQ(slot.bucketIndex, 0);
+    ASSERT_EQ(slot.slotIndex, 11);
+    b.unsetRegistered(0, 11);
+    slot = b.findFirst();
+    ASSERT_EQ(slot, Slot::NotFoundSlot);
 }

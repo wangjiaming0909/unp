@@ -14,7 +14,9 @@
                     "/boost_1_70_0"
                 ]
             },
-            "defines": [],
+            "defines": [
+                "TESTING"
+            ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",

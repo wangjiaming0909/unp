@@ -3,6 +3,54 @@
 
 namespace reactor{
 
+
+void Buckets::initializeUnsetBuckets(size_t bucketSize)
+{
+    unsetBuckets_.resize(bucketSize);
+    for(auto &v : unsetBuckets_)
+    {
+        v.resize(1 << (sizeof(SlotSize_t) * 8));
+    }
+}
+
+bool Buckets::setRegistered(size_t bucket, SlotSize_t slot)
+{
+    if(bucket > buckets_.size()) return false;
+    buckets_[bucket].push(slot);
+    return true;
+}
+
+bool Buckets::unsetRegistered(size_t bucket, SlotSize_t slot)
+{
+    if(bucket > buckets_.size()) return false;
+    if(!buckets_[bucket].empty() && buckets_[bucket].top() == slot)
+    {
+        buckets_[bucket].pop();
+        return true;
+    }
+    auto &value = unsetBuckets_[bucket][slot];
+    if(value != 0) return false;
+    value = 1; return true;
+}
+
+Slot Buckets::findFirst() 
+{
+    for (int i = 0; i < buckets_.size(); i++)
+    {
+        while(buckets_[i].size() > 0)
+        {
+            if(unsetBuckets_[i][buckets_[i].top()] == 0)
+            {
+                return {i, buckets_[i].top()};
+            }
+            buckets_[i].pop();
+        }
+    }
+    return Slot::NotFoundSlot;
+}
+
+Slot Slot::NotFoundSlot = {SIZE_MAX, UINT8_MAX};
+
 HHWheelTimer::HHWheelTimer(Reactor& reactor, time_t interval, time_t defaultTimeout) 
     : interval_(interval)
     , defaultTimeout_(defaultTimeout)
@@ -11,6 +59,7 @@ HHWheelTimer::HHWheelTimer(Reactor& reactor, time_t interval, time_t defaultTime
     , handlers_()
     , reactor_(&reactor)
     , registeredSlotsInFirstbucket_{}
+    , registeredBucketsSlots_{WHEEL_BUCKETS}
 {
 }
 
@@ -22,6 +71,7 @@ HHWheelTimer::HHWheelTimer( time_t interval , time_t defaultTimeout )
     , handlers_()
     , reactor_(nullptr)
     , registeredSlotsInFirstbucket_{}
+    , registeredBucketsSlots_{WHEEL_BUCKETS}
 { 
 }
 
@@ -87,15 +137,18 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTic
     {
         pos = &handlers_[0][ticksToGo];
         registeredSlotsInFirstbucket_.push(static_cast<uint8_t>(ticksToGo));
+        registeredBucketsSlots_.setRegistered(0, static_cast<uint8_t>(ticksToGo));
         handler.posInBucket = ticksToGo;
     }
-    else if(ticksToGo < (1 << 2 * WHEEL_SIZE))
+    else if(ticksToGo < (1 << 2 * WHEEL_BITS))
     {
         pos = &handlers_[1][ticksToGo >> (WHEEL_BITS)];
+        registeredBucketsSlots_.setRegistered(1, static_cast<uint8_t>(ticksToGo >> (WHEEL_BITS)));
     }
-    else if(ticksToGo < (1 << (3 * WHEEL_SIZE)))
+    else if(ticksToGo < (1 << (3 * WHEEL_BITS)))
     {
         pos = &handlers_[2][ticksToGo >> (2 * WHEEL_BITS)];
+        registeredBucketsSlots_.setRegistered(2, static_cast<uint8_t>(ticksToGo >> (2 * WHEEL_BITS)));
     }
     else //currently, the buckets can't take this timeout, cause the time is very long time later
     {
@@ -104,6 +157,7 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTic
             ticksToGo = LARGEST_SLOT;
         }
         pos = &handlers_[3][ticksToGo >> (3 * WHEEL_BITS)];
+        registeredBucketsSlots_.setRegistered(3, static_cast<uint8_t>(ticksToGo >> (3 * WHEEL_BITS)));
     }
     pos->push_back(handler);
     timerCount_++;

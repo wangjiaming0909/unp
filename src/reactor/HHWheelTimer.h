@@ -13,7 +13,43 @@
 
 namespace reactor
 {
-    /**
+
+struct Slot
+{
+    using SlotSize_t = uint8_t;
+    static Slot NotFoundSlot;
+    size_t bucketIndex;
+    SlotSize_t slotIndex;
+
+    bool operator==(const Slot &other) const { return bucketIndex == other.bucketIndex && slotIndex == other.slotIndex; }
+};
+
+class Buckets{
+public:
+    using SlotSize_t = Slot::SlotSize_t;
+    using MinHeap_t = util::min_heap<SlotSize_t>;
+    template <typename T>
+    using Vector_t = std::vector<T>;
+
+    Buckets(size_t size) noexcept: buckets_{}, unsetBuckets_{}
+    {
+        buckets_.resize(size);
+        initializeUnsetBuckets(size);
+    }
+
+    void initializeUnsetBuckets(size_t bucketSize);
+    bool setRegistered(size_t bucket, SlotSize_t slot);
+    bool unsetRegistered(size_t bucket, SlotSize_t slot);
+    Slot findFirst();
+
+private:
+#ifdef TESTING
+public:
+#endif
+    Vector_t<MinHeap_t> buckets_;
+    Vector_t<Vector_t<uint8_t>> unsetBuckets_;
+};
+/**
      * One HHWheelTimer only should be put in one reactor.
      * If scheduleTimeouts in different reactor, there'll have race conditions.
      * 
@@ -74,6 +110,7 @@ private:
     Reactor* reactor_;
 
     util::min_heap<uint8_t> registeredSlotsInFirstbucket_;
+    Buckets registeredBucketsSlots_;
 };
 
 template <typename Fn>
