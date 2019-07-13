@@ -17,3 +17,5 @@ nbproject/**
 log
 unp.log
 myeasylog.log
+unp.cxxflags
+unp.cflags

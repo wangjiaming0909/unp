@@ -14,7 +14,7 @@ public:
 
     virtual int handle_timeout(int ) noexcept override
     {
-        wheel_->timeoutExpired();
+        wheel_->timeoutExpired(this);
         state = 0;
         return -1;
     }
@@ -97,6 +97,36 @@ TEST(HHWheelTimer, scheduleTimeout_usingFunction)
     react.handle_events(&timeout);
     ASSERT_EQ(timer->getTimerCount(), 0);
     ASSERT_EQ(state, 1);
+}
+
+TEST(HHWheelTimer, scheduleTimeout_Which_is_notInFirstBucket)
+{
+    using namespace reactor;
+    Reactor react{new select_reactor_impl{}, true};
+
+    HHWheelTimer *timer = new HHWheelTimer{react};
+    ASSERT_TRUE(timer != nullptr);
+
+    FakeTimeoutHandler* timeoutHandler = new FakeTimeoutHandler(react, "1");
+    timer->scheduleTimeout(*timeoutHandler, 3s);
+    //because 3s is in the second bucket, so we scheduled a new timeout in the wheel
+    //and the new scheduled timeout is in the last slot of the first bucket
+    ASSERT_EQ(timer->getTimerCount(), 2);
+    auto firstSlot = timer->registeredBucketsSlots_.findFirstSlot();
+    ASSERT_EQ(firstSlot.bucketIndex, 0);
+    ASSERT_EQ(firstSlot.slotIndex, (1 << HHWheelTimer::WHEEL_BITS) - 1);
+
+    auto timeout = 2000000000000us;
+    react.handle_events(&timeout);
+    ASSERT_EQ(timer->getTimerCount(), 1);
+
+    ASSERT_EQ(timeoutHandler->name, "1");
+    ASSERT_EQ(timeoutHandler->state, -1);
+
+    react.handle_events(&timeout);
+    ASSERT_EQ(timer->getTimerCount(), 0);
+    ASSERT_EQ(timeoutHandler->name, "1");
+    ASSERT_EQ(timeoutHandler->state, 0);
 }
 
 TEST(BucketsAndSlots, constuctor)

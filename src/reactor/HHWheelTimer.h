@@ -41,6 +41,7 @@ public:
     bool setRegistered(size_t bucket, SlotSize_t slot);
     bool unsetRegistered(size_t bucket, SlotSize_t slot);
     Slot findFirstSlot();
+    Slot findFirstSlotInFirstBucket();
     int64_t count() const {return countOfSlotSet_;}
 
 private:
@@ -79,7 +80,7 @@ public:
     template <typename Fn>
     void scheduleTimeoutFn(Fn f, time_t timeout);
     void scheduleTimeout(TimeoutHandler &handler, time_t timeout);
-    void timeoutExpired() noexcept ;
+    void timeoutExpired(TimeoutHandler* handler) noexcept ;
     size_t cancelTimeoutsFromList(intrusive_list_t& handlers);
     bool isScheduled() const {return reactor_ != nullptr;}
     size_t getTimerCount() const {return timerCount_;}
@@ -87,6 +88,9 @@ public:
 protected:
     virtual ~HHWheelTimer();
 private:
+#ifdef TESTING
+public:
+#endif
     //find the right timeout and register the handlers into the reactor
     void scheduleNextTimeoutInReactor_(int64_t baseTick);
     // find the right place to put the timeout
@@ -101,6 +105,9 @@ private:
     time_point_t curTime() const;
 
 private:
+#ifdef TESTING
+public:
+#endif
     time_t interval_; // the interval of one tick
     time_t defaultTimeout_;
     size_t timerCount_;
@@ -137,7 +144,7 @@ void HHWheelTimer::scheduleTimeoutFn(Fn f, time_t timeout)
             {
                 LOG(WARNING) << "TimeoutHandlerWrapper throw a unknow exception: ";
             }
-            wheel_->timeoutExpired();
+            wheel_->timeoutExpired(this);
             delete this;
         }
         Fn fn_;
