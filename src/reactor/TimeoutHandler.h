@@ -16,20 +16,21 @@ class TimeoutHandler : public EventHandler, public boost_list_base_hook_t, publi
 {
     friend class HHWheelTimer;
 public:
+    using TimePoint_T = std::chrono::steady_clock::time_point;
     TimeoutHandler() = default;
     TimeoutHandler(Reactor& reactor);
     virtual ~TimeoutHandler();
 
     //timeout handler specific functions
-    void setSheduled(HHWheelTimer* wheel, std::chrono::microseconds timeout);
-    std::chrono::steady_clock::time_point expirationTimePoint() const { return expiration_; }
+    void setSheduled(HHWheelTimer* wheel, const TimePoint_T& timeout);
+    TimePoint_T expirationTimePoint() const { return expiration_; }
     bool isScheduled() const {return wheel_ != nullptr;}
     bool isRegistered() const;
 
 protected:
-    int posInBucket{-1};
+    int slotInBucket{-1};
     HHWheelTimer *wheel_{nullptr};
-    std::chrono::steady_clock::time_point expiration_{}; 
+    TimePoint_T expiration_{};
 
 public: //for std::greater
     bool operator>(const TimeoutHandler &other) const { return expiration_ > other.expiration_; }

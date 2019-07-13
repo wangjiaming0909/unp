@@ -56,7 +56,7 @@ public:
     fd_set* get_select_fd_set_ptr(){
         if(size_ > 0) 
             return &set_;
-        return static_cast<fd_set*>(0);
+        return static_cast<fd_set*>(nullptr);
     }
     int first_handle() const {
         //empty fd_set

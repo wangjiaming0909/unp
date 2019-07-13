@@ -3,13 +3,13 @@
 
 using namespace reactor;
 
-select_demultiplex_table::select_demultiplex_table(size_t size) 
+select_demultiplex_table::select_demultiplex_table(size_t size)
     : event_vector_()
     , timeoutHandlersMinHeap_{}
 {
     if(size > MAX_NUMBER_OF_HANDLE) {
-        LOG(ERROR) << "select_demultiplex_table size specified is " 
-                   << size << ", bigger than " 
+        LOG(ERROR) << "select_demultiplex_table size specified is "
+                   << size << ", bigger than "
                    << MAX_NUMBER_OF_HANDLE;
         event_vector_.resize(MAX_NUMBER_OF_HANDLE); //resize requires that T has default constructor
     } else event_vector_.resize(size);
@@ -24,11 +24,6 @@ EventHandler* select_demultiplex_table::get_handler(int handle, Event_Type type)
     return event_vector_[handle].get_handler(type);
 }
 
-inline bool select_demultiplex_table::hasEvent(Event_Type type) const
-{
-    return false;
-}
-
 TimeoutHandler *select_demultiplex_table::getTimeoutHandler() const
 {
     if(timeoutHandlersMinHeap_.empty())
@@ -40,7 +35,7 @@ int select_demultiplex_table::bind(int handle, EventHandler* handler, Event_Type
     auto event_type_str = event_type_to_string(type);
     LOG(INFO) << "bind handle: " << handle << " type: " << event_type_str;
     if(!is_valid_handle(handle) || handler == 0) {
-        LOG(ERROR) << "handle is not in range or handler is null handle: " 
+        LOG(ERROR) << "handle is not in range or handler is null handle: "
                     << handle << " handler: " << handler;
         return -1;
     }
@@ -100,7 +95,7 @@ int select_demultiplex_table::unbindTimeoutEvent(TimeoutHandler &handler)
 }
 
 bool select_demultiplex_table::is_handle_in_range(int handle) const {
-    if(handle < 0 || ((handle + 1) > current_max_handle_p_1_)) 
+    if(handle < 0 || ((handle + 1) > current_max_handle_p_1_))
         return false;
     return true;
 }
@@ -161,7 +156,7 @@ int select_reactor_impl::select(std::chrono::microseconds timeout){
 
     isWaiting_ = true;
 
-    int number_of_active_handles = ::select(width, 
+    int number_of_active_handles = ::select(width,
                      dispatch_sets_.read_set.get_select_fd_set_ptr(),
                      dispatch_sets_.write_set.get_select_fd_set_ptr(),
                      dispatch_sets_.exception_set.get_select_fd_set_ptr(),
@@ -200,7 +195,7 @@ int select_reactor_impl::dispatch(int active_handle_count){
 }
 
 int select_reactor_impl::register_handler(EventHandler* handler, Event_Type type) {
-    if(handler == nullptr || type != EventHandler::TIMEOUT_EVENT) 
+    if(handler == nullptr || type != EventHandler::TIMEOUT_EVENT)
     {
         LOG(ERROR) << "Registering non-timeout event and didn't give handle or handler is null";
         return -1;
@@ -230,7 +225,7 @@ int select_reactor_impl::register_handler(int handle, EventHandler *handler, Eve
         case EventHandler::WRITE_EVENT:
             wait_sets_.write_set.set_bit(handle);
             break;
-        case EventHandler::EXCEPT_EVENT:   
+        case EventHandler::EXCEPT_EVENT:
             wait_sets_.exception_set.set_bit(handle);
             break;
         default:
@@ -265,25 +260,25 @@ int select_reactor_impl::unregister_handler(int handle, EventHandler *handler, E
 //dispatch io_handlers read_set, write_set, exception_set
 int select_reactor_impl::dispatch_io_handlers(int active_handle_count, int& io_handles_dispatched){
     int ret = dispatch_io_set(
-        active_handle_count, 
-        io_handles_dispatched, 
-        EventHandler::READ_EVENT, 
+        active_handle_count,
+        io_handles_dispatched,
+        EventHandler::READ_EVENT,
         this->dispatch_sets_.read_set,
         this->ready_sets_.read_set,
         &EventHandler::handle_input);
     //TODO check ret
     ret = dispatch_io_set(
-        active_handle_count, 
-        io_handles_dispatched, 
-        EventHandler::WRITE_EVENT, 
+        active_handle_count,
+        io_handles_dispatched,
+        EventHandler::WRITE_EVENT,
         this->dispatch_sets_.write_set,
         this->ready_sets_.write_set,
         &EventHandler::handle_output);
     //TODO check ret
     ret = dispatch_io_set(
-        active_handle_count, 
-        io_handles_dispatched, 
-        EventHandler::EXCEPT_EVENT, 
+        active_handle_count,
+        io_handles_dispatched,
+        EventHandler::EXCEPT_EVENT,
         this->dispatch_sets_.exception_set,
         this->ready_sets_.exception_set,
         &EventHandler::handle_output);
@@ -293,7 +288,7 @@ int select_reactor_impl::dispatch_io_handlers(int active_handle_count, int& io_h
 
 //
 int select_reactor_impl::dispatch_io_set(
-        int number_of_active_handles, 
+        int number_of_active_handles,
         int& number_of_handles_dispatched,
         EventHandler::Event_Type type,//can tell us what we are doing: handling read, write or exception events
         unp::handle_set& dispatch_set,
@@ -303,7 +298,7 @@ int select_reactor_impl::dispatch_io_set(
 
     //go throuth the handle_set, dispatch all the handles
     while(
-        ((current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE) && 
+        ((current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE) &&
         (number_of_handles_dispatched < number_of_active_handles))
     {
         LOG(INFO) << "dispatching... handle: " << current_handle << " event: " << event_type_to_string(type);

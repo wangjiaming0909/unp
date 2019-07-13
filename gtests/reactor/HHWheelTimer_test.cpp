@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <string>
 #include "reactor/HHWheelTimer.h"
 #include "reactor/reactor.h"
 #include "reactor/select_reactor_impl.h"
@@ -7,9 +8,11 @@ using namespace std::chrono_literals;
 
 class FakeTimeoutHandler : public reactor::TimeoutHandler{
 public:
-    FakeTimeoutHandler(reactor::Reactor& react) : TimeoutHandler(react){}
+    FakeTimeoutHandler(reactor::Reactor& react, const std::string& name)
+        : TimeoutHandler(react)
+        , name(name){}
 
-    virtual int handle_timeout(int ) noexcept override 
+    virtual int handle_timeout(int ) noexcept override
     {
         wheel_->timeoutExpired();
         state = 0;
@@ -21,13 +24,14 @@ public:
     }
 
     int state = -1;
+    std::string name;
 };
 
 TEST(HHWheelTimer, normal_test)
 {
     using namespace reactor;
     Reactor react{new select_reactor_impl{}, true};
-    TimeoutHandler *handler = new FakeTimeoutHandler{react};
+    TimeoutHandler *handler = new FakeTimeoutHandler{react, "1"};
 
     HHWheelTimer *timer = new HHWheelTimer{react};
     ASSERT_TRUE(timer != nullptr);
@@ -44,11 +48,42 @@ TEST(HHWheelTimer, normal_test)
     ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler)->state, 0);
 }
 
+TEST(HHWheelTimer, schedule_multiTimeouts)
+{
+    using namespace reactor;
+    Reactor react{new select_reactor_impl{}, true};
+    TimeoutHandler *handler1 = new FakeTimeoutHandler{react, "1"};
+    TimeoutHandler *handler2 = new FakeTimeoutHandler{react, "2"};
+    TimeoutHandler *handler3 = new FakeTimeoutHandler{react, "3"};
+
+    HHWheelTimer *timer = new HHWheelTimer{react};
+
+    timer->scheduleTimeout(*handler1, 1s);
+    ASSERT_EQ(timer->getTimerCount(), 1);
+    ASSERT_EQ(timer->isScheduled(), true);
+    timer->scheduleTimeout(*handler2, 2s);
+    ASSERT_EQ(timer->getTimerCount(), 2);
+    ASSERT_EQ(timer->isScheduled(), true);
+    timer->scheduleTimeout(*handler3, 3s);
+    ASSERT_EQ(timer->getTimerCount(), 3);
+    ASSERT_EQ(timer->isScheduled(), true);
+
+    auto timeout = 200000000000000us;
+    react.handle_events(&timeout);
+    ASSERT_EQ(timer->getTimerCount(), 2);
+    react.handle_events(&timeout);
+    ASSERT_EQ(timer->getTimerCount(), 1);
+    react.handle_events(&timeout);
+    ASSERT_EQ(timer->getTimerCount(), 0);
+    ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler1)->state, 0);
+    ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler2)->state, 0);
+    ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler3)->state, 0);
+}
+
 TEST(HHWheelTimer, scheduleTimeout_usingFunction)
 {
     using namespace reactor;
     Reactor react{new select_reactor_impl{}, true};
-    TimeoutHandler *handler = new FakeTimeoutHandler{react};
 
     HHWheelTimer *timer = new HHWheelTimer{react};
     ASSERT_TRUE(timer != nullptr);
@@ -114,10 +149,10 @@ TEST(BucketsAndSlots, unsetRegister)
 
     ASSERT_EQ(b.buckets_[0].top(), 10);
     b.unsetRegistered(0, 10);
-    auto slot = b.findFirst();
+    auto slot = b.findFirstSlot();
     ASSERT_EQ(slot.bucketIndex, 0);
     ASSERT_EQ(slot.slotIndex, 11);
     b.unsetRegistered(0, 11);
-    slot = b.findFirst();
+    slot = b.findFirstSlot();
     ASSERT_EQ(slot, Slot::NotFoundSlot);
 }

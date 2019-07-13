@@ -16,15 +16,15 @@ class Reactor{
 public:
     using Event_Type = EventHandler::Event_Type;
     //should I alloc the memory of reactor_impl, new it in this constructor
-    Reactor(reactor_implementation* reactor_impl = 0, bool needWakeUp = false)
-		: reactor_impl_(reactor_impl)
-	{
+    Reactor(reactor_implementation* reactor_impl = nullptr, bool needWakeUp = false)
+        : reactor_impl_(reactor_impl)
+    {
         if (needWakeUp) //connector and epoll do not need weakup, poll select need it
         {
             eventFd_ptr_ = std::make_shared<EventFD>();
             eventFd_ptr_->registerInto(*this);
         }
-	}
+    }
     virtual ~Reactor(){}
 
     virtual int register_handler(EventHandler* handler, Event_Type type){
@@ -38,8 +38,8 @@ public:
 
         // 如果是event fd的read事件，那么不唤醒
         // 如果是event fd的write事件， 如果没有event fd的write事件就唤醒，有event fd的write就不唤醒
-        if(handle == eventFd_ptr_->getEventFD() && 
-            type == EventHandler::WRITE_EVENT && 
+        if(handle == eventFd_ptr_->getEventFD() &&
+            type == EventHandler::WRITE_EVENT &&
             reactor_impl_->register_handler(handle, handler, type) == -1 &&
             reactor_impl_->isWaiting())
         {
@@ -52,7 +52,7 @@ public:
             LOG(INFO) << "current handle is not the event fd... the reactor will be waked up handle: " << handle;
             eventFd_ptr_->wakeup();
         }
-		return ret;
+        return ret;
     }
     virtual int unregister_handler(EventHandler *handler, Event_Type type) {
         return reactor_impl_->unregister_handler(handler, type);
@@ -70,7 +70,7 @@ public:
     }
 private:
     std::shared_ptr<reactor_implementation> reactor_impl_;
-	std::shared_ptr<EventFD> eventFd_ptr_;
+    std::shared_ptr<EventFD> eventFd_ptr_;
 };
 
 } // Reactor

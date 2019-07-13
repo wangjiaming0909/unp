@@ -31,7 +31,7 @@ public:
     template <typename T>
     using Vector_t = std::vector<T>;
 
-    Buckets(size_t size) noexcept: buckets_{}, unsetBuckets_{}
+    Buckets(size_t size) noexcept: countOfSlotSet_{0}, buckets_{}, unsetBuckets_{}
     {
         buckets_.resize(size);
         initializeUnsetBuckets(size);
@@ -40,19 +40,21 @@ public:
     void initializeUnsetBuckets(size_t bucketSize);
     bool setRegistered(size_t bucket, SlotSize_t slot);
     bool unsetRegistered(size_t bucket, SlotSize_t slot);
-    Slot findFirst();
+    Slot findFirstSlot();
+    int64_t count() const {return countOfSlotSet_;}
 
 private:
 #ifdef TESTING
 public:
 #endif
+    int64_t countOfSlotSet_;
     Vector_t<MinHeap_t> buckets_;
     Vector_t<Vector_t<uint8_t>> unsetBuckets_;
 };
 /**
      * One HHWheelTimer only should be put in one reactor.
      * If scheduleTimeouts in different reactor, there'll have race conditions.
-     * 
+     *
      * Questions:
      * 1, Can we schedule timeouts in different reactors(EventBases)? Will it be a problem?
      */
@@ -65,11 +67,11 @@ public:
     using intrusive_list_t = boost::intrusive::list<TimeoutHandler, boost::intrusive::constant_time_size<false>>;
 
     HHWheelTimer(
-        time_t interval = time_t(DEFAULT_TICK_INTERVAL), 
+        time_t interval = time_t(DEFAULT_TICK_INTERVAL),
         time_t defaultTimeout = time_t(-1));
     HHWheelTimer(
-        Reactor& reactor, 
-        time_t interval = time_t(DEFAULT_TICK_INTERVAL), 
+        Reactor& reactor,
+        time_t interval = time_t(DEFAULT_TICK_INTERVAL),
         time_t defaultTimeout = time_t(-1));
     time_t getDefaultTimeout() const { return defaultTimeout_; }
     time_t getInterval() const { return interval_; }
@@ -89,8 +91,14 @@ private:
     void scheduleNextTimeoutInReactor_(int64_t baseTick);
     // find the right place to put the timeout
     void scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTick, int64_t thisTimerExpireTick);
-    int64_t getTickFromDuration(time_t duration) { return duration.count() / interval_.count(); }
+    template<typename Duration>
+    int64_t getTickFromDuration(Duration duration)
+    {
+        return (std::chrono::duration_cast<time_t>(duration)).count() / interval_.count();
+    }
+    int64_t tickOfCurTime(const time_point_t& curTime) const;
     int64_t tickOfCurTime() const;
+    time_point_t curTime() const;
 
 private:
     time_t interval_; // the interval of one tick
@@ -109,7 +117,6 @@ private:
     intrusive_list_t handlers_[WHEEL_BUCKETS][WHEEL_SIZE];
     Reactor* reactor_;
 
-    util::min_heap<uint8_t> registeredSlotsInFirstbucket_;
     Buckets registeredBucketsSlots_;
 };
 
@@ -122,14 +129,14 @@ void HHWheelTimer::scheduleTimeoutFn(Fn f, time_t timeout)
         int handle_timeout(int) noexcept override
         {
             try{ fn_(); } //for noexcept
-            catch(const std::exception& e) 
+            catch(const std::exception& e)
             {
                 LOG(WARNING) << "TimeoutHandlerWrapper throw an exception: " << e.what();
             }
             catch(...)
             {
                 LOG(WARNING) << "TimeoutHandlerWrapper throw a unknow exception: ";
-            } 
+            }
             wheel_->timeoutExpired();
             delete this;
         }

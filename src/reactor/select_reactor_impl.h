@@ -16,7 +16,7 @@
 namespace reactor{
 
 struct select_reactor_handle_sets{
-    select_reactor_handle_sets() 
+    select_reactor_handle_sets()
         : read_set()
         , write_set()
         , exception_set(){}
@@ -28,11 +28,11 @@ struct select_reactor_handle_sets{
 //event tuple
 struct select_event_tuple{
     using Event_Type = EventHandler::Event_Type;
-    select_event_tuple () 
+    select_event_tuple ()
     // : types_and_handlers()
     : types_and_handlers_()
-    // , event_count(0) 
-    { 
+    // , event_count(0)
+    {
         // types_and_handlers.resize(64);
         // for(int i = 0; i < 64; i++){
         //     types_and_handlers[i] = nullptr;
@@ -40,7 +40,7 @@ struct select_event_tuple{
     }
 
     int bind_new(Event_Type type, EventHandler* handler){
-        if(type == EventHandler::NONE || handler == 0){
+        if(type == EventHandler::NONE || handler == nullptr){
             LOG(WARNING) << "can't bind NONE event or handler is nullptr";
             return -1;
         }
@@ -57,8 +57,8 @@ struct select_event_tuple{
             return -1;
         }
 
-        auto handler_find = std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(), 
-            [&type](const std::pair<unsigned int, EventHandler*>& pair) 
+        auto handler_find = std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(),
+            [&type](const std::pair<unsigned int, EventHandler*>& pair)
             {
                 return pair.first == type;
             });
@@ -93,8 +93,8 @@ struct select_event_tuple{
     }
 
     EventHandler* get_handler(Event_Type type) const {
-        auto handler_find = std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(), 
-            [&type](const std::pair<unsigned int, EventHandler*>& pair) 
+        auto handler_find = std::find_if(types_and_handlers_.begin(), types_and_handlers_.end(),
+            [&type](const std::pair<unsigned int, EventHandler*>& pair)
             {
                 return pair.first == type;
             });
@@ -111,9 +111,9 @@ struct select_event_tuple{
         //     if(type == EventHandler::READ_EVENT){//因为 acceptor 的处理事件也是读事件，以accept_event查找handler时，可能找不到
         //         return get_handler(EventHandler::ACCEPT_EVENT);
         //     }
-        //     // LOG(WARNING) 
-        //     //     << "handle " << handle 
-        //     //     << " has no handler for type " 
+        //     // LOG(WARNING)
+        //     //     << "handle " << handle
+        //     //     << " has no handler for type "
         //     //     << event_type_to_string(type);
         //     return nullptr;
         // }
@@ -145,12 +145,16 @@ public:
     int unbind(int handle);
     int unbind(int handle, const EventHandler* handler, Event_Type type);
     int get_current_max_handle_p_1() const { return current_max_handle_p_1_;}
-    inline bool hasEvent(Event_Type type) const ;
+    bool hasEvent(Event_Type type) const
+    {
+        return false;
+    }
 
     //for timeout handlers
     TimeoutHandler *getTimeoutHandler() const;
     int bindTimeoutEvent(TimeoutHandler &handler);
     int unbindTimeoutEvent(TimeoutHandler &handler);
+    TimeoutHandler* getLatestTimeoutHandler(){return timeoutHandlersMinHeap_.top();}
 
 private:
     bool is_handle_in_range(int handle) const ;
@@ -172,21 +176,21 @@ typedef int (EventHandler::*HANDLER)(int);
 //* select_reactor_impl 不是线程安全的
 class select_reactor_impl : public reactor_implementation{
 public:
-    select_reactor_impl() 
+    select_reactor_impl()
         : reactor_implementation()
         , dispatch_sets_()
         , wait_sets_()
         , ready_sets_()
         , demux_table_()
-	{
-	}
+    {
+    }
     int handle_events(std::chrono::microseconds *timeout) override;
     int register_handler(EventHandler* handler, Event_Type type) override;
     int unregister_handler(EventHandler *handler, Event_Type type) override;
     int register_handler(int handle, EventHandler *handler, Event_Type type) override;
     int unregister_handler(int handle, EventHandler *handler, Event_Type type) override;
 
-    inline bool hasEvent(Event_Type type) const override {return demux_table_.hasEvent(type);}
+    bool hasEvent(Event_Type type) const override {return demux_table_.hasEvent(type);}
 private:
     int select(std::chrono::microseconds timeout);
     int dispatch(int active_handle_count);
@@ -194,7 +198,7 @@ private:
 //for io_dispatching
     int dispatch_io_handlers(int active_handle_count, int& io_handles_dispatched);
     int dispatch_io_set(
-        int number_of_active_handles, 
+        int number_of_active_handles,
         int& number_of_handles_dispatched,
         Event_Type type,
         unp::handle_set& dispatch_set,

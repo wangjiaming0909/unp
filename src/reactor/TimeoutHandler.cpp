@@ -13,14 +13,14 @@ TimeoutHandler::~TimeoutHandler()
 }
 
 
-void TimeoutHandler::setSheduled(HHWheelTimer* wheel, std::chrono::microseconds timeout)
+void TimeoutHandler::setSheduled(HHWheelTimer* wheel, const TimePoint_T& timeout)
 {
     assert(wheel != nullptr);
     wheel_ = wheel;
-    expiration_ = std::chrono::steady_clock::now() + timeout;
+    expiration_ = timeout;
 }
 
-inline bool TimeoutHandler::isRegistered() const 
+inline bool TimeoutHandler::isRegistered() const
 {
     return reactor_->hasEvent(EventHandler::TIMEOUT_EVENT);
 }

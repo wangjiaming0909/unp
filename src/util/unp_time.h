@@ -1,8 +1,8 @@
 /*************************************************************************
-	> File Name: time.h
-	> Author: WANG Jiaming
-	> Mail: 
-	> Created Time: Sun 07 Oct 2018 08:31:03 PM CST
+    > File Name: time.h
+    > Author: WANG Jiaming
+    > Mail:
+    > Created Time: Sun 07 Oct 2018 08:31:03 PM CST
  ************************************************************************/
 
 #ifndef _UNP_TIME_H
@@ -20,7 +20,7 @@ using namespace std::chrono;
 namespace util{
 class Time{
 public:
-    Time(int64_t microSecondsSinceEpoch) 
+    Time(int64_t microSecondsSinceEpoch)
         : m_microSecondsSinceEpoch(microSecondsSinceEpoch){}
     template <typename DURATION>
     explicit Time(const time_point<DURATION>& tp){
@@ -58,14 +58,14 @@ private:
 
 //dura is a ref, so it can't be null
 //but sometimes, we need time to be null means that will wait indefinitely
-//so we need a pointer version 
+//so we need a pointer version
 template<typename DURATION>
 timeval duration_to_timeval(const DURATION& dura){
     seconds s = duration_cast<seconds>(dura);
     microseconds ms = duration_cast<microseconds>(dura);
     timeval ret;
-    ret.tv_sec = s.count();
-    ret.tv_usec = ms.count() - duration_cast<microseconds>(s).count();
+    ret.tv_sec = s.count() < 0 ? 0 : s.count();
+    ret.tv_usec = ms.count() < 0 ? 0 : ms.count();
     return ret;
 }
 
