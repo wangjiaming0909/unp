@@ -27,6 +27,9 @@ public:
     bool isScheduled() const {return wheel_ != nullptr;}
 
 protected:
+#ifdef TESTING
+public:
+#endif
     int bucket_{-1};
     int slotInBucket_{-1};
     HHWheelTimer *wheel_{nullptr};

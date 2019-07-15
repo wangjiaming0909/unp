@@ -145,18 +145,27 @@ public:
     int unbind(int handle);
     int unbind(int handle, const EventHandler* handler, Event_Type type);
     int get_current_max_handle_p_1() const { return current_max_handle_p_1_;}
-    bool hasEvent(Event_Type type) const
-    {
-        return false;
-    }
+    bool hasEvent(Event_Type type) const;
 
     //for timeout handlers
     TimeoutHandler *getTimeoutHandler() const;
     int bindTimeoutEvent(TimeoutHandler &handler);
     int unbindTimeoutEvent(TimeoutHandler &handler);
-    TimeoutHandler* getLatestTimeoutHandler(){return timeoutHandlersMinHeap_.top();}
+    TimeoutHandler* getLatestTimeoutHandler()
+    {
+        if(timeoutHandlersMinHeap_.empty()) return nullptr;
+        return timeoutHandlersMinHeap_.top();
+    }
 
 private:
+    bool hasEventForeachHandle(Event_Type type) const
+    {
+        for(int handle = 0; handle < current_max_handle_p_1_ - 1; handle++)
+        {
+            if(get_handler(handle, type)) return true;
+        }
+        return false;
+    }
     bool is_handle_in_range(int handle) const ;
     bool is_valid_handle(int handle) const ;
 

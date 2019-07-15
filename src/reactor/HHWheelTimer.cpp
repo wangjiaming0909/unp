@@ -17,7 +17,7 @@ bool Buckets::setRegistered(size_t bucket, SlotSize_t slot)
 {
     if(bucket > buckets_.size()) return false;
     buckets_[bucket].push(slot);
-    LOG(INFO) << "Set registered, bucket: " << bucket << " slot: " << static_cast<int>(slot);
+//    LOG(INFO) << "Set registered, bucket: " << bucket << " slot: " << static_cast<int>(slot);
     countOfSlotSet_++;
     return true;
 }
@@ -29,8 +29,10 @@ bool Buckets::unsetRegistered(size_t bucket, SlotSize_t slot)
     auto &value = unsetBuckets_[bucket][slot];
     if(value != 0) return false;
     countOfSlotSet_--;
-    LOG(INFO) << "Unset Registered, bucket: " << bucket << " slot: " << static_cast<int>(slot);
+//    LOG(INFO) << "Unset Registered, bucket: " << bucket << " slot: " << static_cast<int>(slot);
 
+    //if the first timer in the minheap of the specified bucket is in the same slot as {slot},
+    //pop it and no need to set the value in the unsetBuckets_
     if(!buckets_[bucket].empty() && buckets_[bucket].top() == slot)
     {
         buckets_[bucket].pop();
@@ -128,38 +130,70 @@ void HHWheelTimer::scheduleTimeout(TimeoutHandler &handler, time_t timeout)
  */
 void HHWheelTimer::timeoutExpired(TimeoutHandler* handler) noexcept
 {
+    LOG(INFO) << "Timeout expired, bucket: " << handler->bucket_ << " slot: " << handler->slotInBucket_;
     timerCount_--;
     auto slot = registeredBucketsSlots_.findFirstSlot();
     {
-        LOG(INFO) << "First slot bucket: " << slot.bucketIndex << " slot: " << static_cast<int>(slot.slotIndex);
-        LOG(INFO) << "ExpiredTick: " << expireTick_;
+//        LOG(INFO) << "First slot bucket: " << slot.bucketIndex << " slot: " << static_cast<int>(slot.slotIndex);
+//        LOG(INFO) << "ExpiredTick: " << expireTick_;
         assert(slot.slotIndex == expireTick_);
     }
     registeredBucketsSlots_.unsetRegistered(slot.bucketIndex, slot.slotIndex);
     handler->unlink();
-   auto curT = curTime();
-   auto baseTick = tickOfCurTime(curT);
-   if(timerCount_ == 0) return;
+    auto curT = curTime();
+    auto baseTick = tickOfCurTime(curT);
+    if(timerCount_ == 0) return;
 
-   auto firstSlot = registeredBucketsSlots_.findFirstSlot();
-   auto handlersList = &handlers_[firstSlot.bucketIndex][firstSlot.slotIndex];
+    auto firstSlot = registeredBucketsSlots_.findFirstSlot();
+    auto handlersList = &handlers_[firstSlot.bucketIndex][firstSlot.slotIndex];
     auto thisTimerExpireTick = (handlersList->front().expiration_ - curT) / interval_;
-   for(auto& handler : *handlersList)
-   {
-       registeredBucketsSlots_.unsetRegistered(handler.bucket_, handler.slotInBucket_);
-       handler.unlink();
-       scheduleTimeoutImpl_(handler, baseTick, thisTimerExpireTick);
-   }
-   scheduleNextTimeoutInReactor_(baseTick, thisTimerExpireTick);
+
+    intrusive_list_t tmp;
+    tmp.swap(*handlersList);
+    while(!tmp.empty())
+    {
+        LOG(INFO) << "1";
+        auto front = &tmp.front();
+        tmp.pop_front();
+        registeredBucketsSlots_.unsetRegistered(static_cast<size_t>(front->bucket_),
+                                                static_cast<Slot::SlotSize_t>(front->slotInBucket_));
+        timerCount_--;
+        scheduleTimeoutImpl_(*front, baseTick, thisTimerExpireTick);
+    }
+    scheduleNextTimeoutInReactor_(baseTick, thisTimerExpireTick);
+}
+
+void HHWheelTimer::cancelAll()
+{
+    if(timerCount_ == 0) return;
+    for (auto& bucket : handlers_) {
+        for(auto& slot : bucket)
+        {
+            if(slot.empty()) continue;
+            intrusive_list_t tmp;
+            tmp.swap(slot);
+            cancelTimeoutsFromList(tmp);
+            timerCount_--;
+            expireTick_ = INT64_MAX;
+        }
+    }
+
 }
 
 size_t HHWheelTimer::cancelTimeoutsFromList(intrusive_list_t& handlers)
 {
-    for(auto& handler : handlers)
+    size_t size = 0;
+    while(!handlers.empty())
     {
-        registeredBucketsSlots_.unsetRegistered(handler.bucket_, handler.slotInBucket_);
-        handler.unlink();
+        auto front = &handlers.front();
+        handlers.pop_front();
+        size++;
+        registeredBucketsSlots_.unsetRegistered(static_cast<size_t>(front->bucket_),
+                                                static_cast<Slot::SlotSize_t>(front->slotInBucket_));
+        if(front->isRegistered())
+            front->reactor_->unregister_handler(front, EventHandler::TIMEOUT_EVENT);
     }
+    return size;
 }
 
 /**
@@ -259,18 +293,23 @@ void HHWheelTimer::scheduleNextTimeoutInReactor_(int64_t baseTick, int64_t thisT
     // Find the timeouts that will expire first in the first bucket
     //!this first timeout could have been registered into the reactor, so how to exclude them
     auto firstHandlerListInWheel = &handlers_[firstSlotInFirstBucket.bucketIndex][firstSlotInFirstBucket.slotIndex];
-    LOG(INFO) << "Get first slot, bucket: "
-              << firstSlotInFirstBucket.bucketIndex
-              << " slot: " << static_cast<int>(firstSlotInFirstBucket.slotIndex);
+//    LOG(INFO) << "Get first slot, bucket: "
+//              << firstSlotInFirstBucket.bucketIndex
+//              << " slot: " << static_cast<int>(firstSlotInFirstBucket.slotIndex);
 
     //1,2
+    LOG(INFO) << "expireTick: " << expireTick_ << " thisTimerExpireTick: " << thisTimerExpireTick;
+    LOG(INFO) << "has timeout Event in reactor: " << reactor_->hasEvent(EventHandler::TIMEOUT_EVENT);
     if(!reactor_->hasEvent(EventHandler::TIMEOUT_EVENT) || expireTick_ >= thisTimerExpireTick)
     {
+        LOG(INFO) << "size: " << firstHandlerListInWheel->size();
         for(auto &timeoutHandler : *firstHandlerListInWheel)
         {
             if(!timeoutHandler.isRegistered())
             {
-                if(expireTick_ > firstSlotInFirstBucket.slotIndex) 
+                LOG(INFO) << "Registering timeout Handler, bucket: " << firstSlotInFirstBucket.bucketIndex
+                          << " slot: " << static_cast<int>(firstSlotInFirstBucket.slotIndex);
+                if(expireTick_ > firstSlotInFirstBucket.slotIndex)
                     expireTick_ = static_cast<int64_t>(firstSlotInFirstBucket.slotIndex);
                 reactor_->register_handler(&timeoutHandler, EventHandler::TIMEOUT_EVENT);
             }

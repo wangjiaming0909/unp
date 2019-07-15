@@ -42,8 +42,8 @@ TEST(select_reactor_impl_test, test_bind_3_event_tuple_table_size_and_unbind){
 //     default_EventHandler handler2{react};
 //     default_EventHandler handler3{react};
 // //    select_event_tuple event_tuple{&handler, handle1, 01};
-// //    select_event_tuple event_tuple2{&handler2, handle2, 01}; 
-// //    select_event_tuple event_tuple3{&handler3, handle3, 01}; 
+// //    select_event_tuple event_tuple2{&handler2, handle2, 01};
+// //    select_event_tuple event_tuple3{&handler3, handle3, 01};
 //     select_demultiplex_table table{4};
 //     table.bind(handle1, &handler, 1);
 //     table.bind(handle2, &handler2, 1);
@@ -72,4 +72,37 @@ TEST(select_reactor_impl_test, test_select_and_dispatch_events){
     // react_select.register_handler(handle1, &handler1, EventHandler::READ_EVENT);
     // react_select.handle_events(0);
     ASSERT_EQ(1, 1);
+}
+
+TEST(select_demultiplex_table, bind_unbind_timeoutHandlers)
+{
+    using namespace reactor;
+    using namespace std::chrono_literals;
+    select_demultiplex_table table{4};
+    TimeoutHandler* handler1 = new TimeoutHandler();
+    handler1->expiration_ = std::chrono::steady_clock::now();
+    TimeoutHandler* handler2 = new TimeoutHandler();
+    handler2->expiration_ = handler1->expiration_ + 2s;
+    TimeoutHandler* handler3 = new TimeoutHandler();
+    handler3->expiration_ = handler2->expiration_ + 2s;
+
+    table.bindTimeoutEvent(*handler1);
+    table.bindTimeoutEvent(*handler2);
+    table.bindTimeoutEvent(*handler3);
+
+    auto handler = table.getLatestTimeoutHandler();
+    ASSERT_EQ(handler, handler1);
+    table.unbindTimeoutEvent(*handler1);
+    handler = table.getLatestTimeoutHandler();
+    ASSERT_EQ(handler, handler2);
+    table.unbindTimeoutEvent(*handler2);
+    handler = table.getLatestTimeoutHandler();
+    ASSERT_EQ(handler, handler3);
+    bool hasTimeoutEvent = table.hasEvent(EventHandler::TIMEOUT_EVENT);
+    ASSERT_EQ(hasTimeoutEvent, true);
+    table.unbindTimeoutEvent(*handler3);
+    handler = table.getLatestTimeoutHandler();
+    ASSERT_EQ(handler, nullptr);
+    hasTimeoutEvent = table.hasEvent(EventHandler::TIMEOUT_EVENT);
+    ASSERT_EQ(hasTimeoutEvent, false);
 }

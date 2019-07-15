@@ -81,9 +81,9 @@ public:
     void scheduleTimeoutFn(Fn f, time_t timeout);
     void scheduleTimeout(TimeoutHandler &handler, time_t timeout);
     void timeoutExpired(TimeoutHandler* handler) noexcept ;
-    size_t cancelTimeoutsFromList(intrusive_list_t& handlers);
     bool isScheduled() const {return reactor_ != nullptr;}
     size_t getTimerCount() const {return timerCount_;}
+    void cancelAll();
 
 protected:
     virtual ~HHWheelTimer();
@@ -91,6 +91,7 @@ private:
 #ifdef TESTING
 public:
 #endif
+    size_t cancelTimeoutsFromList(intrusive_list_t& handlers);
     //find the right timeout and register the handlers into the reactor
     void scheduleNextTimeoutInReactor_(int64_t baseTick, int64_t thisTimerExpireTick);
     // find the right place to put the timeout

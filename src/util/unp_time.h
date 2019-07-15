@@ -65,7 +65,7 @@ timeval duration_to_timeval(const DURATION& dura){
     microseconds ms = duration_cast<microseconds>(dura);
     timeval ret;
     ret.tv_sec = s.count() < 0 ? 0 : s.count();
-    ret.tv_usec = ms.count() < 0 ? 0 : ms.count();
+    ret.tv_usec = ms.count() < 0 ? 0 : ms.count() - duration_cast<microseconds>(s).count();
     return ret;
 }
 

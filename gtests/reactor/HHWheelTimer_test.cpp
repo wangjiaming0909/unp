@@ -129,6 +129,28 @@ TEST(HHWheelTimer, scheduleTimeout_Which_is_notInFirstBucket)
     ASSERT_EQ(timeoutHandler->state, 0);
 }
 
+TEST(HHWheelTimer, cancel)
+{
+    using namespace reactor;
+    Reactor react{new select_reactor_impl{}, true};
+
+    HHWheelTimer *timer = new HHWheelTimer{react};
+    ASSERT_TRUE(timer != nullptr);
+
+    FakeTimeoutHandler* timeoutHandler = new FakeTimeoutHandler(react, "1");
+    timer->scheduleTimeout(*timeoutHandler, 1s);
+    bool hasTimeroutEvent = react.hasEvent(EventHandler::TIMEOUT_EVENT);
+    ASSERT_EQ(hasTimeroutEvent, true);
+    ASSERT_EQ(timer->getTimerCount(), 1);
+
+    timer->cancelAll();
+    ASSERT_EQ(timer->getTimerCount(), 0);
+    hasTimeroutEvent = react.hasEvent(EventHandler::TIMEOUT_EVENT);
+    ASSERT_EQ(hasTimeroutEvent, false);
+    ASSERT_EQ(timer->registeredBucketsSlots_.findFirstSlot(), Slot::NotFoundSlot);
+
+}
+
 TEST(BucketsAndSlots, constuctor)
 {
     using namespace reactor;

@@ -24,6 +24,24 @@ EventHandler* select_demultiplex_table::get_handler(int handle, Event_Type type)
     return event_vector_[handle].get_handler(type);
 }
 
+bool select_demultiplex_table::hasEvent(Event_Type type) const
+{
+    switch (type) {
+    case EventHandler::TIMEOUT_EVENT:
+        return !timeoutHandlersMinHeap_.empty();
+    case EventHandler::READ_EVENT:
+        return hasEventForeachHandle(EventHandler::READ_EVENT);
+    case EventHandler::WRITE_EVENT:
+        return hasEventForeachHandle(EventHandler::WRITE_EVENT);
+    case EventHandler::ACCEPT_EVENT:
+        return hasEventForeachHandle(EventHandler::ACCEPT_EVENT);
+    case EventHandler::CONNECT_EVENT:
+        return hasEventForeachHandle(EventHandler::CONNECT_EVENT);
+    default:
+        return false;
+    }
+}
+
 TimeoutHandler *select_demultiplex_table::getTimeoutHandler() const
 {
     if(timeoutHandlersMinHeap_.empty())
@@ -83,14 +101,34 @@ int select_demultiplex_table::unbind(int handle, const EventHandler* handler, Ev
 
 int select_demultiplex_table::bindTimeoutEvent(TimeoutHandler &handler)
 {
+    LOG(INFO) << "binding...";
     timeoutHandlersMinHeap_.push(&handler);
+    return 0;
 }
 
 int select_demultiplex_table::unbindTimeoutEvent(TimeoutHandler &handler)
 {
-    if(timeoutHandlersMinHeap_.empty() || timeoutHandlersMinHeap_.top() != &handler)
-        return -1;
+    if(timeoutHandlersMinHeap_.empty()) return -1;
+    if(timeoutHandlersMinHeap_.top() == &handler)
+    {
+        timeoutHandlersMinHeap_.pop();
+        return 0;
+    }
+
+    std::vector<TimeoutHandler*> handlers;
+    while(!timeoutHandlersMinHeap_.empty() && timeoutHandlersMinHeap_.top() != &handler)
+    {
+        handlers.push_back(timeoutHandlersMinHeap_.top());
+        timeoutHandlersMinHeap_.pop();
+    }
+
+    if(timeoutHandlersMinHeap_.empty()) return -1;
     timeoutHandlersMinHeap_.pop();
+    while(!handlers.empty())
+    {
+        timeoutHandlersMinHeap_.push(handlers.back());
+        handlers.pop_back();
+    }
     return 0;
 }
 
@@ -146,9 +184,9 @@ int select_reactor_impl::select(std::chrono::microseconds timeout){
     int read_fd_count = dispatch_sets_.read_set.handles_count();
     int write_fd_count = dispatch_sets_.write_set.handles_count();
     int exception_fd_count = dispatch_sets_.exception_set.handles_count();
-    LOG(INFO) << "read fd count: " << read_fd_count;
-    LOG(INFO) << "write fd count: " << write_fd_count;
-    LOG(INFO) << "exception fd count: " << exception_fd_count;
+//    LOG(INFO) << "read fd count: " << read_fd_count;
+//    LOG(INFO) << "write fd count: " << write_fd_count;
+//    LOG(INFO) << "exception fd count: " << exception_fd_count;
     if((read_fd_count + write_fd_count + exception_fd_count) == 0){
         LOG(ERROR) << "there is no fd to select";
         return -1;
@@ -205,9 +243,15 @@ int select_reactor_impl::register_handler(EventHandler* handler, Event_Type type
 }
 
 int select_reactor_impl::unregister_handler(EventHandler *handler, Event_Type type) {
-    (void)handler;
-    (void)type;
-    return 0;
+    if(handler == nullptr || type != EventHandler::TIMEOUT_EVENT)
+    {
+        LOG(ERROR) << "Unregistering non-timeout event and didn't give handle or handler is null";
+        return -1;
+    }
+
+    if(!hasEvent(type)) return -1;
+
+    demux_table_.unbindTimeoutEvent(*dynamic_cast<TimeoutHandler*>(handler));
 }
 
 int select_reactor_impl::register_handler(int handle, EventHandler *handler, Event_Type type){
@@ -325,5 +369,7 @@ int select_reactor_impl::dispatchTimeoutHandlers()
 {
     auto timeoutHandler = demux_table_.getTimeoutHandler();
     timeoutHandler->handle_timeout(0);
-    return demux_table_.unbindTimeoutEvent(*timeoutHandler);
+    LOG(INFO) << "poping.....";
+    demux_table_.timeoutHandlersMinHeap_.pop();
+    return 0;
 }
