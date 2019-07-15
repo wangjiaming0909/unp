@@ -28,10 +28,13 @@ public:
     virtual ~Reactor(){}
 
     virtual int register_handler(EventHandler* handler, Event_Type type){
-        return reactor_impl_->register_handler(handler, type);
+        auto ret = reactor_impl_->register_handler(handler, type);
+        if(ret == 0) handler->isRegistered_ = true;
+        return ret;
     }
     virtual int register_handler(int handle, EventHandler *handler, Event_Type type) {
         int ret = reactor_impl_->register_handler(handle, handler, type);
+        if(ret == 0) handler->isRegistered_ = true;
 
         if(!eventFd_ptr_)
             return ret;
@@ -55,10 +58,14 @@ public:
         return ret;
     }
     virtual int unregister_handler(EventHandler *handler, Event_Type type) {
-        return reactor_impl_->unregister_handler(handler, type);
+        auto ret = reactor_impl_->unregister_handler(handler, type);
+        if(ret == 0) handler->isRegistered_ = false;
+        return ret;
     }
     virtual int unregister_handler(int handle, EventHandler *handler, Event_Type type) {
-        return reactor_impl_->unregister_handler(handle, handler, type);
+        auto ret = reactor_impl_->unregister_handler(handle, handler, type);
+        if(ret == 0) handler->isRegistered_ = false;
+        return ret;
     }
     int handle_events(std::chrono::microseconds *timeout = 0){
         return reactor_impl_->handle_events(timeout);

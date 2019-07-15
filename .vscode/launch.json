@@ -2,14 +2,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "test",
+            "name": "UnitTest",
             "type":"cppdbg",
             "request":"launch",
             "program": "${workspaceFolder}/gtests/test.out ",
-            "stopAtEntry": true,
-            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/gtests",
             "environment": [],
-            "externalConsole": true,
+            "externalConsole": false,
             "MIMode": "gdb",
             "internalConsoleOptions":"openOnSessionStart",
             "setupCommands": [
@@ -21,7 +21,7 @@
             ]
         },
         {
-            "name": "a.out",
+            "name": "Main",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/a.out",
@@ -44,7 +44,7 @@
             ]
         },
         {
-            "name": "attach listen",
+            "name": "AttachListen",
             "type": "cppdbg",
             "request": "attach",
             "program": "${workspaceRoot}/build/a.out",
@@ -59,7 +59,7 @@
             ]
         },
         {
-            "name": "connect",
+            "name": "Connect",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/a.out",

@@ -20,9 +20,4 @@ void TimeoutHandler::setSheduled(HHWheelTimer* wheel, const TimePoint_T& timeout
     expiration_ = timeout;
 }
 
-inline bool TimeoutHandler::isRegistered() const
-{
-    return reactor_->hasEvent(EventHandler::TIMEOUT_EVENT);
-}
-
 }

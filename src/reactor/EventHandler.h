@@ -21,6 +21,7 @@ class Reactor;
 */
 class EventHandler{
 public:
+    friend class Reactor;
     typedef unsigned int Event_Type;
     enum{
         NONE            = 0x000,
@@ -33,7 +34,7 @@ public:
         CLOSE_EVENT     = 1 << 6,
         CONNECT_EVENT   = 1 << 7
     };
-    EventHandler() : reactor_(nullptr){}
+    EventHandler() : reactor_(nullptr), isRegistered_(false){}
     EventHandler(Reactor& react) : reactor_(&react) {}
     //these functions can't be pure virtual
     //because some handlers may not need to implement all of them
@@ -54,10 +55,12 @@ public:
     Reactor* get_reactor() const {return reactor_;}
     void setReactor(Reactor& reactor) {reactor_ = &reactor;}
     bool isAttachedToReactor() const {return reactor_ != nullptr;}
+    bool isRegistered() const {return isRegistered_;}
 
 protected:
     virtual ~EventHandler(){}
     Reactor* reactor_;
+    bool isRegistered_;
 };
 
 inline util::string event_type_to_string(EventHandler::Event_Type type){

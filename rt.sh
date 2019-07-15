@@ -1,3 +1,3 @@
 #!/bin/bash
 #run tests
-./gtests/test.out # --gtest_filter=test_easylogging.*
+./gtests/test.out  --gtest_filter=HHWheelTimer.*

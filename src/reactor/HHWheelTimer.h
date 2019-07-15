@@ -92,7 +92,7 @@ private:
 public:
 #endif
     //find the right timeout and register the handlers into the reactor
-    void scheduleNextTimeoutInReactor_(int64_t baseTick);
+    void scheduleNextTimeoutInReactor_(int64_t baseTick, int64_t thisTimerExpireTick);
     // find the right place to put the timeout
     void scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTick, int64_t thisTimerExpireTick);
     template<typename Duration>
@@ -112,7 +112,7 @@ public:
     time_t defaultTimeout_;
     size_t timerCount_;
     time_point_t startTime_;
-    int64_t expireTick_{0};
+    int64_t expireTick_{INT64_MAX};
 
     static constexpr int WHEEL_BUCKETS = 4;
     static constexpr int WHEEL_BITS = 8;

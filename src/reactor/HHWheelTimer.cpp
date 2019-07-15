@@ -103,6 +103,7 @@ void HHWheelTimer::scheduleTimeout(TimeoutHandler &handler, time_t timeout)
     auto curT = curTime();
     auto expireT = curT + timeout;
     auto baseTick = tickOfCurTime(curT);
+    // should use curTime + timeout, then use the result to calculate expireTick
     auto thisTimerExpireTick = getTickFromDuration(timeout) + baseTick;
     scheduleTimeoutImpl_(handler, baseTick, thisTimerExpireTick);
     handler.setSheduled(this, expireT);
@@ -110,7 +111,7 @@ void HHWheelTimer::scheduleTimeout(TimeoutHandler &handler, time_t timeout)
     if(!isScheduled()) return;//add timeouts into the HHWheelTimer and schedule it later(maybe)
 
     // 不一定是当前的这个timeout 会被 放到reactor中
-    scheduleNextTimeoutInReactor_(baseTick);
+    scheduleNextTimeoutInReactor_(baseTick, thisTimerExpireTick);
 }
 
 /**
@@ -128,16 +129,37 @@ void HHWheelTimer::scheduleTimeout(TimeoutHandler &handler, time_t timeout)
 void HHWheelTimer::timeoutExpired(TimeoutHandler* handler) noexcept
 {
     timerCount_--;
-//    auto curTick = tickOfCurTime();
     auto slot = registeredBucketsSlots_.findFirstSlot();
+    {
+        LOG(INFO) << "First slot bucket: " << slot.bucketIndex << " slot: " << static_cast<int>(slot.slotIndex);
+        LOG(INFO) << "ExpiredTick: " << expireTick_;
+        assert(slot.slotIndex == expireTick_);
+    }
     registeredBucketsSlots_.unsetRegistered(slot.bucketIndex, slot.slotIndex);
     handler->unlink();
-    //cascade timeouts
+   auto curT = curTime();
+   auto baseTick = tickOfCurTime(curT);
+   if(timerCount_ == 0) return;
+
+   auto firstSlot = registeredBucketsSlots_.findFirstSlot();
+   auto handlersList = &handlers_[firstSlot.bucketIndex][firstSlot.slotIndex];
+    auto thisTimerExpireTick = (handlersList->front().expiration_ - curT) / interval_;
+   for(auto& handler : *handlersList)
+   {
+       registeredBucketsSlots_.unsetRegistered(handler.bucket_, handler.slotInBucket_);
+       handler.unlink();
+       scheduleTimeoutImpl_(handler, baseTick, thisTimerExpireTick);
+   }
+   scheduleNextTimeoutInReactor_(baseTick, thisTimerExpireTick);
 }
 
 size_t HHWheelTimer::cancelTimeoutsFromList(intrusive_list_t& handlers)
 {
-
+    for(auto& handler : handlers)
+    {
+        registeredBucketsSlots_.unsetRegistered(handler.bucket_, handler.slotInBucket_);
+        handler.unlink();
+    }
 }
 
 /**
@@ -158,23 +180,29 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTic
     {
         pos = &handlers_[0][0];
         registeredBucketsSlots_.setRegistered(0, 0);
-        handler.slotInBucket = 0;
+        handler.bucket_ = 0;
+        handler.slotInBucket_ = 0;
     }
     else if(ticksToGo < WHEEL_SIZE)
     {
         pos = &handlers_[0][ticksToGo];
         registeredBucketsSlots_.setRegistered(0, static_cast<uint8_t>(ticksToGo));
-        handler.slotInBucket = static_cast<int>(ticksToGo);
+        handler.bucket_ = 0;
+        handler.slotInBucket_ = static_cast<int>(ticksToGo);
     }
     else if(ticksToGo < (1 << 2 * WHEEL_BITS))
     {
         pos = &handlers_[1][ticksToGo >> (WHEEL_BITS)];
         registeredBucketsSlots_.setRegistered(1, static_cast<uint8_t>(ticksToGo >> (WHEEL_BITS)));
+        handler.bucket_ = 1;
+        handler.slotInBucket_ = static_cast<int>(ticksToGo >> WHEEL_BITS);
     }
     else if(ticksToGo < (1 << (3 * WHEEL_BITS)))
     {
         pos = &handlers_[2][ticksToGo >> (2 * WHEEL_BITS)];
         registeredBucketsSlots_.setRegistered(2, static_cast<uint8_t>(ticksToGo >> (2 * WHEEL_BITS)));
+        handler.bucket_ = 2;
+        handler.slotInBucket_ = static_cast<int>(ticksToGo >> (2 * WHEEL_BITS));
     }
     else //currently, the buckets can't take this timeout, cause the time is very long time later
     {
@@ -184,12 +212,14 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler& handler, int64_t baseTic
         }
         pos = &handlers_[3][ticksToGo >> (3 * WHEEL_BITS)];
         registeredBucketsSlots_.setRegistered(3, static_cast<uint8_t>(ticksToGo >> (3 * WHEEL_BITS)));
+        handler.bucket_ = 3;
+        handler.slotInBucket_ = static_cast<int>(ticksToGo >> (3 * WHEEL_BITS));
     }
     pos->push_back(handler);
     timerCount_++;
 }
 
-void HHWheelTimer::scheduleNextTimeoutInReactor_(int64_t baseTick)
+void HHWheelTimer::scheduleNextTimeoutInReactor_(int64_t baseTick, int64_t thisTimerExpireTick)
 {
     if(!isScheduled())
     {
@@ -227,17 +257,23 @@ void HHWheelTimer::scheduleNextTimeoutInReactor_(int64_t baseTick)
     }
 
     // Find the timeouts that will expire first in the first bucket
+    //!this first timeout could have been registered into the reactor, so how to exclude them
     auto firstHandlerListInWheel = &handlers_[firstSlotInFirstBucket.bucketIndex][firstSlotInFirstBucket.slotIndex];
     LOG(INFO) << "Get first slot, bucket: "
               << firstSlotInFirstBucket.bucketIndex
               << " slot: " << static_cast<int>(firstSlotInFirstBucket.slotIndex);
 
     //1,2
-    if(!reactor_->hasEvent(EventHandler::TIMEOUT_EVENT) || expireTick_ >= baseTick)
+    if(!reactor_->hasEvent(EventHandler::TIMEOUT_EVENT) || expireTick_ >= thisTimerExpireTick)
     {
         for(auto &timeoutHandler : *firstHandlerListInWheel)
         {
-            reactor_->register_handler(&timeoutHandler, EventHandler::TIMEOUT_EVENT);
+            if(!timeoutHandler.isRegistered())
+            {
+                if(expireTick_ > firstSlotInFirstBucket.slotIndex) 
+                    expireTick_ = static_cast<int64_t>(firstSlotInFirstBucket.slotIndex);
+                reactor_->register_handler(&timeoutHandler, EventHandler::TIMEOUT_EVENT);
+            }
         }
     }
 }

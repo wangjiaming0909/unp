@@ -25,10 +25,10 @@ public:
     void setSheduled(HHWheelTimer* wheel, const TimePoint_T& timeout);
     TimePoint_T expirationTimePoint() const { return expiration_; }
     bool isScheduled() const {return wheel_ != nullptr;}
-    bool isRegistered() const;
 
 protected:
-    int slotInBucket{-1};
+    int bucket_{-1};
+    int slotInBucket_{-1};
     HHWheelTimer *wheel_{nullptr};
     TimePoint_T expiration_{};
 

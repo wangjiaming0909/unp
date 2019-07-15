@@ -94,7 +94,11 @@
             }
         ]
     },
-    "gtest-adapter.debugConfig": [
-        "test"
+    "catch2TestExplorer.executables": [
+        {
+            "name": "${filename}",
+            "description": "${relDirpath}/",
+            "pattern": "{gtests,build,Build,BUILD,out,Out,OUT}/**/*{test,Test,TEST}*"
+        }
     ]
 }
