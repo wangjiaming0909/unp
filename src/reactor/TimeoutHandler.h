@@ -34,9 +34,25 @@ public:
     int slotInBucket_{-1};
     HHWheelTimer *wheel_{nullptr};
     TimePoint_T expiration_{};
+};
 
-public: //for std::greater
-    bool operator>(const TimeoutHandler &other) const { return expiration_ > other.expiration_; }
+//for std::greater<TimeoutHandler>
+template <typename handler>
+struct TimeoutHandlerComparer
+{
+    bool operator()(const handler& handler1, const handler& handler2)
+    {
+        return handler1.expirationTimePoint() > handler2.expirationTimePoint();
+    }
+};
+
+template <typename handler>
+struct TimeoutHandlerComparer<handler*>
+{
+    bool operator()(handler*& handler1, handler*& handler2)
+    {
+        return handler1->expirationTimePoint() > handler2->expirationTimePoint();
+    }
 };
 
 }

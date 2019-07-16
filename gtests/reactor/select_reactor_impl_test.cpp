@@ -81,10 +81,18 @@ TEST(select_demultiplex_table, bind_unbind_timeoutHandlers)
     select_demultiplex_table table{4};
     TimeoutHandler* handler1 = new TimeoutHandler();
     handler1->expiration_ = std::chrono::steady_clock::now();
-    TimeoutHandler* handler2 = new TimeoutHandler();
+    TimeoutHandler *handler2 = new TimeoutHandler();
     handler2->expiration_ = handler1->expiration_ + 2s;
     TimeoutHandler* handler3 = new TimeoutHandler();
     handler3->expiration_ = handler2->expiration_ + 2s;
+
+    LOG(INFO) << "handler1: " << handler1->expiration_.time_since_epoch().count();
+    LOG(INFO) << "handler2: " << handler2->expiration_.time_since_epoch().count();
+    LOG(INFO) << "handler3: " << handler3->expiration_.time_since_epoch().count();
+
+    LOG(INFO) << "address: handler1: " << handler1;
+    LOG(INFO) << "address: handler2: " << handler2;
+    LOG(INFO) << "address: handler3: " << handler3;
 
     table.bindTimeoutEvent(*handler1);
     table.bindTimeoutEvent(*handler2);
@@ -105,4 +113,5 @@ TEST(select_demultiplex_table, bind_unbind_timeoutHandlers)
     ASSERT_EQ(handler, nullptr);
     hasTimeoutEvent = table.hasEvent(EventHandler::TIMEOUT_EVENT);
     ASSERT_EQ(hasTimeoutEvent, false);
+    ASSERT_EQ(table.timeoutHandlersMinHeap_.empty(), true);
 }

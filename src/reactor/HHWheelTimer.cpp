@@ -147,6 +147,7 @@ void HHWheelTimer::timeoutExpired(TimeoutHandler* handler) noexcept
     auto firstSlot = registeredBucketsSlots_.findFirstSlot();
     auto handlersList = &handlers_[firstSlot.bucketIndex][firstSlot.slotIndex];
     auto thisTimerExpireTick = (handlersList->front().expiration_ - curT) / interval_;
+    expireTick_ = thisTimerExpireTick < 0 ? 0 : thisTimerExpireTick;
 
     intrusive_list_t tmp;
     tmp.swap(*handlersList);

@@ -17,7 +17,6 @@ select_demultiplex_table::select_demultiplex_table(size_t size)
 
 EventHandler* select_demultiplex_table::get_handler(int handle, Event_Type type) const{
     if(!is_handle_in_range(handle)){
-        //
         //LOG(WARNING) << "handle is not in range, handle: " << handle;
         return nullptr;
     }
@@ -28,7 +27,11 @@ bool select_demultiplex_table::hasEvent(Event_Type type) const
 {
     switch (type) {
     case EventHandler::TIMEOUT_EVENT:
-        return !timeoutHandlersMinHeap_.empty();
+    {
+        bool hasEvent = !timeoutHandlersMinHeap_.empty();
+        LOG(INFO) << "Has Event returned: " << timeoutHandlersMinHeap_.size();
+        return hasEvent;
+    }
     case EventHandler::READ_EVENT:
         return hasEventForeachHandle(EventHandler::READ_EVENT);
     case EventHandler::WRITE_EVENT:
@@ -52,14 +55,14 @@ TimeoutHandler *select_demultiplex_table::getTimeoutHandler() const
 int select_demultiplex_table::bind(int handle, EventHandler* handler, Event_Type type){
     auto event_type_str = event_type_to_string(type);
     LOG(INFO) << "bind handle: " << handle << " type: " << event_type_str;
-    if(!is_valid_handle(handle) || handler == 0) {
+    if(!is_valid_handle(handle) || handler == nullptr) {
         LOG(ERROR) << "handle is not in range or handler is null handle: "
                     << handle << " handler: " << handler;
         return -1;
     }
-    if((int)event_vector_.size() <= handle)
-        event_vector_.resize(handle + handle/2);
-    event_vector_[handle].bind_new(type, handler);
+    if(event_vector_.size() <= static_cast<size_t>(handle))
+        event_vector_.resize(static_cast<size_t>(handle + handle/2));
+    event_vector_[static_cast<size_t>(handle)].bind_new(type, handler);
     if(handle > current_max_handle_p_1_ - 1){
         current_max_handle_p_1_ = handle + 1;
     }
@@ -101,13 +104,15 @@ int select_demultiplex_table::unbind(int handle, const EventHandler* handler, Ev
 
 int select_demultiplex_table::bindTimeoutEvent(TimeoutHandler &handler)
 {
-    LOG(INFO) << "binding...";
     timeoutHandlersMinHeap_.push(&handler);
+    LOG(INFO) << "binding..." << "size: " << timeoutHandlersMinHeap_.size();
+    LOG(INFO) << "time: " << handler.expiration_.time_since_epoch().count();
     return 0;
 }
 
 int select_demultiplex_table::unbindTimeoutEvent(TimeoutHandler &handler)
 {
+    LOG(INFO) << "unbinding timeout events in reactor";
     if(timeoutHandlersMinHeap_.empty()) return -1;
     if(timeoutHandlersMinHeap_.top() == &handler)
     {
@@ -368,8 +373,8 @@ int select_reactor_impl::dispatch_io_set(
 int select_reactor_impl::dispatchTimeoutHandlers()
 {
     auto timeoutHandler = demux_table_.getTimeoutHandler();
-    timeoutHandler->handle_timeout(0);
-    LOG(INFO) << "poping.....";
     demux_table_.timeoutHandlersMinHeap_.pop();
+    LOG(INFO) << "poping....." << "size: " << demux_table_.timeoutHandlersMinHeap_.size();
+    timeoutHandler->handle_timeout(0);
     return 0;
 }

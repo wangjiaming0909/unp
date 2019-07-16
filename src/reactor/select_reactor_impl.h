@@ -170,10 +170,13 @@ private:
     bool is_valid_handle(int handle) const ;
 
 private:
+#ifdef TESTING
+public:
+#endif
     //the size of table_ is meaningless
     std::vector<select_event_tuple> event_vector_;
     int current_max_handle_p_1_ = INVALID_HANDLE + 1;
-    util::min_heap<TimeoutHandler *> timeoutHandlersMinHeap_;
+    util::min_heap<TimeoutHandler*, TimeoutHandlerComparer<TimeoutHandler*>> timeoutHandlersMinHeap_;
 
 public:
     static const int MAX_NUMBER_OF_HANDLE = FD_SETSIZE;

@@ -12,15 +12,11 @@ public:
         : TimeoutHandler(react)
         , name(name){}
 
-    virtual int handle_timeout(int ) noexcept override
+    int handle_timeout(int ) noexcept override
     {
         wheel_->timeoutExpired(this);
         state = 0;
         return -1;
-    }
-
-    virtual int handle_close(int) override
-    {
     }
 
     int state = -1;
@@ -148,6 +144,39 @@ TEST(HHWheelTimer, cancel)
     hasTimeroutEvent = react.hasEvent(EventHandler::TIMEOUT_EVENT);
     ASSERT_EQ(hasTimeroutEvent, false);
     ASSERT_EQ(timer->registeredBucketsSlots_.findFirstSlot(), Slot::NotFoundSlot);
+}
+
+TEST(HHWheelTimer, scheduleTimeout_with_reverse_order)
+{
+    using namespace reactor;
+    Reactor react{new select_reactor_impl{}, true};
+
+    HHWheelTimer *timer = new HHWheelTimer{react};
+
+    TimeoutHandler *handler1 = new FakeTimeoutHandler{react, "1"};
+    TimeoutHandler *handler2 = new FakeTimeoutHandler{react, "2"};
+    TimeoutHandler *handler3 = new FakeTimeoutHandler{react, "3"};
+
+    timer->scheduleTimeout(*handler1, 3s);
+//    ASSERT_EQ(timer->getTimerCount(), 1);
+    ASSERT_EQ(timer->isScheduled(), true);
+    timer->scheduleTimeout(*handler2, 2s);
+//    ASSERT_EQ(timer->getTimerCount(), 2);
+    ASSERT_EQ(timer->isScheduled(), true);
+    timer->scheduleTimeout(*handler3, 1s);
+//    ASSERT_EQ(timer->getTimerCount(), 3);
+    ASSERT_EQ(timer->isScheduled(), true);
+
+    auto timeout = 200000000000000us;
+    react.handle_events(&timeout);
+//    ASSERT_EQ(timer->getTimerCount(), 2);
+    react.handle_events(&timeout);
+//    ASSERT_EQ(timer->getTimerCount(), 1);
+    react.handle_events(&timeout);
+//    ASSERT_EQ(timer->getTimerCount(), 0);
+    ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler1)->state, 0);
+    ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler2)->state, 0);
+    ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler3)->state, 0);
 
 }
 

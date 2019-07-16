@@ -7,20 +7,21 @@
 
 namespace util {
 
-template <typename T>
+
+template <typename T, typename compareT = std::greater<T>>
 class min_heap
 {
 public:
-    using compare_type = std::greater<T>;
-    using container_type = std::priority_queue<T, std::vector<T>, compare_type>;
+    using ElementType = T;
+    using container_type = std::priority_queue<ElementType, std::vector<ElementType>, compareT>;
     using size_type = typename container_type::size_type;
     explicit min_heap() : container_(){}
 
-    static std::shared_ptr<min_heap> make_min_heap(const std::vector<T>& c)
+    static std::shared_ptr<min_heap> make_min_heap(const std::vector<ElementType>& c)
     {
         std::shared_ptr<min_heap> target = std::make_shared<min_heap>();
         target->container_ = c;
-        std::make_heap(target->container_.begin(), target->container_.end(), compare_type());
+        std::make_heap(target->container_.begin(), target->container_.end(), compareT());
         return target;
     }
 public:
@@ -28,12 +29,12 @@ public:
     size_type size() const {return container_.size();}
     size_type max_size() const {return container_.max_size();}
     void clear() {container_.clear();}
-    const T& top() const {return container_.top();}
-    void push(const T& t) { container_.push(t);}
+    const ElementType& top() const {return container_.top();}
+    void push(const ElementType& t) { container_.push(t);}
     template<typename... Args >
     void emplace(Args&&... args)
     {
-       container_.emplace(args...);
+       container_.emplace(std::forward<Args...>(args)...);
     }
 
     void pop(){container_.pop();}
@@ -41,6 +42,7 @@ public:
 private:
     container_type container_;
 };
+
 
 } //namespace util
 #endif // MIN_HEAP_H
