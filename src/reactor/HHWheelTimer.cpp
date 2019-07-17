@@ -130,13 +130,18 @@ void HHWheelTimer::scheduleTimeout(TimeoutHandler &handler, time_t timeout)
  */
 void HHWheelTimer::timeoutExpired(TimeoutHandler* handler) noexcept
 {
+    //expireTick_ 应与当前超时的timer是同一个时间,
+    // 当此超时处理结束后, expireTick应进行调整, 
+    //如果存在下一个timer,那么使用下一个timer的超时时间,
+    //如果不存在下一个timer,那么结束
+
     LOG(INFO) << "Timeout expired, bucket: " << handler->bucket_ << " slot: " << handler->slotInBucket_;
     timerCount_--;
     auto slot = registeredBucketsSlots_.findFirstSlot();
     {
 //        LOG(INFO) << "First slot bucket: " << slot.bucketIndex << " slot: " << static_cast<int>(slot.slotIndex);
 //        LOG(INFO) << "ExpiredTick: " << expireTick_;
-        assert(slot.slotIndex == expireTick_);
+        assert(slot.slotIndex == handler->slotInBucket_);
     }
     registeredBucketsSlots_.unsetRegistered(slot.bucketIndex, slot.slotIndex);
     handler->unlink();
@@ -145,9 +150,12 @@ void HHWheelTimer::timeoutExpired(TimeoutHandler* handler) noexcept
     if(timerCount_ == 0) return;
 
     auto firstSlot = registeredBucketsSlots_.findFirstSlot();
+    if(firstSlot == Slot::NotFoundSlot) return;
+
     auto handlersList = &handlers_[firstSlot.bucketIndex][firstSlot.slotIndex];
     auto thisTimerExpireTick = (handlersList->front().expiration_ - curT) / interval_;
     expireTick_ = thisTimerExpireTick < 0 ? 0 : thisTimerExpireTick;
+    LOG(INFO) << "Setting expireTick2_: " << expireTick_;
 
     intrusive_list_t tmp;
     tmp.swap(*handlersList);
@@ -311,7 +319,11 @@ void HHWheelTimer::scheduleNextTimeoutInReactor_(int64_t baseTick, int64_t thisT
                 LOG(INFO) << "Registering timeout Handler, bucket: " << firstSlotInFirstBucket.bucketIndex
                           << " slot: " << static_cast<int>(firstSlotInFirstBucket.slotIndex);
                 if(expireTick_ > firstSlotInFirstBucket.slotIndex)
-                    expireTick_ = static_cast<int64_t>(firstSlotInFirstBucket.slotIndex);
+                {
+                    auto slotTmp = static_cast<int64_t>(firstSlotInFirstBucket.slotIndex);
+                    expireTick_ = slotTmp < 0 ? 0 : slotTmp;
+                    LOG(INFO) << "Setting expiredTick_ to: " << expireTick_;
+                }
                 reactor_->register_handler(&timeoutHandler, EventHandler::TIMEOUT_EVENT);
             }
         }
