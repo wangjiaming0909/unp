@@ -5,10 +5,13 @@ build:
   # instead of calling g++ directly you can also use some build toolkit like make
   # install the necessary build tools when needed
   before_script:
-    - apt update && apt -y install make
+    - apt update && apt -y install make libgtest-dev
     - wget https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz
     - gunzip boost_1_70_0.tar.gz
     - tar -xf boost_1_70_0.tar
     - mv boost_1_70_0 /
+    - /boost_1_70_0/bootstrap.sh
+    - /boost_1_70_0/bjam --with-thread --with-system --with-timer
+    - 
   script:
-    - make
+    - make test -j $(nproc)
