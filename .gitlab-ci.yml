@@ -1,8 +1,8 @@
+before_script: 
+    "https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz"
+    "gunzip boost_1_70_0.tar.gz"
+    "tar -xvf boost_1_70_0.tar"
+    "mv boost_1_70_0 /"
 build:
-    before_script: 
-        "https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz"
-        "gunzip boost_1_70_0.tar.gz"
-        "tar -xvf boost_1_70_0.tar"
-        "mv boost_1_70_0 /"
     script: "make"
 
