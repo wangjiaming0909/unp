@@ -1,4 +1,4 @@
-build
+build:
     script: "sudo apt-get install g++"
     script: "git clont https:github.com/wangjiaming0909/unp"
     script: "cd unp"
