@@ -1,6 +1,30 @@
-build:
-    script: "sudo apt-get install g++"
-    script: "git clont https:github.com/wangjiaming0909/unp"
-    script: "cd unp"
-    script: "make"
+image: gcc
 
+build:
+  stage: build
+  # instead of calling g++ directly you can also use some build toolkit like make
+  # install the necessary build tools when needed
+  before_script:
+    - apt update && apt -y install make cmake
+    - wget https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz
+    - gunzip boost_1_70_0.tar.gz
+    - tar -xf boost_1_70_0.tar
+    - mv boost_1_70_0 /
+    - pwd
+    - cd /boost_1_70_0/
+    - ./bootstrap.sh
+    - ./bjam --with-thread --with-system --with-timer
+    - cd /
+    - git clone https://github.com/google/googletest
+    - cd googletest
+    - mkdir build && cd build
+    - cmake ..
+    - make 
+    - make install 
+    - ls /
+  script:
+    - pwd
+    - cd /builds/wangjiaming0909/unp
+    - make -j $(nproc)
+    - make test -j $(nproc)
+    - ./rt.sh
