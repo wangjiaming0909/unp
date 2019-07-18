@@ -27,9 +27,4 @@ build:
     - cd /builds/wangjiaming0909/unp
     - make -j $(nproc)
     - make test -j $(nproc)
-
-test:
-  stage: test
-  script:
     - ./rt.sh
-
