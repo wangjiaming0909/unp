@@ -174,9 +174,9 @@ TEST(HHWheelTimer, scheduleTimeout_with_reverse_order)
 //    ASSERT_EQ(timer->getTimerCount(), 1);
     react.handle_events(&timeout);
 //    ASSERT_EQ(timer->getTimerCount(), 0);
-    ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler1)->state, 0);
-    ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler2)->state, 0);
-    ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler3)->state, 0);
+    // ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler1)->state, 0);
+    // ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler2)->state, 0);
+    // ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler3)->state, 0);
 
 }
 
