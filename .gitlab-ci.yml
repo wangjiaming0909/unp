@@ -12,6 +12,5 @@ build:
     - mv boost_1_70_0 /
     - /boost_1_70_0/bootstrap.sh
     - /boost_1_70_0/bjam --with-thread --with-system --with-timer
-    - 
   script:
     - make test -j $(nproc)
