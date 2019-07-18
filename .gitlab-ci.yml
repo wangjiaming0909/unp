@@ -10,7 +10,8 @@ build:
     - gunzip boost_1_70_0.tar.gz
     - tar -xf boost_1_70_0.tar
     - mv boost_1_70_0 /
-    - /boost_1_70_0/bootstrap.sh
+    - cd /boost_1_70_0/
+    - ./bootstrap.sh
     - ./bjam --with-thread --with-system --with-timer
   script:
     - make test -j $(nproc)
