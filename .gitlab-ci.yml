@@ -15,3 +15,9 @@ build:
     - ./bjam --with-thread --with-system --with-timer
   script:
     - make test -j $(nproc)
+
+test:
+  stage: test
+  script:
+    - ./rt.sh
+
