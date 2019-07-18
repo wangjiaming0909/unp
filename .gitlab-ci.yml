@@ -5,7 +5,7 @@ build:
   # instead of calling g++ directly you can also use some build toolkit like make
   # install the necessary build tools when needed
   before_script:
-    - apt update && apt -y install make 
+    - apt update && apt -y install make cmake
     - wget https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz
     - gunzip boost_1_70_0.tar.gz
     - tar -xf boost_1_70_0.tar
@@ -21,6 +21,7 @@ build:
     - cmake ..
     - make 
     - make install 
+    - ls /
   script:
     - pwd
     - cd /builds/wangjiaming0909/unp
