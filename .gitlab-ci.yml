@@ -16,6 +16,7 @@ build:
     - ./bjam --with-thread --with-system --with-timer
   script:
     - pwd
+    - cd /builds/wangjiaming0909/unp
     - make test -j $(nproc)
 
 test:
