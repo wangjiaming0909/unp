@@ -172,25 +172,45 @@ TEST(HHWheelTimer, scheduleTimeout_with_reverse_order)
     TimeoutHandler *handler1 = new FakeTimeoutHandler{react, "1"};
     TimeoutHandler *handler2 = new FakeTimeoutHandler{react, "2"};
     TimeoutHandler *handler3 = new FakeTimeoutHandler{react, "3"};
+    TimeoutHandler *handler4 = new FakeTimeoutHandler{react, "4"};
     handler1->timeoutCallback = timeoutCallback1;
     handler2->timeoutCallback = timeoutCallback2;
     handler3->timeoutCallback = timeoutCallback3;
+    handler4->timeoutCallback = timeoutCallback4;
+
+    int value = 0;
 
     timer->scheduleTimeout(*handler1, 3s);
 //    ASSERT_EQ(timer->getTimerCount(), 1);
-    timer->scheduleTimeout(*handler2, 2s);
-    timer->scheduleTimeoutFn([](TimeoutHandler*){LOG(INFO) << "fn1";}, 2020ms);
-    timer->scheduleTimeoutFn([](TimeoutHandler*){LOG(INFO) << "fn2";}, 2130ms);
-    timer->scheduleTimeoutFn([](TimeoutHandler*){LOG(INFO) << "fn3";}, 2240ms);
+    timer->scheduleTimeout(*handler2, 1800ms);
+    timer->scheduleTimeoutFn([&](TimeoutHandler*){
+        value++;
+        LOG(INFO) << "*+*+*+*+*+*+*+**+ fn1";
+    }, 2000ms);
+    timer->scheduleTimeoutFn([&](TimeoutHandler*){
+        value++;
+        LOG(INFO) << "*+*+*+*+*+*+*+**+ fn2";
+    }, 2100ms);
+    timer->scheduleTimeoutFn([&](TimeoutHandler*){
+        value++;
+        LOG(INFO) << "*+*+*+*+*+*+*+**+ fn3";
+    }, 2200ms);
 //    ASSERT_EQ(timer->getTimerCount(), 2);
     timer->scheduleTimeout(*handler3, 1s);
 //    ASSERT_EQ(timer->getTimerCount(), 3);
-    timer->scheduleTimeoutFn([](TimeoutHandler*){LOG(INFO) << "fn4";}, 4240ms);
-    timer->scheduleTimeoutFn([](TimeoutHandler*){LOG(INFO) << "fn5";}, 8240ms);
+    timer->scheduleTimeoutFn([&](TimeoutHandler*){
+        value++;
+        LOG(INFO) << "*+*+*+*+*+*+*+**+ fn4";
+    }, 4000ms);
+    timer->scheduleTimeout(*handler4, 7020ms);
+    timer->scheduleTimeoutFn([&](TimeoutHandler*){
+        value++;
+        LOG(INFO) << "*+*+*+*+*+*+*+**+ fn5";
+    }, 8000ms);
 
     auto timeout = 1us;
     int i = 0;
-    while(i < 10)
+    while(i < 15)
     {
         react.handle_events(&timeout);
         i++;
@@ -198,6 +218,9 @@ TEST(HHWheelTimer, scheduleTimeout_with_reverse_order)
     ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler1)->state, 0);
     ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler2)->state, 0);
     ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler3)->state, 0);
+    ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler4)->state, 0);
+
+    ASSERT_EQ(value, 5);
 
 }
 
