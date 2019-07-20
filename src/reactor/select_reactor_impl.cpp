@@ -5,7 +5,7 @@ using namespace reactor;
 
 select_demultiplex_table::select_demultiplex_table(size_t size)
     : event_vector_()
-    , timeoutHandlersMinHeap_{}
+    // , timeoutHandlersMinHeap_{}
 {
     if(size > MAX_NUMBER_OF_HANDLE) {
         LOG(ERROR) << "select_demultiplex_table size specified is "
@@ -29,7 +29,7 @@ bool select_demultiplex_table::hasEvent(Event_Type type) const
     case EventHandler::TIMEOUT_EVENT:
     {
         bool hasEvent = !timeoutHandlersMinHeap_.empty();
-        LOG(INFO) << "Has Event returned: " << timeoutHandlersMinHeap_.size();
+        // LOG(INFO) << "Has Event returned: " << timeoutHandlersMinHeap_.size();
         return hasEvent;
     }
     case EventHandler::READ_EVENT:
@@ -54,7 +54,7 @@ TimeoutHandler *select_demultiplex_table::getTimeoutHandler() const
 
 int select_demultiplex_table::bind(int handle, EventHandler* handler, Event_Type type){
     auto event_type_str = event_type_to_string(type);
-    LOG(INFO) << "bind handle: " << handle << " type: " << event_type_str;
+    // LOG(INFO) << "bind handle: " << handle << " type: " << event_type_str;
     if(!is_valid_handle(handle) || handler == nullptr) {
         LOG(ERROR) << "handle is not in range or handler is null handle: "
                     << handle << " handler: " << handler;
@@ -105,14 +105,14 @@ int select_demultiplex_table::unbind(int handle, const EventHandler* handler, Ev
 int select_demultiplex_table::bindTimeoutEvent(TimeoutHandler &handler)
 {
     timeoutHandlersMinHeap_.push(&handler);
-    LOG(INFO) << "binding..." << "size: " << timeoutHandlersMinHeap_.size();
-    LOG(INFO) << "time: " << handler.expiration_.time_since_epoch().count();
+    handler.isRegistered = true;
+    // LOG(INFO) << "binding..." << "size: " << timeoutHandlersMinHeap_.size() << " time: " << handler.expiration_.time_since_epoch().count();
     return 0;
 }
 
 int select_demultiplex_table::unbindTimeoutEvent(TimeoutHandler &handler)
 {
-    LOG(INFO) << "unbinding timeout events in reactor";
+    // LOG(INFO) << "unbinding timeout events in reactor";
     if(timeoutHandlersMinHeap_.empty()) return -1;
     if(timeoutHandlersMinHeap_.top() == &handler)
     {
@@ -169,7 +169,7 @@ int select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
 //if returned value == 0, means ?
 //if returned value > 0, means n fd(s) are ready
 int select_reactor_impl::select(std::chrono::microseconds timeout){
-    LOG(INFO) << "preparing to select...";
+    // LOG(INFO) << "preparing to select...";
     const int width = this->demux_table_.get_current_max_handle_p_1();
     dispatch_sets_.read_set = this->wait_sets_.read_set;
     dispatch_sets_.write_set = this->wait_sets_.write_set;
@@ -178,7 +178,8 @@ int select_reactor_impl::select(std::chrono::microseconds timeout){
     if(!demux_table_.timeoutHandlersMinHeap_.empty())
     {
         auto timeoutOfFirstTimer = demux_table_.timeoutHandlersMinHeap_.top()->expirationTimePoint() - std::chrono::steady_clock::now();
-        timeout = std::min(std::chrono::duration_cast<std::chrono::microseconds>(timeoutOfFirstTimer), timeout);
+        // timeout = std::min(std::chrono::duration_cast<std::chrono::microseconds>(timeoutOfFirstTimer), timeout);
+        timeout = std::chrono::duration_cast<std::chrono::microseconds>(timeoutOfFirstTimer);
     }
 
     //!What if the timeout has missed, timeout will be negative
@@ -260,7 +261,7 @@ int select_reactor_impl::unregister_handler(EventHandler *handler, Event_Type ty
 }
 
 int select_reactor_impl::register_handler(int handle, EventHandler *handler, Event_Type type){
-    LOG(INFO) << "registering handler for handle: " << handle << " event: "<< event_type_to_string(type);
+    // LOG(INFO) << "registering handler for handle: " << handle << " event: "<< event_type_to_string(type);
     if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "handle error or registered type error...";
         return -1;
@@ -284,7 +285,7 @@ int select_reactor_impl::register_handler(int handle, EventHandler *handler, Eve
 }
 
 int select_reactor_impl::unregister_handler(int handle, EventHandler *handler, Event_Type type){
-    LOG(INFO) << "unregistering handler for handle: " << handle << " event: " << event_type_to_string(type);
+    // LOG(INFO) << "unregistering handler for handle: " << handle << " event: " << event_type_to_string(type);
     if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "handle error or registered type error...";
         return -1;
@@ -350,7 +351,7 @@ int select_reactor_impl::dispatch_io_set(
         ((current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE) &&
         (number_of_handles_dispatched < number_of_active_handles))
     {
-        LOG(INFO) << "dispatching... handle: " << current_handle << " event: " << event_type_to_string(type);
+        // LOG(INFO) << "dispatching... handle: " << current_handle << " event: " << event_type_to_string(type);
         ++number_of_handles_dispatched;
         EventHandler* handler = this->demux_table_.get_handler(current_handle, type);
         if(handler == 0) return -1;
@@ -358,13 +359,13 @@ int select_reactor_impl::dispatch_io_set(
 
         if(ret < 0){
             //TODO ret handling
-            LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_to_string(type);
+            // LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_to_string(type);
             this->demux_table_.unbind(current_handle);
             handler->handle_close(current_handle);
             dispatch_set.unset_bit(current_handle);
             ready_set.unset_bit(current_handle);
         }else{
-            LOG(INFO) <<"keep listening on handle: " << current_handle << " event: ";// << event_type_to_string(type);
+            // LOG(INFO) <<"keep listening on handle: " << current_handle << " event: ";// << event_type_to_string(type);
         }
     }
     return 0;
@@ -372,9 +373,12 @@ int select_reactor_impl::dispatch_io_set(
 
 int select_reactor_impl::dispatchTimeoutHandlers()
 {
-    auto timeoutHandler = demux_table_.getTimeoutHandler();
-    demux_table_.timeoutHandlersMinHeap_.pop();
-    LOG(INFO) << "poping....." << "size: " << demux_table_.timeoutHandlersMinHeap_.size();
-    timeoutHandler->handle_timeout(0);
+    if(hasEvent(EventHandler::TIMEOUT_EVENT))
+    {
+        auto timeoutHandler = demux_table_.getTimeoutHandler();
+        demux_table_.timeoutHandlersMinHeap_.pop();
+        // LOG(INFO) << "poping....." << "size: " << demux_table_.timeoutHandlersMinHeap_.size();
+        timeoutHandler->handle_timeout(0);
+    }
     return 0;
 }

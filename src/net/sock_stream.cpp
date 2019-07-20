@@ -15,7 +15,7 @@ void net::sock_stream::close_writer()
 
 void net::sock_stream::close()
 {
-	if(sock_fd_ == nullptr) return;
+	if(sock_fd_ == nullptr || sock_fd_->get_handle() == INVALID_HANDLE) return;
 
 	if (sock_fd_->close() != 0)
 	{
