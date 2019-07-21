@@ -31,6 +31,8 @@ public:
         expiration_ = timeout;
     }
     TimePoint_T expirationTimePoint() const { return expiration_; }
+    bool needDestroy() const {return needDestroy_;}
+    void destroy(){delete this;}
 public:
     std::function<void(TimeoutHandler*)> timeoutCallback{};
 

@@ -52,6 +52,8 @@ TEST(HHWheelTimer, normal_test)
     }
     ASSERT_EQ(timer->getTimerCount(), 0);
     ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler1)->state, 0);
+    delete handler1;
+    delete handler2;
 }
 
 
@@ -121,6 +123,11 @@ TEST(HHWheelTimer, schedule_multiTimeouts)
     ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler1)->state, 0);
     ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler2)->state, 0);
     ASSERT_EQ(dynamic_cast<FakeTimeoutHandler*>(handler3)->state, 0);
+
+    delete handler1;
+    delete handler2;
+    delete handler3;
+    delete handler4;
 }
 
 TEST(HHWheelTimer, scheduleTimeout_usingFunction)
@@ -144,22 +151,35 @@ TEST(HHWheelTimer, scheduleTimeout_usingFunction)
 
 TEST(HHWheelTimer, cancel)
 {
-    // using namespace reactor;
-    // Reactor react{new select_reactor_impl{}, true};
+    using namespace reactor;
+    Reactor react{new select_reactor_impl{}, true};
 
-    // HHWheelTimer *timer = new HHWheelTimer{&react};
-    // ASSERT_TRUE(timer != nullptr);
+    HHWheelTimer *timer = new HHWheelTimer{&react};
+    ASSERT_TRUE(timer != nullptr);
 
-    // FakeTimeoutHandler* timeoutHandler = new FakeTimeoutHandler(react, "1");
-    // timer->scheduleTimeout(*timeoutHandler, 1s);
-    // bool hasTimeroutEvent = react.hasEvent(EventHandler::TIMEOUT_EVENT);
-    // ASSERT_EQ(hasTimeroutEvent, true);
-    // ASSERT_EQ(timer->getTimerCount(), 1);
+    FakeTimeoutHandler* timeoutHandler = new FakeTimeoutHandler(react, "1");
+    timer->scheduleTimeout(*timeoutHandler, 1s);
+    bool hasTimeoutEvent = react.hasEvent(EventHandler::TIMEOUT_EVENT);
+    ASSERT_EQ(hasTimeoutEvent, true);
+    ASSERT_EQ(timer->getTimerCount(), 1);
 
-    // timer->cancelAll();
-    // ASSERT_EQ(timer->getTimerCount(), 0);
-    // hasTimeroutEvent = react.hasEvent(EventHandler::TIMEOUT_EVENT);
-    // ASSERT_EQ(hasTimeroutEvent, false);
+    timer->cancelAll();
+    ASSERT_EQ(timer->getTimerCount(), 0);
+
+    hasTimeoutEvent = react.hasEvent(EventHandler::TIMEOUT_EVENT);
+    ASSERT_EQ(hasTimeoutEvent, false);
+
+    delete timeoutHandler;
+
+    timer->scheduleTimeoutFn([](TimeoutHandler*){LOG(INFO) << "schedule FN";}, 2s);
+    hasTimeoutEvent = react.hasEvent(EventHandler::TIMEOUT_EVENT);
+    ASSERT_EQ(hasTimeoutEvent, true);
+    ASSERT_EQ(timer->getTimerCount(), 1);
+
+    timer->cancelAll();
+    ASSERT_EQ(timer->getTimerCount(), 0);
+    hasTimeoutEvent = react.hasEvent(EventHandler::TIMEOUT_EVENT);
+    ASSERT_EQ(hasTimeoutEvent, false);
 }
 
 TEST(HHWheelTimer, scheduleTimeout_with_reverse_order)
@@ -244,4 +264,8 @@ TEST(HHWheelTimer, timeoutExpired){
     // timer.scheduleTimeout(*handler3, 2s);
 
     timer.timeoutExpired(handler1);
+
+    delete handler1;
+    delete handler2;
+    delete handler3;
 }

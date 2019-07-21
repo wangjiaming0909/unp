@@ -32,10 +32,10 @@ int TimeoutHandler::handle_timeout(int) noexcept
     }
 
     wheel_->timeoutExpired(this);
-    if(needDestroy_)
+    if(needDestroy())
     {
         // LOG(INFO) << "preparing to destructoring TimeoutHandler...";
-        delete this;
+        destroy();
     }
 }
 

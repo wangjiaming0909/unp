@@ -156,6 +156,7 @@ public:
         if(timeoutHandlersMinHeap_.empty()) return nullptr;
         return timeoutHandlersMinHeap_.top();
     }
+    void cancelTimeEvent(){timeoutHandlersMinHeap_.clear();}
 
 private:
     bool hasEventForeachHandle(Event_Type type) const

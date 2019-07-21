@@ -30,7 +30,22 @@ HHWheelTimer::~HHWheelTimer()
 
 void HHWheelTimer::cancelAll()
 {
+    if(reactor_ == nullptr) return;
 
+    for(auto& intrusiveListArray : handlers_)
+    {
+        for(auto &intrusiveList : intrusiveListArray)
+        {
+            if(intrusiveList.empty()) continue;
+            auto count = cancelTimeoutsFromList_(intrusiveList);
+            timerCount_ -= count;
+        }
+    }
+
+    if(timerCount_ <= 0) 
+    {
+        reactor_->unregister_handler(nullptr, EventHandler::TIMEOUT_EVENT);
+    }
 }
 
 void HHWheelTimer::scheduleTimeout(TimeoutHandler_t &handler, Duration timeout)
@@ -189,10 +204,33 @@ int HHWheelTimer::cascadeTimers_(int bucket, int tick)
 
 size_t HHWheelTimer::cancelTimeoutsFromList_(intrusive_list_t& handlers)
 {
-    for(auto& handler : handlers)
+    if(handlers.empty()) return 0;
+    size_t ret = 0;
+    auto slot = handlers.front().slotInBucket_;
+    if(slot != -1) 
     {
-        // handler.
+        firstBucketBitSet_.reset(slot);
     }
+
+    intrusive_list_t tmp;
+    tmp.swap(handlers);
+
+    while(!tmp.empty())
+    {
+        auto& handler = tmp.front();
+        assert(handler.slotInBucket_ == slot);
+        if(handler.isRegistered())
+        {
+            // handler.timeoutCallback = [](TimeoutHandler*){};
+            reactor_->unregister_handler(&handler, EventHandler::TIMEOUT_EVENT);
+        }
+        handler.unlink();
+        handler.expiration_ = {};
+        handler.slotInBucket_ = -1;
+        if(handler.needDestroy()) handler.destroy();
+        ret++;
+    }
+    return ret;
 }
 
 inline int64_t  HHWheelTimer::tickOfCurTime(const time_point_t& curTime) const

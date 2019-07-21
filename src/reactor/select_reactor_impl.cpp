@@ -249,7 +249,8 @@ int select_reactor_impl::register_handler(EventHandler* handler, Event_Type type
 }
 
 int select_reactor_impl::unregister_handler(EventHandler *handler, Event_Type type) {
-    if(handler == nullptr || type != EventHandler::TIMEOUT_EVENT)
+    if(handler == nullptr) demux_table_.cancelTimeEvent();
+    if(type != EventHandler::TIMEOUT_EVENT)
     {
         LOG(ERROR) << "Unregistering non-timeout event and didn't give handle or handler is null";
         return -1;

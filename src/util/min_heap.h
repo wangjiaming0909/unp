@@ -28,7 +28,11 @@ public:
     bool empty() const {return container_.empty();}
     size_type size() const {return container_.size();}
     size_type max_size() const {return container_.max_size();}
-    void clear() {container_.clear();}
+    void clear() 
+    {
+        container_type tmp{};
+        container_.swap(tmp);
+    }
     const ElementType& top() const {return container_.top();}
     void push(const ElementType& t) { container_.push(t);}
     template<typename... Args >
