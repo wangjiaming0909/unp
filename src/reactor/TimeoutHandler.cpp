@@ -1,16 +1,18 @@
 #include "reactor/TimeoutHandler.h"
 #include "reactor/reactor.h"
 #include "reactor/HHWheelTimer.h"
+#include "util/easylogging++.h"
 
 namespace reactor
 {
 
-TimeoutHandler::TimeoutHandler(Reactor& reactor) : EventHandler(reactor)
+TimeoutHandler::TimeoutHandler(Reactor& reactor, bool needDestroy) : EventHandler(reactor), needDestroy_(needDestroy)
 {
 }
 
 TimeoutHandler::~TimeoutHandler()
 {
+    LOG(INFO) << "destructoring TimeoutHandler...";
 }
 
 
@@ -30,6 +32,11 @@ int TimeoutHandler::handle_timeout(int) noexcept
     }
 
     wheel_->timeoutExpired(this);
+    if(needDestroy_)
+    {
+        // LOG(INFO) << "preparing to destructoring TimeoutHandler...";
+        delete this;
+    }
 }
 
 

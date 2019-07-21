@@ -222,6 +222,11 @@ TEST(HHWheelTimer, scheduleTimeout_with_reverse_order)
 
     ASSERT_EQ(value, 5);
 
+    delete handler1;
+    delete handler2;
+    delete handler3;
+    delete handler4;
+
 }
 
 TEST(HHWheelTimer, timeoutExpired){

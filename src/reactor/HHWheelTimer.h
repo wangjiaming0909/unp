@@ -94,12 +94,10 @@ public:
 template <typename Fn>
 void HHWheelTimer::scheduleTimeoutFn(Fn f, Duration timeout)
 {
-    auto *handler = new TimeoutHandler_t();
+    auto *handler = new TimeoutHandler_t(true);
     handler->timeoutCallback = f;
     scheduleTimeout(*handler, timeout);
 }
-
-
 
 }//reactor
 #endif // _UTIL_HHWHEELTIMER_H_

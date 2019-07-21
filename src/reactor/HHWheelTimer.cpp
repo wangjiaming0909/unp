@@ -74,9 +74,15 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler_t& handler, int64_t baseT
         handlerList = &handlers_[1][(thisTimerExpireTick >> WHEEL_BITS) & WHEEL_MASK];
     } else if(diff < 1 << (3 * WHEEL_BITS)){
         LOG(INFO) << "!!!!thisTimerExpireTick: " << thisTimerExpireTick;
-        handlerList = &handlers_[2][(thisTimerExpireTick >> 2 * WHEEL_BITS) & WHEEL_MASK];
+        handlerList = &handlers_[2][(thisTimerExpireTick >> (2 * WHEEL_BITS)) & WHEEL_MASK];
     }else {
+        if(diff > LARGEST_SLOT)
+        {
+            diff = LARGEST_SLOT;
+            thisTimerExpireTick = diff + baseTick;
+        }
         LOG(INFO) << ".0.0.0.0.0.0.0.0.0.0.0.0";
+        handlerList = &handlers_[3][(thisTimerExpireTick >> (3 * WHEEL_BITS)) & WHEEL_MASK];
     }
     handlerList->push_back(handler);
 }

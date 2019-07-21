@@ -17,8 +17,8 @@ public:
     using Duration = std::chrono::milliseconds;
     using TimePoint_T = std::chrono::steady_clock::time_point;
     using WheelTimer_t = HHWheelTimer;
-    TimeoutHandler() = default;
-    TimeoutHandler(Reactor& reactor);
+    TimeoutHandler(bool needDestroy = false) : needDestroy_(needDestroy){}
+    TimeoutHandler(Reactor& reactor, bool needDestroy = false);
     virtual ~TimeoutHandler();
 
     virtual int handle_timeout(int) noexcept override;
@@ -42,6 +42,7 @@ public:
     bool isRegistered{false};
     WheelTimer_t *wheel_{nullptr};
     TimePoint_T expiration_{};
+    bool needDestroy_{false};
 };
 
 //for std::greater<TimeoutHandler>
