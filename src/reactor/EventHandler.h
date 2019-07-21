@@ -35,7 +35,7 @@ public:
         CONNECT_EVENT   = 1 << 7
     };
     EventHandler() : reactor_(nullptr), isRegistered_(false){}
-    EventHandler(Reactor& react) : reactor_(&react) {}
+    EventHandler(Reactor& react) : reactor_(&react), isRegistered_(false){}
     //these functions can't be pure virtual
     //because some handlers may not need to implement all of them
     //so the these handlers can be non-abstract classes
