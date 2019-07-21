@@ -44,6 +44,22 @@ public:
     void scheduleTimeout(TimeoutHandler_t &handler, Duration timeout);
     void timeoutExpired(TimeoutHandler_t* handler) noexcept ;
     size_t getTimerCount() const {return timerCount_;}
+    /**
+     * how to cancel timeouts
+     * 1, it's possible that we've registered more than one timeout handlers into the reactor
+     *   so, do we need to cancel the timeouts that already scheduled into the reactor
+     *   acorroding to folly, only when there is no timeouts in the HHWheelTimer, then  
+     *   the timeout event will be deleted in the EventBase, so here we only delete the 
+     *   timeouts that are in the HHWheelTimer, for those already registered into the reactor,
+     *   we try to disable it's timeoutCallback
+     *  2, so, how to cancel a timeout in the HHWheelTimer?
+     *      first, we need to reset the bit in the bitmap,
+     *      unlink it from the intrusiveHandlersList,
+     *          if the handler is scheduled through scheduleTimeoutFn(), 
+     *          (the TimeoutHandler is newed, so we need to delete it)
+     *          delete the TimeoutHandler
+     *  3, If there is no timeouts in the HHWheelTimer, cancel timeoutEvent from the Reactor
+     */
     void cancelAll();
 
 // protected:

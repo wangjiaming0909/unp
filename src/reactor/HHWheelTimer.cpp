@@ -62,13 +62,13 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler_t& handler, int64_t baseT
     {
         handlerList = &handlers_[0][baseTick & WHEEL_MASK];
         firstBucketBitSet_.set(baseTick & WHEEL_MASK);
-        handler.bucket_ = (baseTick & WHEEL_MASK);
+        handler.slotInBucket_ = (baseTick & WHEEL_MASK);
         LOG(INFO) << "seting pos: " << (baseTick & WHEEL_MASK);
     }else if(diff < WHEEL_SIZE) {
         handlerList = &handlers_[0][thisTimerExpireTick & WHEEL_MASK];
         firstBucketBitSet_.set(thisTimerExpireTick & WHEEL_MASK);
         LOG(INFO) << "seting pos: " << (thisTimerExpireTick & WHEEL_MASK) << " thisTimerExpireTick: " << thisTimerExpireTick;
-        handler.bucket_ = (thisTimerExpireTick & WHEEL_MASK);
+        handler.slotInBucket_ = (thisTimerExpireTick & WHEEL_MASK);
     } else if(diff < 1 << (2 * WHEEL_BITS)){
         LOG(INFO) << "!!!!thisTimerExpireTick: " << thisTimerExpireTick;
         handlerList = &handlers_[1][(thisTimerExpireTick >> WHEEL_BITS) & WHEEL_MASK];

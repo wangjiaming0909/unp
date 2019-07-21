@@ -38,7 +38,6 @@ protected:
 #ifdef TESTING
 public:
 #endif
-    int bucket_{-1};
     int slotInBucket_{-1};
     WheelTimer_t *wheel_{nullptr};
     TimePoint_T expiration_{};
