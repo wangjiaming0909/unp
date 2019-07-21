@@ -14,6 +14,7 @@ using boost_list_base_hook_t = boost::intrusive::list_base_hook<boost::intrusive
 class TimeoutHandler : public EventHandler, public boost_list_base_hook_t, public boost::noncopyable
 {
 public:
+    friend class HHWheelTimer;
     using Duration = std::chrono::milliseconds;
     using TimePoint_T = std::chrono::steady_clock::time_point;
     using WheelTimer_t = HHWheelTimer;
@@ -39,10 +40,20 @@ public:
 #endif
     int bucket_{-1};
     int slotInBucket_{-1};
-    bool isRegistered{false};
     WheelTimer_t *wheel_{nullptr};
     TimePoint_T expiration_{};
     bool needDestroy_{false};
+
+//override hiding functions 
+private:
+    int handle_input(int) override { return 0; }
+    int handle_output(int) override { return 0; }
+    int handle_close(int) override { return 0; }
+    int close_read(int) override { return 0; }
+    int close_write(int) override { return 0; }
+    int handle_signal(int) override{ return 0; }
+    int get_handle() const override{ return 0; }
+    void set_handle(int) override {}
 };
 
 //for std::greater<TimeoutHandler>

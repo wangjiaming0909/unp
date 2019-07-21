@@ -52,12 +52,12 @@ private:
 #ifdef TESTING
 public:
 #endif
-    size_t cancelTimeoutsFromList(intrusive_list_t& handlers);
+    size_t cancelTimeoutsFromList_(intrusive_list_t& handlers);
     //find the right timeout and register the handlers into the reactor
     void scheduleNextTimeoutInReactor_(TimeoutHandler_t *handler, int64_t baseTick, int64_t thisTimerExpireTick);
     // find the right place to put the timeout
     void scheduleTimeoutImpl_(TimeoutHandler_t& handler, int64_t baseTick, int64_t thisTimerExpireTick);
-    int cascadeTimers(int bucket, int tick);
+    int cascadeTimers_(int bucket, int tick);
     template<typename Duration2>
     int64_t getTickFromDuration(Duration2 duration)
     {
@@ -71,6 +71,7 @@ private:
 #ifdef TESTING
 public:
 #endif
+    Reactor *reactor_;
     Duration interval_; // the interval of one tick
     Duration defaultTimeout_;
     size_t timerCount_;
@@ -88,7 +89,6 @@ public:
 
     // Buckets registeredBucketsSlots_;
     std::bitset<WHEEL_SIZE> firstBucketBitSet_;
-    Reactor *reactor_;
 };
 
 template <typename Fn>

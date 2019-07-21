@@ -56,6 +56,7 @@ public:
     void setReactor(Reactor& reactor) {reactor_ = &reactor;}
     bool isAttachedToReactor() const {return reactor_ != nullptr;}
     bool isRegistered() const {return isRegistered_;}
+    void setRegistered() {isRegistered_ = true;}
 
 protected:
     virtual ~EventHandler(){}

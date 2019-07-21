@@ -108,7 +108,7 @@ void HHWheelTimer::scheduleNextTimeoutInReactor_(TimeoutHandler_t *handler, int6
         }
     }
 
-    if(!handler->isRegistered)
+    if(!handler->isRegistered())
     {
         reactor_->register_handler(handler, EventHandler::TIMEOUT_EVENT);
     }
@@ -135,9 +135,9 @@ void HHWheelTimer::timeoutExpired(TimeoutHandler_t* handler) noexcept
         index = expireTick_ & WHEEL_MASK;
         if(index == 0 && timerCount_ > 0)
         {
-            if (cascadeTimers(1, (expireTick_ >> WHEEL_BITS) & WHEEL_MASK) &&
-                cascadeTimers(2, (expireTick_ >> (2 * WHEEL_BITS)) & WHEEL_MASK)) {
-                cascadeTimers(3, (expireTick_ >> (3 * WHEEL_BITS)) & WHEEL_MASK);
+            if (cascadeTimers_(1, (expireTick_ >> WHEEL_BITS) & WHEEL_MASK) &&
+                cascadeTimers_(2, (expireTick_ >> (2 * WHEEL_BITS)) & WHEEL_MASK)) {
+                cascadeTimers_(3, (expireTick_ >> (3 * WHEEL_BITS)) & WHEEL_MASK);
             }
         }
         expireTick_++;
@@ -151,7 +151,7 @@ void HHWheelTimer::timeoutExpired(TimeoutHandler_t* handler) noexcept
             auto& callback = tmpList.front();
             tmpList.pop_front();
 
-            if(&callback == handler || handler->isRegistered) continue;
+            if(&callback == handler || handler->isRegistered()) continue;
             expiredTimers.push_back(callback);
             timerCount_--;
             LOG(INFO) << "-----------timer count--: " << timerCount_;;
@@ -169,7 +169,7 @@ void HHWheelTimer::timeoutExpired(TimeoutHandler_t* handler) noexcept
         scheduleNextTimeoutInReactor_(nullptr, curTick, -1);
 }
 
-int HHWheelTimer::cascadeTimers(int bucket, int tick)
+int HHWheelTimer::cascadeTimers_(int bucket, int tick)
 {
     LOG(INFO) << "-------------------cascading timeouts bucket: " << bucket << " tick: " << tick;
     intrusive_list_t tmp;
@@ -185,6 +185,14 @@ int HHWheelTimer::cascadeTimers(int bucket, int tick)
         scheduleTimeoutImpl_(callback, curTick, newThisTimerExpireTick);
     }
     return tick == 0;
+}
+
+size_t HHWheelTimer::cancelTimeoutsFromList_(intrusive_list_t& handlers)
+{
+    for(auto& handler : handlers)
+    {
+        // handler.
+    }
 }
 
 inline int64_t  HHWheelTimer::tickOfCurTime(const time_point_t& curTime) const
