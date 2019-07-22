@@ -49,23 +49,23 @@ public:
     //must call before open
     void set_thread_num(size_t n);
 
-    int open();
+    int open(unp::reactor_imp_t_enum impl);
     int close(bool force);
 
-private:
+TEST_PRIVATE:
 	reactor_ptr_t make_reactor(unp::reactor_imp_t_enum reactor_t);
     void make_acceptor();
 
-private:
-    size_t						thread_num_ = DEFAULT_THREAD_NUM;
+TEST_PRIVATE:
+    size_t thread_num_ = DEFAULT_THREAD_NUM;
 
-private:
-    reactor_ptr_t				first_reactor_;
-    acceptor_ptr_t 				acceptor_;
-    pool_ptr_t          		pool_;
-    net::inet_addr 				local_addr_;
+TEST_PRIVATE:
+    reactor_ptr_t first_reactor_;
+    acceptor_ptr_t acceptor_;
+    pool_ptr_t pool_;
+    net::inet_addr local_addr_;
 
-    std::vector<reactor_ptr_t>  connection_reactors_;
+    std::vector<reactor_ptr_t> connection_reactors_;
 };
 
 } //namespace reactor

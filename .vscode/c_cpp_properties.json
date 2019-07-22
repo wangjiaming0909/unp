@@ -1,7 +1,7 @@
 {
     "configurations": [
         {
-            "name": "Linux",
+            "name": "Test",
             "includePath": [
                 "${workspaceFolder}/src",
                 "/boost_1_70_0",
@@ -16,6 +16,27 @@
             },
             "defines": [
                 "TESTING"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        },
+        {
+            "name": "a.out",
+            "includePath": [
+                "${workspaceFolder}/src",
+                "/boost_1_70_0",
+                "/usr/local/include"
+            ],
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/src",
+                    "/usr/local/include",
+                    "/boost_1_70_0"
+                ]
+            },
+            "defines": [
             ],
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",

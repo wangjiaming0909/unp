@@ -44,7 +44,8 @@ int net::sock_acceptor::open(const inet_addr& local_addr,
 }
 
 int net::sock_acceptor::close(){
-    return sock_fd_->close();
+    if(sock_fd_) return sock_fd_->close();
+    return 0;
 }
 
 int net::sock_acceptor::accept(

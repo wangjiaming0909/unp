@@ -154,7 +154,10 @@ const int select_demultiplex_table::MAX_NUMBER_OF_HANDLE;
 int select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
     int n = 0;
 
-    n = this->select(*timeout); // select > 0 再 dispatch
+    std::chrono::microseconds t{0};
+    if(timeout == nullptr) t = t.max();
+    else t = *timeout;
+    n = this->select(t); // select > 0 再 dispatch
 
     if(n <= 0 && errno != ETIMEDOUT)
     {

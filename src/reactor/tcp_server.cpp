@@ -20,13 +20,13 @@ tcp_server::tcp_server(const net::inet_addr& local_addr)
 
 tcp_server::~tcp_server()
 {
-	close(true);
+    if(acceptor_) close(true);
 }
 
-int tcp_server::open()
+int tcp_server::open(unp::reactor_imp_t_enum impl)
 {
     LOG(INFO) << "Starting server on " << local_addr_.get_address_string();
-    first_reactor_ = make_reactor(unp::reactor_imp_t_enum::USING_EPOLL);
+    first_reactor_ = make_reactor(impl);
     if(first_reactor_.get() == nullptr)
 		return -1;
 
@@ -39,7 +39,7 @@ int tcp_server::open()
 
     for(size_t i = 0; i < thread_num_; i++)
     {
-        auto connection_reactor = make_reactor(unp::reactor_imp_t_enum::USING_EPOLL);
+        auto connection_reactor = make_reactor(impl);
         if(connection_reactor.get() == nullptr) return -1;
         connection_reactors_.push_back(connection_reactor);
         auto current_reactor = connection_reactors_.back();

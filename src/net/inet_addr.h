@@ -37,7 +37,7 @@ public:
 	void reset_addr(void);
 	util::string to_string();
     virtual ~inet_addr();
-	bool operator==(const inet_addr& addr){
+	bool operator==(const inet_addr& addr) const {
 		return memcmp(&in4_, &addr, sizeof in4_);
 	}
 	bool operator!=(const inet_addr& addr){

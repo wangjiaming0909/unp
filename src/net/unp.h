@@ -50,4 +50,10 @@ int handle_timed_connect_using_select(int handle, milliseconds* timeout);
 int handle_timed_accept_using_poll(int listen_handle, const milliseconds* timeout, bool restart);
 }
 
+#ifdef TESTING
+#define TEST_PRIVATE public
+#else
+#define TEST_PRIVATE private
+#endif //TESTING
+
 #endif // _UNP_H_

@@ -9,6 +9,7 @@
 #include "util/easylogging++.h"
 #include "reactor/reactor.h"
 #include "util/min_heap.h"
+#include "net/unp.h"
 
 namespace reactor
 {
@@ -64,10 +65,7 @@ public:
 
 // protected:
     virtual ~HHWheelTimer();
-private:
-#ifdef TESTING
-public:
-#endif
+TEST_PRIVATE:
     size_t cancelTimeoutsFromList_(intrusive_list_t& handlers);
     //find the right timeout and register the handlers into the reactor
     void scheduleNextTimeoutInReactor_(TimeoutHandler_t *handler, int64_t baseTick, int64_t thisTimerExpireTick);
