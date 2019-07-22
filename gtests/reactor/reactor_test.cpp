@@ -4,5 +4,5 @@
 
 using namespace reactor;
 
-TEST(test_reactor, constructor_of_reactor){
+TEST(reactor, constructor_of_reactor){
 }

@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
-TEST(test_string_to_addr, give_the_right_ip_and_port){
+TEST(string_to_addr, give_the_right_ip_and_port){
     boost::scoped_array<char> ip_and_port{new char[INET_ADDRSTRLEN]};
     snprintf(ip_and_port.get(), INET_ADDRSTRLEN, "%s", "127.0.0.1:22");
     sockaddr_in ret_addr;
@@ -22,7 +22,7 @@ TEST(test_string_to_addr, give_the_right_ip_and_port){
     ASSERT_STREQ("127.0.0.1", ret_ptr);
 }
 
-TEST(test_string_to_addr, give_wrong_ip){
+TEST(string_to_addr, give_wrong_ip){
     boost::scoped_array<char> wrong_ip{new char[INET_ADDRSTRLEN]};
     snprintf(wrong_ip.get(), INET_ADDRSTRLEN, "%s", "127.2.2.1234:22");
     sockaddr_in ret_addr;
@@ -33,7 +33,7 @@ TEST(test_string_to_addr, give_wrong_ip){
     ASSERT_EQ(ret, 0);
 }
 
-TEST(test_string_to_addr, give_zero_port_or_ADDR_ANY){
+TEST(string_to_addr, give_zero_port_or_ADDR_ANY){
     boost::scoped_array<char> zero_port{new char[INET_ADDRSTRLEN]};
     snprintf(zero_port.get(), INET_ADDRSTRLEN , "%s", "127.0.0.1:0");
     sockaddr_in ret_addr;
@@ -47,7 +47,7 @@ TEST(test_string_to_addr, give_zero_port_or_ADDR_ANY){
     ASSERT_STREQ("127.0.0.1", ret_addr_ptr);
 }
 
-TEST(test_string_to_addr, give_wrong_port){
+TEST(string_to_addr, give_wrong_port){
     boost::scoped_array<char> zero_port{new char[INET_ADDRSTRLEN]};
     snprintf(zero_port.get(), INET_ADDRSTRLEN, "%s", "127.0.0.1:99999");
     sockaddr_in ret_addr;
@@ -60,7 +60,7 @@ TEST(test_string_to_addr, give_wrong_port){
     ASSERT_STREQ("127.0.0.1", ret_addr_ptr);
 }
 
-TEST(test_addr_to_string, give_INADDR_ANY_should_return_false){
+TEST(addr_to_string, give_INADDR_ANY_should_return_false){
     const int buffer_size = INET_ADDRSTRLEN;
     boost::scoped_array<char> buffer{new char[buffer_size]}; memset(buffer.get(), 0, buffer_size);
     sockaddr_in addr;
@@ -72,7 +72,7 @@ TEST(test_addr_to_string, give_INADDR_ANY_should_return_false){
     ASSERT_STREQ("0.0.0.0:22", buffer.get());
 }
 
-TEST(test_addr_to_string, give_right_sockaddr_in_struct){
+TEST(addr_to_string, give_right_sockaddr_in_struct){
     const int buffer_size = INET_ADDRSTRLEN;
     boost::scoped_array<char> buffer{new char[buffer_size]};
     memset(buffer.get(), 0, buffer_size);
@@ -86,7 +86,7 @@ TEST(test_addr_to_string, give_right_sockaddr_in_struct){
 }
 
 //it seems that every sockaddr_in struct can be converted to a string
-TEST(test_addr_to_string, give_wrong_sockaddr_in_struct){ 
+TEST(addr_to_string, give_wrong_sockaddr_in_struct){ 
     ASSERT_EQ(1,1);
 }
 

@@ -18,6 +18,13 @@ enum
     REUSE_ADDR = 1
 };
 
+enum AcceptorStateEnum
+{
+    REGISTERED, // means that listen fd has opened, and have also registered into the reactor
+    LISTEN_CLOSED_WITH_IO_HANDLERS_ACTIVE, // unregistered the event in the reactor
+    ALL_CLOSED
+};
+
 class acceptor : public EventHandler
 {
 public:
@@ -68,6 +75,7 @@ private:
     //并且会轮流register, 如果可以做到: 查看 这些 reactor上的当前事件有多少,然后针对事件比较少的进行register就更好了
     size_t current_reactor_index_to_register_;
     std::vector<std::shared_ptr<Reactor>> external_reactors_;
+    AcceptorStateEnum acceptorState_;
 };
 
 /*

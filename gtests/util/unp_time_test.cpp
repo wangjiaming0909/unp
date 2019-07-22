@@ -24,14 +24,14 @@ TEST_F(unp_time_test, test_to_std_time_point){
     ASSERT_EQ(t.microSecondsSinceEpoch(), tp.time_since_epoch().count());
 }
 
-TEST(test_duration_to_timeval, duration_to_timeval_us){
+TEST(duration_to_timeval, duration_to_timeval_us){
     using namespace std::chrono_literals;
     std::chrono::microseconds uss = 1us + 1s;
     timeval time_val = util::duration_to_timeval(uss);
     ASSERT_EQ(time_val.tv_sec, 1);
     ASSERT_EQ(time_val.tv_usec, 1);
 }
-TEST(test_duration_to_timeval, duration_to_timeval_ms){
+TEST(duration_to_timeval, duration_to_timeval_ms){
     using namespace std::chrono_literals;
     std::chrono::milliseconds ms = 1ms + 1s;
     timeval time_val = util::duration_to_timeval(ms);
@@ -39,7 +39,7 @@ TEST(test_duration_to_timeval, duration_to_timeval_ms){
     ASSERT_EQ(time_val.tv_usec, 1000);
 }
 
-TEST(test_timeval_to_duration, timeval_to_duration){
+TEST(timeval_to_duration, timeval_to_duration){
     timeval time_val;
     time_val.tv_sec = 1;
     time_val.tv_usec = 1000;

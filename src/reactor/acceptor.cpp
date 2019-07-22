@@ -147,6 +147,7 @@ int acceptor::open()
     }
 
     return reactor_->register_handler(sock_acceptor_.get_handle(), this, ACCEPT_EVENT);
+    acceptorState_ = REGISTERED;
 }
 
 int acceptor::close()
@@ -158,6 +159,8 @@ int acceptor::close()
     }
 
     return reactor_->unregister_handler(sock_acceptor_.get_handle(), this, ACCEPT_EVENT);
+    if(read_handlers_.size() == 0) acceptorState_ = ALL_CLOSED;
+    else acceptorState_ = LISTEN_CLOSED_WITH_IO_HANDLERS_ACTIVE;
 }
 
 void acceptor::close_read_handler(int handle)
