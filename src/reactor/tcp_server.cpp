@@ -79,12 +79,14 @@ int tcp_server::open(unp::reactor_imp_t_enum impl)
 
 int tcp_server::close(bool force)
 {
-    int ret = 0;
-	if(!force)
-	{
-		ret = acceptor_->destroy_acceptor();
-	}
-    
+    if(!force)
+    {
+        return acceptor_->destroy_acceptor();
+    }
+    if(acceptor_->destroy_acceptor() != 0)
+    {
+        acceptor_->close_all_handlers();
+    }
     return acceptor_->destroy_acceptor();
 }
 

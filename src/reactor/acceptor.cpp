@@ -146,21 +146,27 @@ int acceptor::open()
         return -1;
     }
 
-    return reactor_->register_handler(sock_acceptor_.get_handle(), this, ACCEPT_EVENT);
+    int ret = reactor_->register_handler(sock_acceptor_.get_handle(), this, ACCEPT_EVENT);
     acceptorState_ = REGISTERED;
+    return ret;
 }
 
 int acceptor::close()
 {
-    if (sock_acceptor_.close() != 0)
+    if(acceptorState_ == LISTEN_CLOSED || acceptorState_ == ALL_CLOSED) return 0;
+
+    int ret = reactor_->unregister_handler(sock_acceptor_.get_handle(), this, ACCEPT_EVENT);
+
+    ret = sock_acceptor_.close() && ret;
+    if(ret != 0)
     {
-        LOG(ERROR) << "Close a socket error..." << strerror(errno);
-        return -1;
+        LOG(ERROR) << "Close acceptor error..." << strerror(errno);
     }
 
-    return reactor_->unregister_handler(sock_acceptor_.get_handle(), this, ACCEPT_EVENT);
-    if(read_handlers_.size() == 0) acceptorState_ = ALL_CLOSED;
-    else acceptorState_ = LISTEN_CLOSED_WITH_IO_HANDLERS_ACTIVE;
+    if(connectionCount_ == 0) acceptorState_ = ALL_CLOSED;
+    else acceptorState_ = LISTEN_CLOSED;
+
+    return ret;
 }
 
 void acceptor::close_read_handler(int handle)
@@ -172,10 +178,12 @@ void acceptor::close_read_handler(int handle)
     //一般也不会有别人会获得这些 connection_handler 的指针,因此 reset 之后就会析构此 connection_handler
     // read_handlers_[handle]->close();
     read_handlers_[handle].reset();
+    connectionCount_--;
 }
 
 int acceptor::close_all_handlers()
 {
+    connectionCount_ = 0;
     return 0;
 }
 
@@ -209,6 +217,7 @@ int acceptor::make_read_handler(Reactor &reactor_to_register)
 
     // if(read_handlers_.size() <= static_cast<size_t>(handle)) read_handlers_.resize(handle + 10);
     read_handlers_[static_cast<uint32_t>(handle)] = handler;
+    connectionCount_++;
 
     return handle;
 }
