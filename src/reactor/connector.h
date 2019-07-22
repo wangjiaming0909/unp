@@ -16,19 +16,23 @@
 namespace reactor
 {
 
-class connector : public EventHandler
+struct IConnector : public EventHandler
+{
+    using micro_seconds = std::chrono::microseconds;
+    IConnector(Reactor& react) : EventHandler(react), connector_{}{}
+    virtual int connect(const net::inet_addr& targetAddr, const micro_seconds& timeout) = 0;
+protected:
+    net::sock_connector connector_;
+};
+
+template <typename Handler_t >
+class connector : public IConnector
 {
 public:
-    using micro_seconds = std::chrono::microseconds;
-    using connection_handler_ptr_t = std::shared_ptr<connection_handler>;
+    using connection_handler_ptr_t = std::shared_ptr<Handler_t>;
     using map_t = std::unordered_map<int, connection_handler_ptr_t>;
-    connector(Reactor &react)
-        : EventHandler(react), connector_()
-          //		, handlers_()
-          ,
-          connection_handlers_()
-    {
-    }
+
+    connector(Reactor &react) : IConnector{react}, connection_handlers_{} { }
     virtual ~connector() override;
     virtual int handle_input(int handle) override;
 
@@ -40,11 +44,65 @@ private:
     int activate_connection_handler(int handle);
 
 private:
-    net::sock_connector connector_;
-    //	std::vector<connection_handler_ptr_t> 		handlers_;
     //key is the handle
     map_t connection_handlers_;
 };
+
+template <typename Handler_t>
+connector<Handler_t>::~connector()
+{
+
+}
+
+template <typename Handler_t>
+int connector<Handler_t>::handle_input(int)
+{
+	return 0;
+}
+
+template <typename Handler_t>
+int connector<Handler_t>::activate_connection_handler(int handle)
+{
+    return connection_handlers_[handle]->open();
+}
+
+template <typename Handler_t>
+int connector<Handler_t>::connect(const net::inet_addr& target_addr, const micro_seconds& timeout)
+{
+    auto handler = make_connection_handler();
+    if(!handler) return -1;
+
+    net::sock_stream &stream = handler->get_sock_stream();
+
+    if (connector_.connect(stream, target_addr, &timeout, 1, 0) != 0)
+    {
+        LOG(WARNING) << "connect to " << target_addr.get_address_string() << " error...";
+        return -1;
+   }
+
+   auto handle = handler->get_handle();
+   connection_handlers_[handle] = handler;
+
+   int ret = activate_connection_handler(handle);
+   if(ret != 0)
+    {
+        LOG(WARNING) << "activate connection handler error";
+        connection_handlers_[handle].reset();
+        return -1;
+    }
+    return handle;
+}
+
+template <typename Handler_t>
+typename connector<Handler_t>::connection_handler_ptr_t connector<Handler_t>::make_connection_handler()
+{
+    if(connection_handlers_.size() >= INT32_MAX)
+    {
+        LOG(WARNING) << "Too many connectors: " << connection_handlers_.size();
+        return 0;
+    }
+    return std::make_shared<Handler_t>(*reactor_);
+}
 
 template <typename DataType, typename Handler>
 class reactor_connector : public EventHandler

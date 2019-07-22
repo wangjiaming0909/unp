@@ -67,7 +67,7 @@ public:
         if(ret == 0) handler->isRegistered_ = false;
         return ret;
     }
-    int handle_events(std::chrono::microseconds *timeout = 0){
+    int handle_events(std::chrono::microseconds *timeout = nullptr){
         return reactor_impl_->handle_events(timeout);
     }
 

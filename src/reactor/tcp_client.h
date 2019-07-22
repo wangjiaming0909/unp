@@ -14,7 +14,6 @@ class tcp_client
 {
 public:
     using reactor_ptr_t = std::shared_ptr<Reactor>;
-    using connector_ptr_t = std::shared_ptr<connector>;
     using microseconds_t = std::chrono::microseconds;
     tcp_client();
     ~tcp_client();
@@ -26,7 +25,6 @@ private:
 
 private:
     reactor_ptr_t       reactor_;
-    connector_ptr_t     connector_;
 };
 
 } //namespace reactor
