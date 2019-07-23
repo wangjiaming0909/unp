@@ -12,7 +12,7 @@ private:
     /* data */
 public:
     echo_client_handler(Reactor& reactor) : echo_connection_handler(reactor){}
-    ~echo_client_handler();
+    ~echo_client_handler(){}
     virtual int open()
     {
         this->enable_reading();
@@ -40,11 +40,6 @@ Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7";
         return ret;
     }
 };
-
-echo_client_handler::~echo_client_handler()
-{
-}
-
 }//namespace reactor
 
 #endif // _ECHO_CLIENT_HANDLER_H_

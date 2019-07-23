@@ -1,9 +1,19 @@
 #include "reactor/ConnectionManager.h"
 
-ConnectionManager::ConnectionManager(/* args */)
+namespace reactor
+{
+
+ConnectionManager::ConnectionManager(Reactor& react) : reactor_(react)
 {
 }
 
 ConnectionManager::~ConnectionManager()
 {
+    auto it = handlersMap_.begin();
+    for(; it != handlersMap_.end(); it++)
+    {
+        delete it->second;
+        it->second = nullptr;
+    }
+}
 }
