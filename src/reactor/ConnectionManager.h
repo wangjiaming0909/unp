@@ -1,6 +1,7 @@
-#include "reactor/connection_handler.h"
 #include "reactor/reactor.h"
+#include "reactor/connector.h"
 #include "boost/noncopyable.hpp"
+#include "boost/intrusive/list.hpp"
 
 #include <unordered_map>
 #include <vector>
@@ -11,38 +12,43 @@ namespace reactor
 class ConnectionManager : boost::noncopyable
 {
 public:
-    using HashMap_t = std::unordered_map<int, connection_handler*>;
+    using Container_t = boost::intrusive::list<IConnector, boost::intrusive::constant_time_size<false>>;
+    using ConnectorPtr = Container_t::iterator;
     ConnectionManager(Reactor& react);
     ~ConnectionManager();
 
-    template <typename Handler_t, typename ...Args>
-    Handler_t* makeHandler(Args&&... args);
+    template <typename Connector_t, typename Handler_t, typename ...Args>
+    ConnectorPtr makeConnection(Args&&... args);
 
     template <typename Handler_t>
-    void closeHandler(Handler_t& handler);
+    void closeConnection(ConnectorPtr e, IConnector::micro_seconds timeout);
 
-    HashMap_t::size_type connectionCount() const {return handlersMap_.size();}
+    Container_t::size_type connectionCount() const {return connections_.size();}
 
 private:
-    HashMap_t handlersMap_;
+    Container_t connections_;
     Reactor& reactor_;
 };
 
-template <typename Handler_t, typename ...Args>
-Handler_t* ConnectionManager::makeHandler(Args&&... args)
+template <typename Connector_t, typename Handler_t, typename ...Args>
+typename ConnectionManager::ConnectorPtr ConnectionManager::makeConnection(Args&&... args)
 {
     static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
     auto* handler = new Handler_t(reactor_, std::forward<Args>(args)...);
-    handlersMap_.emplace(handler->get_handle(), handler);
-    return handler;
+
+    IConnector* conn = new Connector_t{reactor_, *handler};
+    connections_.push_front(*conn);
+    return connections_.begin();
 }
 
 template <typename Handler_t>
-void ConnectionManager::closeHandler(Handler_t& handler)
+void ConnectionManager::closeConnection(ConnectorPtr e, IConnector::micro_seconds timeout)
 {
     static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
-    handlersMap_.erase(handler.get_handle());
-    delete &handler;
+
+    e->disconnect(timeout);
+    // delete 
+    connections_.erase(e);
 }
 
 

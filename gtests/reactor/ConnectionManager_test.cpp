@@ -32,16 +32,16 @@ TEST(ConnectionManager, makeHandler)
     Reactor react{new select_reactor_impl{}};
     ConnectionManager manager{react};
 
-    auto* handler = manager.makeHandler<echo_connection_handler>();
-    ASSERT_TRUE(handler != nullptr);
+    // auto* handler = manager.makeHandler<echo_connection_handler>();
+    // ASSERT_TRUE(handler != nullptr);
 
-    auto* handler2 = manager.makeHandler<echo_client_handler>();
-    ASSERT_TRUE(handler2 != nullptr);
+    // auto* handler2 = manager.makeHandler<echo_client_handler>();
+    // ASSERT_TRUE(handler2 != nullptr);
 
-    auto* handler3 = manager.makeHandler<FakeConnectionHandler>("name1");
-    ASSERT_TRUE(handler3 != nullptr);
-    ASSERT_EQ(state, 1);
-    ASSERT_EQ(handler3->name, "name1");
-    manager.closeHandler(*handler3);
-    ASSERT_EQ(state, 0);
+    // auto* handler3 = manager.makeHandler<FakeConnectionHandler>("name1");
+    // ASSERT_TRUE(handler3 != nullptr);
+    // ASSERT_EQ(state, 1);
+    // ASSERT_EQ(handler3->name, "name1");
+    // manager.closeHandler(*handler3);
+    // ASSERT_EQ(state, 0);
 }

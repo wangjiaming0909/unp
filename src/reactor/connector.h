@@ -8,6 +8,7 @@
 #include "thread/thread_pool.h"
 #include "util/easylogging++.h"
 #include "reactor/connection_handler.h"
+#include "boost/intrusive/list_hook.hpp"
 
 #include <vector>
 #include <chrono>
@@ -17,7 +18,9 @@
 namespace reactor
 {
 
-struct IConnector : public EventHandler
+using IntrusiveListBaseHook = boost::intrusive::list_base_hook<boost::intrusive::link_mode<boost::intrusive::auto_unlink>>;
+
+struct IConnector : public EventHandler, public IntrusiveListBaseHook
 {
     using micro_seconds = std::chrono::microseconds;
     IConnector(Reactor& react) : EventHandler(react), connector_{}{}
