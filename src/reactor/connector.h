@@ -8,7 +8,6 @@
 #include "thread/thread_pool.h"
 #include "util/easylogging++.h"
 #include "reactor/connection_handler.h"
-#include "reactor/ConnectionManager.h"
 
 #include <vector>
 #include <chrono>
@@ -22,7 +21,8 @@ struct IConnector : public EventHandler
 {
     using micro_seconds = std::chrono::microseconds;
     IConnector(Reactor& react) : EventHandler(react), connector_{}{}
-    virtual int connect(const net::inet_addr& targetAddr, const micro_seconds& timeout) = 0;
+    virtual int connect(const net::inet_addr& targetAddr, micro_seconds timeout) = 0;
+    virtual int disconnect(micro_seconds timeout) = 0;
 protected:
     net::sock_connector connector_;
 };
@@ -33,42 +33,22 @@ class connector : public IConnector
 public:
     using connection_handler_ptr_t = Handler_t*;
 
-    connector(Reactor &react) 
+    connector(Reactor &react, Handler_t& handler) 
         : IConnector{react}
-        , connManager_{react}
+        , handlerPtr_(&handler)
         { }
-    virtual ~connector() override;
-    virtual int handle_input(int handle) override;
+    virtual ~connector() override{}
 
-    int connect(const net::inet_addr &target_addr, const micro_seconds &timeout);
-
+    virtual int connect(const net::inet_addr &target_addr, micro_seconds timeout) override;
+    virtual int disconnect(micro_seconds timeout) override;
 private:
-    template <typename ...Args>
-    connection_handler_ptr_t make_connection_handler(Args&&... args);
-
-private:
-    ConnectionManager connManager_;
+    connection_handler_ptr_t handlerPtr_;
 };
 
 template <typename Handler_t>
-connector<Handler_t>::~connector()
+int connector<Handler_t>::connect(const net::inet_addr& target_addr, micro_seconds timeout)
 {
-
-}
-
-template <typename Handler_t>
-int connector<Handler_t>::handle_input(int)
-{
-	return 0;
-}
-
-template <typename Handler_t>
-int connector<Handler_t>::connect(const net::inet_addr& target_addr, const micro_seconds& timeout)
-{
-    auto handler = make_connection_handler();
-    if(!handler) return -1;
-
-    net::sock_stream &stream = handler->get_sock_stream();
+    net::sock_stream &stream = handlerPtr_->get_sock_stream();
 
     if (connector_.connect(stream, target_addr, &timeout, 1, 0) != 0)
     {
@@ -76,9 +56,8 @@ int connector<Handler_t>::connect(const net::inet_addr& target_addr, const micro
         return -1;
    }
 
-   auto handle = handler->get_handle();
-
-   if(handler->open() != 0)
+   auto handle = handlerPtr_->get_handle();
+   if(handlerPtr_->open() != 0)
     {
         LOG(WARNING) << "activate connection handler error";
         return -1;
@@ -87,11 +66,11 @@ int connector<Handler_t>::connect(const net::inet_addr& target_addr, const micro
 }
 
 template <typename Handler_t>
-template <typename ...Args>
-typename connector<Handler_t>::connection_handler_ptr_t connector<Handler_t>::make_connection_handler(Args&&... args)
+int connector<Handler_t>::disconnect(micro_seconds timeout)
 {
-    return connManager_.makeHandler<Handler_t>(std::forward<Args>(args)...);
+    handlerPtr_->close();
 }
+
 
 template <typename DataType, typename Handler>
 class reactor_connector : public EventHandler

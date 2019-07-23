@@ -9,7 +9,8 @@ connection_handler::connection_handler(Reactor &reactor)
 
 connection_handler::~connection_handler()
 {
-    stream_.close();
+    close();
+    closeStream();
 }
 
 const unsigned int connection_handler::BUFFER_HIGH_WATER_MARK = 100 * buffer_chain::MAXIMUM_CHAIN_SIZE;
@@ -198,7 +199,12 @@ void connection_handler::close()
     if (write_enabled_)
         disable_writing();
     check_and_invoke_close_callback();
-    // stream_.close();
+    closeStream();
+}
+
+void connection_handler::closeStream()
+{
+    stream_.close();
 }
 
 int connection_handler::close_read(int)

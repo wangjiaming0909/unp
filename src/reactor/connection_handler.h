@@ -51,6 +51,7 @@ public:
 
     virtual int open();
     void close();
+    void closeStream();
     void clear_input_buffer()
     {
         input_buffer_.drain(1);

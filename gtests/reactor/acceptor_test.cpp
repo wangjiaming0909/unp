@@ -33,11 +33,11 @@ TEST(acceptor, normal_with_handlers){
     acpt->open();
 
     //make connector
-    connector<echo_connection_handler> conn{react};
+    // connector<echo_connection_handler> conn{react};
 
     // std::thread acceptorThread{&Reactor::handle_events, &react, nullptr};
 
-    std::thread connectorThread{};
+    // std::thread connectorThread{};
 
     // acceptorThread.join();
 }

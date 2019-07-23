@@ -8,7 +8,10 @@
 namespace reactor
 {
 
-tcp_client::tcp_client() : reactor_() { }
+tcp_client::tcp_client() 
+    : reactor_()
+    , connectors_{}
+    { }
 
 tcp_client::~tcp_client() { }
 
@@ -19,25 +22,29 @@ int tcp_client::open(unp::reactor_imp_t_enum type)
     return 0;
 }
 
-int tcp_client::connect(const net::inet_addr& target_addr, const microseconds_t& timeout)
+void tcp_client::addConnector(IConnector& connector)
 {
-    // if(!connector_) return -1;
 
-    // if(connector_->connect(target_addr, timeout) <= 0)
-    // {
-    //     LOG(WARNING) << "connector error...";
-    //     return -1;
-    // }
-    // while(true)
-    // {
-    //     int ret = reactor_->handle_events();
-    //     if(ret != 0)
-    //     {
-    //         LOG(WARNING) << "handle events error";
-    //         return -1;
-    //     }
-    // }
-    return 0;
+}
+
+void tcp_client::closeConnector(IConnector& connector)
+{
+
+}
+
+int tcp_client::start()
+{
+
+}
+
+int tcp_client::suspend()
+{
+
+}
+
+int tcp_client::stop()
+{
+
 }
 
 tcp_client::reactor_ptr_t tcp_client::make_reactor(unp::reactor_imp_t_enum type)

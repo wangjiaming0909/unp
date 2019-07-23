@@ -3,6 +3,7 @@
 #include "net/inet_addr.h"
 #include "net/unp.h"
 #include "reactor/connector.h"
+#include "boost/noncopyable.hpp"
 #include <chrono>
 
 class Reactor;
@@ -10,7 +11,7 @@ class Reactor;
 namespace reactor
 {
 
-class tcp_client
+class tcp_client : boost::noncopyable
 {
 public:
     using reactor_ptr_t = std::shared_ptr<Reactor>;
@@ -18,12 +19,18 @@ public:
     tcp_client();
     ~tcp_client();
     int open(unp::reactor_imp_t_enum type);
-    int connect(const net::inet_addr& target_addr_, const microseconds_t& timeout);
+    void addConnector(IConnector& connector);
+    void closeConnector(IConnector& connector);
+    int start();
+    int suspend();
+    int stop();
 
 private:
     reactor_ptr_t make_reactor(unp::reactor_imp_t_enum type);
 
 private:
+    std::vector<IConnector*> connectors_;
+
     reactor_ptr_t       reactor_;
 };
 
