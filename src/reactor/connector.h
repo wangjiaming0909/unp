@@ -7,7 +7,9 @@
 #include "reactor/io_handler.h"
 #include "thread/thread_pool.h"
 #include "util/easylogging++.h"
-#include "connection_handler.h"
+#include "reactor/connection_handler.h"
+#include "reactor/ConnectionManager.h"
+
 #include <vector>
 #include <chrono>
 #include <map>
@@ -29,23 +31,23 @@ template <typename Handler_t >
 class connector : public IConnector
 {
 public:
-    using connection_handler_ptr_t = std::shared_ptr<Handler_t>;
-    using map_t = std::unordered_map<int, connection_handler_ptr_t>;
+    using connection_handler_ptr_t = Handler_t*;
 
-    connector(Reactor &react) : IConnector{react}, connection_handlers_{} { }
+    connector(Reactor &react) 
+        : IConnector{react}
+        , connManager_{react}
+        { }
     virtual ~connector() override;
     virtual int handle_input(int handle) override;
 
     int connect(const net::inet_addr &target_addr, const micro_seconds &timeout);
 
 private:
-    //return handle
-    connection_handler_ptr_t make_connection_handler();
-    int activate_connection_handler(int handle);
+    template <typename ...Args>
+    connection_handler_ptr_t make_connection_handler(Args&&... args);
 
 private:
-    //key is the handle
-    map_t connection_handlers_;
+    ConnectionManager connManager_;
 };
 
 template <typename Handler_t>
@@ -58,12 +60,6 @@ template <typename Handler_t>
 int connector<Handler_t>::handle_input(int)
 {
 	return 0;
-}
-
-template <typename Handler_t>
-int connector<Handler_t>::activate_connection_handler(int handle)
-{
-    return connection_handlers_[handle]->open();
 }
 
 template <typename Handler_t>
@@ -81,27 +77,20 @@ int connector<Handler_t>::connect(const net::inet_addr& target_addr, const micro
    }
 
    auto handle = handler->get_handle();
-   connection_handlers_[handle] = handler;
 
-   int ret = activate_connection_handler(handle);
-   if(ret != 0)
+   if(handler->open() != 0)
     {
         LOG(WARNING) << "activate connection handler error";
-        connection_handlers_[handle].reset();
         return -1;
     }
     return handle;
 }
 
 template <typename Handler_t>
-typename connector<Handler_t>::connection_handler_ptr_t connector<Handler_t>::make_connection_handler()
+template <typename ...Args>
+typename connector<Handler_t>::connection_handler_ptr_t connector<Handler_t>::make_connection_handler(Args&&... args)
 {
-    if(connection_handlers_.size() >= INT32_MAX)
-    {
-        LOG(WARNING) << "Too many connectors: " << connection_handlers_.size();
-        return 0;
-    }
-    return std::make_shared<Handler_t>(*reactor_);
+    return connManager_.makeHandler<Handler_t>(std::forward<Args>(args)...);
 }
 
 template <typename DataType, typename Handler>

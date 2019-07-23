@@ -16,25 +16,34 @@ public:
     ~ConnectionManager();
 
     template <typename Handler_t, typename ...Args>
-    Handler_t* makeHandler(Args&&... args)
-    {
-        static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
-        auto* handler = new Handler_t(reactor_, std::forward<Args>(args)...);
-        handlersMap_.emplace(handler->get_handle(), handler);
-        return handler;
-    }
+    Handler_t* makeHandler(Args&&... args);
 
     template <typename Handler_t>
-    void closeHandler(Handler_t& handler)
-    {
-        static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
-        handlersMap_.erase(handler.get_handle());
-        delete &handler;
-    }
+    void closeHandler(Handler_t& handler);
+
+    HashMap_t::size_type connectionCount() const {return handlersMap_.size();}
 
 private:
     HashMap_t handlersMap_;
     Reactor& reactor_;
 };
+
+template <typename Handler_t, typename ...Args>
+Handler_t* ConnectionManager::makeHandler(Args&&... args)
+{
+    static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
+    auto* handler = new Handler_t(reactor_, std::forward<Args>(args)...);
+    handlersMap_.emplace(handler->get_handle(), handler);
+    return handler;
+}
+
+template <typename Handler_t>
+void ConnectionManager::closeHandler(Handler_t& handler)
+{
+    static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
+    handlersMap_.erase(handler.get_handle());
+    delete &handler;
+}
+
 
 }//namespace reactor
