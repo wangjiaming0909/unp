@@ -11,10 +11,14 @@ namespace reactor
 tcp_client::tcp_client(unp::reactor_imp_t_enum type) 
 { 
     make_reactor(type);
-    manager_ = std::make_shared<ConnectionManager>(*(reactor_.get()));
+    manager_ = new ConnectionManager(*reactor_);
 }
 
-tcp_client::~tcp_client() { }
+tcp_client::~tcp_client() 
+{ 
+    delete manager_;
+    delete reactor_;
+}
 
 int tcp_client::open(unp::reactor_imp_t_enum type)
 {
@@ -25,15 +29,19 @@ int tcp_client::open(unp::reactor_imp_t_enum type)
 
 int tcp_client::start()
 {
-    while(1)
+    reactor_->start();
+    int ret = 0;
+    while(ret >= 0)
     {
-        reactor_->handle_events();
+        ret = reactor_->handle_events();
     }
+    return ret;
 }
 
 int tcp_client::suspend()
 {
-
+    reactor_->suspend();
+    return 0;
 }
 
 int tcp_client::stop()
@@ -43,23 +51,21 @@ int tcp_client::stop()
 
 tcp_client::reactor_ptr_t tcp_client::make_reactor(unp::reactor_imp_t_enum type)
 {
-    reactor_ptr_t reactor{};
     switch (type)
     {
     case unp::reactor_imp_t_enum::USING_SELECT:
-        reactor = std::make_shared<Reactor>(new select_reactor_impl(), true);
+        reactor_ = new Reactor(new select_reactor_impl(), true);
         break;
     case unp::reactor_imp_t_enum::USING_POLL:
-        reactor = std::make_shared<Reactor>(new poll_reactor_impl(), true);
+        reactor_ = new Reactor(new poll_reactor_impl(), true);
         break;
     case unp::reactor_imp_t_enum::USING_EPOLL:
-        reactor = std::make_shared<Reactor>(new epoll_reactor_impl());
+        reactor_ = new Reactor(new epoll_reactor_impl());
         break;
     default:
         break;
     }
-    reactor_.swap(reactor);
-    return reactor;
+    return reactor_;
 }
 
 } //namespace reactor

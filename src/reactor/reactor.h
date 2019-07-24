@@ -2,6 +2,7 @@
 #define _UNP_REACTOR_H_
 
 #include <memory>
+#include <atomic>
 #include "reactor_implementation.h"
 #include "reactor/EventFD.h"
 
@@ -12,13 +13,20 @@ enum class ReactorType
     POLL, EPOLL, SELECT
 };
 
+enum class ReactorStatus : uint
+{
+    RUNNING = 1, SUSPENDED = 2
+};
+
 class Reactor{
 public:
     using Event_Type = EventHandler::Event_Type;
     //should I alloc the memory of reactor_impl, new it in this constructor
     Reactor(reactor_implementation* reactor_impl = nullptr, bool needWakeUp = false)
         : reactor_impl_(reactor_impl)
+        , status_{}
     {
+        status_.store(static_cast<uint>(ReactorStatus::SUSPENDED));
         if (needWakeUp) //connector and epoll do not need weakup, poll select need it
         {
             eventFd_ptr_ = std::make_shared<EventFD>();
@@ -53,7 +61,7 @@ public:
         if(handle != eventFd_ptr_->getEventFD() && reactor_impl_->isWaiting())
         {
             LOG(INFO) << "current handle is not the event fd... the reactor will be waked up handle: " << handle;
-            eventFd_ptr_->wakeup();
+            wakeup();
         }
         return ret;
     }
@@ -68,6 +76,9 @@ public:
         return ret;
     }
     int handle_events(std::chrono::microseconds *timeout = nullptr){
+        auto status = status_.load();
+        if(status == static_cast<uint>(ReactorStatus::SUSPENDED)) 
+            return -1;
         return reactor_impl_->handle_events(timeout);
     }
 
@@ -75,9 +86,25 @@ public:
     {
         return reactor_impl_->hasEvent(type);
     }
+
+    void suspend()
+    {
+        uint status = static_cast<uint>(ReactorStatus::SUSPENDED);
+        status_.store(status);
+        wakeup();
+    }
+
+    void start()
+    {
+        uint status = static_cast<uint>(ReactorStatus::RUNNING);
+        status_.store(status);
+    }
+
+    void wakeup() { eventFd_ptr_->wakeup(); }
 private:
     std::shared_ptr<reactor_implementation> reactor_impl_;
     std::shared_ptr<EventFD> eventFd_ptr_;
+    std::atomic_uint status_;
 };
 
 } // Reactor

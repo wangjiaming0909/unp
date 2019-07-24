@@ -24,7 +24,7 @@ echo_connection_handler::~echo_connection_handler()
 
 int echo_connection_handler::handle_input(int handle)
 {
-
+    LOG(INFO) << "handle: " << handle << " going to read...";
     if(input_buffer_.total_len() >= connection_handler::BUFFER_HIGH_WATER_MARK)
     {
         return 0;

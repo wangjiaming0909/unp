@@ -9,9 +9,11 @@ namespace reactor
 class echo_client_handler : public echo_connection_handler
 {
 private:
-    /* data */
+    int index{-1};
 public:
-    echo_client_handler(Reactor& reactor) : echo_connection_handler(reactor){}
+    echo_client_handler(Reactor& reactor, int index) 
+    : echo_connection_handler(reactor)
+    , index{index}{}
     ~echo_client_handler(){}
     virtual int open()
     {

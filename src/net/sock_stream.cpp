@@ -125,11 +125,11 @@ ssize_t net::sock_stream::read_imp(void *buffer, size_t len, const micro_seconds
         read_len = ::read(sock_fd_->get_handle(), static_cast<char *>(buffer), len);
         if(read_len > 0) 
         {
-            // LOG(INFO) << "Read from: " << sock_fd_->get_handle() << " read: " << read_len << "bytes";
+            LOG(INFO) << "Read from: " << sock_fd_->get_handle() << " read: " << read_len << "bytes";
         } 
         else if(read_len == 0)
         {
-            // LOG(INFO) << "Read a EOF: " << sock_fd_->get_handle();
+            LOG(INFO) << "Read a EOF: " << sock_fd_->get_handle();
         }
         else
         {

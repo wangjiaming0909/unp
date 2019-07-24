@@ -31,6 +31,7 @@ TEST(HHWheelTimer, normal_test)
 {
     using namespace reactor;
     Reactor react{new select_reactor_impl{}, true};
+    react.start();
     TimeoutHandler *handler1 = new FakeTimeoutHandler{react, "1"};
     TimeoutHandler *handler2 = new FakeTimeoutHandler{react, "2"};
     handler1->timeoutCallback = timeoutCallback;
@@ -92,6 +93,7 @@ TEST(HHWheelTimer, schedule_multiTimeouts)
 {
     using namespace reactor;
     Reactor react{new select_reactor_impl{}, true};
+    react.start();
     TimeoutHandler *handler1 = new FakeTimeoutHandler{react, "1"};
     TimeoutHandler *handler2 = new FakeTimeoutHandler{react, "2"};
     TimeoutHandler *handler3 = new FakeTimeoutHandler{react, "3"};
@@ -134,6 +136,7 @@ TEST(HHWheelTimer, scheduleTimeout_usingFunction)
 {
     using namespace reactor;
     Reactor react{new select_reactor_impl{}, true};
+    react.start();
 
     HHWheelTimer *timer = new HHWheelTimer{&react};
     ASSERT_TRUE(timer != nullptr);
@@ -186,6 +189,7 @@ TEST(HHWheelTimer, scheduleTimeout_with_reverse_order)
 {
     using namespace reactor;
     Reactor react{new select_reactor_impl{}, true};
+    react.start();
 
     HHWheelTimer *timer = new HHWheelTimer{&react};
 

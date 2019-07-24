@@ -12,17 +12,16 @@ namespace reactor
 class ConnectionManager : boost::noncopyable
 {
 public:
-    using Container_t = boost::intrusive::list<IConnector, boost::intrusive::constant_time_size<false>>;
+    using Container_t = boost::intrusive::list<ServiceT, boost::intrusive::constant_time_size<false>>;
     using ConnectorPtr = Container_t::iterator;
     ConnectionManager(Reactor& react);
-    //TODO free memory
     ~ConnectionManager();
 
     template <typename Connector_t, typename ...Args>
     Connector_t* makeConnection(Args&&... args);
 
     template <typename Connector_t>
-    void closeConnection(Connector_t& e, IConnector::micro_seconds timeout);
+    void closeConnection(Connector_t& e, std::chrono::microseconds timeout);
 
     Container_t::size_type connectionCount() const {return connections_.size();}
 
@@ -38,14 +37,14 @@ Connector_t* ConnectionManager::makeConnection(Args&&... args)
     static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
     auto* handler = new Handler_t(reactor_, std::forward<Args>(args)...);
 
-    Connector_t* ret = new Connector_t{reactor_, *handler};
-    IConnector* conn = ret;
+    Connector_t* ret = new Connector_t{*handler};
+    ServiceT* conn = ret;
     connections_.push_front(*conn);
     return ret;
 }
 
 template <typename Connector_t>
-void ConnectionManager::closeConnection(Connector_t& e, IConnector::micro_seconds timeout)
+void ConnectionManager::closeConnection(Connector_t& e, std::chrono::microseconds timeout)
 {
     using Handler_t = typename Connector_t::HandlerT;
     static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");

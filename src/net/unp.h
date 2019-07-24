@@ -56,4 +56,10 @@ int handle_timed_accept_using_poll(int listen_handle, const milliseconds* timeou
 #define TEST_PRIVATE private
 #endif //TESTING
 
+#ifdef TESTING
+#define TEST_PROTECTED public
+#else
+#define TEST_PROTECTED protected
+#endif //TESTING
+
 #endif // _UNP_H_

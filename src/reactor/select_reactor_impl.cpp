@@ -17,7 +17,7 @@ select_demultiplex_table::select_demultiplex_table(size_t size)
 
 EventHandler* select_demultiplex_table::get_handler(int handle, Event_Type type) const{
     if(!is_handle_in_range(handle)){
-        //LOG(WARNING) << "handle is not in range, handle: " << handle;
+        LOG(WARNING) << "handle is not in range, handle: " << handle;
         return nullptr;
     }
     return event_vector_[handle].get_handler(type);
@@ -29,7 +29,7 @@ bool select_demultiplex_table::hasEvent(Event_Type type) const
     case EventHandler::TIMEOUT_EVENT:
     {
         bool hasEvent = !timeoutHandlersMinHeap_.empty();
-        // LOG(INFO) << "Has Event returned: " << timeoutHandlersMinHeap_.size();
+        LOG(INFO) << "Has Event returned: " << timeoutHandlersMinHeap_.size();
         return hasEvent;
     }
     case EventHandler::READ_EVENT:
@@ -54,7 +54,7 @@ TimeoutHandler *select_demultiplex_table::getTimeoutHandler() const
 
 int select_demultiplex_table::bind(int handle, EventHandler* handler, Event_Type type){
     auto event_type_str = event_type_to_string(type);
-    // LOG(INFO) << "bind handle: " << handle << " type: " << event_type_str;
+    LOG(INFO) << "bind handle: " << handle << " type: " << event_type_str;
     if(!is_valid_handle(handle) || handler == nullptr) {
         LOG(ERROR) << "handle is not in range or handler is null handle: "
                     << handle << " handler: " << handler;
@@ -112,7 +112,7 @@ int select_demultiplex_table::bindTimeoutEvent(TimeoutHandler &handler)
 
 int select_demultiplex_table::unbindTimeoutEvent(TimeoutHandler &handler)
 {
-    // LOG(INFO) << "unbinding timeout events in reactor";
+    LOG(INFO) << "unbinding timeout events in reactor";
     if(timeoutHandlersMinHeap_.empty()) return -1;
     if(timeoutHandlersMinHeap_.top() == &handler)
     {
@@ -172,7 +172,7 @@ int select_reactor_impl::handle_events(std::chrono::microseconds* timeout) {
 //if returned value == 0, means ?
 //if returned value > 0, means n fd(s) are ready
 int select_reactor_impl::select(std::chrono::microseconds timeout){
-    // LOG(INFO) << "preparing to select...";
+    LOG(INFO) << "preparing to select...";
     const int width = this->demux_table_.get_current_max_handle_p_1();
     dispatch_sets_.read_set = this->wait_sets_.read_set;
     dispatch_sets_.write_set = this->wait_sets_.write_set;
@@ -189,13 +189,13 @@ int select_reactor_impl::select(std::chrono::microseconds timeout){
     //We also have to let every timeout event be handled, 不能丢event, 即便几个timeout event在很短的时间间隔内超时
     auto timeout_timeval = util::duration_to_timeval<std::chrono::microseconds>(timeout);
 
-//    LOG(INFO) << "trying to wait on " << width << " fds...";
+   LOG(INFO) << "trying to wait on " << width << " fds...";
     int read_fd_count = dispatch_sets_.read_set.handles_count();
     int write_fd_count = dispatch_sets_.write_set.handles_count();
     int exception_fd_count = dispatch_sets_.exception_set.handles_count();
-//    LOG(INFO) << "read fd count: " << read_fd_count;
-//    LOG(INFO) << "write fd count: " << write_fd_count;
-//    LOG(INFO) << "exception fd count: " << exception_fd_count;
+   LOG(INFO) << "read fd count: " << read_fd_count;
+   LOG(INFO) << "write fd count: " << write_fd_count;
+   LOG(INFO) << "exception fd count: " << exception_fd_count;
     if((read_fd_count + write_fd_count + exception_fd_count) == 0){
         LOG(ERROR) << "there is no fd to select";
         return -1;
@@ -232,12 +232,13 @@ int select_reactor_impl::select(std::chrono::microseconds timeout){
 
 int select_reactor_impl::dispatch(int active_handle_count){
     if(active_handle_count == 0) {
-        dispatchTimeoutHandlers();
+        return dispatchTimeoutHandlers();
     }
     else
     {
         int number_of_handles_dispatched = 0;
-        return dispatch_io_handlers(active_handle_count, number_of_handles_dispatched);
+        dispatch_io_handlers(active_handle_count, number_of_handles_dispatched);
+        return active_handle_count - number_of_handles_dispatched;
     }
 }
 
@@ -265,7 +266,7 @@ int select_reactor_impl::unregister_handler(EventHandler *handler, Event_Type ty
 }
 
 int select_reactor_impl::register_handler(int handle, EventHandler *handler, Event_Type type){
-    // LOG(INFO) << "registering handler for handle: " << handle << " event: "<< event_type_to_string(type);
+    LOG(INFO) << "registering handler for handle: " << handle << " event: "<< event_type_to_string(type);
     if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "handle error or registered type error...";
         return -1;
@@ -289,7 +290,7 @@ int select_reactor_impl::register_handler(int handle, EventHandler *handler, Eve
 }
 
 int select_reactor_impl::unregister_handler(int handle, EventHandler *handler, Event_Type type){
-    // LOG(INFO) << "unregistering handler for handle: " << handle << " event: " << event_type_to_string(type);
+    LOG(INFO) << "unregistering handler for handle: " << handle << " event: " << event_type_to_string(type);
     if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "handle error or registered type error...";
         return -1;
@@ -313,31 +314,28 @@ int select_reactor_impl::unregister_handler(int handle, EventHandler *handler, E
 
 //dispatch io_handlers read_set, write_set, exception_set
 int select_reactor_impl::dispatch_io_handlers(int active_handle_count, int& io_handles_dispatched){
-    int ret = dispatch_io_set(
+    dispatch_io_set(
         active_handle_count,
         io_handles_dispatched,
         EventHandler::READ_EVENT,
         this->dispatch_sets_.read_set,
         this->ready_sets_.read_set,
         &EventHandler::handle_input);
-    //TODO check ret
-    ret = dispatch_io_set(
+    dispatch_io_set(
         active_handle_count,
         io_handles_dispatched,
         EventHandler::WRITE_EVENT,
         this->dispatch_sets_.write_set,
         this->ready_sets_.write_set,
         &EventHandler::handle_output);
-    //TODO check ret
-    ret = dispatch_io_set(
+    dispatch_io_set(
         active_handle_count,
         io_handles_dispatched,
         EventHandler::EXCEPT_EVENT,
         this->dispatch_sets_.exception_set,
         this->ready_sets_.exception_set,
         &EventHandler::handle_output);
-    //TODO check ret
-    return ret;
+    return 0;
 }
 
 //
@@ -352,24 +350,26 @@ int select_reactor_impl::dispatch_io_set(
 
     //go throuth the handle_set, dispatch all the handles
     while(
-        ((current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE) &&
-        (number_of_handles_dispatched < number_of_active_handles))
+            dispatch_set.handles_count() > 0 &&
+            (current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE && 
+            (number_of_handles_dispatched < number_of_active_handles)
+        )
     {
-        // LOG(INFO) << "dispatching... handle: " << current_handle << " event: " << event_type_to_string(type);
-        ++number_of_handles_dispatched;
+        LOG(INFO) << "dispatching... handle: " << current_handle << " event: " << event_type_to_string(type);
         EventHandler* handler = this->demux_table_.get_handler(current_handle, type);
-        if(handler == 0) return -1;
+        if(handler == 0) return 0;
+        ++number_of_handles_dispatched;
         int ret = (handler->*callback) (current_handle);
 
         if(ret < 0){
             //TODO ret handling
-            // LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_to_string(type);
+            LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_to_string(type);
             this->demux_table_.unbind(current_handle);
             handler->handle_close(current_handle);
             dispatch_set.unset_bit(current_handle);
             ready_set.unset_bit(current_handle);
         }else{
-            // LOG(INFO) <<"keep listening on handle: " << current_handle << " event: ";// << event_type_to_string(type);
+            LOG(INFO) <<"keep listening on handle: " << current_handle << " event: ";// << event_type_to_string(type);
         }
     }
     return 0;

@@ -74,9 +74,10 @@ public:
         }
         if(is_last_handle(current_handle)) 
             return INVALID_HANDLE;
-        current_handle -= 1;//minus 1
-        while(!is_set(++current_handle));//must use ++current_handle, not current_handle++
-        return current_handle;
+        // current_handle -= 1;//minus 1
+        while(!is_set(++current_handle) && current_handle < max_handle_);//must use ++current_handle, not current_handle++
+        if(is_set(current_handle)) return current_handle;
+        return INVALID_HANDLE;
     }
 
     bool is_last_handle(int handle) const {

@@ -17,7 +17,7 @@ namespace reactor
 class tcp_client : boost::noncopyable
 {
 public:
-    using reactor_ptr_t = std::shared_ptr<Reactor>;
+    using reactor_ptr_t = Reactor*;
     using microseconds_t = std::chrono::microseconds;
     tcp_client(unp::reactor_imp_t_enum type);
     ~tcp_client();
@@ -35,8 +35,8 @@ private:
 
 private:
     // std::vector<IConnector*> connectors_;
-    std::shared_ptr<ConnectionManager> manager_{};
-    reactor_ptr_t       reactor_{};
+    ConnectionManager* manager_{nullptr};
+    reactor_ptr_t       reactor_{nullptr};
 };
 
 template <typename Connector_t, typename ...Args>

@@ -20,64 +20,69 @@ namespace reactor
 {
 
 using IntrusiveListBaseHook = boost::intrusive::list_base_hook<boost::intrusive::link_mode<boost::intrusive::auto_unlink>>;
+struct ServiceT : public IntrusiveListBaseHook
+{
+    virtual ~ServiceT() = default;
+    virtual int close() = 0;
+};
 
-//TODO remove IConnector, (and also no virtual destructor)
-struct IConnector : public EventHandler, public IntrusiveListBaseHook
+
+template <typename Handler_t>
+struct IConnector : public ServiceT
 {
     using micro_seconds = std::chrono::microseconds;
-    IConnector(Reactor& react) : EventHandler(react), connector_{}{}
-    virtual int connect(const net::inet_addr& targetAddr, micro_seconds timeout) = 0;
-    virtual int disconnect(micro_seconds timeout) = 0;
-protected:
+    using HandlerT = Handler_t  ;
+    using ConnectionHandlerPtr_t = Handler_t*;
+
+    IConnector(ConnectionHandlerPtr_t handlerP) : connector_{}, handlerPtr_{handlerP}{}
+    virtual Handler_t* connect(const net::inet_addr& targetAddr, micro_seconds timeout) = 0;
+    virtual int disconnect(micro_seconds timeout = std::chrono::microseconds{1}) = 0;
+    int close() override { disconnect(); }
+    virtual ~IConnector() = default;
+TEST_PROTECTED:
     net::sock_connector connector_;
+    ConnectionHandlerPtr_t handlerPtr_;
 };
 
 template <typename Handler_t >
-class connector : public IConnector
+class connector : public IConnector<Handler_t>
 {
 public:
-    using HandlerT = Handler_t  ;
-    using connection_handler_ptr_t = Handler_t*;
+    using Base_t = IConnector<Handler_t>;
+    using micro_seconds = typename Base_t::micro_seconds;
+    using HandlerT = typename Base_t::HandlerT;
+    using ConnectionHandlerPtr_t = typename Base_t::ConnectionHandlerPtr_t;
 
-    connector(Reactor &react, Handler_t& handler) 
-        : IConnector{react}
-        , handlerPtr_(&handler)
-        { }
-    virtual ~connector() override
-    {
-        delete handlerPtr_;
-    }
-    //TODO return Handler_t*
-    virtual int connect(const net::inet_addr &target_addr, micro_seconds timeout) override;
+    connector(Handler_t& handler) : Base_t(&handler) { }
+    virtual ~connector() override { delete this->handlerPtr_;}
+
+    virtual ConnectionHandlerPtr_t connect(const net::inet_addr &target_addr, micro_seconds timeout) override;
     virtual int disconnect(micro_seconds timeout) override;
-
-    connection_handler_ptr_t handlerPtr_;
 };
 
 template <typename Handler_t>
-int connector<Handler_t>::connect(const net::inet_addr& target_addr, micro_seconds timeout)
+typename connector<Handler_t>::ConnectionHandlerPtr_t connector<Handler_t>::connect(const net::inet_addr& target_addr, micro_seconds timeout)
 {
-    net::sock_stream &stream = handlerPtr_->get_sock_stream();
+    net::sock_stream &stream = this->handlerPtr_->get_sock_stream();
 
-    if (connector_.connect(stream, target_addr, &timeout, 1, 0) != 0)
+    if (this->connector_.connect(stream, target_addr, &timeout, 1, 0) != 0)
     {
         LOG(WARNING) << "connect to " << target_addr.get_address_string() << " error...";
-        return -1;
+        return nullptr;
    }
 
-   auto handle = handlerPtr_->get_handle();
-   if(handlerPtr_->open() < 0)
+   if(this->handlerPtr_->open() < 0)
     {
         LOG(WARNING) << "activate connection handler error";
-        return -1;
+        return nullptr;
     }
-    return handle;
+    return this->handlerPtr_;
 }
 
 template <typename Handler_t>
 int connector<Handler_t>::disconnect(micro_seconds timeout)
 {
-    handlerPtr_->close();
+    this->handlerPtr_->close();
 }
 
 
