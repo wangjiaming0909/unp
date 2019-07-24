@@ -35,6 +35,7 @@ template <typename Handler_t >
 class connector : public IConnector
 {
 public:
+    using HandlerT = Handler_t  ;
     using connection_handler_ptr_t = Handler_t*;
 
     connector(Reactor &react, Handler_t& handler) 

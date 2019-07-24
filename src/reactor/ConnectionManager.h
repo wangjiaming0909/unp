@@ -17,10 +17,10 @@ public:
     ConnectionManager(Reactor& react);
     ~ConnectionManager();
 
-    template <typename Connector_t, typename Handler_t, typename ...Args>
+    template <typename Connector_t, typename ...Args>
     Connector_t* makeConnection(Args&&... args);
 
-    template <typename Connector_t, typename Handler_t>
+    template <typename Connector_t>
     void closeConnection(Connector_t& e, IConnector::micro_seconds timeout);
 
     Container_t::size_type connectionCount() const {return connections_.size();}
@@ -30,9 +30,10 @@ private:
     Reactor& reactor_;
 };
 
-template <typename Connector_t, typename Handler_t, typename ...Args>
+template <typename Connector_t, typename ...Args>
 Connector_t* ConnectionManager::makeConnection(Args&&... args)
 {
+    using Handler_t = typename Connector_t::HandlerT;
     static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
     auto* handler = new Handler_t(reactor_, std::forward<Args>(args)...);
 
@@ -42,9 +43,10 @@ Connector_t* ConnectionManager::makeConnection(Args&&... args)
     return ret;
 }
 
-template <typename Connector_t, typename Handler_t>
+template <typename Connector_t>
 void ConnectionManager::closeConnection(Connector_t& e, IConnector::micro_seconds timeout)
 {
+    using Handler_t = typename Connector_t::HandlerT;
     static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
     e.disconnect(timeout);
     delete &e;

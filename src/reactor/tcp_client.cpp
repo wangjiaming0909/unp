@@ -10,6 +10,7 @@ namespace reactor
 
 tcp_client::tcp_client() 
     : reactor_()
+    // , manager_{*reactor_}
     , connectors_{}
     { }
 

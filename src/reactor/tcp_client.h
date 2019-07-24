@@ -4,6 +4,8 @@
 #include "net/unp.h"
 #include "reactor/connector.h"
 #include "boost/noncopyable.hpp"
+#include "reactor/ConnectionManager.h"
+
 #include <chrono>
 
 class Reactor;
@@ -30,6 +32,8 @@ private:
 
 private:
     std::vector<IConnector*> connectors_;
+
+    // ConnectionManager manager_;
 
     reactor_ptr_t       reactor_;
 };
