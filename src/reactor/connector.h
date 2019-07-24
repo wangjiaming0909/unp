@@ -49,7 +49,7 @@ public:
 
     virtual int connect(const net::inet_addr &target_addr, micro_seconds timeout) override;
     virtual int disconnect(micro_seconds timeout) override;
-TEST_PRIVATE:
+
     connection_handler_ptr_t handlerPtr_;
 };
 
@@ -65,7 +65,7 @@ int connector<Handler_t>::connect(const net::inet_addr& target_addr, micro_secon
    }
 
    auto handle = handlerPtr_->get_handle();
-   if(handlerPtr_->open() != 0)
+   if(handlerPtr_->open() < 0)
     {
         LOG(WARNING) << "activate connection handler error";
         return -1;

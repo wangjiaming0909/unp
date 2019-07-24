@@ -7,6 +7,7 @@
 #include "reactor/ConnectionManager.h"
 
 #include <chrono>
+#include <memory>
 
 class Reactor;
 
@@ -18,11 +19,13 @@ class tcp_client : boost::noncopyable
 public:
     using reactor_ptr_t = std::shared_ptr<Reactor>;
     using microseconds_t = std::chrono::microseconds;
-    tcp_client();
+    tcp_client(unp::reactor_imp_t_enum type);
     ~tcp_client();
     int open(unp::reactor_imp_t_enum type);
-    void addConnector(IConnector& connector);
-    void closeConnector(IConnector& connector);
+    template <typename Connector_t, typename ...Args>
+    Connector_t* addConnection(Args&&... args);
+    template <typename Connector_t>
+    void closeConnection(Connector_t& connector, microseconds_t timeout);
     int start();
     int suspend();
     int stop();
@@ -31,12 +34,23 @@ private:
     reactor_ptr_t make_reactor(unp::reactor_imp_t_enum type);
 
 private:
-    std::vector<IConnector*> connectors_;
-
-    // ConnectionManager manager_;
-
-    reactor_ptr_t       reactor_;
+    // std::vector<IConnector*> connectors_;
+    std::shared_ptr<ConnectionManager> manager_{};
+    reactor_ptr_t       reactor_{};
 };
+
+template <typename Connector_t, typename ...Args>
+Connector_t* tcp_client::addConnection(Args&&... args)
+{
+    return manager_->makeConnection<Connector_t>(std::forward<Args>(args)...);
+}
+
+template <typename Connector_t>
+void tcp_client::closeConnection(Connector_t& connector, microseconds timeout)
+{
+    manager_->closeConnection<Connector_t>(connector, timeout);
+}
+
 
 } //namespace reactor
 #endif // TCP_CLIENT_H

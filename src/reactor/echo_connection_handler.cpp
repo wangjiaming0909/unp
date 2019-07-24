@@ -56,6 +56,7 @@ int echo_connection_handler::handle_input(int handle)
     char* dataRead = static_cast<char*>(::calloc(recv_buf_size, 1));
 
     this->read(dataRead, ret);
+    LOG(INFO) << "Recived: " << dataRead;
     this->write(dataRead, ret);
 
     ::free(dataRead);

@@ -15,7 +15,7 @@ TEST(ServerClientIntergratonTest, normal)
     
     // server.open(unp::reactor_imp_t_enum::USING_SELECT);
 
-    tcp_client client{};
-    client.open(unp::reactor_imp_t_enum::USING_SELECT);
+    // tcp_client client{};
+    // client.open(unp::reactor_imp_t_enum::USING_SELECT);
 }
 
