@@ -32,16 +32,20 @@ TEST(ConnectionManager, makeHandler)
     Reactor react{new select_reactor_impl{}};
     ConnectionManager manager{react};
 
-    // auto* handler = manager.makeHandler<echo_connection_handler>();
-    // ASSERT_TRUE(handler != nullptr);
+    using Connector_t = connector<echo_connection_handler>;
+
+    auto* handler = manager.makeConnection<Connector_t, echo_connection_handler>();
+    ASSERT_TRUE(handler != nullptr);
 
     // auto* handler2 = manager.makeHandler<echo_client_handler>();
     // ASSERT_TRUE(handler2 != nullptr);
 
-    // auto* handler3 = manager.makeHandler<FakeConnectionHandler>("name1");
-    // ASSERT_TRUE(handler3 != nullptr);
-    // ASSERT_EQ(state, 1);
-    // ASSERT_EQ(handler3->name, "name1");
-    // manager.closeHandler(*handler3);
-    // ASSERT_EQ(state, 0);
+    using Connector_t2 = connector<FakeConnectionHandler>;
+    auto* handler3 = manager.makeConnection<Connector_t2, FakeConnectionHandler>("name1");
+    ASSERT_TRUE(handler3 != nullptr);
+    ASSERT_EQ(state, 1);
+    ASSERT_EQ(handler3->handlerPtr_->name, "name1");
+    using namespace std::chrono_literals;
+    manager.closeConnection<Connector_t2, FakeConnectionHandler>(*handler3, 2s);
+    ASSERT_EQ(state, 0);
 }

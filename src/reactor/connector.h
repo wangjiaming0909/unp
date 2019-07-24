@@ -9,6 +9,7 @@
 #include "util/easylogging++.h"
 #include "reactor/connection_handler.h"
 #include "boost/intrusive/list_hook.hpp"
+#include "net/unp.h"
 
 #include <vector>
 #include <chrono>
@@ -40,11 +41,14 @@ public:
         : IConnector{react}
         , handlerPtr_(&handler)
         { }
-    virtual ~connector() override{}
+    virtual ~connector() override
+    {
+        delete handlerPtr_;
+    }
 
     virtual int connect(const net::inet_addr &target_addr, micro_seconds timeout) override;
     virtual int disconnect(micro_seconds timeout) override;
-private:
+TEST_PRIVATE:
     connection_handler_ptr_t handlerPtr_;
 };
 
