@@ -42,6 +42,7 @@ public:
     void setDefaultTimeout(Duration &defaultTimeout) { defaultTimeout_ = defaultTimeout; }
     template <typename Fn>
     void scheduleTimeoutFn(Fn f, Duration timeout);
+    //TODO if handler has already been scheduled(handler.linked), update the timeout
     void scheduleTimeout(TimeoutHandler_t &handler, Duration timeout);
     void timeoutExpired(TimeoutHandler_t* handler) noexcept ;
     size_t getTimerCount() const {return timerCount_;}

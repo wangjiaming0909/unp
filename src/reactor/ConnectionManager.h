@@ -15,6 +15,7 @@ public:
     using Container_t = boost::intrusive::list<IConnector, boost::intrusive::constant_time_size<false>>;
     using ConnectorPtr = Container_t::iterator;
     ConnectionManager(Reactor& react);
+    //TODO free memory
     ~ConnectionManager();
 
     template <typename Connector_t, typename ...Args>

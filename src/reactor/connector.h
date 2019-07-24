@@ -21,6 +21,7 @@ namespace reactor
 
 using IntrusiveListBaseHook = boost::intrusive::list_base_hook<boost::intrusive::link_mode<boost::intrusive::auto_unlink>>;
 
+//TODO remove IConnector, (and also no virtual destructor)
 struct IConnector : public EventHandler, public IntrusiveListBaseHook
 {
     using micro_seconds = std::chrono::microseconds;
@@ -46,7 +47,7 @@ public:
     {
         delete handlerPtr_;
     }
-
+    //TODO return Handler_t*
     virtual int connect(const net::inet_addr &target_addr, micro_seconds timeout) override;
     virtual int disconnect(micro_seconds timeout) override;
 
