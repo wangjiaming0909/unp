@@ -7,8 +7,10 @@
 #include "reactor/io_handler.h"
 #include "thread/thread_pool.h"
 #include "util/easylogging++.h"
-#include "reactor/connection_handler.h"
+#include "reactor/IConnection.h"
 #include "boost/intrusive/list_hook.hpp"
+
+#include "net/unp.h"
 
 #include <vector>
 #include <chrono>
@@ -18,62 +20,39 @@
 namespace reactor
 {
 
-using IntrusiveListBaseHook = boost::intrusive::list_base_hook<boost::intrusive::link_mode<boost::intrusive::auto_unlink>>;
-
-struct IConnector : public EventHandler, public IntrusiveListBaseHook
+struct IConnector
 {
     using micro_seconds = std::chrono::microseconds;
-    IConnector(Reactor& react) : EventHandler(react), connector_{}{}
+
+    IConnector() : connector_{}
+        {}
+    virtual ~IConnector() = 0;
     virtual int connect(const net::inet_addr& targetAddr, micro_seconds timeout) = 0;
     virtual int disconnect(micro_seconds timeout) = 0;
-protected:
+
+TEST_PROTECTED:
     net::sock_connector connector_;
 };
 
-template <typename Handler_t >
+
 class connector : public IConnector
 {
 public:
-    using connection_handler_ptr_t = Handler_t*;
-
-    connector(Reactor &react, Handler_t& handler) 
-        : IConnector{react}
-        , handlerPtr_(&handler)
+    using micro_seconds = std::chrono::microseconds;
+    connector(IConnection& handler) 
+        : IConnector{}
+        , handler_(handler)
         { }
-    virtual ~connector() override{}
+    virtual ~connector() override = default;
 
     virtual int connect(const net::inet_addr &target_addr, micro_seconds timeout) override;
     virtual int disconnect(micro_seconds timeout) override;
-private:
-    connection_handler_ptr_t handlerPtr_;
+TEST_PRIVATE:
+    IConnection& handler_;
 };
 
-template <typename Handler_t>
-int connector<Handler_t>::connect(const net::inet_addr& target_addr, micro_seconds timeout)
-{
-    net::sock_stream &stream = handlerPtr_->get_sock_stream();
 
-    if (connector_.connect(stream, target_addr, &timeout, 1, 0) != 0)
-    {
-        LOG(WARNING) << "connect to " << target_addr.get_address_string() << " error...";
-        return -1;
-   }
-
-   auto handle = handlerPtr_->get_handle();
-   if(handlerPtr_->open() != 0)
-    {
-        LOG(WARNING) << "activate connection handler error";
-        return -1;
-    }
-    return handle;
-}
-
-template <typename Handler_t>
-int connector<Handler_t>::disconnect(micro_seconds timeout)
-{
-    handlerPtr_->close();
-}
-
+#if 1
 
 template <typename DataType, typename Handler>
 class reactor_connector : public EventHandler
@@ -227,6 +206,8 @@ int reactor_connector<DataType, Handler>::connect_i(const net::inet_addr &target
     //activate handler: bind to reactor
     return activate_io_handler(handle);
 }
+
+#endif
 } // namespace reactor
 
 #endif // _UNP_REACTOR_CONNECTOR_H_

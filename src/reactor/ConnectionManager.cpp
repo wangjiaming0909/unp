@@ -3,11 +3,4 @@
 namespace reactor
 {
 
-ConnectionManager::ConnectionManager(Reactor& react) : reactor_(react)
-{
-}
-
-ConnectionManager::~ConnectionManager()
-{
-}
 }

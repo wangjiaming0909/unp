@@ -195,31 +195,31 @@ int acceptor::make_read_handler(Reactor &reactor_to_register)
         return -1;
     }
 
-    std::shared_ptr<connection_handler> handler{new echo_connection_handler{reactor_to_register}};
-    handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
+    // std::shared_ptr<connection_handler> handler{new echo_connection_handler{reactor_to_register}};
+    // handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
 
-    net::inet_addr peer_addr{};
+    // net::inet_addr peer_addr{};
 
-    int ret = sock_acceptor_.accept(handler->get_sock_stream(), &peer_addr);
-    if (ret != 0)
-    {
-        LOG(ERROR) << "Acceptor error..." << strerror(errno);
-        return -1;
-    }
+    // int ret = sock_acceptor_.accept(handler->get_sock_stream(), &peer_addr);
+    // if (ret != 0)
+    // {
+    //     LOG(ERROR) << "Acceptor error..." << strerror(errno);
+    //     return -1;
+    // }
 
-    int handle = handler->get_handle();
-    LOG(INFO) << "connection from: " << peer_addr.get_address_string() << " handle: " << handle;
-    if (handle < 0)
-    {
-        LOG(ERROR) << "Handler errror" << strerror(errno);
-        return handle;
-    }
+    // int handle = handler->get_handle();
+    // LOG(INFO) << "connection from: " << peer_addr.get_address_string() << " handle: " << handle;
+    // if (handle < 0)
+    // {
+    //     LOG(ERROR) << "Handler errror" << strerror(errno);
+    //     return handle;
+    // }
 
-    // if(read_handlers_.size() <= static_cast<size_t>(handle)) read_handlers_.resize(handle + 10);
-    read_handlers_[static_cast<uint32_t>(handle)] = handler;
-    connectionCount_++;
+    // // if(read_handlers_.size() <= static_cast<size_t>(handle)) read_handlers_.resize(handle + 10);
+    // read_handlers_[static_cast<uint32_t>(handle)] = handler;
+    // connectionCount_++;
 
-    return handle;
+    // return handle;
 }
 
 int acceptor::activate_read_handler(int handle)

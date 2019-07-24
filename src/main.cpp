@@ -171,12 +171,12 @@ int main(int argc, char** argv){
 
 */
 
-    inet_addr target_addr{9090, "192.168.0.2"};
-    // inet_addr target_addr{9090, "192.168.0.142"};
-    reactor::tcp_client client{};
-    client.open(unp::reactor_imp_t_enum::USING_EPOLL);
-    std::chrono::microseconds timeout = 2s;
-    client.connect(target_addr, timeout);
+    // inet_addr target_addr{9090, "192.168.0.2"};
+    // // inet_addr target_addr{9090, "192.168.0.142"};
+    // reactor::tcp_client client{};
+    // client.open(unp::reactor_imp_t_enum::USING_EPOLL);
+    // std::chrono::microseconds timeout = 2s;
+    // client.connect(target_addr, timeout);
 
     //     if(argc == 4){
     //         const char* ipAddr = argv[2];

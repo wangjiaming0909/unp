@@ -29,19 +29,20 @@ public:
 TEST(ConnectionManager, makeHandler)
 {
     using namespace reactor;
+    using namespace std::chrono_literals;
     Reactor react{new select_reactor_impl{}};
     ConnectionManager manager{react};
 
-    // auto* handler = manager.makeHandler<echo_connection_handler>();
-    // ASSERT_TRUE(handler != nullptr);
+    auto* connector1 = manager.makeConnection<connector, echo_connection_handler>();
+    ASSERT_TRUE(connector1 != nullptr);
 
-    // auto* handler2 = manager.makeHandler<echo_client_handler>();
-    // ASSERT_TRUE(handler2 != nullptr);
+    auto* connector2 = manager.makeConnection<connector, echo_client_handler>();
+    ASSERT_TRUE(connector2 != nullptr);
 
-    // auto* handler3 = manager.makeHandler<FakeConnectionHandler>("name1");
-    // ASSERT_TRUE(handler3 != nullptr);
-    // ASSERT_EQ(state, 1);
-    // ASSERT_EQ(handler3->name, "name1");
-    // manager.closeHandler(*handler3);
-    // ASSERT_EQ(state, 0);
+    auto* connector3 = manager.makeConnection<connector, FakeConnectionHandler>("name1");
+    ASSERT_TRUE(connector3 != nullptr);
+    ASSERT_EQ(state, 1);
+    // ASSERT_EQ(connector3->handlerPtr_->, );
+    manager.closeConnection(connector3, 200000us);
+    ASSERT_EQ(state, 0);
 }

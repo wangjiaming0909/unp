@@ -9,46 +9,57 @@
 namespace reactor
 {
 
+template <typename Connector_t>
 class ConnectionManager : boost::noncopyable
 {
 public:
-    using Container_t = boost::intrusive::list<IConnector, boost::intrusive::constant_time_size<false>>;
-    using ConnectorPtr = Container_t::iterator;
+    using BaseHandler_t = connection_handler<Connector_t>;
+    using Container_t = boost::intrusive::list<connection_handler<Connector_t>, boost::intrusive::constant_time_size<false>>;
+
     ConnectionManager(Reactor& react);
     ~ConnectionManager();
 
-    template <typename Connector_t, typename Handler_t, typename ...Args>
-    ConnectorPtr makeConnection(Args&&... args);
+    template <typename Handler_t, typename ...Args>
+    Handler_t* makeConnection(Args&&... args);
 
-    template <typename Handler_t>
-    void closeConnection(ConnectorPtr e, IConnector::micro_seconds timeout);
+    int closeConnection(BaseHandler_t* e, IConnector::micro_seconds timeout);
 
-    Container_t::size_type connectionCount() const {return connections_.size();}
+    Container_t::size_type connectionCount() const {return connectionCount_;}
 
 private:
-    Container_t connections_;
+    Container_t connections_{};
     Reactor& reactor_;
+    size_t connectionCount_{0};
 };
 
-template <typename Connector_t, typename Handler_t, typename ...Args>
-typename ConnectionManager::ConnectorPtr ConnectionManager::makeConnection(Args&&... args)
+template <typename Connector_t>
+ConnectionManager<Connector_t>::ConnectionManager(Reactor& react) : reactor_(react)
+{ }
+
+template <typename Connector_t>
+ConnectionManager<Connector_t>::~ConnectionManager()
+{ }
+
+template <typename Connector_t>
+template <typename Handler_t, typename ...Args>
+Handler_t* ConnectionManager<Connector_t>::makeConnection(Args&&... args)
 {
-    static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
+    static_assert(std::is_base_of<BaseHandler_t, Handler_t>::value, "Handler_t should derive from connection_handler");
     auto* handler = new Handler_t(reactor_, std::forward<Args>(args)...);
 
-    IConnector* conn = new Connector_t{reactor_, *handler};
-    connections_.push_front(*conn);
-    return connections_.begin();
+    connections_.push_back(*conn);
+    connectionCount_++;
+    return handler;
 }
 
-template <typename Handler_t>
-void ConnectionManager::closeConnection(ConnectorPtr e, IConnector::micro_seconds timeout)
+template <typename Connector_t>
+int ConnectionManager<Connector_t>::closeConnection(BaseHandler_t* e, IConnector::micro_seconds timeout)
 {
-    static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
-
+    if(!e->is_linked()) return -1;
     e->disconnect(timeout);
-    // delete 
-    connections_.erase(e);
+    delete e;
+    connectionCount_--;
+    return 0;
 }
 
 
