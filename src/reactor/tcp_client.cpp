@@ -46,6 +46,8 @@ int tcp_client::suspend()
 
 int tcp_client::stop()
 {
+    suspend();
+    //TODO wait until the loop is over, then close all connections 
     return manager_->closeAllConnection();
 }
 

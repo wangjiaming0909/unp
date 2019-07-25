@@ -56,6 +56,8 @@ public:
 TEST_PRIVATE:
 	reactor_ptr_t make_reactor(unp::reactor_imp_t_enum reactor_t);
     void make_acceptor();
+    void suspendAcceptorReactor();
+    void suspendConnectionReactor();
 
 TEST_PRIVATE:
     size_t thread_num_ = DEFAULT_THREAD_NUM;

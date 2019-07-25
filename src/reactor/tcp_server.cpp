@@ -79,11 +79,28 @@ int tcp_server::start(unp::reactor_imp_t_enum impl)
 
 int tcp_server::suspend()
 {
+    suspendAcceptorReactor();
+    suspendConnectionReactor();
     return 0;
+}
+
+void tcp_server::suspendAcceptorReactor()
+{
+    first_reactor_->suspend();
+}
+
+void tcp_server::suspendConnectionReactor()
+{
+    for(auto connReactor : connection_reactors_)
+    {
+        connReactor->suspend();
+    }
 }
 
 int tcp_server::stop(bool force)
 {
+    suspend();
+    //TODO wait until all the reactors are suspended
     if(!force)
     {
         return acceptor_->destroy_acceptor();

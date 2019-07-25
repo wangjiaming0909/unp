@@ -15,7 +15,7 @@ enum class ReactorType
 
 enum class ReactorStatus : uint
 {
-    RUNNING = 1, SUSPENDED = 2
+    RUNNING = 1, SUSPENDED = 2, SUSPENDING = 3
 };
 
 class Reactor{
@@ -75,10 +75,15 @@ public:
         if(ret == 0) handler->isRegistered_ = false;
         return ret;
     }
+
     int handle_events(std::chrono::microseconds *timeout = nullptr){
         auto status = status_.load();
-        if(status == static_cast<uint>(ReactorStatus::SUSPENDED)) 
+        if(status == static_cast<uint>(ReactorStatus::SUSPENDING)) 
+        {
+            status = static_cast<uint>(ReactorStatus::SUSPENDED);
+            status_.store(status);
             return -1;
+        }
         return reactor_impl_->handle_events(timeout);
     }
 
@@ -87,9 +92,10 @@ public:
         return reactor_impl_->hasEvent(type);
     }
 
+    //suspend operation could have some delay, cause we have to wait for the reactor to finish last event handling
     void suspend()
     {
-        uint status = static_cast<uint>(ReactorStatus::SUSPENDED);
+        uint status = static_cast<uint>(ReactorStatus::SUSPENDING);
         status_.store(status);
         wakeup();
     }
@@ -104,7 +110,7 @@ public:
 private:
     std::shared_ptr<reactor_implementation> reactor_impl_;
     std::shared_ptr<EventFD> eventFd_ptr_;
-    std::atomic_uint status_;
+    std::atomic_uint status_;//seems that atomic is not needed
 };
 
 } // Reactor
