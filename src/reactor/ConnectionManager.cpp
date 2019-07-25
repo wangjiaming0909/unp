@@ -11,6 +11,11 @@ ConnectionManager::ConnectionManager(Reactor& react)
 
 ConnectionManager::~ConnectionManager()
 {
+    closeAllConnection();
+}
+
+int ConnectionManager::closeAllConnection()
+{
     while(!connections_.empty())
     {
         auto* conn = &connections_.front();
@@ -18,5 +23,6 @@ ConnectionManager::~ConnectionManager()
         conn->close();
         delete conn;
     }
+    return connectionCount_;
 }
 }

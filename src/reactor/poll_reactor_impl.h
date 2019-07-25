@@ -28,7 +28,7 @@ public:
     poll_reactor_impl(const poll_reactor_impl&) = delete;
     poll_reactor_impl& operator=(const poll_reactor_impl&) = delete;
 
-    bool hasEvent(Event_Type type) const override{}
+    bool hasEvent(Event_Type) const override{return false;}
 private:
     int poll(std::chrono::microseconds* timeout);
     int dispatch(int active_handle_count);

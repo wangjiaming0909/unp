@@ -37,7 +37,7 @@ struct IConnector : public ServiceT
     IConnector(ConnectionHandlerPtr_t handlerP) : connector_{}, handlerPtr_{handlerP}{}
     virtual Handler_t* connect(const net::inet_addr& targetAddr, micro_seconds timeout) = 0;
     virtual int disconnect(micro_seconds timeout = std::chrono::microseconds{1}) = 0;
-    int close() override { disconnect(); }
+    int close() override { disconnect(); return 0;}
     virtual ~IConnector() = default;
 TEST_PROTECTED:
     net::sock_connector connector_;
@@ -80,9 +80,10 @@ typename connector<Handler_t>::ConnectionHandlerPtr_t connector<Handler_t>::conn
 }
 
 template <typename Handler_t>
-int connector<Handler_t>::disconnect(micro_seconds timeout)
+int connector<Handler_t>::disconnect(micro_seconds)
 {
     this->handlerPtr_->close();
+    return 0;
 }
 
 

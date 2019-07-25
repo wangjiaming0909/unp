@@ -46,7 +46,7 @@ int tcp_client::suspend()
 
 int tcp_client::stop()
 {
-
+    return manager_->closeAllConnection();
 }
 
 tcp_client::reactor_ptr_t tcp_client::make_reactor(unp::reactor_imp_t_enum type)

@@ -37,6 +37,7 @@ int TimeoutHandler::handle_timeout(int) noexcept
         // LOG(INFO) << "preparing to destructoring TimeoutHandler...";
         destroy();
     }
+    return 0;
 }
 
 

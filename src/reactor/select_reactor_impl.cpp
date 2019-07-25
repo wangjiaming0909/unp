@@ -262,7 +262,7 @@ int select_reactor_impl::unregister_handler(EventHandler *handler, Event_Type ty
 
     if(!hasEvent(type)) return -1;
 
-    demux_table_.unbindTimeoutEvent(*dynamic_cast<TimeoutHandler*>(handler));
+    return demux_table_.unbindTimeoutEvent(*dynamic_cast<TimeoutHandler*>(handler));
 }
 
 int select_reactor_impl::register_handler(int handle, EventHandler *handler, Event_Type type){

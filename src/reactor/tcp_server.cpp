@@ -23,7 +23,7 @@ tcp_server::~tcp_server()
     if(acceptor_) close(true);
 }
 
-int tcp_server::open(unp::reactor_imp_t_enum impl)
+int tcp_server::start(unp::reactor_imp_t_enum impl)
 {
     LOG(INFO) << "Starting server on " << local_addr_.get_address_string();
     first_reactor_ = make_reactor(impl);
@@ -77,7 +77,12 @@ int tcp_server::open(unp::reactor_imp_t_enum impl)
     return -1;
 }
 
-int tcp_server::close(bool force)
+int tcp_server::suspend()
+{
+    return 0;
+}
+
+int tcp_server::stop(bool force)
 {
     if(!force)
     {

@@ -49,8 +49,9 @@ public:
     //must call before open
     void set_thread_num(size_t n);
 
-    int open(unp::reactor_imp_t_enum impl);
-    int close(bool force);
+    int start(unp::reactor_imp_t_enum impl);
+    int suspend();
+    int stop(bool force);
 
 TEST_PRIVATE:
 	reactor_ptr_t make_reactor(unp::reactor_imp_t_enum reactor_t);

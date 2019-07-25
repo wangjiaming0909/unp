@@ -29,7 +29,7 @@ public:
     epoll_reactor_impl(const epoll_reactor_impl&) = delete;
     epoll_reactor_impl& operator=(const epoll_reactor_impl&) = delete;
 
-    bool hasEvent(Event_Type type) const override{}
+    bool hasEvent(Event_Type) const override{return false;}
 private:
     int open();
     //TODO epoll 的精度是 microseconds 么?

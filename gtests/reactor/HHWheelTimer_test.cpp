@@ -22,7 +22,7 @@ void timeoutCallback(reactor::TimeoutHandler* handler)
     LOG(INFO) << "timer expired...";
 }
 
-void timeoutCallback22(reactor::TimeoutHandler* handler)
+void timeoutCallback22(reactor::TimeoutHandler*)
 {
     LOG(INFO) << "----------------------timer expired...";
 }
