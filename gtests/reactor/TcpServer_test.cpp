@@ -3,18 +3,21 @@
 
 TEST(TcpServer, normal)
 {
-    GTEST_SKIP();
+    // GTEST_SKIP();
     using namespace reactor;
     using namespace std::chrono_literals;
 
-    net::inet_addr listenAddr{9090, "127.0.0.1"};
+    // net::inet_addr listenAddr{9090, "127.0.0.1"};
+    net::inet_addr listenAddr{9090, "163.184.56.140"};
     tcp_server server{listenAddr};
 
     server.set_thread_num(4);
 
-    std::thread th1{&tcp_server::start, &server, unp::reactor_imp_t_enum::USING_SELECT};
-    // server.suspend();
+    std::thread th1{&tcp_server::start, &server, unp::reactor_imp_t_enum::USING_EPOLL};
 
+    // std::this_thread::sleep_for(20s);
+    // server.suspend();
     // server.stop();
     th1.join();
+    // server.stop(false);
 }

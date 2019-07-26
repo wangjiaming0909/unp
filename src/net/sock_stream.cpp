@@ -1,5 +1,6 @@
 #include "sock_stream.h"
 #include <sys/uio.h>
+#include <cassert>
 
 void net::sock_stream::close_reader()
 {
@@ -37,7 +38,9 @@ ssize_t net::sock_stream::read(reactor::buffer& buf, size_t len, const microseco
         auto data_appended = buf.append(data_p, read_len);
         if(data_appended != read_len)
         {
+            assert(data_appended == read_len);
             // LOG(WARNING) << "Read data from socket len: " << read_len << " appended into buffer len: " << data_appended;
+            free(data_p);
             return -1;
         }
     }

@@ -26,7 +26,7 @@ public:
         : reactor_impl_(reactor_impl)
         , status_{}
     {
-        status_.store(static_cast<uint>(ReactorStatus::SUSPENDED));
+        status_ = ReactorStatus::SUSPENDED;
         if (needWakeUp) //connector and epoll do not need weakup, poll select need it
         {
             eventFd_ptr_ = std::make_shared<EventFD>();
@@ -77,11 +77,9 @@ public:
     }
 
     int handle_events(std::chrono::microseconds *timeout = nullptr){
-        auto status = status_.load();
-        if(status == static_cast<uint>(ReactorStatus::SUSPENDING)) 
+        if(status_ == ReactorStatus::SUSPENDING) 
         {
-            status = static_cast<uint>(ReactorStatus::SUSPENDED);
-            status_.store(status);
+            status_ = ReactorStatus::SUSPENDED;
             return -1;
         }
         return reactor_impl_->handle_events(timeout);
@@ -95,22 +93,22 @@ public:
     //suspend operation could have some delay, cause we have to wait for the reactor to finish last event handling
     void suspend()
     {
-        uint status = static_cast<uint>(ReactorStatus::SUSPENDING);
-        status_.store(status);
+        status_ = ReactorStatus::SUSPENDING;
         wakeup();
     }
 
     void start()
     {
-        uint status = static_cast<uint>(ReactorStatus::RUNNING);
-        status_.store(status);
+        status_ = ReactorStatus::RUNNING;
     }
 
     void wakeup() { eventFd_ptr_->wakeup(); }
+    ReactorStatus reactorStatus() const {return status_;} 
 private:
     std::shared_ptr<reactor_implementation> reactor_impl_;
     std::shared_ptr<EventFD> eventFd_ptr_;
-    std::atomic_uint status_;//seems that atomic is not needed
+    ReactorStatus status_;
+    
 };
 
 } // Reactor

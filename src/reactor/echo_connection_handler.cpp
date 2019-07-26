@@ -40,6 +40,9 @@ int echo_connection_handler::handle_input(int handle)
 
     int recv_buf_size = 4096;
 
+    char* const data_p = static_cast<char*>(::calloc(4096 + 1, 1));
+    free(data_p);
+
     int ret = stream_.read(input_buffer_, recv_buf_size, &timeout);
     if(ret < 0)
     {

@@ -6,7 +6,7 @@
 
 TEST(tcp_client, normal)
 {
-    GTEST_SKIP();
+    // GTEST_SKIP();
     using namespace reactor;
     using namespace std::chrono_literals; 
 
@@ -15,7 +15,8 @@ TEST(tcp_client, normal)
 
 
     // net::inet_addr target_addr{22, "127.0.0.1"};
-    net::inet_addr target_addr{9090, "192.168.0.2"};
+    // net::inet_addr target_addr{9090, "192.168.0.2"};
+    net::inet_addr target_addr{9090, "163.184.251.157"};
 
 
     std::vector<Connector_t*> conns{};
@@ -31,13 +32,14 @@ TEST(tcp_client, normal)
 
     std::thread th1{&tcp_client::start, &client};
 
-    std::this_thread::sleep_for(10s);
+    // std::this_thread::sleep_for(10s);
+    std::this_thread::sleep_for(4s);
     for(int i = 0; i < connCount; i++)
     {
         conns[i]->disconnect(2s);
     }
-    std::this_thread::sleep_for(4s);
-    client.suspend();
+    // client.suspend();
+    client.stop();
 
     th1.join();
 }

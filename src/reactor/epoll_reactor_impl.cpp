@@ -186,6 +186,8 @@ int epoll_reactor_impl::epoll_wait(int milliseconds)
 int epoll_reactor_impl::dispatch(int active_handle_count)
 {
     int handles_dispatched = 0;
+    char* const data_p = static_cast<char*>(::calloc(4096 + 1, 1));
+    free(data_p);
     int ret = this->dispatch_io_handlers(active_handle_count, handles_dispatched);
     if(ret != 0)
     {
@@ -216,7 +218,8 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
     int current_fd = -1;
     int ret = -1;
 
-
+    char* const data_p1 = static_cast<char*>(::calloc(4096 + 1, 1));
+    free(data_p1);
     for(size_t i = 0; i < ret_events_.size(); i++)
     {
         if(active_handles - handles_dispatched <= 0)
@@ -236,6 +239,9 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
 
         LOG(INFO) << "Dispatching handle: " << current_fd << " event: " << event_type_to_string(type);
 
+
+        char* const data_p = static_cast<char*>(::calloc(4096 + 1, 1));
+        free(data_p);
 
         EventHandler* handler = demux_table_.get_handler(current_fd, type);
         if(handler != nullptr) ret = (handler->*callback)(current_fd);

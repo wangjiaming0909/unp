@@ -195,7 +195,7 @@ int acceptor::make_read_handler(Reactor &reactor_to_register)
         return -1;
     }
 
-    std::shared_ptr<connection_handler> handler{new echo_connection_handler{reactor_to_register}};
+    std::shared_ptr<connection_handler> handler = std::make_shared<echo_connection_handler>(reactor_to_register);
     handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
 
     net::inet_addr peer_addr{};

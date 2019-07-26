@@ -76,6 +76,21 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "name": "AttachTest",
+            "type": "cppdbg",
+            "request":"attach",
+            "program": "${workspaceRoot}/gtests/test.out",
+            "processId":"${command:pickProcess}",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+
         }
     ]
 }
