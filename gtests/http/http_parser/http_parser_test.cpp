@@ -1,8 +1,9 @@
-#include <iostream>
 #include "http/http_parser/http_parser.h"
 #include "boost/range.hpp"
-#include <vector>
 #include "http/http_parser/URLParser.h"
+
+#include <iostream>
+#include <vector>
 #include <gtest/gtest.h>
 
 using namespace std;
@@ -123,5 +124,79 @@ TEST(http_parser, test_URLParser)
     assert(parser.path() == path);
 
     assert(parser.port() == 0);
+}
+
+#define PRINT(i) cout << (i) << endl; return 0
+
+int onMessageBeginCB(http_parser* parser) { PRINT(1); }
+int onUrlCB(http_parser* parser, const char* buf, size_t len) {PRINT(2);  }
+int onHeaderFieldCB(http_parser* parser, const char* buf, size_t len) { PRINT(3); }
+int onHeaderValueCB(http_parser* parser, const char* buf, size_t len) {PRINT(4);}
+int onHeadersCompleteCB(http_parser* parser) {PRINT(5); }
+int onBodyCB(http_parser* parser, const char* buf, size_t len) {PRINT(6); }
+int onMessageCompleteCB(http_parser* parser) { PRINT(7); }
+int onReasonCB(http_parser* parser, const char* buf, size_t len){PRINT(8); }
+int onChunkHeaderCB(http_parser* parser){PRINT(9);}
+int onChunkCompleteCB(http_parser* parser){PRINT(10);}
+
+
+
+TEST(HttpParser, normal)
+{
+    http_parser parser;
+    http_parser_init(&parser, http_parser_type::HTTP_REQUEST);
+
+    http_parser_settings settings;
+    http_parser_settings_init(&settings);
+
+    settings.on_message_begin = onMessageBeginCB;
+    settings.on_url = onUrlCB;
+    settings.on_header_field = onHeaderFieldCB;
+    settings.on_header_value = onHeaderValueCB;
+    settings.on_headers_complete = onHeadersCompleteCB;
+    settings.on_body = onBodyCB;
+    settings.on_message_complete = onMessageCompleteCB;
+    // settings.on_reason = onReasonCB;
+    settings.on_chunk_header = onChunkHeaderCB;
+    settings.on_chunk_complete = onChunkCompleteCB;
+
+
+    const char* requestStr = "GET http://www.herongyang.com/Service/Hello_REST.php?Message=Hello%20from%20client. HTTP/1.1\n\
+Accept-Encoding: gzip,deflate\n\
+Host: www.herongyang.com\n\
+Connection: Keep-Alive\n\
+User-Agent: Apache-HttpClient/4.1.1 (java 1.5)\n\n";
+
+    http_parser_execute(&parser, &settings, requestStr, strlen(requestStr));
+    ASSERT_EQ(parser.http_errno, 0);
+    cout << "------------------------------------------------------------------------------" << endl;
+
+    const char* responseStr = "HTTP/1.1 200 OK\n\
+Cache-Control: private\n\
+Connection: Keep-Alive\n\
+Content-Length: 43\n\
+Content-Encoding: gzip\n\
+Content-Type: text/html;charset=utf-8\n\
+Date: Tue, 30 Jul 2019 04:52:20 GMT\n\
+Server: BWS/1.1\n\
+Set-Cookie: delPer=0; path=/; domain=.baidu.com\n\
+Set-Cookie: BD_CK_SAM=1;path=/\n\
+Set-Cookie: PSINO=7; domain=.baidu.com; path=/\n\
+Set-Cookie: BDSVRTM=16; path=/\n\
+Set-Cookie: H_PS_PSSID=26524_1422_21102_29522_29521_28519_29099_29568_28839_29221_26350_22160; path=/; domain=.baidu.com\n\n\
+<html>\n\
+<body>\n\
+<h1>我的第一个标题</h1>\n\
+<p>我的第一个段落。</p>\n\
+</body>\n\
+</html>";
+
+    http_parser responseParser;
+    http_parser_init(&responseParser, http_parser_type::HTTP_RESPONSE);
+
+    http_parser_execute(&responseParser, &settings, responseStr, strlen(responseStr));
+    ASSERT_EQ(responseParser.http_errno, 0);
+    // ASSERT_EQ(responseParser.content_length, 1);
+    // ASSERT_EQ(responseParser.method, HTTP_GET);
 }
 }
