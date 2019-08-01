@@ -10144,7 +10144,8 @@
 									"_parent": {
 										"$ref": "AAAAAAFsRqbfxSJUoRY="
 									},
-									"name": "EventBase*"
+									"name": "EventBase*",
+									"type": ""
 								}
 							]
 						}
@@ -11971,9 +11972,10 @@
 													"_parent": {
 														"$ref": "AAAAAAFsSrIMG6In2lM="
 													},
+													"fillColor": "#5a3e3e",
 													"font": "Arial;13;0",
 													"left": 70.97900390625,
-													"top": 10,
+													"top": 5,
 													"width": 64.57177734375,
 													"height": 13,
 													"text": "startServer"
@@ -11984,18 +11986,19 @@
 													"_parent": {
 														"$ref": "AAAAAAFsSrIMG6In2lM="
 													},
+													"fillColor": "#5a3e3e",
 													"font": "Arial;13;1",
 													"left": 5,
-													"top": 10,
+													"top": 5,
 													"width": 60.97900390625,
 													"height": 13,
 													"text": "interaction"
 												}
 											],
+											"fillColor": "#5a3e3e",
 											"font": "Arial;13;0",
-											"top": 5,
-											"width": 1156,
-											"height": 684,
+											"width": 1057,
+											"height": 753,
 											"nameLabel": {
 												"$ref": "AAAAAAFsSrIMG6IoAvg="
 											},
@@ -13664,7 +13667,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "deferredIngress_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13673,7 +13677,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "maxDeferrefdIngress_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13682,7 +13687,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "direction_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13691,7 +13697,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "id_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13700,7 +13707,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "seqNo_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13709,7 +13717,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "handler_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13718,7 +13727,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "transport_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13727,7 +13737,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "sessionStats_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13736,7 +13747,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "CompressionInfo tableInfo_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13745,7 +13757,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "Window recvWindow_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13754,7 +13767,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "Window sendWindow_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13763,7 +13777,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "transportCallback_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13772,7 +13787,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "HTTPHeaders* trailers_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13781,7 +13797,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "chunkHeaders_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13790,7 +13807,8 @@
 								"$ref": "AAAAAAFsSqadH6Fc5tM="
 							},
 							"name": "timer_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -13827,7 +13845,8 @@
 								"$ref": "AAAAAAFsSrKVrqI0Qz4="
 							},
 							"name": "options_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13836,7 +13855,8 @@
 								"$ref": "AAAAAAFsSrKVrqI0Qz4="
 							},
 							"name": "mainEventBase_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13845,7 +13865,8 @@
 								"$ref": "AAAAAAFsSrKVrqI0Qz4="
 							},
 							"name": "signalHandler_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13854,7 +13875,8 @@
 								"$ref": "AAAAAAFsSrKVrqI0Qz4="
 							},
 							"name": "addresses_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13863,7 +13885,8 @@
 								"$ref": "AAAAAAFsSrKVrqI0Qz4="
 							},
 							"name": "bootstraps_",
-							"visibility": "package"
+							"visibility": "package",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13872,7 +13895,8 @@
 								"$ref": "AAAAAAFsSrKVrqI0Qz4="
 							},
 							"name": "sessionInfoCb_",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -13985,7 +14009,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "size_t threads"
+							"name": "size_t threads",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -13993,7 +14018,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "requestHandlerFactories"
+							"name": "requestHandlerFactories",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14001,7 +14027,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "idleTimeout"
+							"name": "idleTimeout",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14009,7 +14036,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "listenBacklog"
+							"name": "listenBacklog",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14017,7 +14045,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "initialReciveWindow"
+							"name": "initialReciveWindow",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14025,7 +14054,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "receiveStreamWindowSize"
+							"name": "receiveStreamWindowSize",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14033,7 +14063,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "receiveSessionWindowSize"
+							"name": "receiveSessionWindowSize",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14041,7 +14072,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "maxConcurrentIncomingStreams"
+							"name": "maxConcurrentIncomingStreams",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14049,7 +14081,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "enableContentCompression"
+							"name": "enableContentCompression",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14057,7 +14090,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "contentCompressionMinimumSize"
+							"name": "contentCompressionMinimumSize",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14065,7 +14099,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "contentCompressionLevel"
+							"name": "contentCompressionLevel",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14073,7 +14108,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "preboundSockets_"
+							"name": "preboundSockets_",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14081,7 +14117,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSrlcP6L6AYI="
 							},
-							"name": "newConnectionFilter"
+							"name": "newConnectionFilter",
+							"type": ""
 						}
 					],
 					"operations": [
@@ -14268,7 +14305,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSs/aJcberUY="
 							},
-							"name": "addresss"
+							"name": "addresss",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14276,7 +14314,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSs/aJcberUY="
 							},
-							"name": "protocol"
+							"name": "protocol",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14284,7 +14323,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSs/aJcberUY="
 							},
-							"name": "codecFactory"
+							"name": "codecFactory",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14292,7 +14332,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSs/aJcberUY="
 							},
-							"name": "sslConfigs"
+							"name": "sslConfigs",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -14300,7 +14341,8 @@
 							"_parent": {
 								"$ref": "AAAAAAFsSs/aJcberUY="
 							},
-							"name": "acceptorSocketOptions"
+							"name": "acceptorSocketOptions",
+							"type": ""
 						}
 					]
 				},
