@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLInterface</id>
+    <coordinates>
+      <x>330</x>
+      <y>470</y>
+      <w>320</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>folly::AsyncSocketBase
+--
++ EventBase* getEventBase() const = 0;
++ void getAddress(socketAddress*) const = 0;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>490</x>
+      <y>480</y>
+      <w>160</w>
+      <h>330</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;140.0;310.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>710</x>
+      <y>390</y>
+      <w>320</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>AsyncServerSocket::ConnectionEventCallback
+--
+--
++ onConnectionAccepted() = 0;
++ onConnectionDropped() = 0;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1130</x>
+      <y>330</y>
+      <w>320</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>AsyncServerSocket::AcceptorCallback
+--
+--
++ onnectionAccepted() = 0;
++ acceptError() = 0;
++ acceptStarted() = 0;
++ acceptStopped() = 0;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>520</x>
+      <y>790</y>
+      <w>220</w>
+      <h>260</h>
+    </coordinates>
+    <panel_attributes>AsyncServerSocket
+--
+- base_
+- handlers : ServerEventHandler
+--
++ virtual startAccepting();
++ virtual handlerReady(events, socket, family);
+--
++ static newSocket();
++ void destroy()
++ bind();
++ addAcceptCallback();
++ pauseAccepting();
++ stopAccepting()
++ setKeepAliveEnabled();
++ createSocket()
++ dispatchSocket()
++ dispatchError()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1110</x>
+      <y>780</y>
+      <w>320</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>folly::ServerEventHandler
+--
++ base_ : EventBase*
++ socket_
++ parent_ : AsyncServerSocket*
++ addrFamily_
+--
++ handlerReady(events) override;</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>730</x>
+      <y>780</y>
+      <w>400</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+1                                                                          0...n</panel_attributes>
+    <additional_attributes>10.0;20.0;380.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1120</x>
+      <y>590</y>
+      <w>320</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>folly::EventHandler
+--
++ base_ : EventBase*
++ event_ : event
+--
++ handlerReady(events) = 0;
++ registerHandler(event);
++ unregisterHandler();
++ initHandler()</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>1280</x>
+      <y>700</y>
+      <w>30</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
+  </element>
+</diagram>
