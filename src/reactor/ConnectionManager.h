@@ -17,11 +17,11 @@ public:
     ConnectionManager(Reactor& react);
     ~ConnectionManager();
 
-    template <typename Connector_t, typename ...Args>
-    Connector_t* makeConnection(Args&&... args);
+    template <typename ServiceImpl, typename ...Args>
+    ServiceImpl* makeConnection(Args&&... args);
 
-    template <typename Connector_t>
-    void closeConnection(Connector_t& e, std::chrono::microseconds timeout);
+    template <typename ServiceImpl>
+    void closeConnection(ServiceImpl& e, std::chrono::microseconds timeout);
     int closeAllConnection();
 
     Container_t::size_type connectionCount() const {return connectionCount_;}
@@ -32,25 +32,27 @@ private:
     size_t connectionCount_{0};
 };
 
-template <typename Connector_t, typename ...Args>
-Connector_t* ConnectionManager::makeConnection(Args&&... args)
+template <typename ServiceImpl, typename ...Args>
+ServiceImpl* ConnectionManager::makeConnection(Args&&... args)
 {
-    using Handler_t = typename Connector_t::HandlerT;
+    using Handler_t = typename ServiceImpl::HandlerT;
     static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
+    static_assert(std::is_base_of<ServiceT, ServiceImpl>::value, "ServiceImpl should drive from ServiceT");
     auto* handler = new Handler_t(reactor_, std::forward<Args>(args)...);
 
-    Connector_t* ret = new Connector_t{*handler};
+    ServiceImpl* ret = new ServiceImpl{*handler};
     ServiceT* conn = ret;
     connections_.push_front(*conn);
     connectionCount_++;
     return ret;
 }
 
-template <typename Connector_t>
-void ConnectionManager::closeConnection(Connector_t& e, std::chrono::microseconds timeout)
+template <typename ServiceImpl>
+void ConnectionManager::closeConnection(ServiceImpl& e, std::chrono::microseconds timeout)
 {
-    using Handler_t = typename Connector_t::HandlerT;
+    using Handler_t = typename ServiceImpl::HandlerT;
     static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from connection_handler");
+    static_assert(std::is_base_of<ServiceT, ServiceImpl>::value, "ServiceImpl should drive from ServiceT");
     e.disconnect(timeout);
     delete &e;
     connectionCount_--;

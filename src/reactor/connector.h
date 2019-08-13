@@ -23,6 +23,7 @@ using IntrusiveListBaseHook = boost::intrusive::list_base_hook<boost::intrusive:
 struct ServiceT : public IntrusiveListBaseHook
 {
     virtual ~ServiceT() = default;
+    virtual int open() = 0;
     virtual int close() = 0;
 };
 
@@ -37,6 +38,7 @@ struct IConnector : public ServiceT
     IConnector(ConnectionHandlerPtr_t handlerP) : connector_{}, handlerPtr_{handlerP}{}
     virtual Handler_t* connect(const net::inet_addr& targetAddr, micro_seconds timeout) = 0;
     virtual int disconnect(micro_seconds timeout = std::chrono::microseconds{1}) = 0;
+    int open() override {return 0;}
     int close() override { disconnect(); return 0;}
     virtual ~IConnector() = default;
 TEST_PROTECTED:
