@@ -643,7 +643,7 @@ bg=light_gray</panel_attributes>
     <id>UMLClass</id>
     <coordinates>
       <x>1960</x>
-      <y>1720</y>
+      <y>1780</y>
       <w>280</w>
       <h>130</h>
     </coordinates>
@@ -659,8 +659,8 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2610</x>
-      <y>1440</y>
+      <x>2750</x>
+      <y>1450</y>
       <w>340</w>
       <h>170</h>
     </coordinates>
@@ -712,27 +712,27 @@ bg=light_gray</panel_attributes>
       <x>1870</x>
       <y>1680</y>
       <w>110</w>
-      <h>60</h>
+      <h>120</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;90.0;40.0</additional_attributes>
+    <additional_attributes>10.0;10.0;90.0;100.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
       <x>2230</x>
-      <y>1600</y>
-      <w>400</w>
-      <h>140</h>
+      <y>1610</y>
+      <w>540</w>
+      <h>190</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>380.0;10.0;10.0;120.0</additional_attributes>
+    <additional_attributes>520.0;10.0;10.0;170.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2050</x>
-      <y>1890</y>
+      <x>1910</x>
+      <y>1940</y>
       <w>280</w>
       <h>80</h>
     </coordinates>
@@ -744,13 +744,13 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2090</x>
-      <y>1840</y>
-      <w>110</w>
-      <h>70</h>
+      <x>2030</x>
+      <y>1900</y>
+      <w>90</w>
+      <h>60</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;90.0;50.0</additional_attributes>
+    <additional_attributes>70.0;10.0;10.0;40.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
@@ -772,12 +772,12 @@ bg=light_gray</panel_attributes>
     <coordinates>
       <x>2080</x>
       <y>1570</y>
-      <w>110</w>
-      <h>170</h>
+      <w>100</w>
+      <h>230</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 private</panel_attributes>
-    <additional_attributes>10.0;10.0;70.0;150.0</additional_attributes>
+    <additional_attributes>10.0;10.0;70.0;210.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
@@ -870,7 +870,7 @@ ref</panel_attributes>
     <coordinates>
       <x>360</x>
       <y>170</y>
-      <w>50</w>
+      <w>40</w>
       <h>880</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
@@ -1020,10 +1020,41 @@ onBody() = 0</panel_attributes>
       <x>2200</x>
       <y>1100</y>
       <w>240</w>
-      <h>640</h>
+      <h>700</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 private</panel_attributes>
-    <additional_attributes>220.0;10.0;10.0;620.0</additional_attributes>
+    <additional_attributes>220.0;10.0;10.0;680.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>2360</x>
+      <y>1490</y>
+      <w>280</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>folly::AsyncTransportWrapper::ReadCallback
+--
+--
++ void readDataAvailable(size_t len) = 0;
++ bool isBufferMovable()
++ void readEof() = 0
++ void readErr() = 0
++ setReadCB(ReadCallback*) = 0
++ getReadCallback() const = 0
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>2220</x>
+      <y>1610</y>
+      <w>260</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>240.0;10.0;10.0;170.0</additional_attributes>
   </element>
 </diagram>
