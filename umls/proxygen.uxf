@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="14.3.0">
-  <zoom_level>8</zoom_level>
+  <zoom_level>10</zoom_level>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2224</x>
-      <y>216</y>
-      <w>208</w>
-      <h>152</h>
+      <x>2570</x>
+      <y>270</y>
+      <w>260</w>
+      <h>190</h>
     </coordinates>
     <panel_attributes>proxygen::Acceptor
 --
@@ -27,10 +27,10 @@
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2304</x>
-      <y>128</y>
-      <w>24</w>
-      <h>104</h>
+      <x>2670</x>
+      <y>160</y>
+      <w>30</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;110.0</additional_attributes>
@@ -38,10 +38,10 @@
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2216</x>
-      <y>56</y>
-      <w>208</w>
-      <h>80</h>
+      <x>2560</x>
+      <y>70</y>
+      <w>260</w>
+      <h>100</h>
     </coordinates>
     <panel_attributes>AsyncServerSocket::AcceptCallback
 --
@@ -56,10 +56,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1960</x>
-      <y>72</y>
-      <w>208</w>
-      <h>72</h>
+      <x>2240</x>
+      <y>90</y>
+      <w>260</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>ConnectionManager::Callback
 --
@@ -73,10 +73,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2160</x>
-      <y>128</y>
-      <w>168</w>
-      <h>104</h>
+      <x>2490</x>
+      <y>160</y>
+      <w>210</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;190.0;110.0</additional_attributes>
@@ -84,10 +84,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2456</x>
-      <y>56</y>
-      <w>192</w>
-      <h>96</h>
+      <x>2860</x>
+      <y>70</y>
+      <w>240</w>
+      <h>120</h>
     </coordinates>
     <panel_attributes>AsyncUDPServerSocket::Callback
 --
@@ -103,10 +103,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2304</x>
-      <y>144</y>
-      <w>168</w>
-      <h>88</h>
+      <x>2670</x>
+      <y>180</y>
+      <w>210</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>190.0;10.0;10.0;90.0</additional_attributes>
@@ -114,10 +114,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2248</x>
-      <y>424</y>
-      <w>152</w>
-      <h>72</h>
+      <x>2600</x>
+      <y>530</y>
+      <w>190</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPAcceptor
 --
@@ -130,10 +130,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2320</x>
-      <y>360</y>
-      <w>24</w>
-      <h>80</h>
+      <x>2690</x>
+      <y>450</y>
+      <w>30</w>
+      <h>100</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;80.0</additional_attributes>
@@ -141,10 +141,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2216</x>
-      <y>544</y>
-      <w>296</w>
-      <h>176</h>
+      <x>2560</x>
+      <y>680</y>
+      <w>370</w>
+      <h>220</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPSessionAcceptor
 --
@@ -165,10 +165,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2312</x>
-      <y>488</y>
-      <w>24</w>
-      <h>72</h>
+      <x>2680</x>
+      <y>610</y>
+      <w>30</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
@@ -176,10 +176,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2256</x>
-      <y>768</y>
-      <w>184</w>
-      <h>72</h>
+      <x>2610</x>
+      <y>960</y>
+      <w>230</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPServerAcceptor
 --
@@ -192,10 +192,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2336</x>
-      <y>712</y>
-      <w>24</w>
-      <h>24</h>
+      <x>2710</x>
+      <y>890</y>
+      <w>30</w>
+      <h>30</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;10.0</additional_attributes>
@@ -203,10 +203,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2616</x>
-      <y>352</y>
-      <w>288</w>
-      <h>232</h>
+      <x>3060</x>
+      <y>440</y>
+      <w>360</w>
+      <h>290</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPSessionBase::InfoCallback
 --
@@ -232,21 +232,22 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2504</x>
-      <y>448</y>
-      <w>128</w>
-      <h>112</h>
+      <x>2920</x>
+      <y>560</y>
+      <w>160</w>
+      <h>140</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <panel_attributes>lt=&lt;&lt;-
+private</panel_attributes>
     <additional_attributes>140.0;10.0;10.0;120.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2944</x>
+      <x>3470</x>
       <y>0</y>
-      <w>160</w>
-      <h>120</h>
+      <w>200</w>
+      <h>150</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPServer
 --
@@ -263,10 +264,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3144</x>
-      <y>160</y>
-      <w>184</w>
-      <h>64</h>
+      <x>3720</x>
+      <y>200</y>
+      <w>230</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPServerOptions
 --
@@ -276,10 +277,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3680</x>
-      <y>304</y>
-      <w>192</w>
-      <h>64</h>
+      <x>4390</x>
+      <y>380</y>
+      <w>240</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::EchoHandlerFactory
 --
@@ -289,10 +290,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3448</x>
-      <y>168</y>
-      <w>192</w>
-      <h>64</h>
+      <x>4100</x>
+      <y>210</y>
+      <w>240</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::RequestHandlerFactory
 --
@@ -302,10 +303,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3200</x>
-      <y>304</y>
-      <w>176</w>
-      <h>64</h>
+      <x>3790</x>
+      <y>380</y>
+      <w>220</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::ProxyHandlerFactory
 --
@@ -315,10 +316,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3416</x>
-      <y>304</y>
-      <w>216</w>
-      <h>64</h>
+      <x>4060</x>
+      <y>380</y>
+      <w>270</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::PushRequestHandlerFactory
 --
@@ -328,10 +329,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3272</x>
-      <y>224</y>
-      <w>192</w>
-      <h>96</h>
+      <x>3880</x>
+      <y>280</y>
+      <w>240</w>
+      <h>120</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>220.0;10.0;10.0;100.0</additional_attributes>
@@ -339,10 +340,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3496</x>
-      <y>224</y>
-      <w>48</w>
-      <h>96</h>
+      <x>4160</x>
+      <y>280</y>
+      <w>60</w>
+      <h>120</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>40.0;10.0;10.0;100.0</additional_attributes>
@@ -350,10 +351,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3632</x>
-      <y>224</y>
-      <w>160</w>
-      <h>96</h>
+      <x>4330</x>
+      <y>280</y>
+      <w>200</w>
+      <h>120</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;180.0;100.0</additional_attributes>
@@ -361,10 +362,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3120</x>
-      <y>504</y>
-      <w>200</w>
-      <h>64</h>
+      <x>3690</x>
+      <y>630</y>
+      <w>250</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPCodecFactory
 --
@@ -375,10 +376,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2960</x>
-      <y>304</y>
-      <w>152</w>
-      <h>64</h>
+      <x>3490</x>
+      <y>380</y>
+      <w>190</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::IPConfig
 --
@@ -388,10 +389,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2984</x>
-      <y>632</y>
-      <w>224</w>
-      <h>64</h>
+      <x>3520</x>
+      <y>790</y>
+      <w>280</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::DefaultHTTPCodecFactory
 --
@@ -401,10 +402,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3088</x>
-      <y>560</y>
-      <w>120</w>
-      <h>88</h>
+      <x>3650</x>
+      <y>700</y>
+      <w>150</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>130.0;10.0;10.0;90.0</additional_attributes>
@@ -412,10 +413,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3232</x>
-      <y>632</y>
-      <w>240</w>
-      <h>64</h>
+      <x>3830</x>
+      <y>790</y>
+      <w>300</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPDefaultSessionCodecFactory
 --
@@ -425,10 +426,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3232</x>
-      <y>560</y>
-      <w>200</w>
-      <h>88</h>
+      <x>3830</x>
+      <y>700</y>
+      <w>250</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;230.0;90.0</additional_attributes>
@@ -436,10 +437,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2896</x>
-      <y>112</y>
-      <w>64</w>
-      <h>256</h>
+      <x>3410</x>
+      <y>140</y>
+      <w>80</w>
+      <h>320</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes>60.0;10.0;10.0;300.0</additional_attributes>
@@ -447,10 +448,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3016</x>
-      <y>112</y>
-      <w>40</w>
-      <h>208</h>
+      <x>3560</x>
+      <y>140</y>
+      <w>50</w>
+      <h>260</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;30.0;240.0</additional_attributes>
@@ -458,10 +459,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3096</x>
-      <y>112</y>
-      <w>64</w>
-      <h>64</h>
+      <x>3660</x>
+      <y>140</y>
+      <w>80</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;60.0;60.0</additional_attributes>
@@ -469,10 +470,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3104</x>
-      <y>360</y>
-      <w>32</w>
-      <h>184</h>
+      <x>3670</x>
+      <y>450</y>
+      <w>40</w>
+      <h>230</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;20.0;210.0</additional_attributes>
@@ -480,10 +481,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3320</x>
-      <y>184</y>
-      <w>144</w>
-      <h>32</h>
+      <x>3940</x>
+      <y>230</y>
+      <w>180</w>
+      <h>40</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 ref</panel_attributes>
@@ -492,10 +493,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2344</x>
-      <y>712</y>
-      <w>24</w>
-      <h>72</h>
+      <x>2720</x>
+      <y>890</y>
+      <w>30</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;10.0;70.0</additional_attributes>
@@ -503,10 +504,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1176</x>
-      <y>744</y>
-      <w>488</w>
-      <h>152</h>
+      <x>1260</x>
+      <y>930</y>
+      <w>610</w>
+      <h>190</h>
     </coordinates>
     <panel_attributes>folly::HHWheelTimerBase::Callback
 --
@@ -526,10 +527,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2000</x>
-      <y>1160</y>
-      <w>152</w>
-      <h>64</h>
+      <x>2290</x>
+      <y>1450</y>
+      <w>190</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>wangle::ManagedConnection
 --
@@ -540,10 +541,10 @@ bg=orange</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1376</x>
-      <y>888</y>
-      <w>656</w>
-      <h>288</h>
+      <x>1510</x>
+      <y>1110</y>
+      <w>820</w>
+      <h>360</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;800.0;340.0</additional_attributes>
@@ -551,10 +552,10 @@ bg=orange</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2920</x>
-      <y>1200</y>
-      <w>288</w>
-      <h>152</h>
+      <x>3440</x>
+      <y>1500</y>
+      <w>360</w>
+      <h>190</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPSessionBase
 --
@@ -573,10 +574,10 @@ bg=orange</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2144</x>
-      <y>1192</y>
-      <w>832</w>
-      <h>40</h>
+      <x>2470</x>
+      <y>1490</y>
+      <w>1040</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;30.0;1020.0;10.0</additional_attributes>
@@ -584,10 +585,10 @@ bg=orange</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1888</x>
-      <y>824</y>
-      <w>248</w>
-      <h>112</h>
+      <x>2150</x>
+      <y>1030</y>
+      <w>310</w>
+      <h>140</h>
     </coordinates>
     <panel_attributes>wangle::ConnectionManager
 --
@@ -603,22 +604,22 @@ bg=orange</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2056</x>
-      <y>872</y>
-      <w>96</w>
-      <h>304</h>
+      <x>2360</x>
+      <y>1160</y>
+      <w>50</w>
+      <h>310</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 ref</panel_attributes>
-    <additional_attributes>10.0;360.0;100.0;10.0</additional_attributes>
+    <additional_attributes>10.0;290.0;20.0;10.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1728</x>
-      <y>720</y>
-      <w>224</w>
-      <h>56</h>
+      <x>1950</x>
+      <y>900</y>
+      <w>280</w>
+      <h>70</h>
     </coordinates>
     <panel_attributes>wangle::managedConnection::Callback
 --
@@ -631,10 +632,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1944</x>
-      <y>768</y>
-      <w>56</w>
-      <h>72</h>
+      <x>2220</x>
+      <y>960</y>
+      <w>70</w>
+      <h>90</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;50.0;70.0</additional_attributes>
@@ -642,10 +643,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3232</x>
-      <y>1672</y>
-      <w>224</w>
-      <h>104</h>
+      <x>3830</x>
+      <y>2090</y>
+      <w>280</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPSession
 --
@@ -659,10 +660,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1856</x>
-      <y>1288</y>
-      <w>528</w>
-      <h>488</h>
+      <x>2110</x>
+      <y>1610</y>
+      <w>660</w>
+      <h>610</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPTransaction::Transport
 --
@@ -709,10 +710,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3168</x>
-      <y>1344</y>
-      <w>80</w>
-      <h>344</h>
+      <x>3750</x>
+      <y>1680</y>
+      <w>100</w>
+      <h>430</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;80.0;410.0</additional_attributes>
@@ -720,10 +721,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2376</x>
-      <y>1552</y>
-      <w>872</w>
-      <h>152</h>
+      <x>2760</x>
+      <y>1940</y>
+      <w>1090</w>
+      <h>190</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;1070.0;170.0</additional_attributes>
@@ -731,10 +732,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3264</x>
-      <y>1864</y>
-      <w>224</w>
-      <h>64</h>
+      <x>3870</x>
+      <y>2330</y>
+      <w>280</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPDownStreamSession
 --
@@ -744,10 +745,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3336</x>
-      <y>1768</y>
-      <w>48</w>
-      <h>112</h>
+      <x>3960</x>
+      <y>2210</y>
+      <w>60</w>
+      <h>140</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;40.0;120.0</additional_attributes>
@@ -755,10 +756,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3280</x>
-      <y>1160</y>
-      <w>224</w>
-      <h>104</h>
+      <x>3890</x>
+      <y>1450</y>
+      <w>280</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>EventBase::Callback
 --
@@ -770,10 +771,10 @@ bg=light_gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3376</x>
-      <y>1256</y>
-      <w>72</w>
-      <h>432</h>
+      <x>4010</x>
+      <y>1570</y>
+      <w>80</w>
+      <h>540</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 private</panel_attributes>
@@ -782,10 +783,10 @@ private</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2464</x>
-      <y>1256</y>
-      <w>304</w>
-      <h>40</h>
+      <x>2870</x>
+      <y>1570</y>
+      <w>380</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPSessionController
 --
@@ -796,10 +797,10 @@ private</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2576</x>
-      <y>1216</y>
-      <w>360</w>
-      <h>56</h>
+      <x>3010</x>
+      <y>1520</y>
+      <w>450</w>
+      <h>70</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 ref</panel_attributes>
@@ -808,10 +809,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2424</x>
-      <y>1384</y>
-      <w>224</w>
-      <h>40</h>
+      <x>2820</x>
+      <y>1730</y>
+      <w>280</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPUpstreamSessionController
 --
@@ -821,10 +822,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>2680</x>
-      <y>1368</y>
-      <w>224</w>
-      <h>40</h>
+      <x>3140</x>
+      <y>1710</y>
+      <w>280</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>proxygen::SimpleController
 --
@@ -834,10 +835,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2520</x>
-      <y>1288</y>
-      <w>56</w>
-      <h>112</h>
+      <x>2940</x>
+      <y>1610</y>
+      <w>70</w>
+      <h>140</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>50.0;10.0;10.0;120.0</additional_attributes>
@@ -845,10 +846,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2600</x>
-      <y>1288</y>
-      <w>208</w>
-      <h>96</h>
+      <x>3040</x>
+      <y>1610</y>
+      <w>260</w>
+      <h>120</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;240.0;100.0</additional_attributes>
@@ -856,10 +857,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2128</x>
-      <y>360</y>
-      <w>112</w>
-      <h>480</h>
+      <x>2450</x>
+      <y>450</y>
+      <w>140</w>
+      <h>600</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 ref</panel_attributes>
@@ -868,10 +869,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2016</x>
-      <y>136</y>
+      <x>2310</x>
+      <y>170</y>
       <w>40</w>
-      <h>704</h>
+      <h>880</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 ref</panel_attributes>
@@ -880,10 +881,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>2824</x>
-      <y>576</y>
-      <w>336</w>
-      <h>640</h>
+      <x>3320</x>
+      <y>720</y>
+      <w>420</w>
+      <h>800</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 ref</panel_attributes>
@@ -892,10 +893,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3600</x>
-      <y>496</y>
-      <w>192</w>
-      <h>64</h>
+      <x>4290</x>
+      <y>620</y>
+      <w>240</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPCodec
 --
@@ -906,10 +907,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3496</x>
-      <y>656</y>
-      <w>192</w>
-      <h>104</h>
+      <x>4160</x>
+      <y>820</y>
+      <w>240</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>proxygen::HTTP1xCodec
 --
@@ -919,10 +920,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3592</x>
-      <y>552</y>
-      <w>120</w>
-      <h>120</h>
+      <x>4280</x>
+      <y>690</y>
+      <w>150</w>
+      <h>150</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>130.0;10.0;10.0;130.0</additional_attributes>
@@ -930,10 +931,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3760</x>
-      <y>656</y>
-      <w>192</w>
-      <h>104</h>
+      <x>4490</x>
+      <y>820</y>
+      <w>240</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>proxygen::HQFramedCodec
 --
@@ -943,10 +944,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3776</x>
-      <y>552</y>
-      <w>104</w>
-      <h>120</h>
+      <x>4510</x>
+      <y>690</y>
+      <w>130</w>
+      <h>150</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;110.0;130.0</additional_attributes>
@@ -954,10 +955,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3568</x>
-      <y>832</y>
-      <w>192</w>
-      <h>64</h>
+      <x>4250</x>
+      <y>1040</y>
+      <w>240</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPCodec::Callback
 --
@@ -970,10 +971,10 @@ bg=gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>4208</x>
-      <y>976</y>
-      <w>192</w>
-      <h>104</h>
+      <x>5050</x>
+      <y>1220</y>
+      <w>240</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>proxygen::HQFramedCodecCallback
 --
@@ -983,10 +984,10 @@ bg=gray</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3928</x>
-      <y>960</y>
-      <w>192</w>
-      <h>104</h>
+      <x>4700</x>
+      <y>1200</y>
+      <w>240</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>proxygen::HTTP1xCodecCallback
 --
@@ -996,10 +997,10 @@ bg=gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3688</x>
-      <y>888</y>
-      <w>400</w>
-      <h>88</h>
+      <x>4400</x>
+      <y>1110</y>
+      <w>500</w>
+      <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;480.0;90.0</additional_attributes>
@@ -1007,10 +1008,10 @@ bg=gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3728</x>
-      <y>888</y>
-      <w>576</w>
-      <h>104</h>
+      <x>4450</x>
+      <y>1110</y>
+      <w>720</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;700.0;110.0</additional_attributes>
@@ -1018,10 +1019,10 @@ bg=gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3424</x>
-      <y>888</y>
-      <w>200</w>
-      <h>800</h>
+      <x>4070</x>
+      <y>1110</y>
+      <w>250</w>
+      <h>1000</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 private</panel_attributes>
@@ -1030,10 +1031,10 @@ private</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>3616</x>
-      <y>1192</y>
-      <w>224</w>
-      <h>104</h>
+      <x>4310</x>
+      <y>1490</y>
+      <w>300</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>folly::AsyncTransportWrapper::ReadCallback
 --
@@ -1050,10 +1051,10 @@ private</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>3440</x>
-      <y>1288</y>
-      <w>272</w>
-      <h>400</h>
+      <x>4090</x>
+      <y>1610</y>
+      <w>340</w>
+      <h>500</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>320.0;10.0;10.0;480.0</additional_attributes>
@@ -1061,10 +1062,10 @@ private</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>1232</x>
-      <y>1232</y>
-      <w>368</w>
-      <h>240</h>
+      <x>1330</x>
+      <y>1540</y>
+      <w>460</w>
+      <h>300</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPTransaction
 --
@@ -1089,10 +1090,10 @@ private</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1296</x>
-      <y>888</y>
-      <w>32</w>
-      <h>360</h>
+      <x>1410</x>
+      <y>1110</y>
+      <w>40</w>
+      <h>450</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;20.0;430.0</additional_attributes>
@@ -1100,10 +1101,10 @@ private</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1592</x>
-      <y>1360</y>
-      <w>280</w>
-      <h>40</h>
+      <x>1780</x>
+      <y>1700</y>
+      <w>350</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 ref</panel_attributes>
@@ -1112,10 +1113,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>864</x>
-      <y>1208</y>
-      <w>224</w>
-      <h>40</h>
+      <x>870</x>
+      <y>1510</y>
+      <w>280</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPTransactionHandler
 --
@@ -1125,10 +1126,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1080</x>
-      <y>1224</y>
-      <w>168</w>
-      <h>128</h>
+      <x>1140</x>
+      <y>1530</y>
+      <w>210</w>
+      <h>160</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 ref</panel_attributes>
@@ -1137,10 +1138,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>936</x>
-      <y>1336</y>
-      <w>224</w>
-      <h>40</h>
+      <x>960</x>
+      <y>1670</y>
+      <w>280</w>
+      <h>50</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPPushTransactionHandler
 --
@@ -1150,10 +1151,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>912</x>
-      <y>1240</y>
-      <w>64</w>
-      <h>112</h>
+      <x>930</x>
+      <y>1550</y>
+      <w>80</w>
+      <h>140</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;60.0;120.0</additional_attributes>
@@ -1161,10 +1162,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>536</x>
-      <y>1160</y>
-      <w>224</w>
-      <h>80</h>
+      <x>460</x>
+      <y>1450</y>
+      <w>280</w>
+      <h>100</h>
     </coordinates>
     <panel_attributes>proxygen::ResponseHandler
 --
@@ -1179,10 +1180,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>592</x>
-      <y>1368</y>
-      <w>224</w>
-      <h>128</h>
+      <x>530</x>
+      <y>1710</y>
+      <w>280</w>
+      <h>160</h>
     </coordinates>
     <panel_attributes>proxygen::RequestHandlerAdapter
 --
@@ -1195,10 +1196,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>600</x>
-      <y>1232</y>
-      <w>128</w>
-      <h>152</h>
+      <x>540</x>
+      <y>1540</y>
+      <w>160</w>
+      <h>190</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>10.0;10.0;140.0;170.0</additional_attributes>
@@ -1206,10 +1207,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>784</x>
-      <y>1240</y>
-      <w>104</w>
-      <h>144</h>
+      <x>770</x>
+      <y>1550</y>
+      <w>130</w>
+      <h>180</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
     <additional_attributes>110.0;10.0;10.0;160.0</additional_attributes>
@@ -1217,10 +1218,10 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>168</x>
-      <y>1264</y>
-      <w>200</w>
-      <h>80</h>
+      <x>0</x>
+      <y>1580</y>
+      <w>250</w>
+      <h>100</h>
     </coordinates>
     <panel_attributes>proxygen::RequestHandler
 --
@@ -1234,10 +1235,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>360</x>
-      <y>1216</y>
-      <w>192</w>
-      <h>96</h>
+      <x>240</x>
+      <y>1520</y>
+      <w>240</w>
+      <h>120</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 ref</panel_attributes>
@@ -1246,10 +1247,10 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>360</x>
-      <y>1184</y>
-      <w>192</w>
-      <h>104</h>
+      <x>240</x>
+      <y>1480</y>
+      <w>240</w>
+      <h>130</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
 ref</panel_attributes>

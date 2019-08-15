@@ -5,7 +5,7 @@
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>590</x>
+      <x>380</x>
       <y>0</y>
       <w>180</w>
       <h>30</h>
@@ -16,7 +16,7 @@
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>670</x>
+      <x>460</x>
       <y>20</y>
       <w>30</w>
       <h>1030</h>
@@ -27,7 +27,7 @@
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>670</x>
+      <x>460</x>
       <y>70</y>
       <w>20</w>
       <h>100</h>
@@ -39,9 +39,9 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>70</y>
-      <w>290</w>
+      <w>270</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -51,9 +51,9 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>210</y>
-      <w>250</w>
+      <w>240</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -64,7 +64,7 @@ group=1</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>670</x>
+      <x>460</x>
       <y>210</y>
       <w>20</w>
       <h>100</h>
@@ -77,7 +77,7 @@ group=1</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>670</x>
+      <x>460</x>
       <y>350</y>
       <w>20</w>
       <h>100</h>
@@ -90,9 +90,9 @@ group=2</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>350</y>
-      <w>210</w>
+      <w>200</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -103,7 +103,7 @@ group=2</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>670</x>
+      <x>460</x>
       <y>490</y>
       <w>20</w>
       <h>100</h>
@@ -115,9 +115,9 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>490</y>
-      <w>260</w>
+      <w>250</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -128,7 +128,7 @@ group=3</panel_attributes>
   <element>
     <id>UMLNote</id>
     <coordinates>
-      <x>930</x>
+      <x>720</x>
       <y>520</y>
       <w>350</w>
       <h>50</h>
@@ -144,7 +144,7 @@ group=3</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>960</x>
+      <x>750</x>
       <y>650</y>
       <w>140</w>
       <h>30</h>
@@ -155,7 +155,7 @@ group=3</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1020</x>
+      <x>810</x>
       <y>670</y>
       <w>30</w>
       <h>370</h>
@@ -166,7 +166,7 @@ group=3</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>670</y>
       <w>370</w>
       <h>40</h>
@@ -178,7 +178,7 @@ CreateAccrptorFactory</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>670</x>
+      <x>460</x>
       <y>650</y>
       <w>20</w>
       <h>100</h>
@@ -190,7 +190,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>1750</y>
       <w>20</w>
       <h>80</h>
@@ -202,7 +202,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>670</x>
+      <x>460</x>
       <y>770</y>
       <w>20</w>
       <h>100</h>
@@ -214,9 +214,9 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>770</y>
-      <w>290</w>
+      <w>260</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -226,7 +226,7 @@ bootStrap.add acceptor factory</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1630</x>
+      <x>1420</x>
       <y>1490</y>
       <w>140</w>
       <h>40</h>
@@ -238,7 +238,7 @@ syncMsg</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>720</y>
       <w>360</w>
       <h>40</h>
@@ -250,7 +250,7 @@ return AcceptorFactory</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>610</x>
+      <x>400</x>
       <y>1130</y>
       <w>170</w>
       <h>30</h>
@@ -261,7 +261,7 @@ return AcceptorFactory</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>1150</y>
       <w>30</w>
       <h>770</h>
@@ -272,7 +272,7 @@ return AcceptorFactory</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>920</x>
+      <x>710</x>
       <y>1160</y>
       <w>220</w>
       <h>30</h>
@@ -283,7 +283,7 @@ return AcceptorFactory</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1020</x>
+      <x>810</x>
       <y>1180</y>
       <w>30</w>
       <h>210</h>
@@ -294,7 +294,7 @@ return AcceptorFactory</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>1200</y>
       <w>20</w>
       <h>100</h>
@@ -306,7 +306,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>690</x>
+      <x>480</x>
       <y>1200</y>
       <w>350</w>
       <h>40</h>
@@ -318,7 +318,7 @@ getCodec</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>1020</x>
+      <x>810</x>
       <y>1200</y>
       <w>20</w>
       <h>70</h>
@@ -330,7 +330,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>1220</x>
+      <x>1010</x>
       <y>1180</y>
       <w>170</w>
       <h>30</h>
@@ -341,7 +341,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1290</x>
+      <x>1080</x>
       <y>1200</y>
       <w>30</w>
       <h>460</h>
@@ -352,7 +352,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>1290</x>
+      <x>1080</x>
       <y>1220</y>
       <w>20</w>
       <h>60</h>
@@ -364,7 +364,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>1030</x>
+      <x>820</x>
       <y>1220</y>
       <w>280</w>
       <h>40</h>
@@ -376,7 +376,7 @@ create</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>690</x>
+      <x>480</x>
       <y>1240</y>
       <w>350</w>
       <h>40</h>
@@ -388,7 +388,7 @@ return codec</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>300</x>
+      <x>90</x>
       <y>1120</y>
       <w>330</w>
       <h>40</h>
@@ -400,7 +400,7 @@ onNewConnection</panel_attributes>
   <element>
     <id>UMLActor</id>
     <coordinates>
-      <x>270</x>
+      <x>60</x>
       <y>1100</y>
       <w>60</w>
       <h>110</h>
@@ -411,7 +411,7 @@ onNewConnection</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>1340</y>
       <w>20</w>
       <h>60</h>
@@ -423,7 +423,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>690</x>
+      <x>480</x>
       <y>1350</y>
       <w>240</w>
       <h>40</h>
@@ -435,7 +435,7 @@ create</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>910</x>
+      <x>700</x>
       <y>1350</y>
       <w>20</w>
       <h>50</h>
@@ -447,7 +447,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>790</x>
+      <x>580</x>
       <y>1300</y>
       <w>190</w>
       <h>30</h>
@@ -458,7 +458,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>910</x>
+      <x>700</x>
       <y>1320</y>
       <w>30</w>
       <h>620</h>
@@ -469,7 +469,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>1430</y>
       <w>20</w>
       <h>180</h>
@@ -481,7 +481,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>680</x>
+      <x>470</x>
       <y>1630</y>
       <w>20</w>
       <h>100</h>
@@ -493,7 +493,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>910</x>
+      <x>700</x>
       <y>1430</y>
       <w>20</w>
       <h>180</h>
@@ -505,7 +505,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>690</x>
+      <x>480</x>
       <y>1440</y>
       <w>240</w>
       <h>40</h>
@@ -517,7 +517,7 @@ setEgressSettings</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>690</x>
+      <x>480</x>
       <y>1500</y>
       <w>240</w>
       <h>40</h>
@@ -529,7 +529,7 @@ setHTTP2PrioritiesEnabled</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>690</x>
+      <x>480</x>
       <y>1550</y>
       <w>240</w>
       <h>40</h>
@@ -541,9 +541,9 @@ setSessionStats</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>690</x>
+      <x>480</x>
       <y>1630</y>
-      <w>250</w>
+      <w>230</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -553,7 +553,7 @@ Acceptor::addConnection</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>690</x>
+      <x>480</x>
       <y>1760</y>
       <w>240</w>
       <h>40</h>
@@ -565,7 +565,7 @@ start</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>1650</x>
+      <x>1440</x>
       <y>1570</y>
       <w>20</w>
       <h>100</h>
@@ -577,7 +577,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>910</x>
+      <x>700</x>
       <y>1750</y>
       <w>20</w>
       <h>70</h>
@@ -589,7 +589,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>480</x>
+      <x>270</x>
       <y>1960</y>
       <w>170</w>
       <h>30</h>
@@ -600,7 +600,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>550</x>
+      <x>340</x>
       <y>1980</y>
       <w>30</w>
       <h>410</h>
@@ -611,7 +611,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>550</x>
+      <x>340</x>
       <y>2020</y>
       <w>20</w>
       <h>80</h>
@@ -623,7 +623,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>260</x>
+      <x>50</x>
       <y>1950</y>
       <w>240</w>
       <h>40</h>
@@ -635,7 +635,7 @@ handleRead</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>560</x>
+      <x>350</x>
       <y>2020</y>
       <w>230</w>
       <h>40</h>
@@ -647,7 +647,7 @@ readDataAvailable</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>690</x>
+      <x>480</x>
       <y>1980</y>
       <w>170</w>
       <h>30</h>
@@ -658,7 +658,7 @@ readDataAvailable</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>770</x>
+      <x>560</x>
       <y>2000</y>
       <w>30</w>
       <h>670</h>
@@ -669,7 +669,7 @@ readDataAvailable</panel_attributes>
   <element>
     <id>UMLNote</id>
     <coordinates>
-      <x>690</x>
+      <x>480</x>
       <y>1950</y>
       <w>180</w>
       <h>30</h>
@@ -681,7 +681,7 @@ bg=gray</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>780</x>
+      <x>570</x>
       <y>2040</y>
       <w>230</w>
       <h>40</h>
@@ -693,7 +693,7 @@ infoCallBack.onRead</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>770</x>
+      <x>560</x>
       <y>2030</y>
       <w>20</w>
       <h>160</h>
@@ -705,9 +705,9 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>780</x>
+      <x>570</x>
       <y>2070</y>
-      <w>190</w>
+      <w>180</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -717,7 +717,7 @@ processReadData</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>920</x>
+      <x>710</x>
       <y>1970</y>
       <w>170</w>
       <h>30</h>
@@ -728,7 +728,7 @@ processReadData</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>980</x>
+      <x>770</x>
       <y>1990</y>
       <w>30</w>
       <h>800</h>
@@ -739,7 +739,7 @@ processReadData</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>780</x>
+      <x>570</x>
       <y>2160</y>
       <w>230</w>
       <h>40</h>
@@ -751,7 +751,7 @@ onIngress</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>980</x>
+      <x>770</x>
       <y>2160</y>
       <w>20</w>
       <h>100</h>
@@ -763,9 +763,9 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>990</x>
+      <x>780</x>
       <y>2160</y>
-      <w>210</w>
+      <w>200</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -775,7 +775,7 @@ http_parser_execute</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>990</x>
+      <x>780</x>
       <y>2240</y>
       <w>310</w>
       <h>100</h>
@@ -787,7 +787,7 @@ onMessageBegin</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>980</x>
+      <x>770</x>
       <y>2290</y>
       <w>20</w>
       <h>100</h>
@@ -799,7 +799,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>980</x>
+      <x>770</x>
       <y>2530</y>
       <w>20</w>
       <h>100</h>
@@ -811,7 +811,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>990</x>
+      <x>780</x>
       <y>2310</y>
       <w>310</w>
       <h>270</h>
@@ -823,7 +823,7 @@ onUrl</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>990</x>
+      <x>780</x>
       <y>2310</y>
       <w>310</w>
       <h>390</h>
@@ -835,7 +835,7 @@ onHeader_complete</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>980</x>
+      <x>770</x>
       <y>2670</y>
       <w>20</w>
       <h>100</h>
@@ -847,7 +847,7 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>780</x>
+      <x>570</x>
       <y>2320</y>
       <w>220</w>
       <h>40</h>
@@ -859,7 +859,7 @@ onMessagebegin</panel_attributes>
   <element>
     <id>UMLGeneric</id>
     <coordinates>
-      <x>770</x>
+      <x>560</x>
       <y>2330</y>
       <w>20</w>
       <h>170</h>
@@ -871,9 +871,9 @@ bg=yellow</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>780</x>
+      <x>570</x>
       <y>2360</y>
-      <w>200</w>
+      <w>180</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
