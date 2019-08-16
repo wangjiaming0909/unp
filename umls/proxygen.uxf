@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <diagram program="umlet" version="14.3.0">
+  <help_text>facebook proxygen UML class diagrams
+</help_text>
   <zoom_level>10</zoom_level>
   <element>
     <id>UMLClass</id>
@@ -871,7 +873,7 @@ ref</panel_attributes>
     <coordinates>
       <x>2310</x>
       <y>170</y>
-      <w>40</w>
+      <w>50</w>
       <h>880</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
@@ -893,7 +895,7 @@ ref</panel_attributes>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>4290</x>
+      <x>4310</x>
       <y>620</y>
       <w>240</w>
       <h>80</h>
@@ -910,7 +912,7 @@ ref</panel_attributes>
       <x>4160</x>
       <y>820</y>
       <w>240</w>
-      <h>130</h>
+      <h>100</h>
     </coordinates>
     <panel_attributes>proxygen::HTTP1xCodec
 --
@@ -922,19 +924,19 @@ ref</panel_attributes>
     <coordinates>
       <x>4280</x>
       <y>690</y>
-      <w>150</w>
+      <w>100</w>
       <h>150</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>130.0;10.0;10.0;130.0</additional_attributes>
+    <additional_attributes>80.0;10.0;10.0;130.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
     <coordinates>
-      <x>4490</x>
+      <x>4450</x>
       <y>820</y>
       <w>240</w>
-      <h>130</h>
+      <h>100</h>
     </coordinates>
     <panel_attributes>proxygen::HQFramedCodec
 --
@@ -944,13 +946,13 @@ ref</panel_attributes>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>4510</x>
+      <x>4530</x>
       <y>690</y>
-      <w>130</w>
+      <w>70</w>
       <h>150</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;110.0;130.0</additional_attributes>
+    <additional_attributes>10.0;10.0;50.0;130.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
@@ -958,7 +960,7 @@ ref</panel_attributes>
       <x>4180</x>
       <y>970</y>
       <w>240</w>
-      <h>200</h>
+      <h>210</h>
     </coordinates>
     <panel_attributes>proxygen::HTTPCodec::Callback
 --
@@ -1006,35 +1008,35 @@ bg=gray</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>4330</x>
-      <y>1160</y>
+      <y>1170</y>
       <w>250</w>
-      <h>180</h>
+      <h>170</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;230.0;160.0</additional_attributes>
+    <additional_attributes>10.0;10.0;230.0;150.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
       <x>4380</x>
-      <y>1160</y>
+      <y>1170</y>
       <w>430</w>
-      <h>190</h>
+      <h>180</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>10.0;10.0;410.0;170.0</additional_attributes>
+    <additional_attributes>10.0;10.0;410.0;160.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
       <x>4070</x>
-      <y>1160</y>
+      <y>1170</y>
       <w>180</w>
-      <h>950</h>
+      <h>940</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-
 private</panel_attributes>
-    <additional_attributes>160.0;10.0;10.0;930.0</additional_attributes>
+    <additional_attributes>160.0;10.0;10.0;920.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>
@@ -1042,7 +1044,7 @@ private</panel_attributes>
       <x>4310</x>
       <y>1490</y>
       <w>300</w>
-      <h>130</h>
+      <h>140</h>
     </coordinates>
     <panel_attributes>folly::AsyncTransportWrapper::ReadCallback
 --
@@ -1060,12 +1062,12 @@ private</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>4090</x>
-      <y>1610</y>
+      <y>1620</y>
       <w>340</w>
-      <h>500</h>
+      <h>490</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>320.0;10.0;10.0;480.0</additional_attributes>
+    <additional_attributes>320.0;10.0;10.0;470.0</additional_attributes>
   </element>
   <element>
     <id>UMLClass</id>

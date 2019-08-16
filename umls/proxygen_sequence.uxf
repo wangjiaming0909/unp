@@ -216,7 +216,7 @@ bg=yellow</panel_attributes>
     <coordinates>
       <x>570</x>
       <y>770</y>
-      <w>260</w>
+      <w>270</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -912,7 +912,7 @@ bg=blue</panel_attributes>
       <w>1590</w>
       <h>800</h>
     </coordinates>
-    <panel_attributes>if transaction has stream
+    <panel_attributes>if transaction has no stream
 bg=yellow
 
 </panel_attributes>
@@ -957,7 +957,7 @@ bg=yellow</panel_attributes>
     <coordinates>
       <x>360</x>
       <y>2930</y>
-      <w>230</w>
+      <w>240</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
