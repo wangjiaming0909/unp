@@ -41,7 +41,7 @@ bg=yellow</panel_attributes>
     <coordinates>
       <x>570</x>
       <y>70</y>
-      <w>270</w>
+      <w>290</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -53,7 +53,7 @@ bg=yellow</panel_attributes>
     <coordinates>
       <x>570</x>
       <y>210</y>
-      <w>240</w>
+      <w>250</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -92,7 +92,7 @@ group=2</panel_attributes>
     <coordinates>
       <x>570</x>
       <y>350</y>
-      <w>200</w>
+      <w>210</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -117,7 +117,7 @@ bg=yellow</panel_attributes>
     <coordinates>
       <x>570</x>
       <y>490</y>
-      <w>250</w>
+      <w>260</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -216,7 +216,7 @@ bg=yellow</panel_attributes>
     <coordinates>
       <x>570</x>
       <y>770</y>
-      <w>270</w>
+      <w>290</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -543,7 +543,7 @@ setSessionStats</panel_attributes>
     <coordinates>
       <x>580</x>
       <y>1630</y>
-      <w>230</w>
+      <w>250</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -707,7 +707,7 @@ bg=yellow</panel_attributes>
     <coordinates>
       <x>670</x>
       <y>2070</y>
-      <w>180</w>
+      <w>190</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -765,7 +765,7 @@ bg=yellow</panel_attributes>
     <coordinates>
       <x>880</x>
       <y>2160</y>
-      <w>200</w>
+      <w>210</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -873,7 +873,7 @@ bg=yellow</panel_attributes>
     <coordinates>
       <x>670</x>
       <y>2360</y>
-      <w>180</w>
+      <w>200</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -957,7 +957,7 @@ bg=yellow</panel_attributes>
     <coordinates>
       <x>360</x>
       <y>2930</y>
-      <w>240</w>
+      <w>250</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
@@ -1237,7 +1237,7 @@ return</panel_attributes>
     <coordinates>
       <x>1150</x>
       <y>3300</y>
-      <w>280</w>
+      <w>300</w>
       <h>110</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
