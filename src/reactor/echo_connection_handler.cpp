@@ -2,6 +2,10 @@
 #include <iostream>
 #include <chrono>
 #include "util/unp_time.h"
+#include "boost/beast/http.hpp"
+#include "boost/beast/http/empty_body.hpp"
+#include "boost/asio/ip/tcp.hpp"
+#include "boost/beast/core.hpp"
 
 using namespace reactor;
 
@@ -54,10 +58,48 @@ int echo_connection_handler::handle_input(int handle)
 
     //read {ret} bytes of data, write it to output_buffer
     char* dataRead = static_cast<char*>(::calloc(recv_buf_size, 1));
+    char* dataSend = nullptr;
 
-    this->read(dataRead, ret);
+    auto len = this->read(dataRead, ret);
     LOG(INFO) << "Recived: " << dataRead;
-    this->write(dataRead, ret);
+
+    using namespace boost::beast::http;
+    request_parser<string_body> parser{};
+
+    using namespace boost::asio;
+
+    boost::asio::mutable_buffer buf{static_cast<void*>(dataRead), len};
+
+    boost::beast::error_code ec;
+    parser.put(buf, ec);
+
+    boost::beast::http::response<string_body> resp{};
+    resp.version(11);
+    resp.result(status::ok);
+    resp.set(field::server, "unp");
+
+    if(parser.is_done())
+    {
+        auto message = parser.get();
+        auto method = message.method();
+        if(method == boost::beast::http::verb::get)
+        {
+            resp.body() = "Hello World!";
+        }else 
+        {
+            resp.body() = "No this Method";
+        }
+    }else
+    {
+        resp.body() = "Error";
+    }
+
+    resp.prepare_payload();
+
+    serializer<false, string_body> seri{resp};
+
+    WriteLambda writer{*this};
+    seri.next(ec, writer);
 
     ::free(dataRead);
 
