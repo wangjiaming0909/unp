@@ -348,6 +348,8 @@ int select_reactor_impl::dispatch_io_set(
         HANDLER callback){
     int current_handle = -1;
 
+    std::vector<int> toBeClosedhandles{};
+
     //go throuth the handle_set, dispatch all the handles
     while(
             dispatch_set.handles_count() > 0 &&
@@ -357,21 +359,34 @@ int select_reactor_impl::dispatch_io_set(
     {
         LOG(INFO) << "dispatching... handle: " << current_handle << " event: " << event_type_to_string(type);
         EventHandler* handler = this->demux_table_.get_handler(current_handle, type);
-        if(handler == 0) return 0;
+        if(handler == 0)
+        {
+            LOG(WARNING) << "Handler of handle: " << current_handle << " is null";
+            continue;
+        } 
         ++number_of_handles_dispatched;
         int ret = (handler->*callback) (current_handle);
 
         if(ret < 0){
-            //TODO ret handling
-            LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_to_string(type);
-            this->demux_table_.unbind(current_handle);
-            handler->handle_close(current_handle);
+            toBeClosedhandles.push_back(current_handle);
             dispatch_set.unset_bit(current_handle);
+            // this->demux_table_.unbind(current_handle);
             ready_set.unset_bit(current_handle);
+            LOG(INFO) << "Handle: " << current_handle << " returned -1, going to call handle_close";
         }else{
-            LOG(INFO) <<"keep listening on handle: " << current_handle << " event: ";// << event_type_to_string(type);
+            LOG(INFO) << "keep listening on handle: " << current_handle << " event: ";// << event_type_to_string(type);
         }
     }
+
+    for(auto handle : toBeClosedhandles)
+    {
+        LOG(INFO) << "unbinding handle: " << current_handle << " event: " << event_type_to_string(type);
+        EventHandler* handler = this->demux_table_.get_handler(handle, type);
+        if(handler == nullptr) continue;
+        handler->handle_close(handle);
+        demux_table_.unbind(handle);
+    }
+
     return 0;
 }
 

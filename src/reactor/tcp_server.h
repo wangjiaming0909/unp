@@ -2,6 +2,10 @@
 #define TCP_SERVER_H
 
 #include "thread/thread_pool.h"
+#include "reactor/acceptor.h"
+#include "reactor/select_reactor_impl.h"
+#include "reactor/poll_reactor_impl.h"
+#include "reactor/epoll_reactor_impl.h"
 #include "net/inet_addr.h"
 #include "net/unp.h"
 #include <memory>
@@ -34,9 +38,11 @@ class acceptor;
         而 handle_input, handle_output 都是在对应的reactor线程中被调用的
 */
 
+template <typename Handler_t>
 class tcp_server
 {
 public:
+    using Acceptor_t = Acceptor<Handler_t>;
     using reactor_ptr_t	= std::shared_ptr<Reactor>;
     using acceptor_ptr_t = acceptor*;
     using pool_ptr_t = std::shared_ptr<thread::thread_pool>;
@@ -70,6 +76,156 @@ TEST_PRIVATE:
 
     std::vector<reactor_ptr_t> connection_reactors_;
 };
+
+template <typename Handler_t>
+tcp_server<Handler_t>::tcp_server(const net::inet_addr& local_addr)
+    : first_reactor_(0)
+    , acceptor_(0)
+    , pool_()
+    , local_addr_(local_addr)
+    , connection_reactors_() { }
+
+template <typename Handler_t>
+tcp_server<Handler_t>::~tcp_server()
+{
+    if(acceptor_) close(true);
+}
+
+template <typename Handler_t>
+int tcp_server<Handler_t>::start(unp::reactor_imp_t_enum impl)
+{
+    LOG(INFO) << "Starting server on " << local_addr_.get_address_string();
+    first_reactor_ = make_reactor(impl);
+    if(first_reactor_.get() == nullptr)
+		return -1;
+
+    make_acceptor();
+	if(acceptor_->open() != 0)
+	{
+		return -1;
+	}
+    pool_ = std::make_shared<thread::thread_pool>(thread_num_);
+
+    for(size_t i = 0; i < thread_num_; i++)
+    {
+        auto connection_reactor = make_reactor(impl);
+        if(connection_reactor.get() == nullptr) return -1;
+        connection_reactors_.push_back(connection_reactor);
+        auto current_reactor = connection_reactors_.back();
+        pool_->add_task(
+        [=]()
+        {
+            while(true)
+            {
+                auto ret = current_reactor->handle_events();
+                if(ret != 0)
+                {
+                    LOG(ERROR) << "handle events error";
+                    break;
+                }
+            }
+        });
+    }
+    if(thread_num_ > 0)
+        // acceptor_->set_external_reactors_(connection_reactors_);
+
+    // pool_->start();
+    while(1)
+    {
+        auto ret = first_reactor_->handle_events();
+        if(ret != 0)
+        {
+            LOG(ERROR) << "handle events error";
+            break;
+        }
+    }
+
+	std::chrono::microseconds timeout = 2s;
+	pool_->wait(&timeout);
+
+    return -1;
+}
+
+template <typename Handler_t>
+int tcp_server<Handler_t>::suspend()
+{
+    suspendAcceptorReactor();
+    suspendConnectionReactor();
+    return 0;
+}
+
+template <typename Handler_t>
+void tcp_server<Handler_t>::suspendAcceptorReactor()
+{
+    first_reactor_->suspend();
+}
+
+template <typename Handler_t>
+void tcp_server<Handler_t>::suspendConnectionReactor()
+{
+    for(auto connReactor : connection_reactors_)
+    {
+        connReactor->suspend();
+    }
+}
+
+template <typename Handler_t>
+int tcp_server<Handler_t>::stop(bool force)
+{
+    suspend();
+    //TODO wait until all the reactors are suspended
+    if(!force)
+    {
+        return acceptor_->destroy_acceptor();
+    }
+    if(acceptor_->destroy_acceptor() != 0)
+    {
+        acceptor_->close_all_handlers();
+    }
+    return acceptor_->destroy_acceptor();
+}
+
+template <typename Handler_t>
+typename tcp_server<Handler_t>::reactor_ptr_t tcp_server<Handler_t>::make_reactor(unp::reactor_imp_t_enum reactor_t)
+{
+	reactor_ptr_t ret_ptr;
+	Reactor* reactor_ret = nullptr;
+    switch(reactor_t)
+    {
+        case unp::reactor_imp_t_enum::USING_SELECT:
+            reactor_ret = new Reactor(new select_reactor_impl{}, true);
+            break;
+        case unp::reactor_imp_t_enum::USING_POLL:
+            reactor_ret = new Reactor(new poll_reactor_impl{}, true);
+            break;
+        case unp::reactor_imp_t_enum::USING_EPOLL:
+            reactor_ret = new Reactor(new epoll_reactor_impl{}, false);
+            break;
+        default:
+			break;
+    }
+    ret_ptr.reset(reactor_ret);
+	return ret_ptr;
+}
+
+template <typename Handler_t>
+void tcp_server<Handler_t>::make_acceptor()
+{
+    acceptor_ = new acceptor (*first_reactor_, local_addr_);
+}
+
+template <class Handler_t>
+void tcp_server<Handler_t>::set_thread_num(size_t n)
+{
+    if(n == 0 || n > 32)
+    {
+        LOG(WARNING) << "thread num can't be large than 32 or can't be 0: " << n;
+        n = DEFAULT_THREAD_NUM;
+    }
+
+    thread_num_ = n;
+}
+
 
 } //namespace reactor
 #endif // TCP_SERVER_H

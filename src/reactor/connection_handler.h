@@ -71,7 +71,7 @@ protected:
     //如果enabled了，表明 正在flush 数据到sock_stream, 那么直接把数据添加到buffer中
     //    int write_i();
 
-    void check_and_invoke_close_callback();
+    void check_and_invoke_close_callback(int handle);
 
 public:
     //registering

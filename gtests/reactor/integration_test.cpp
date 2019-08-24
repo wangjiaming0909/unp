@@ -7,7 +7,7 @@ TEST(ServerClientIntergratonTest, normal)
 {
     using namespace reactor;
     net::inet_addr localAddr{9090, "127.0.0.1"};
-    tcp_server server{localAddr};
+    tcp_server<echo_connection_handler> server{localAddr};
     ASSERT_EQ(server.local_addr_, localAddr);
 
     server.set_thread_num(4);

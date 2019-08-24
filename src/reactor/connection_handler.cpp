@@ -115,7 +115,9 @@ int connection_handler::handle_timeout(int) noexcept
 
 int connection_handler::handle_close(int)
 {
+    int handle = stream_.get_handle();
     close();
+    check_and_invoke_close_callback(handle);
     return 0;
 }
 
@@ -198,7 +200,6 @@ void connection_handler::close()
         disable_reading();
     if (write_enabled_)
         disable_writing();
-    check_and_invoke_close_callback();
     closeStream();
 }
 
@@ -223,12 +224,12 @@ int connection_handler::close_write(int)
     return 0;
 }
 
-void connection_handler::check_and_invoke_close_callback()
+void connection_handler::check_and_invoke_close_callback(int handle)
 {
     // if(!read_enabled_ && !write_enabled_)
     // {
     if (closed_callback_)
-        closed_callback_(stream_.get_handle());
+        closed_callback_(handle);
     // }
 }
 
