@@ -1,6 +1,8 @@
 #include "http/http_parser/http_parser.h"
 #include "boost/range.hpp"
 #include "http/http_parser/URLParser.h"
+#include "util/easylogging++.h"
+#include "reactor/buffer.h"
 
 #include <iostream>
 #include <vector>
@@ -128,7 +130,13 @@ TEST(http_parser, test_URLParser)
 
 #define PRINT(i) cout << (i) << endl; return 0
 
-int onMessageBeginCB(http_parser* parser) { PRINT(1); }
+int onMessageBeginCB(http_parser* parser) 
+{ 
+    PRINT(http_method_str(http_method(parser->method)));
+    PRINT(http_status_str(http_status(parser->state)));
+    PRINT(http_errno_name(http_errno(parser->http_errno)));
+    PRINT(1); 
+}
 int onUrlCB(http_parser* parser, const char* buf, size_t len) {PRINT(2);  }
 int onHeaderFieldCB(http_parser* parser, const char* buf, size_t len) { PRINT(3); }
 int onHeaderValueCB(http_parser* parser, const char* buf, size_t len) {PRINT(4);}
@@ -143,7 +151,7 @@ int onChunkCompleteCB(http_parser* parser){PRINT(10);}
 
 TEST(HttpParser, normal)
 {
-    GTEST_SKIP();
+    // GTEST_SKIP();
     http_parser parser;
     http_parser_init(&parser, http_parser_type::HTTP_REQUEST);
 
@@ -169,7 +177,23 @@ Connection: Keep-Alive\n\
 User-Agent: Apache-HttpClient/4.1.1 (java 1.5)\n\n";
 
     http_parser_execute(&parser, &settings, requestStr, strlen(requestStr));
+    LOG(INFO) << (http_errno_name(http_errno(parser.http_errno)));
     ASSERT_EQ(parser.http_errno, 0);
+
+    requestStr = "GET http://www.baidu.com HTTP/1.1\n";
+    http_parser_execute(&parser, &settings, requestStr, strlen(requestStr));
+    LOG(INFO) << (http_errno_name(http_errno(parser.http_errno)));
+    ASSERT_EQ(parser.http_errno, 0);
+
+    requestStr = "GET http://www.baidu.com HTT";
+    http_parser_execute(&parser, &settings, requestStr, strlen(requestStr));
+    LOG(INFO) << (http_errno_name(http_errno(parser.http_errno)));
+    ASSERT_EQ(parser.http_errno, http_errno::HPE_INVALID_HEADER_TOKEN);
+
+    requestStr = "GET http://www.baidu.com HTTP/1.1\n\nGET http://www.baidu.com HTTP/1.1\n";
+    http_parser_execute(&parser, &settings, requestStr, strlen(requestStr));
+    LOG(INFO) << (http_errno_name(http_errno(parser.http_errno)));
+    ASSERT_EQ(parser.http_errno, http_errno::HPE_INVALID_HEADER_TOKEN);
     cout << "------------------------------------------------------------------------------" << endl;
 
     const char* responseStr = "HTTP/1.1 200 OK\n\
@@ -196,8 +220,26 @@ Set-Cookie: H_PS_PSSID=26524_1422_21102_29522_29521_28519_29099_29568_28839_2922
     http_parser_init(&responseParser, http_parser_type::HTTP_RESPONSE);
 
     http_parser_execute(&responseParser, &settings, responseStr, strlen(responseStr));
+    LOG(INFO) << (http_errno_name(http_errno(parser.http_errno)));
     ASSERT_EQ(responseParser.http_errno, 0);
     // ASSERT_EQ(responseParser.content_length, 1);
     // ASSERT_EQ(responseParser.method, HTTP_GET);
 }
+
+
+TEST(HttpParser, ParserUsingBuffer){
+    using namespace reactor;
+    http_parser_settings settings;
+    http_parser parser;
+
+    buffer messageBuf{};
+
+    const char* method = "GET";
+    const char* url = "http://www.baidu.com";
+    const char* httpVersion = "HTTP/1.1";
+
+    // messageBuf.append()
+
+}
+
 }

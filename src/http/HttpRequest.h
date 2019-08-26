@@ -6,6 +6,14 @@
 #include <boost/variant/variant.hpp> 
 #include <string>
 
+enum class HttpVersion
+{
+    HTTP1_1,
+    HTTP2
+};
+
+class HttpRequestBuilder;
+
 namespace http
 {
 struct HttpRequest
@@ -18,10 +26,13 @@ struct HttpRequest
     string_t                                clientPort_;
     string_t                                path_;
     string_t                                query_;
-    string_t                                utl_;
+    string_t                                url_;
     uint16_t                                pushStatus_;
     string_t                                pushStatusStr_;
-    boost::variant<string_t, HTTPMethod>      method_;
+    boost::variant<string_t, HTTPMethod>    method_;
+    HttpVersion                             httpVersion_;
+
+    friend class HttpRequestBuilder;
 };
 }
 #endif //_HTTP_REQUEST_H_
