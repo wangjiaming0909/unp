@@ -22,6 +22,8 @@ public:
 
 public:
     bool isDone() const {return isDone_;}
+    template <typename T>
+    T get() {return boost::get<T>(&message_);}
 
 private:
     boost::variant<boost::blank, HttpRequest, HttpResponse> message_;

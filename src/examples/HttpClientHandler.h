@@ -19,10 +19,13 @@ private:
     beast::http::request<beast::http::string_body> req_;
     beast::http::response<beast::http::string_body> res_;
 public:
-    HttpClientHandler(reactor::Reactor &react, const char* url, const char* userAgent);
+    HttpClientHandler(reactor::Reactor &react, const char* url, const char* userAgent, const std::string& displayName);
     virtual ~HttpClientHandler();
 
     virtual int open();
     virtual int handle_input(int handle);
+private:
+    int get();
+    std::string name_;
 };
 }

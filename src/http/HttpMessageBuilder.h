@@ -9,12 +9,13 @@ namespace http
 {
 
 
+template <typename T>
 class HttpMessageBuilder
 {
 public:
     HttpMessageBuilder& method(http::HTTPMethod method)
     {
-        message_->method_ = method;
+        boost::get<T>(&message_)->
     }
     HttpMessageBuilder& url(std::string& url)
     {
