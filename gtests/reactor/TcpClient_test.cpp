@@ -84,7 +84,7 @@ TEST(TCPCLIENT, Get_SHANGZHENGZHISHU)
             auto ret = client.start();
             client.closeConnection<Connector_t>(*conn, 1s);
             ASSERT_TRUE(ret < 0);
-            std::this_thread::sleep_for(2s);
+            std::this_thread::sleep_for(5s);
         }
     };
 

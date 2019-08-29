@@ -45,7 +45,7 @@ int HttpClientHandler::open()
 
 int HttpClientHandler::get()
 {
-    beast::http::serializer<true, beast::http::string_body> seri{req_};
+    beast::http::serializer<true, beast::http::empty_body> seri{req_};
     reactor::WriteLambda writer{*this};
     beast::error_code err{};
     seri.next(err, writer);
@@ -88,14 +88,13 @@ int HttpClientHandler::handle_input(int handle)
 
     parser.on_chunk_body(body_cb);
 
-    char* data = static_cast<char*>(::calloc(4096, 1));
     if(input_buffer_.buffer_length() > 0)
     {
         auto beg = input_buffer_.begin().chain().get_buffer();
         LOG(INFO) << static_cast<const char*>(beg);
-        input_buffer_.pullup(input_buffer_.buffer_length());
-        void* data = ::calloc(4096, 1);
-        input_buffer_.copy_out_from(data, input_buffer_.buffer_length(), input_buffer_.begin());
+        auto data = input_buffer_.pullup(input_buffer_.buffer_length());
+        // void* data = ::calloc(4096, 1);
+        // input_buffer_.copy_out_from(data, input_buffer_.buffer_length(), input_buffer_.begin());
         // boost::asio::const_buffer buf{beg, input_buffer_.buffer_length()};
         boost::asio::const_buffer buf{data, input_buffer_.buffer_length()};
 
@@ -104,7 +103,6 @@ int HttpClientHandler::handle_input(int handle)
         parser.put(buf, err);
         parser.put_eof(err); 
         LOG(WARNING) << err.message();
-        free(data);
     }
     if(chunk.length() != 0)
     {
