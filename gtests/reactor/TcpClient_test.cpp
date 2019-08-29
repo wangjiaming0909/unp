@@ -53,6 +53,7 @@ TEST(tcp_client, normal)
 
 TEST(TCPCLIENT, Get_SHANGZHENGZHISHU)
 {
+    GTEST_SKIP();
     using namespace reactor;
     using namespace std::chrono_literals; 
 
@@ -100,6 +101,49 @@ TEST(TCPCLIENT, Get_SHANGZHENGZHISHU)
     };
 
     // std::thread th1{&tcp_client::start, &client};
+    std::thread th{run};
+
+    th.join();
+}
+
+TEST(httpDownloader, normal)
+{
+    GTEST_SKIP();
+    using namespace reactor;
+    using namespace std::chrono_literals; 
+
+    tcp_client client{unp::reactor_imp_t_enum::USING_EPOLL};
+    using Connector_t = connector<examples::HttpDownloader>;
+
+    net::inet_addr target_addr1{80, "192.168.0.2"};
+    std::string name = "downloader";
+
+    std::vector<Connector_t*> conns{};
+
+    // const char* url = "http://192.168.0.2/home/pi/m/1/1.mkv";
+    const char* url = "http://192.168.0.2/home/pi/Documents/cert/fd.cnf";
+    const char* userAgent = "Mozilla/5.0 (X11; Ubuntu; Linux) Gecko/20100101 Firefox/61.0";
+    // char* userAgent = "curl/7.47.0";
+
+    auto lambda = [&client, &conns](const char* url, const char* userAgent, net::inet_addr& addr, std::string& name)
+    {
+        auto* conn = client.addConnection<Connector_t>(url, userAgent, name);
+        ASSERT_TRUE(conn != nullptr);
+        conns.push_back(conn);
+        auto* handler = conn->connect(addr, 2s);
+        if(handler == nullptr) FAIL();
+
+        auto ret = client.start();
+        client.closeConnection<Connector_t>(*conn, 1s);
+        ASSERT_TRUE(ret < 0);
+    };
+
+
+    auto run = [&]()
+    {
+        lambda(url, userAgent, target_addr1, name);
+    };
+
     std::thread th{run};
 
     th.join();

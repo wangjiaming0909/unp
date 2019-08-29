@@ -4,7 +4,7 @@
 
 TEST(TcpServer, normal)
 {
-    // GTEST_SKIP();
+    GTEST_SKIP();
     using namespace reactor;
     using namespace std::chrono_literals;
 

@@ -7,6 +7,7 @@
 #include "util/unp_time.h"
 #include <chrono>
 #include <iomanip>
+#include "boost/beast/http/buffer_body.hpp"
 
 namespace examples
 {
@@ -90,8 +91,8 @@ int HttpClientHandler::handle_input(int handle)
 
     if(input_buffer_.buffer_length() > 0)
     {
-        auto beg = input_buffer_.begin().chain().get_buffer();
-        LOG(INFO) << static_cast<const char*>(beg);
+        // auto beg = input_buffer_.begin().chain().get_buffer();
+        // LOG(INFO) << static_cast<const char*>(beg);
         auto data = input_buffer_.pullup(input_buffer_.buffer_length());
         // void* data = ::calloc(4096, 1);
         // input_buffer_.copy_out_from(data, input_buffer_.buffer_length(), input_buffer_.begin());
@@ -145,6 +146,120 @@ int HttpClientHandler::handle_input(int handle)
         LOG(INFO) << "Not completed...";
     }
     if(shouldCloseHandle) return -1;
+    return 0;
+}
+
+HttpDownloader::HttpDownloader(reactor::Reactor &react, const char* url, const char* userAgent, const std::string& displayName)
+    : connection_handler(react)
+    , url_{url}
+    , userAgent_(userAgent)
+    , request_{beast::http::verb::get, url_.c_str(), 11}
+    , name_(displayName)
+{
+    request_.set(beast::http::field::user_agent, userAgent_.c_str());
+    request_.set(beast::http::field::accept, "text/html");
+    http::URLParser parser{url_};
+    if(!parser.valid()) 
+    {
+        LOG(WARNING) << "url err: " << url;
+        return;
+    }
+    auto hostSize = parser.host().size();
+    char host[hostSize];
+    memset(host, 0, hostSize);
+    memcpy(host, parser.host().cbegin(), hostSize);
+    request_.set(beast::http::field::host, &*host);
+    request_.set(beast::http::field::connection, "keep-alive");
+
+}
+
+HttpDownloader::~HttpDownloader()
+{
+
+}
+
+int HttpDownloader::open()
+{
+    if(get() != 0) return -1;
+    return enable_reading();
+}
+
+int HttpDownloader::get()
+{
+    beast::http::serializer<true, beast::http::empty_body> seri{request_};
+    reactor::WriteLambda writer{*this};
+    beast::error_code err{};
+    seri.next(err, writer);
+    if(err && err != beast::errc::not_connected)
+    {
+        LOG(ERROR) << err.message();
+        return -1;
+    }
+    return 0;
+}
+
+int HttpDownloader::handle_input(int handle)
+{
+    int ret = connection_handler::handle_input(handle);
+    if(ret < 0)
+    {
+        LOG(WARNING) << "error when connection_handler::handle_input";
+        return -1;
+    }
+    beast::http::response_parser<beast::http::buffer_body> responseParser;
+    responseParser.body_limit(UINT64_MAX);
+    auto onChunkBody = std::bind(&HttpDownloader::onChunkBody, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    responseParser.on_chunk_body(onChunkBody);
+
+    if(input_buffer_.buffer_length() == 0) 
+    {
+        LOG(INFO) << "didn't get any data...";
+        return 0;
+    }
+    auto data = input_buffer_.pullup(input_buffer_.buffer_length());
+
+    boost::beast::error_code errCode;
+
+    while(input_buffer_.buffer_length() > 0)
+    {
+        boost::asio::const_buffer bufToParser{data, input_buffer_.buffer_length()};
+        auto bytesConsumed = responseParser.put(bufToParser, errCode);
+        if(errCode && errCode.failed())
+        {
+            LOG(WARNING) << "parser error: " << errCode.message();
+            return -1;
+        }
+
+        if(!responseParser.is_done())
+        {
+            LOG(INFO) << "Not done...";
+        }
+        if(responseParser.chunked())
+        {
+
+        }
+        else if(responseParser.is_header_done() && responseParser.content_length_remaining().get() > 0)
+        {
+            // boost::beast::http::buffer_body
+            auto mes = responseParser.get();
+            auto remain = responseParser.content_length_remaining().get();
+            auto length = responseParser.content_length().get();
+            LOG(INFO) << "remaining: " << remain;
+            LOG(INFO) << "content length: " << length;
+            if(remain != length) LOG(INFO) << static_cast<char*>(mes.body().data);
+        }
+        input_buffer_.drain(bytesConsumed);
+    }
+    return 0;
+}
+
+int HttpDownloader::onChunkBody( std::uint64_t remain, string_view body, beast::error_code& ec)
+{
+    auto sizeInCurrentChunk = body.size();
+    if(remain - sizeInCurrentChunk == 0) isCurrentChunkDone = true;
+    if(sizeInCurrentChunk <= 0) return 0;
+    inputData_.append(body.data(), sizeInCurrentChunk);
+    return sizeInCurrentChunk;
 }
 
 }
