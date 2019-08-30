@@ -72,20 +72,6 @@ class sock_connector
         }
         //errno == EINPROGRESS that's what we expected
         return complete(new_stream, timeout);
-
-        // if(ret == -1 && timeout->count() != 0){
-        // 	//because we use non-blocking connect, so it will posibilly be EWOULDBLOCK
-        // 	if(errno == EWOULDBLOCK || errno == EINPROGRESS){
-        // 		LOG(ERROR) << strerror(errno);
-        // 		if(complete(new_stream, timeout) == -1){
-        // 			return -1;
-        // 		}
-        // 	}else{
-        // 		LOG(ERROR) << strerror(errno);
-        // 		return -1;
-        // 	}
-        // }
-        // return 0;
     }
 
     int complete(sock_stream &new_stream, const micro_seconds *timeout)
@@ -95,12 +81,10 @@ class sock_connector
         int h = unp::handle_timed_connect_using_select(
             new_stream.get_handle(),
             &timeout_milli_seconds);
-        // int h = unp::handle_timed_connect_using_poll(
-        // 			new_stream.get_handle(),
-        // 			&timeout_milli_seconds);
         //timeout or poll error
         if (h == INVALID_HANDLE)
         {
+            LOG(INFO) << "connect error: " << strerror(errno);
             new_stream.close(); //we need to close the fd
             return -1;
         }

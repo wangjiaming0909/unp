@@ -44,6 +44,9 @@ public:
     virtual int onChunkBody(std::uint64_t remain,   // The number of bytes left in this chunk
             string_view body,       // A buffer holding chunk body data
             beast::error_code& ec);         // We can set this to indicate an error
+    
+private:
+    void init(const char* url, const char* userAgent);
 private:
     std::string url_;
     std::string userAgent_;

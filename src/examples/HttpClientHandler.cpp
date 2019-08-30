@@ -154,7 +154,14 @@ HttpDownloader::HttpDownloader(reactor::Reactor &react, const char* url, const c
     , url_{url}
     , userAgent_(userAgent)
     , request_{beast::http::verb::get, url_.c_str(), 11}
+    , response_{}
+    , inputData_{}
     , name_(displayName)
+{
+    init(url, userAgent);
+}
+
+void HttpDownloader::init(const char* url, const char* userAgent)
 {
     request_.set(beast::http::field::user_agent, userAgent_.c_str());
     request_.set(beast::http::field::accept, "text/html");
@@ -170,7 +177,6 @@ HttpDownloader::HttpDownloader(reactor::Reactor &react, const char* url, const c
     memcpy(host, parser.host().cbegin(), hostSize);
     request_.set(beast::http::field::host, &*host);
     request_.set(beast::http::field::connection, "keep-alive");
-
 }
 
 HttpDownloader::~HttpDownloader()
