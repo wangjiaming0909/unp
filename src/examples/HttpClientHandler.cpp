@@ -157,6 +157,7 @@ HttpDownloader::HttpDownloader(reactor::Reactor &react, const char* url, const c
     , response_{}
     , inputData_{}
     , name_(displayName)
+    , bodyData_()
 {
     init(url, userAgent);
 }
@@ -177,6 +178,10 @@ void HttpDownloader::init(const char* url, const char* userAgent)
     memcpy(host, parser.host().cbegin(), hostSize);
     request_.set(beast::http::field::host, &*host);
     request_.set(beast::http::field::connection, "keep-alive");
+
+    auto& body = response_.body();
+    body.data = &*bodyData_;
+    body.size = DEFAULTBODYSIZE;
 }
 
 HttpDownloader::~HttpDownloader()
@@ -212,7 +217,7 @@ int HttpDownloader::handle_input(int handle)
         LOG(WARNING) << "error when connection_handler::handle_input";
         return -1;
     }
-    beast::http::response_parser<beast::http::buffer_body> responseParser;
+    beast::http::response_parser<beast::http::buffer_body> responseParser{response_};
     responseParser.body_limit(UINT64_MAX);
     auto onChunkBody = std::bind(&HttpDownloader::onChunkBody, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     responseParser.on_chunk_body(onChunkBody);
@@ -222,12 +227,11 @@ int HttpDownloader::handle_input(int handle)
         LOG(INFO) << "didn't get any data...";
         return 0;
     }
-    auto data = input_buffer_.pullup(input_buffer_.buffer_length());
-
     boost::beast::error_code errCode;
 
     while(input_buffer_.buffer_length() > 0)
     {
+        auto data = input_buffer_.pullup(input_buffer_.buffer_length());
         boost::asio::const_buffer bufToParser{data, input_buffer_.buffer_length()};
         auto bytesConsumed = responseParser.put(bufToParser, errCode);
         if(errCode && errCode.failed())
@@ -246,13 +250,11 @@ int HttpDownloader::handle_input(int handle)
         }
         else if(responseParser.is_header_done() && responseParser.content_length_remaining().get() > 0)
         {
-            // boost::beast::http::buffer_body
             auto mes = responseParser.get();
             auto remain = responseParser.content_length_remaining().get();
             auto length = responseParser.content_length().get();
-            LOG(INFO) << "remaining: " << remain;
-            LOG(INFO) << "content length: " << length;
-            if(remain != length) LOG(INFO) << static_cast<char*>(mes.body().data);
+            if(remain != length) 
+                LOG(INFO) << static_cast<char*>(mes.body().data);
         }
         input_buffer_.drain(bytesConsumed);
     }

@@ -55,6 +55,7 @@ private:
     reactor::buffer inputData_;
     bool isCurrentChunkDone = false;
     std::string name_;
+    static const int DEFAULTBODYSIZE = 4096;
+    char bodyData_[DEFAULTBODYSIZE];
 };
-
 }
