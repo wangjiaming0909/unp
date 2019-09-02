@@ -55,6 +55,7 @@ private:
 
 TEST(Fstream, normal)
 {
+    GTEST_SKIP();
     const char *fileName = "/tmp/1.txt";
     fstream fs{ fileName, fs.in | fs.binary | fs.out | fs.trunc};
     if(fs.is_open())
@@ -76,6 +77,7 @@ TEST(Fstream, normal)
 
 TEST(FStream, normal2)
 {
+    GTEST_SKIP();
     {
         utils::timer _{"writing with manual flush"};
         const char* fileName = "/tmp/2.txt";

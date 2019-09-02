@@ -6,6 +6,7 @@
 #include "boost/beast/core.hpp"
 #include "util/XString.h"
 #include "util/FileWriter.h"
+#include <memory>
 
 
 namespace examples
@@ -59,6 +60,6 @@ private:
     static const int DEFAULTBODYSIZE = 4096;
     char bodyData_[DEFAULTBODYSIZE];
     utils::FileWriter writer_;
-    beast::http::response_parser<beast::http::buffer_body> responseParser_;
+    std::shared_ptr<beast::http::response_parser<beast::http::buffer_body>> responseParser_;
 };
 }

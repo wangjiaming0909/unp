@@ -108,23 +108,23 @@ TEST(TCPCLIENT, Get_SHANGZHENGZHISHU)
 
 TEST(httpDownloader, normal)
 {
-    GTEST_SKIP();
+    // GTEST_SKIP();
     using namespace reactor;
     using namespace std::chrono_literals; 
 
     tcp_client client{unp::reactor_imp_t_enum::USING_EPOLL};
     using Connector_t = connector<examples::HttpDownloader>;
 
-    // net::inet_addr target_addr1{80, "192.168.0.2"};
-    net::inet_addr target_addr1{80, "127.0.0.1"};
+    net::inet_addr target_addr1{80, "192.168.0.2"};
+    // net::inet_addr target_addr1{80, "127.0.0.1"};
     std::string name = "downloader";
 
     std::vector<Connector_t*> conns{};
 
-    // const char* url = "http://192.168.0.2/home/pi/m/1/1.mkv";
+    const char* url = "http://192.168.0.2/home/pi/m/1/1.mkv";
     // const char* url = "http://192.168.0.2/home/pi/Documents/cert/fd.cnf";
     // const char* url = "http://163.184.56.140/home/jwang284/downloads/1/bootstrap.log";
-    const char* url = "http://163.184.56.140/home/jwang284/downloads/boost_1_70_0.tar";
+    // const char* url = "http://163.184.56.140/home/jwang284/downloads/boost_1_70_0.tar";
     const char* userAgent = "Mozilla/5.0 (X11; Ubuntu; Linux) Gecko/20100101 Firefox/61.0";
     // char* userAgent = "curl/7.47.0";
 

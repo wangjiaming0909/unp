@@ -159,7 +159,7 @@ HttpDownloader::HttpDownloader(reactor::Reactor &react, const char* url, const c
     , name_(displayName)
     , bodyData_()
     , writer_{"/tmp/unp.tmp"}
-    , responseParser_{response_}
+    , responseParser_{nullptr}
 {
     init(url, userAgent);
 }
@@ -185,9 +185,10 @@ void HttpDownloader::init(const char* url, const char* userAgent)
     body.data = &*bodyData_;
     body.size = DEFAULTBODYSIZE;
 
-    responseParser_.body_limit(UINT64_MAX);
+    responseParser_.reset(new beast::http::response_parser<beast::http::buffer_body>(response_));
+    responseParser_->body_limit(UINT64_MAX);
     auto onChunkBody = std::bind(&HttpDownloader::onChunkBody, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-    responseParser_.on_chunk_body(onChunkBody);
+    responseParser_->on_chunk_body(onChunkBody);
 }
 
 HttpDownloader::~HttpDownloader()
@@ -235,42 +236,42 @@ int HttpDownloader::handle_input(int handle)
     {
         auto data = input_buffer_.pullup(input_buffer_.buffer_length());
         boost::asio::const_buffer bufToParser{data, input_buffer_.buffer_length()};
-        auto bytesConsumed = responseParser_.put(bufToParser, errCode);
+        auto bytesConsumed = responseParser_->put(bufToParser, errCode);
         if(errCode && errCode.failed())
         {
             LOG(WARNING) << "parser error: " << errCode.message();
             return -1;
         }
-        if(responseParser_.is_header_done())
+        if(responseParser_->is_header_done())
         {
-            if(responseParser_.get().result_int() != 200)
+            if(responseParser_->get().result_int() != 200)
             {
                 return -1;
             }
         }
 
-        if(!responseParser_.is_done())
+        if(!responseParser_->is_done())
         {
             LOG(INFO) << "Not done...";
         }
-        if(responseParser_.chunked())
+        if(responseParser_->chunked())
         {
 
         }
-        else if( responseParser_.is_header_done() && responseParser_.content_length_remaining().get() > 0)
+        else if( responseParser_->is_header_done() && responseParser_->content_length_remaining().get() > 0)
         {
-            auto mes = responseParser_.get();
-            auto remain = responseParser_.content_length_remaining().get();
-            auto length = responseParser_.content_length().get();
+            auto remain = responseParser_->content_length_remaining().get();
+            auto length = responseParser_->content_length().get();
             if(remain != length && remain > 0) 
             {
-                writer_.write(bodyData_, DEFAULTBODYSIZE - mes.body().size);
+                writer_.write(bodyData_, DEFAULTBODYSIZE - response_.body().size);
+                response_.body().size = DEFAULTBODYSIZE;
             }
         }
-        if(responseParser_.is_done()) 
+        if(responseParser_->is_done()) 
         {
-            auto mes = responseParser_.get();
-            writer_.write(bodyData_, DEFAULTBODYSIZE - mes.body().size);
+            writer_.write(bodyData_, DEFAULTBODYSIZE - response_.body().size);
+            response_.body().size = DEFAULTBODYSIZE;
         }
         input_buffer_.drain(bytesConsumed);
     }
