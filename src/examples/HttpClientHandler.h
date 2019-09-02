@@ -5,6 +5,7 @@
 #include "boost/beast/http.hpp"
 #include "boost/beast/core.hpp"
 #include "util/XString.h"
+#include "util/FileWriter.h"
 
 
 namespace examples
@@ -57,5 +58,6 @@ private:
     std::string name_;
     static const int DEFAULTBODYSIZE = 4096;
     char bodyData_[DEFAULTBODYSIZE];
+    utils::FileWriter writer_;
 };
 }

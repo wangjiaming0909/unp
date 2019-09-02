@@ -158,6 +158,7 @@ HttpDownloader::HttpDownloader(reactor::Reactor &react, const char* url, const c
     , inputData_{}
     , name_(displayName)
     , bodyData_()
+    , writer_{"/tmp/unp.tmp"}
 {
     init(url, userAgent);
 }
@@ -186,7 +187,7 @@ void HttpDownloader::init(const char* url, const char* userAgent)
 
 HttpDownloader::~HttpDownloader()
 {
-
+    if(writer_.isValid()) writer_.close();
 }
 
 int HttpDownloader::open()
@@ -239,6 +240,13 @@ int HttpDownloader::handle_input(int handle)
             LOG(WARNING) << "parser error: " << errCode.message();
             return -1;
         }
+        if(responseParser.is_header_done())
+        {
+            if(responseParser.get().result_int() != 200)
+            {
+                return -1;
+            }
+        }
 
         if(!responseParser.is_done())
         {
@@ -248,13 +256,20 @@ int HttpDownloader::handle_input(int handle)
         {
 
         }
-        else if(responseParser.is_header_done() && responseParser.content_length_remaining().get() > 0)
+        else if( responseParser.is_header_done() && responseParser.content_length_remaining().get() > 0)
         {
             auto mes = responseParser.get();
             auto remain = responseParser.content_length_remaining().get();
             auto length = responseParser.content_length().get();
-            if(remain != length) 
-                LOG(INFO) << static_cast<char*>(mes.body().data);
+            if(remain != length && remain > 0) 
+            {
+                writer_.write(bodyData_, DEFAULTBODYSIZE - mes.body().size);
+            }
+        }
+        if(responseParser.is_done()) 
+        {
+            auto mes = responseParser.get();
+            writer_.write(bodyData_, DEFAULTBODYSIZE - mes.body().size);
         }
         input_buffer_.drain(bytesConsumed);
     }
