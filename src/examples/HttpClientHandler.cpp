@@ -260,18 +260,22 @@ int HttpDownloader::handle_input(int handle)
         }
         else if( responseParser_->is_header_done() && responseParser_->content_length_remaining().get() > 0)
         {
+            auto& mesg = responseParser_->get();
             auto remain = responseParser_->content_length_remaining().get();
             auto length = responseParser_->content_length().get();
             if(remain != length && remain > 0) 
             {
-                writer_.write(bodyData_, DEFAULTBODYSIZE - response_.body().size);
-                response_.body().size = DEFAULTBODYSIZE;
+                writer_.write(bodyData_, DEFAULTBODYSIZE - mesg.body().size);
+                mesg.body().data = bodyData_;
+                mesg.body().size = DEFAULTBODYSIZE;
             }
         }
         if(responseParser_->is_done()) 
         {
-            writer_.write(bodyData_, DEFAULTBODYSIZE - response_.body().size);
-            response_.body().size = DEFAULTBODYSIZE;
+            auto& mesg = responseParser_->get();
+            writer_.write(bodyData_, DEFAULTBODYSIZE - mesg.body().size);
+            mesg.body().data = bodyData_;
+            mesg.body().size = DEFAULTBODYSIZE;
         }
         input_buffer_.drain(bytesConsumed);
     }
