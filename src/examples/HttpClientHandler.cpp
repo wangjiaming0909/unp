@@ -159,6 +159,7 @@ HttpDownloader::HttpDownloader(reactor::Reactor &react, const char* url, const c
     , name_(displayName)
     , bodyData_()
     , writer_{"/tmp/unp.tmp"}
+    , responseParser_{response_}
 {
     init(url, userAgent);
 }
@@ -183,6 +184,10 @@ void HttpDownloader::init(const char* url, const char* userAgent)
     auto& body = response_.body();
     body.data = &*bodyData_;
     body.size = DEFAULTBODYSIZE;
+
+    responseParser_.body_limit(UINT64_MAX);
+    auto onChunkBody = std::bind(&HttpDownloader::onChunkBody, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    responseParser_.on_chunk_body(onChunkBody);
 }
 
 HttpDownloader::~HttpDownloader()
@@ -218,10 +223,6 @@ int HttpDownloader::handle_input(int handle)
         LOG(WARNING) << "error when connection_handler::handle_input";
         return -1;
     }
-    beast::http::response_parser<beast::http::buffer_body> responseParser{response_};
-    responseParser.body_limit(UINT64_MAX);
-    auto onChunkBody = std::bind(&HttpDownloader::onChunkBody, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-    responseParser.on_chunk_body(onChunkBody);
 
     if(input_buffer_.buffer_length() == 0) 
     {
@@ -234,41 +235,41 @@ int HttpDownloader::handle_input(int handle)
     {
         auto data = input_buffer_.pullup(input_buffer_.buffer_length());
         boost::asio::const_buffer bufToParser{data, input_buffer_.buffer_length()};
-        auto bytesConsumed = responseParser.put(bufToParser, errCode);
+        auto bytesConsumed = responseParser_.put(bufToParser, errCode);
         if(errCode && errCode.failed())
         {
             LOG(WARNING) << "parser error: " << errCode.message();
             return -1;
         }
-        if(responseParser.is_header_done())
+        if(responseParser_.is_header_done())
         {
-            if(responseParser.get().result_int() != 200)
+            if(responseParser_.get().result_int() != 200)
             {
                 return -1;
             }
         }
 
-        if(!responseParser.is_done())
+        if(!responseParser_.is_done())
         {
             LOG(INFO) << "Not done...";
         }
-        if(responseParser.chunked())
+        if(responseParser_.chunked())
         {
 
         }
-        else if( responseParser.is_header_done() && responseParser.content_length_remaining().get() > 0)
+        else if( responseParser_.is_header_done() && responseParser_.content_length_remaining().get() > 0)
         {
-            auto mes = responseParser.get();
-            auto remain = responseParser.content_length_remaining().get();
-            auto length = responseParser.content_length().get();
+            auto mes = responseParser_.get();
+            auto remain = responseParser_.content_length_remaining().get();
+            auto length = responseParser_.content_length().get();
             if(remain != length && remain > 0) 
             {
                 writer_.write(bodyData_, DEFAULTBODYSIZE - mes.body().size);
             }
         }
-        if(responseParser.is_done()) 
+        if(responseParser_.is_done()) 
         {
-            auto mes = responseParser.get();
+            auto mes = responseParser_.get();
             writer_.write(bodyData_, DEFAULTBODYSIZE - mes.body().size);
         }
         input_buffer_.drain(bytesConsumed);

@@ -59,5 +59,6 @@ private:
     static const int DEFAULTBODYSIZE = 4096;
     char bodyData_[DEFAULTBODYSIZE];
     utils::FileWriter writer_;
+    beast::http::response_parser<beast::http::buffer_body> responseParser_;
 };
 }
