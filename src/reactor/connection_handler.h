@@ -37,15 +37,15 @@ public:
     net::sock_stream &get_sock_stream() { return stream_; }
     //read 只是从intput_buffer中读取数据，并不会从socket中读取
     //return bytes read
-    int64_t read(char *data_out, uint32_t data_len);
+    uint32_t read(char *data_out, uint32_t data_len);
     //data_len means the length of data_out
     //not the returned length of data_out
-    int64_t read_line(char *data_out, uint32_t data_len, buffer_eol_style eol);
+    uint32_t read_line(char *data_out, uint32_t data_len, buffer_eol_style eol);
     //最初我们不注册 write事件，因为sock_stream一直都是可写，直到达到 socket 出缓冲区的 HIGH WATER MARK 为止
     //所以handle_output会被频繁调用
     //write 仅仅是将data写进output缓冲区的末尾，至于什么时候会被写进socket中，看buffer中有多少数据
     //return bytes written
-    int64_t write(const char *data, uint32_t len);
+    uint32_t write(const char *data, uint32_t len);
     template <typename T>
     int write(const T &data);
 

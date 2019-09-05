@@ -151,7 +151,7 @@ int onChunkCompleteCB(http_parser* parser){PRINT(10);}
 
 TEST(HttpParser, normal)
 {
-    GTEST_SKIP();
+    // GTEST_SKIP();
     http_parser parser;
     http_parser_init(&parser, http_parser_type::HTTP_REQUEST);
 
@@ -199,7 +199,7 @@ User-Agent: Apache-HttpClient/4.1.1 (java 1.5)\n\n";
     const char* responseStr = "HTTP/1.1 200 OK\n\
 Cache-Control: private\n\
 Connection: Keep-Alive\n\
-Content-Length: 43\n\
+Content-Length: 68\n\
 Content-Encoding: gzip\n\
 Content-Type: text/html;charset=utf-8\n\
 Date: Tue, 30 Jul 2019 04:52:20 GMT\n\
@@ -211,10 +211,10 @@ Set-Cookie: BDSVRTM=16; path=/\n\
 Set-Cookie: H_PS_PSSID=26524_1422_21102_29522_29521_28519_29099_29568_28839_29221_26350_22160; path=/; domain=.baidu.com\n\n\
 <html>\n\
 <body>\n\
-<h1>我的第一个标题</h1>\n\
-<p>我的第一个段落。</p>\n\
+<h1>first tite</h1>\n\
+<p>first para</p>\n\
 </body>\n\
-</html>";
+</html>\n";
 
     http_parser responseParser;
     http_parser_init(&responseParser, http_parser_type::HTTP_RESPONSE);
@@ -224,6 +224,7 @@ Set-Cookie: H_PS_PSSID=26524_1422_21102_29522_29521_28519_29099_29568_28839_2922
     ASSERT_EQ(responseParser.http_errno, 0);
     // ASSERT_EQ(responseParser.content_length, 1);
     // ASSERT_EQ(responseParser.method, HTTP_GET);
+    cout << "---------------------------------------" << endl;
 }
 
 

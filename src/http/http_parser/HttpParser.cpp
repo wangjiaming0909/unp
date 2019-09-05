@@ -5,8 +5,8 @@ namespace http
 
 
 HttpPaser::HttpPaser(http_parser_type parserType)
-    : parser_{}
-    , parserSettings_{}
+    : parserSettings_{}
+    , parser_{}
 {
     http_parser_init(&parser_, parserType);
 }

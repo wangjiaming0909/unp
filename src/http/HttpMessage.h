@@ -15,7 +15,7 @@ class HttpMessage
 {
 public:
     using addr_t = net::inet_addr;
-    using string_t = util::string;
+    using string_t = std::string;
 public:
     HttpMessage(bool isRequest);
     ~HttpMessage();

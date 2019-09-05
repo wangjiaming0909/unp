@@ -58,7 +58,6 @@ int echo_connection_handler::handle_input(int handle)
 
     //read {ret} bytes of data, write it to output_buffer
     char* dataRead = static_cast<char*>(::calloc(recv_buf_size, 1));
-    char* dataSend = nullptr;
 
     auto len = this->read(dataRead, ret);
     LOG(INFO) << "Recived: " << dataRead;

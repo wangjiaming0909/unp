@@ -48,7 +48,7 @@ public:
             beast::error_code& ec);         // We can set this to indicate an error
     
 private:
-    void init(const char* url, const char* userAgent);
+    void init();
 private:
     std::string url_;
     std::string userAgent_;

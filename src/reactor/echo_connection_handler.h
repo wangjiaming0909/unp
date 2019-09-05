@@ -22,20 +22,22 @@ struct Stream{
     connection_handler& handler_;
     Stream(connection_handler& handler) : handler_(handler){}
 
-    void operator()(boost::beast::error_code& ec, const boost::asio::mutable_buffer& buffer)
+    void operator()(boost::beast::error_code&, const boost::asio::mutable_buffer&)
     {
 
     }
-    std::size_t write_some(const boost::asio::mutable_buffer& buffer, boost::beast::error_code& ec)
+    std::size_t write_some(const boost::asio::mutable_buffer& buffer, boost::beast::error_code&)
     {
         auto data = static_cast<char*>(buffer.data());
-        handler_.write(data, buffer.size());
+        auto ret = handler_.write(data, buffer.size());
+        return ret;
     }
 
     std::size_t write_some(const boost::asio::mutable_buffer& buffer)
     {
         auto data = static_cast<char*>(buffer.data());
-        handler_.write(data, buffer.size());
+        auto ret = handler_.write(data, buffer.size());
+        return ret;
     }
 };
 
@@ -47,7 +49,7 @@ public:
     explicit WriteLambda(connection_handler& handler) : handler_(handler) { }
 
     template<class ConstBufferSequence>
-    void operator()(boost::beast::error_code& ec, ConstBufferSequence const& buffers)
+    void operator()(boost::beast::error_code& , ConstBufferSequence const& buffers)
     {
         auto begin = buffers.begin();
         auto end = buffers.end();

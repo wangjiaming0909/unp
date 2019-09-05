@@ -135,7 +135,7 @@ void connection_handler::set_handle(int)
 {
 }
 
-int64_t connection_handler::read(char *data_out, uint32_t data_len)
+uint32_t connection_handler::read(char *data_out, uint32_t data_len)
 {
     if (data_out == 0 || data_len == 0)
         return -1;
@@ -154,7 +154,7 @@ int64_t connection_handler::read(char *data_out, uint32_t data_len)
     return len_gonna_pullup;
 }
 
-int64_t connection_handler::read_line(char *data_out, uint32_t data_len, buffer_eol_style eol)
+uint32_t connection_handler::read_line(char *data_out, uint32_t data_len, buffer_eol_style eol)
 {
     if (data_out == 0 || data_len == 0)
         return -1;
@@ -165,7 +165,7 @@ int64_t connection_handler::read_line(char *data_out, uint32_t data_len, buffer_
     return input_buffer_.read_line(data_out, data_len, eol);
 }
 
-int64_t connection_handler::write(const char *data, uint32_t len)
+uint32_t connection_handler::write(const char *data, uint32_t len)
 {
     if (data == 0 || len == 0)
         return -1;

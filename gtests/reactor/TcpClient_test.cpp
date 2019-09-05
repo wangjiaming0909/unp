@@ -24,9 +24,9 @@ TEST(tcp_client, normal)
 
     std::vector<Connector_t*> conns{};
 
-    char* url = "http://www.baidu.com";
+    const char* url = "http://www.baidu.com";
     // char* userAgent = "Mozilla/5.0 (X11; Ubuntu; Linux) Gecko/20100101 Firefox/61.0";
-    char* userAgent = "curl/7.47.0";
+    const char* userAgent = "curl/7.47.0";
 
     int connCount = 1;
     for(int i = 0; i < connCount; i++)
@@ -108,7 +108,7 @@ TEST(TCPCLIENT, Get_SHANGZHENGZHISHU)
 
 TEST(httpDownloader, normal)
 {
-    // GTEST_SKIP();
+    GTEST_SKIP();
     using namespace reactor;
     using namespace std::chrono_literals; 
 

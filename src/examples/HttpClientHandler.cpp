@@ -161,17 +161,17 @@ HttpDownloader::HttpDownloader(reactor::Reactor &react, const char* url, const c
     , writer_{"/tmp/unp.tmp"}
     , responseParser_{nullptr}
 {
-    init(url, userAgent);
+    init();
 }
 
-void HttpDownloader::init(const char* url, const char* userAgent)
+void HttpDownloader::init()
 {
     request_.set(beast::http::field::user_agent, userAgent_.c_str());
     request_.set(beast::http::field::accept, "text/html");
     http::URLParser parser{url_};
     if(!parser.valid()) 
     {
-        LOG(WARNING) << "url err: " << url;
+        LOG(WARNING) << "url err: " << url_;
         return;
     }
     auto hostSize = parser.host().size();
@@ -284,6 +284,7 @@ int HttpDownloader::handle_input(int handle)
 
 int HttpDownloader::onChunkBody( std::uint64_t remain, string_view body, beast::error_code& ec)
 {
+    if(ec) return -1;
     auto sizeInCurrentChunk = body.size();
     if(remain - sizeInCurrentChunk == 0) isCurrentChunkDone = true;
     if(sizeInCurrentChunk <= 0) return 0;

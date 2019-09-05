@@ -2,6 +2,7 @@
 #define _HTTP_PARSER_H_
 
 #include "http_parser.h"
+#include "http/HttpMessage.h"
 
 namespace http
 {
@@ -16,6 +17,7 @@ public:
     void setHttpParserSettings(http_parser_settings& settings) {parserSettings_ = settings;}
 
     int put();
+    HttpMessage& get();
 
 public:
     void setOnUrlCB(http_data_cb cb) {parserSettings_.on_url = cb;}
@@ -31,7 +33,8 @@ public:
 
 private:
     http_parser_settings        parserSettings_;
-    http_parser                 parser_;
+    http_parser                         parser_;
+    // HttpMessage                     message_;
 };
 
 
