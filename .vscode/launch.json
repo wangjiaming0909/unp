@@ -5,7 +5,10 @@
             "name": "UnitTest",
             "type":"cppdbg",
             "request":"launch",
-            "program": "${workspaceFolder}/gtests/test.out ",
+            "program": "${workspaceFolder}/gtests/test.out",
+            "args": [
+                "--gtest_filter=httpDownloader.*"
+            ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/gtests",
             "environment": [],

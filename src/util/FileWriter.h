@@ -34,7 +34,7 @@ public:
 
     FileWriter& write(const char* data, Size_t size)
     {
-        if(!isUsingConstomizedBuf_) setDefaultBuffer();
+        if(!isUsingConstomizedBuf_ && !isUsingDefautBuf) setDefaultBuffer();
         if(!valid_) return *this;
         auto streamBuf = fstream_.rdbuf();
         streamBuf->sputn(data, size);
