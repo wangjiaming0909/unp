@@ -222,6 +222,7 @@ Set-Cookie: H_PS_PSSID=26524_1422_21102_29522_29521_28519_29099_29568_28839_2922
     http_parser_execute(&responseParser, &settings, responseStr, strlen(responseStr));
     LOG(INFO) << (http_errno_name(http_errno(parser.http_errno)));
     ASSERT_EQ(responseParser.http_errno, 0);
+    ASSERT_EQ(responseParser.status_code, HTTP_STATUS_OK);
     // ASSERT_EQ(responseParser.content_length, 1);
     // ASSERT_EQ(responseParser.method, HTTP_GET);
     cout << "---------------------------------------" << endl;

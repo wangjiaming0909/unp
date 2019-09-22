@@ -30,7 +30,6 @@ struct HttpRequest
     uint16_t                                pushStatus_;
     string_t                                pushStatusStr_;
     boost::variant<string_t, HTTPMethod>    method_;
-    HttpVersion                             httpVersion_;
 
     friend class HttpRequestBuilder;
 };

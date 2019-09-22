@@ -75,6 +75,23 @@ public:
     iterator end() {return end_;}
     const_iterator cend() const {return end_;}
 
+    void reset(iterator begin, iterator end)
+    {
+        begin_ = begin;
+        end_ = end;
+    }
+
+    void reset()
+    {
+        begin_ = nullptr;
+        end_ = nullptr;
+    }
+
+    void reset(iterator begin, size_type len)
+    {
+        reset(begin, begin + len);
+    }
+
     size_type find(value_type value)
     {
         auto it = std::find(begin(), end(), value);

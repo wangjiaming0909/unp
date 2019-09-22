@@ -1,18 +1,106 @@
 #include "HttpParser.h"
+#include "http/Http1xCodec.h"
 
 namespace http
 {
 
 
-HttpPaser::HttpPaser(http_parser_type parserType)
+HttpParserWrapper::HttpParserWrapper(Http1xCodec& codec, http_parser_type parserType)
     : parserSettings_{}
     , parser_{}
 {
     http_parser_init(&parser_, parserType);
+    parser_.data = &codec;
 }
 
-HttpPaser::~HttpPaser()
+HttpParserWrapper::~HttpParserWrapper()
 {
+}
+
+size_t HttpParserWrapper::parse(const char* buf, size_t len)
+{
+    return http_parser_execute(&parser_, getParserSettings(), buf, len);
+}
+
+const http_parser_settings* HttpParserWrapper::getParserSettings()
+{
+    static http_parser_settings settings = []
+    {
+        http_parser_settings st;
+        st.on_message_begin = HttpParserWrapper::onMessageBeginCB;
+        st.on_url = HttpParserWrapper::onUrlCB;
+        st.on_header_field = HttpParserWrapper::onHeaderFieldCB;
+        st.on_header_value = HttpParserWrapper::onHeaderValueCB;
+        st.on_headers_complete = HttpParserWrapper::onHeadersCompleteCB;
+        st.on_body = HttpParserWrapper::onBodyCB;
+        st.on_message_complete = HttpParserWrapper::onMessageCompleteCB;
+        // st.on_reason = HttpParserWrapper::onReasonCB;
+        st.on_chunk_header = HttpParserWrapper::onChunkHeaderCB;
+        st.on_chunk_complete = HttpParserWrapper::onChunkCompleteCB;
+        return st;
+    }();
+    return &settings;
+}
+
+int HttpParserWrapper::onMessageBeginCB(http_parser* parser)
+{
+    auto* codec = static_cast<Http1xCodec*>(parser->data);
+    assert(codec != nullptr);
+    codec->onMessageBegin();
+    return 0;
+}
+int HttpParserWrapper::onPathCB(http_parser* parser, const char* buf, size_t len)
+{
+
+}
+int HttpParserWrapper::onQueryStringCB(http_parser* parser, const char* buf, size_t len)
+{
+
+}
+int HttpParserWrapper::onUrlCB(http_parser* parser, const char* buf, size_t len)
+{
+    auto* codec = static_cast<Http1xCodec*>(parser->data);
+    assert(codec != nullptr);
+    codec->onURL(buf, len);
+    return 0;
+}
+int HttpParserWrapper::onReasonCB(http_parser* parser, const char* buf, size_t len)
+{
+    
+}
+int HttpParserWrapper::onHeaderFieldCB(http_parser* parser, const char* buf, size_t len)
+{
+    auto* codec = static_cast<Http1xCodec*>(parser->data);
+    assert(codec != nullptr);
+    codec->onHeaderField(buf, len);
+    return 0;
+}
+int HttpParserWrapper::onHeaderValueCB(http_parser* parser, const char* buf, size_t len)
+{
+    auto* codec = static_cast<Http1xCodec*>(parser->data);
+    assert(codec != nullptr);
+    codec->onHeaderValue(buf, len);
+    return 0;
+}
+int HttpParserWrapper::onHeadersCompleteCB(http_parser* parser)
+{
+    
+}
+int HttpParserWrapper::onBodyCB(http_parser* parser, const char* buf, size_t len)
+{
+    
+}
+int HttpParserWrapper::onChunkHeaderCB(http_parser* parser)
+{
+    
+}
+int HttpParserWrapper::onChunkCompleteCB(http_parser* parser)
+{
+    
+}
+int HttpParserWrapper::onMessageCompleteCB(http_parser* parser)
+{
+    
 }
 
 

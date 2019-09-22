@@ -4,39 +4,42 @@
 #include "http_parser.h"
 #include "http/HttpMessage.h"
 
+
 namespace http
 {
+class Http1xCodec;
 
-class HttpPaser
+class HttpParserWrapper
 {
 public:
-    HttpPaser(http_parser_type parserType);
-    ~HttpPaser();
+    HttpParserWrapper(Http1xCodec& codec, http_parser_type parserType);
+    ~HttpParserWrapper();
 
 public:
-    void setHttpParserSettings(http_parser_settings& settings) {parserSettings_ = settings;}
-
-    int put();
-    HttpMessage& get();
-
-public:
-    void setOnUrlCB(http_data_cb cb) {parserSettings_.on_url = cb;}
-    void setOnHeaderFieldCB(http_data_cb cb) {parserSettings_.on_header_field = cb;}
-    void setOnHeaderValueCB(http_data_cb cb) {parserSettings_.on_header_value = cb;}
-    void setOnHeadersCompleteCB(http_cb cb) {parserSettings_.on_headers_complete = cb;}
-    void setOnBodyCB(http_data_cb cb) {parserSettings_.on_body = cb;}
-    void setOnMessageBeginCB(http_cb cb) {parserSettings_.on_message_begin = cb;}
-    void setOnMessageCompleteCB(http_cb cb) {parserSettings_.on_message_complete = cb;}
-    // void setOnReasonCB(http_data_cb cb) {parserSettings_.}
-    void setOnChunkHeaderCB(http_cb cb) {parserSettings_.on_chunk_header = cb;}
-    void setOnChunkCompleteCB(http_cb cb) {parserSettings_.on_chunk_complete = cb;}
-
+    unsigned int getParserError() const {return parser_.http_errno;}
+    size_t parse(const char* buf, size_t len);
 private:
     http_parser_settings        parserSettings_;
-    http_parser                         parser_;
-    // HttpMessage                     message_;
-};
+    http_parser                 parser_;
 
+    bool parserError_ = false;
+
+
+    static int onMessageBeginCB(http_parser* parser);
+    static int onPathCB(http_parser* parser, const char* buf, size_t len);
+    static int onQueryStringCB(http_parser* parser, const char* buf, size_t len);
+    static int onUrlCB(http_parser* parser, const char* buf, size_t len);
+    static int onReasonCB(http_parser* parser, const char* buf, size_t len);
+    static int onHeaderFieldCB(http_parser* parser, const char* buf, size_t len);
+    static int onHeaderValueCB(http_parser* parser, const char* buf, size_t len);
+    static int onHeadersCompleteCB(http_parser* parser);
+    static int onBodyCB(http_parser* parser, const char* buf, size_t len);
+    static int onChunkHeaderCB(http_parser* parser);
+    static int onChunkCompleteCB(http_parser* parser);
+    static int onMessageCompleteCB(http_parser* parser);
+
+    static const http_parser_settings* getParserSettings();
+};
 
 }
 
