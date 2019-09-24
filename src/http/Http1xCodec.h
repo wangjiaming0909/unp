@@ -4,6 +4,7 @@
 #include "http/HttpMessage.h"
 #include "http/HttpDirection.h"
 #include "util/string_piece/string_piece.h"
+#include "net/unp.h"
 
 namespace http
 {
@@ -16,9 +17,10 @@ public:
     using String_t = std::string;
     friend class HttpParserWrapper;
 
-private:
+TEST_PRIVATE:
     enum class CodecState : uint8_t
     {
+        ERROR,
         IDLE,
         ON_URL,
         ON_MESSAGEBEGIN,
@@ -40,7 +42,7 @@ public:
     virtual size_t onIngress(CStringPiece_t buf) override;
 
 
-private:
+TEST_PRIVATE:
   int onMessageBegin();
   int onURL(const char* buf, size_t len);
   int onReason(const char* buf, size_t len);
@@ -51,8 +53,9 @@ private:
   int onChunkHeader(size_t len);
   int onChunkComplete();
   int onMessageComplete();
+  int onParserError();
 
-private:
+TEST_PRIVATE:
     std::unique_ptr<HttpMessage> message_;
     std::unique_ptr<HttpParserWrapper> parser_;
 

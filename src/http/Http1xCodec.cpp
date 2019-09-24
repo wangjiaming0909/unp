@@ -1,5 +1,6 @@
 #include "http/Http1xCodec.h"
 #include "http_parser/HttpParser.h"
+#include "util/easylogging++.h"
 
 namespace http
 {
@@ -36,6 +37,11 @@ size_t Http1xCodec::onIngress(CStringPiece_t buf)
 {
     if(parser_->getParserError() != 0) return 0;
     auto bytesParsed = parser_->parse(buf.cbegin(), buf.size());
+    if(parser_->getParserError() != 0)
+    {
+        LOG(ERROR) << "Parser error" << http_errno_name(http_errno(parser_->getParserError()));
+        return -1;
+    }
     return bytesParsed;
 }
 
@@ -43,19 +49,19 @@ int Http1xCodec::onMessageBegin()
 {
     state_ = CodecState::ON_MESSAGEBEGIN;
     message_.reset(new HttpMessage{});
-    callback_->onMessageBegin();
+    if(callback_) callback_->onMessageBegin();
     return 0;
 }
 int Http1xCodec::onURL(const char* buf, size_t len)
 {
     state_ = CodecState::ON_URL;
     url_.append(buf, len);
-    callback_->onURL(buf, len);
+    if(callback_) callback_->onURL(buf, len);
     return 0;
 }
 int Http1xCodec::onReason(const char* buf, size_t len)
 {
-    callback_->onReason(buf, len);
+    if(callback_) callback_->onReason(buf, len);
     return 0;
 }
 int Http1xCodec::onHeaderField(const char* buf, size_t len)
@@ -64,7 +70,7 @@ int Http1xCodec::onHeaderField(const char* buf, size_t len)
     assert(currentHeaderFiled_.empty());
     currentHeaderFiled_.append(buf, len);
     state_ = CodecState::ON_HEADERFIELD;
-    callback_->onHeaderField(buf, len);
+    if(callback_) callback_->onHeaderField(buf, len);
     return 0;
 }
 int Http1xCodec::onHeaderValue(const char* buf, size_t len)
@@ -74,37 +80,42 @@ int Http1xCodec::onHeaderValue(const char* buf, size_t len)
     currentHeaderFiled_.clear();
     currentHeaderValue_.reset();
     state_ = CodecState::ON_HEADERVALUE;
-    callback_->onHeaderValue(buf, len);
+    if(callback_) callback_->onHeaderValue(buf, len);
     return 0;
 }
 int Http1xCodec::onHeadersComplete(size_t len)
 {
     state_ = CodecState::ON_HEADERS_COMPLETE;
-    callback_->onHeadersComplete(len);
+    if(callback_) callback_->onHeadersComplete(len);
     return 0;
 }
 int Http1xCodec::onBody(const char* buf, size_t len)
 {
     state_ = CodecState::ON_BODY;
-    callback_->onBody(buf, len);
+    if(callback_) callback_->onBody(buf, len);
     return 0;
 }
 int Http1xCodec::onChunkHeader(size_t len)
 {
     state_ = CodecState::ON_CHUNKHEADER;
-    callback_->onChunkHeader(len);
+    if(callback_) callback_->onChunkHeader(len);
     return 0;
 }
 int Http1xCodec::onChunkComplete()
 {
     state_ = CodecState::ON_CHUNKCOMPLETE;
-    callback_->onChunkComplete();
+    if(callback_) callback_->onChunkComplete();
     return 0;
 }
 int Http1xCodec::onMessageComplete()
 {
     state_ = CodecState::ON_MESSAGE_COMPLETE;
-    callback_->onMessageComplete();
+    if(callback_) callback_->onMessageComplete();
     return 0;
+}
+
+int Http1xCodec::onParserError()
+{
+
 }
 }

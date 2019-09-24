@@ -84,11 +84,17 @@ int HttpParserWrapper::onHeaderValueCB(http_parser* parser, const char* buf, siz
 }
 int HttpParserWrapper::onHeadersCompleteCB(http_parser* parser)
 {
-    
+    auto* codec = static_cast<Http1xCodec*>(parser->data);
+    assert(codec != nullptr);
+    codec->onHeadersComplete(0);
+    return 0;
 }
 int HttpParserWrapper::onBodyCB(http_parser* parser, const char* buf, size_t len)
 {
-    
+    auto* codec = static_cast<Http1xCodec*>(parser->data);
+    assert(codec != nullptr);
+    codec->onBody(buf, len);
+    return 0;
 }
 int HttpParserWrapper::onChunkHeaderCB(http_parser* parser)
 {
@@ -100,7 +106,10 @@ int HttpParserWrapper::onChunkCompleteCB(http_parser* parser)
 }
 int HttpParserWrapper::onMessageCompleteCB(http_parser* parser)
 {
-    
+    auto* codec = static_cast<Http1xCodec*>(parser->data);
+    assert(codec != nullptr);
+    codec->onMessageComplete();
+    return 0;
 }
 
 
