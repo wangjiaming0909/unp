@@ -10,7 +10,7 @@
                 "--gtest_filter=httpDownloader.*"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/gtests",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

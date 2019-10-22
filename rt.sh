@@ -1,4 +1,5 @@
 #!/bin/bash
+cd gtests &&
 #run tests
 # ./gtests/test.out --gtest_filter=httpDownloader.*
 
@@ -6,4 +7,4 @@
 # ./gtests/test.out   --gtest_filter=HttpParser.*
 # ./gtests/test.out   --gtest_filter=TCPCLIENT.*
 
-./gtests/test.out --gtest_filter=Http1xCodec.*
+./test.out --gtest_filter=Http1xCodec.*

@@ -53,7 +53,7 @@ private:
     bool valid_ = false;
 };
 
-TEST(Fstream, normal)
+TEST(FStream, normal)
 {
     GTEST_SKIP();
     const char *fileName = "/tmp/1.txt";
