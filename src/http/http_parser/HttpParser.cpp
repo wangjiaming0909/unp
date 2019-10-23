@@ -1,5 +1,6 @@
 #include "HttpParser.h"
 #include "http/Http1xCodec.h"
+#include "util/easylogging++.h"
 
 namespace http
 {
@@ -17,10 +18,6 @@ HttpParserWrapper::~HttpParserWrapper()
 {
 }
 
-size_t HttpParserWrapper::parse(const char* buf, size_t len)
-{
-    return http_parser_execute(&parser_, getParserSettings(), buf, len);
-}
 
 const http_parser_settings* HttpParserWrapper::getParserSettings()
 {
@@ -29,6 +26,7 @@ const http_parser_settings* HttpParserWrapper::getParserSettings()
         http_parser_settings st;
         st.on_message_begin = HttpParserWrapper::onMessageBeginCB;
         st.on_url = HttpParserWrapper::onUrlCB;
+        st.on_status = HttpParserWrapper::onStatusCB;
         st.on_header_field = HttpParserWrapper::onHeaderFieldCB;
         st.on_header_value = HttpParserWrapper::onHeaderValueCB;
         st.on_headers_complete = HttpParserWrapper::onHeadersCompleteCB;
@@ -112,5 +110,23 @@ int HttpParserWrapper::onMessageCompleteCB(http_parser* parser)
     return 0;
 }
 
+int HttpParserWrapper::onStatusCB(http_parser* parser, const char* buf, size_t len)
+{
+    auto* codec = static_cast<Http1xCodec*>(parser->data);
+    assert(codec != nullptr);
+    codec->onStatus(buf, len);
+    return 0;
+}
+
+int HttpParserWrapper::parserPause(int pause)
+{
+    auto err = parser_.http_errno;
+    if(err != HPE_OK || err != HPE_PAUSED)
+    {
+        LOG(WARNING) << "pause a parser error";
+        return -1;
+    }
+    http_parser_pause(&parser_, pause);
+}
 
 }

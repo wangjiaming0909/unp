@@ -35,11 +35,11 @@ void Http1xCodec::setCallback(Callback* callback)
 
 size_t Http1xCodec::onIngress(CStringPiece_t buf)
 {
-    if(parser_->getParserError() != 0) return 0;
+    if(parser_->error() != 0) return 0;
     auto bytesParsed = parser_->parse(buf.cbegin(), buf.size());
-    if(parser_->getParserError() != 0)
+    if(parser_->error() != 0)
     {
-        LOG(ERROR) << "Parser error" << http_errno_name(http_errno(parser_->getParserError()));
+        LOG(ERROR) << "Parser error" << http_errno_name(http_errno(parser_->error()));
         return -1;
     }
     return bytesParsed;
@@ -52,6 +52,15 @@ int Http1xCodec::onMessageBegin()
     if(callback_) callback_->onMessageBegin();
     return 0;
 }
+
+int Http1xCodec::onStatus(const char* buf, size_t len)
+{
+    state_ = CodecState::ON_STATUS;
+
+    if(callback_) callback_->onStatus(buf, len);
+    return 0;
+}
+
 int Http1xCodec::onURL(const char* buf, size_t len)
 {
     state_ = CodecState::ON_URL;
@@ -59,11 +68,13 @@ int Http1xCodec::onURL(const char* buf, size_t len)
     if(callback_) callback_->onURL(buf, len);
     return 0;
 }
+
 int Http1xCodec::onReason(const char* buf, size_t len)
 {
     if(callback_) callback_->onReason(buf, len);
     return 0;
 }
+
 int Http1xCodec::onHeaderField(const char* buf, size_t len)
 {
     // assert(state_ == CodecState::)
@@ -118,4 +129,12 @@ int Http1xCodec::onParserError()
 {
 
 }
+
+uint64_t Http1xCodec::contentLength() const {return parser_->contentLength();}
+short Http1xCodec::httpMajor() const {return parser_->httpMajor();}
+short Http1xCodec::httpMinor() const {return parser_->httpMinor();}
+int Http1xCodec::status() const {return parser_->statusCode();}
+int Http1xCodec::method() const {return parser_->method();}
+int Http1xCodec::upgrade() const {return parser_->upgrade();}
+http_parser_type Http1xCodec::parserType() const {return parser_->parserType();}
 }

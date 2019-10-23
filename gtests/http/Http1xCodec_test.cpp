@@ -6,9 +6,30 @@
 
 using namespace http;
 
+std::string ReadHttpRequestLineFromFile(const std::string& requestLineFullFileName)
+{
+    auto filePath = std::filesystem::path{requestLineFullFileName};
+    if(!std::filesystem::exists(filePath))
+    {
+        LOG(ERROR) << "headerFile: " << requestLineFullFileName << " does not exist...";
+        return "";
+    }
+    std::string retMessageString;
+    std::fstream fs{requestLineFullFileName, std::ios_base::in};
+    char* buf = (char*)::calloc(1, 4096);
+    while(fs.getline(buf, 4096))
+    {
+        retMessageString.append(buf, strlen(buf));
+        retMessageString.append("\n");
+        memset(buf, 0, 4096);
+    }
+    free(buf);
+    fs.close();
+    return retMessageString;
+}
+
 std::string ReadHttpHeadersFromFile(const std::string& headerFileFullName)
 {
-    LOG(INFO) << std::filesystem::current_path();
     auto filePath = std::filesystem::path{headerFileFullName};
     if(!std::filesystem::exists(filePath))
     {
@@ -59,10 +80,33 @@ std::string ReadHttpBodyFromFile(const std::string& bodyFileFullName)
 TEST(Http1xCodec, normal_downstream)
 {
     Http1xCodec codec{HttpDirection::DOWNSTREAM};
+    std::string requestLineData = ReadHttpRequestLineFromFile("./http/HttpResponseRequestLineExmp.txt");
     std::string headerData = ReadHttpHeadersFromFile("./http/HttpResponseHeadersExmp.txt");
     std::string bodyData = ReadHttpBodyFromFile("./http/HttpResponseBodyExmp.txt");
-    std::string message = headerData.append(bodyData);
+    std::string message{};
+    message.append(requestLineData).append(headerData).append(bodyData);
     auto ret = codec.onIngress(message);
+    if(ret <= 0) FAIL();
+    ASSERT_EQ(codec.state_, http::Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
+}
+
+TEST(Http1xCodec, downstream_with_steps)
+{
+    Http1xCodec codec{HttpDirection::DOWNSTREAM};
+    std::string requestLineData = ReadHttpRequestLineFromFile("./http/HttpResponseRequestLineExmp.txt");
+    std::string headerData = ReadHttpHeadersFromFile("./http/HttpResponseHeadersExmp.txt");
+    std::string bodyData = ReadHttpBodyFromFile("./http/HttpResponseBodyExmp.txt");
+
+    auto ret = codec.onIngress(requestLineData);
+    ASSERT_EQ(codec.status(), 200);
+    if(ret <= 0) FAIL();
+    ASSERT_EQ(codec.state_, http::Http1xCodec::CodecState::ON_STATUS);
+
+    ret = codec.onIngress(headerData);
+    if(ret <= 0) FAIL();
+    ASSERT_EQ(codec.state_, http::Http1xCodec::CodecState::ON_HEADERS_COMPLETE);
+
+    ret = codec.onIngress(bodyData);
     if(ret <= 0) FAIL();
     ASSERT_EQ(codec.state_, http::Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
 }

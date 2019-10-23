@@ -23,6 +23,7 @@ TEST_PRIVATE:
         ERROR,
         IDLE,
         ON_URL,
+        ON_STATUS,
         ON_MESSAGEBEGIN,
         ON_HEADERFIELD,
         ON_HEADERVALUE,
@@ -41,10 +42,20 @@ public:
     virtual void setCallback(Callback* callback) override;
     virtual size_t onIngress(CStringPiece_t buf) override;
 
+    uint64_t contentLength() const;
+    short httpMajor() const;
+    short httpMinor() const;
+    int status() const;
+    int method() const;
+    int upgrade() const;
+    http_parser_type parserType() const;
+    bool isPaused() const;
+
 
 TEST_PRIVATE:
   int onMessageBegin();
   int onURL(const char* buf, size_t len);
+  int onStatus(const char* buf, size_t len);
   int onReason(const char* buf, size_t len);
   int onHeaderField(const char* buf, size_t len);
   int onHeaderValue(const char* buf, size_t len);
@@ -57,9 +68,9 @@ TEST_PRIVATE:
 
 TEST_PRIVATE:
     std::unique_ptr<HttpMessage> message_;
+    Callback*               callback_;
     std::unique_ptr<HttpParserWrapper> parser_;
 
-    Callback*               callback_;
 
     String_t                url_;
     String_t                currentHeaderFiled_;

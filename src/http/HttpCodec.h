@@ -10,6 +10,7 @@ public:
     {
         virtual int onMessageBegin() = 0;
         virtual int onURL(const char* buf, size_t len) = 0;
+        virtual int onStatus(const char*buf, size_t len) = 0;
         virtual int onReason(const char* buf, size_t len) = 0;
         virtual int onHeaderField(const char* buf, size_t len) = 0;
         virtual int onHeaderValue(const char* buf, size_t len) = 0;
