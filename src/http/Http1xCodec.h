@@ -22,6 +22,7 @@ TEST_PRIVATE:
     {
         ERROR,
         IDLE,
+        PAUSED,
         ON_URL,
         ON_STATUS,
         ON_MESSAGEBEGIN,
@@ -41,6 +42,8 @@ public:
 public:
     virtual void setCallback(Callback* callback) override;
     virtual size_t onIngress(CStringPiece_t buf) override;
+
+    int pause(int pause);
 
     uint64_t contentLength() const;
     short httpMajor() const;
@@ -72,10 +75,10 @@ TEST_PRIVATE:
     std::unique_ptr<HttpParserWrapper> parser_;
 
 
-    String_t                url_;
-    String_t                currentHeaderFiled_;
+    String_t                    url_;
+    String_t                    currentHeaderFiled_;
     CStringPiece_t          currentHeaderValue_;
-    CodecState              state_ = CodecState::IDLE;
+    CodecState               state_ = CodecState::IDLE;
 };
 
 }

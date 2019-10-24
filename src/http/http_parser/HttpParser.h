@@ -21,6 +21,8 @@ public:
     {
         return http_parser_execute(&parser_, getParserSettings(), buf, len);
     }
+    int parserPause(int pause);
+
     inline int state(){return parser_.state;}
     inline uint64_t contentLength() const {return parser_.content_length;}
     inline short httpMajor() const {return parser_.http_major;}
@@ -29,7 +31,6 @@ public:
     inline int method() const {return parser_.method;}
     inline int upgrade() const {return parser_.upgrade;}
     inline http_parser_type parserType() const {return static_cast<http_parser_type>(parser_.type);}
-    inline int parserPause(int pause);
     inline bool isPaused() const {return error() == HPE_PAUSED;}
 
 private:

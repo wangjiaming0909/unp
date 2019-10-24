@@ -111,6 +111,32 @@ TEST(Http1xCodec, downstream_with_steps)
     ASSERT_EQ(codec.state_, http::Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
 }
 
+TEST(Http1xCodec, downStream_pause_Parser)
+{
+    Http1xCodec codec{HttpDirection::DOWNSTREAM};
+    std::string requestLineData = ReadHttpRequestLineFromFile("./http/HttpResponseRequestLineExmp.txt");
+    std::string headerData = ReadHttpHeadersFromFile("./http/HttpResponseHeadersExmp.txt");
+    std::string bodyData = ReadHttpBodyFromFile("./http/HttpResponseBodyExmp.txt");
+
+    auto ret = codec.onIngress(requestLineData);
+    auto ispaused = codec.pause(1);
+    ASSERT_EQ(ispaused, 0);
+    ASSERT_EQ(codec.state_, http::Http1xCodec::CodecState::PAUSED);
+
+//continue to parse after paused, onIngress return 0;
+    ret = codec.onIngress(headerData);
+    ASSERT_EQ(ret, 0);
+
+    //unpause the codec
+    ispaused = codec.pause(0);
+    ASSERT_EQ(ispaused, 0);
+    ASSERT_EQ(codec.state_, http::Http1xCodec::CodecState::ON_STATUS);
+
+    ret = codec.onIngress(headerData);
+    ASSERT_TRUE(ret > 0);
+    ASSERT_EQ(codec.state_, http::Http1xCodec::CodecState::ON_HEADERS_COMPLETE);
+}
+
 TEST(Http1xCodec, normal_uptream)
 {
     Http1xCodec codec{HttpDirection::UPSTREAM};
@@ -129,4 +155,5 @@ Cache-Control: no-cache\n\n";
     codec.onIngress(requestData);
 
     ASSERT_EQ(codec.state_, Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
+    
 }

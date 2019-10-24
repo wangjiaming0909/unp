@@ -8,6 +8,7 @@
 #include "http_parser/http_parser.h"
 #include "util/string_piece/string_piece.h"
 #include <boost/variant/variant.hpp>
+#include <boost/variant/get.hpp>
 #include <map>
 
 namespace http{
@@ -25,11 +26,38 @@ public:
 public:
     bool isDone() const {return isDone_;}
     template <typename T>
-    T get() {return boost::get<T>(&message_);}
+    T& get() {return boost::get<T>(message_);}
 
 
     void addHeader(string_t& field, CStringPiece_t value) { headers_.add(field, value); }
     void addHeader(string_t& field, string_t&& value) { headers_.add(field, value); }
+    void setHttpVersion(uint8_t maj, uint8_t min) 
+    {
+        version_.first = maj, version_.second = min;
+        versionStr_ = std::to_string(maj).append(".").append(std::to_string(min));
+    }
+    void setHttpMethod(int method)
+    {
+
+    }
+
+private:
+    HttpRequest& request()
+    {
+        if(message_.which() == 0)
+        {
+            message_ = HttpRequest();
+        }
+        return get<HttpRequest>();
+    }
+    HttpResponse& response()
+    {
+        if(message_.which() == 0)
+        {
+            message_ = HttpResponse();
+        }
+        return get<HttpResponse>();
+    }
 
 private:
     boost::variant<boost::blank, HttpRequest, HttpResponse> message_;

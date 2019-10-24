@@ -62,6 +62,7 @@ int HttpParserWrapper::onUrlCB(http_parser* parser, const char* buf, size_t len)
     codec->onURL(buf, len);
     return 0;
 }
+
 int HttpParserWrapper::onReasonCB(http_parser* parser, const char* buf, size_t len)
 {
     
@@ -121,12 +122,12 @@ int HttpParserWrapper::onStatusCB(http_parser* parser, const char* buf, size_t l
 int HttpParserWrapper::parserPause(int pause)
 {
     auto err = parser_.http_errno;
-    if(err != HPE_OK || err != HPE_PAUSED)
+    if(err != HPE_OK && err != HPE_PAUSED)
     {
         LOG(WARNING) << "pause a parser error";
         return -1;
     }
     http_parser_pause(&parser_, pause);
+    return 0;
 }
-
 }

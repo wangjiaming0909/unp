@@ -53,10 +53,10 @@ int Http1xCodec::onMessageBegin()
     return 0;
 }
 
+//for response only
 int Http1xCodec::onStatus(const char* buf, size_t len)
 {
     state_ = CodecState::ON_STATUS;
-
     if(callback_) callback_->onStatus(buf, len);
     return 0;
 }
@@ -97,6 +97,7 @@ int Http1xCodec::onHeaderValue(const char* buf, size_t len)
 int Http1xCodec::onHeadersComplete(size_t len)
 {
     state_ = CodecState::ON_HEADERS_COMPLETE;
+    message_->setHttpVersion(parser_->httpMajor(), parser_->httpMinor());
     if(callback_) callback_->onHeadersComplete(len);
     return 0;
 }
@@ -128,6 +129,22 @@ int Http1xCodec::onMessageComplete()
 int Http1xCodec::onParserError()
 {
 
+}
+
+int Http1xCodec::pause(int pause)
+{
+    static CodecState savedState;
+    auto ret = parser_->parserPause(pause);
+    if(pause)
+    {
+        savedState = state_;
+        state_ = CodecState::PAUSED;
+    }
+    else
+    {
+        state_ = savedState;
+    }
+    return ret;
 }
 
 uint64_t Http1xCodec::contentLength() const {return parser_->contentLength();}
