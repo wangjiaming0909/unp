@@ -53,6 +53,7 @@ public:
     int upgrade() const;
     http_parser_type parserType() const;
     bool isPaused() const;
+    bool hasError() const {return hasError_;}
 
 
 TEST_PRIVATE:
@@ -79,6 +80,7 @@ TEST_PRIVATE:
     String_t                    currentHeaderFiled_;
     CStringPiece_t          currentHeaderValue_;
     CodecState               state_ = CodecState::IDLE;
+    bool                          hasError_ = false;
 };
 
 }

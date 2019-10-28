@@ -189,6 +189,8 @@ void HttpDownloader::init()
     responseParser_->body_limit(UINT64_MAX);
     auto onChunkBody = std::bind(&HttpDownloader::onChunkBody, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     responseParser_->on_chunk_body(onChunkBody);
+    codec_.reset(new http::Http1xCodec{http::HttpDirection::DOWNSTREAM});
+    codec_->setCallback(this);
 }
 
 HttpDownloader::~HttpDownloader()
@@ -216,7 +218,55 @@ int HttpDownloader::get()
     return 0;
 }
 
+
+int HttpDownloader::onStatus(const char* buf, size_t len)
+{
+    if(codec_->status() != 200)
+    {
+        LOG(WARNING) << "status is: " << codec_->status();
+        return -1;
+    }
+}
+
+int HttpDownloader::onBody(const char* buf, size_t size)
+{
+    writer_.write(buf, size);
+    writer_.flush();
+}
+
 int HttpDownloader::handle_input(int handle)
+{
+    int ret = connection_handler::handle_input(handle);
+    if(ret < 0)
+    {
+        LOG(WARNING) << "error when connection_handler::handle_input";
+        return -1;
+    }
+    if(input_buffer_.buffer_length() == 0) 
+    {
+        LOG(INFO) << "didn't get any data...";
+        return 0;
+    }
+
+    while(input_buffer_.buffer_length() > 0)
+    {
+        auto firstChain = input_buffer_.begin().chain();
+        auto data = firstChain.get_start_buffer();
+        auto chainLen = firstChain.size();
+        string_piece::const_string_piece sp{static_cast<const char*>(data), chainLen};
+        size_t bytesRead = codec_->onIngress(sp);
+        if(codec_->hasError())
+        {
+            LOG(WARNING) << "Http parser parse error";
+            return -1;
+        }
+        assert(bytesRead == chainLen);
+        input_buffer_.drain(chainLen);
+    }
+}
+
+/*
+int handle_input(int handle)
 {
     int ret = connection_handler::handle_input(handle);
     if(ret < 0)
@@ -281,6 +331,7 @@ int HttpDownloader::handle_input(int handle)
     }
     return 0;
 }
+*/
 
 int HttpDownloader::onChunkBody( std::uint64_t remain, string_view body, beast::error_code& ec)
 {

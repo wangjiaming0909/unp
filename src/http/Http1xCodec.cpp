@@ -30,7 +30,7 @@ Http1xCodec::~Http1xCodec()
 
 void Http1xCodec::setCallback(Callback* callback)
 {
-
+    callback_ = callback;
 }
 
 size_t Http1xCodec::onIngress(CStringPiece_t buf)
@@ -128,7 +128,7 @@ int Http1xCodec::onMessageComplete()
 
 int Http1xCodec::onParserError()
 {
-
+    hasError_ = true;
 }
 
 int Http1xCodec::pause(int pause)

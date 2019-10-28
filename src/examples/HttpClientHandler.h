@@ -6,6 +6,8 @@
 #include "boost/beast/core.hpp"
 #include "util/XString.h"
 #include "util/FileWriter.h"
+#include "http/HttpCodec.h"
+#include "http/Http1xCodec.h"
 #include <memory>
 
 
@@ -33,7 +35,7 @@ private:
 };
 
 
-class HttpDownloader : public reactor::connection_handler
+class HttpDownloader : public reactor::connection_handler, public http::HttpCodec::Callback
 {
 public:
     HttpDownloader(reactor::Reactor &react, const char* url, const char* userAgent, const std::string& displayName);
@@ -43,9 +45,12 @@ public:
     virtual int handle_input(int handle);
     int get();
 
+    int onStatus(const char* buf, size_t len) override;
     virtual int onChunkBody(std::uint64_t remain,   // The number of bytes left in this chunk
             string_view body,       // A buffer holding chunk body data
             beast::error_code& ec);         // We can set this to indicate an error
+
+    int onBody(const char* buf, size_t size) override;
     
 private:
     void init();
@@ -61,5 +66,6 @@ private:
     char bodyData_[DEFAULTBODYSIZE];
     utils::FileWriter writer_;
     std::shared_ptr<beast::http::response_parser<beast::http::buffer_body>> responseParser_;
+    std::shared_ptr<http::Http1xCodec> codec_;
 };
 }

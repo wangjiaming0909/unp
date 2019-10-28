@@ -726,6 +726,7 @@ int64_t buffer::remove(/*out*/void* data, uint32_t data_len)
     return data_len;
 }
 
+//TODO remove the calloc and free
 int64_t buffer::drain(uint32_t len)
 {
     void* datap = ::calloc(len, 1);
