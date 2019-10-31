@@ -1,10 +1,18 @@
 #include "reactor/connection_handler.h"
+#include "net/ssl_sock_stream.h"
 
 using namespace reactor;
 
-connection_handler::connection_handler(Reactor &reactor)
-    : EventHandler(reactor), stream_(), input_buffer_(), output_buffer_(), read_enabled_(false), write_enabled_(false)
+connection_handler::connection_handler(Reactor &reactor, bool isSSL)
+    : EventHandler(reactor)
+    , stream_{}
+    , input_buffer_()
+    , output_buffer_()
+    , read_enabled_(false)
+    , write_enabled_(false)
+    , isSSL_(isSSL)
 {
+    initStream();
 }
 
 connection_handler::~connection_handler()
@@ -17,18 +25,17 @@ const unsigned int connection_handler::BUFFER_HIGH_WATER_MARK = 100 * buffer_cha
 
 int connection_handler::handle_input(int handle)
 {
+    if(!stream_) return -1;
     if (input_buffer_.total_len() >= connection_handler::BUFFER_HIGH_WATER_MARK)
     {
         return 0;
     }
 
-    if (handle != stream_.get_handle() || handle == INVALID_HANDLE)
+    if (handle != stream_->getHandle() || handle == INVALID_HANDLE)
     {
         LOG(ERROR) << "Register error: handle error: " << handle;
         return -1;
     }
-
-    std::chrono::microseconds timeout = 2s;
 
     int recv_buf_size = 0;
     // socklen_t optlen = sizeof(recv_buf_size);
@@ -41,7 +48,7 @@ int connection_handler::handle_input(int handle)
 	 */
     recv_buf_size = recv_buf_size == 0 ? 4096 : recv_buf_size;
 
-    int ret = stream_.read(input_buffer_, recv_buf_size, &timeout);
+    int ret = stream_->read(input_buffer_, recv_buf_size);
     if (ret < 0)
     {
         LOG(ERROR) << "Read error: " << strerror(errno);
@@ -62,7 +69,7 @@ int connection_handler::handle_output(int handle)
         return 0;
     }
 
-    if (handle != stream_.get_handle() || handle == INVALID_HANDLE)
+    if (handle != stream_->getHandle() || handle == INVALID_HANDLE)
     {
         LOG(ERROR) << "Register error: handle error: " << handle;
         return -1;
@@ -79,7 +86,7 @@ int connection_handler::handle_output(int handle)
         //行为： 最多pullup 4096 bytes
         size_t pullupSize = DEFAULT_SEND_SIZE > output_buffer_.buffer_length() ? output_buffer_.buffer_length() : DEFAULT_SEND_SIZE;
         auto data_p = output_buffer_.pullup(pullupSize);
-        int bytes_send = stream_.send(static_cast<const void *>(data_p), pullupSize, 0);
+        int bytes_send = stream_->send(static_cast<const void *>(data_p), pullupSize, 0);
         if (bytes_send <= 0)
         {
             LOG(ERROR) << "Send error: " << strerror(errno);
@@ -115,7 +122,7 @@ int connection_handler::handle_timeout(int) noexcept
 
 int connection_handler::handle_close(int)
 {
-    int handle = stream_.get_handle();
+    int handle = stream_->getHandle();
     close();
     check_and_invoke_close_callback(handle);
     return 0;
@@ -128,7 +135,7 @@ int connection_handler::handle_signal(int)
 
 int connection_handler::get_handle() const
 {
-    return stream_.get_handle();
+    return stream_->getHandle();
 }
 
 void connection_handler::set_handle(int)
@@ -176,21 +183,28 @@ uint32_t connection_handler::write(const char *data, uint32_t len)
         return 0;
     }
 
+    auto bytesWritten = output_buffer_.append(data, len);
     if (!write_enabled_)
     {
         enable_writing();
     }
+    return bytesWritten;
+}
 
-    return output_buffer_.append(data, len);
+void connection_handler::initStream()
+{
+    if(isSSL_)
+    {
+        stream_.reset(new net::SSLSockStream());
+    }
+    else
+    {
+        stream_.reset(new net::InetSockStream());
+    }
 }
 
 int connection_handler::open()
 {
-    //    if(stream_.get_sock_fd().set_non_blocking() != 0)
-    //    {
-    //        LOG(ERROR) << "Setting non blocking error: " << strerror(errno);
-    //        return -1;
-    //    }
     return enable_reading();
 }
 
@@ -205,22 +219,22 @@ void connection_handler::close()
 
 void connection_handler::closeStream()
 {
-    stream_.close();
+    if(stream_) stream_->close();
 }
 
 int connection_handler::close_read(int)
 {
-    if (read_enabled_)
-        disable_reading();
-    stream_.close_reader();
+    if(!stream_) return -1;
+    if (read_enabled_) disable_reading();
+    stream_->closeReader();
     return 0;
 }
 
 int connection_handler::close_write(int)
 {
-    if (write_enabled_)
-        disable_writing();
-    stream_.close_writer();
+    if(!stream_) return -1;
+    if (write_enabled_) disable_writing();
+    stream_->closeWriter();
     return 0;
 }
 
@@ -238,33 +252,30 @@ int connection_handler::enable_reading()
     if (read_enabled_ == true)
         return 0;
     read_enabled_ = true;
-    return reactor_->register_handler(stream_.get_handle(), this, EventHandler::READ_EVENT);
+    return reactor_->register_handler(stream_->getHandle(), this, EventHandler::READ_EVENT);
 }
 
 int connection_handler::enable_writing()
 {
-    if (write_enabled_ == true)
-        return 0;
+    if (write_enabled_ == true) return 0;
     write_enabled_ = true;
-    return reactor_->register_handler(stream_.get_handle(), this, EventHandler::WRITE_EVENT);
+    return reactor_->register_handler(stream_->getHandle(), this, EventHandler::WRITE_EVENT);
 }
 
 int connection_handler::disable_reading()
 {
-    if (read_enabled_ == false)
-        return 0;
+    if (read_enabled_ == false) return 0;
     read_enabled_ = false;
-    int ret = reactor_->unregister_handler(stream_.get_handle(), this, EventHandler::READ_EVENT);
+    int ret = reactor_->unregister_handler(stream_->getHandle(), this, EventHandler::READ_EVENT);
     //    check_and_invoke_close_callback();
     return ret;
 }
 
 int connection_handler::disable_writing()
 {
-    if (write_enabled_ == false)
-        return 0;
+    if (write_enabled_ == false) return 0;
     write_enabled_ = false;
-    int ret = reactor_->unregister_handler(stream_.get_handle(), this, EventHandler::WRITE_EVENT);
+    int ret = reactor_->unregister_handler(stream_->getHandle(), this, EventHandler::WRITE_EVENT);
     //    check_and_invoke_close_callback();
     return ret;
 }

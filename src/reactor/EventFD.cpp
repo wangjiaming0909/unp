@@ -28,7 +28,7 @@ void EventFD::wakeup()
 {
 	handler_->clear_input_buffer();
 	uint64_t one = 1;
-	handler_->get_sock_stream().write(&one, sizeof(one), 0);
+	handler_->get_sock_stream().write(&one, sizeof(one));
 //	handler_->write(reinterpret_cast<const char*>(&one), sizeof(one));
 }
 
@@ -36,7 +36,7 @@ int EventFD::registerInto(Reactor& reactor)
 {
 	if(event_fd_ < 0) return -1;
 	handler_ = std::make_shared<connection_handler>(reactor);
-	handler_->get_sock_stream().set_handle(event_fd_);
+	handler_->get_sock_stream().setHandle(event_fd_);
 	return handler_->enable_reading();
 }
 

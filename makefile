@@ -31,13 +31,17 @@ TESTLDFLAG =  -pthread \
 		/boost_1_70_0/stage/lib/libboost_timer.so.1.70.0 \
 		/boost_1_70_0/stage/lib/libboost_chrono.so.1.70.0 \
 		/usr/local/lib/libgtest.a \
-		/usr/local/lib/libgmock.a
+		/usr/local/lib/libgmock.a \
+		-lssl \
+		-lcrypto
 
 # /boost_1_70_0/stage/lib/libboost_thread.a 
 LDFLAGS = -pthread \
 		/boost_1_70_0/stage/lib/libboost_timer.so.1.70.0 \
 		/boost_1_70_0/stage/lib/libboost_chrono.so.1.70.0 \
-		/boost_1_70_0/stage/lib/libboost_system.so.1.70.0 
+		/boost_1_70_0/stage/lib/libboost_system.so.1.70.0 \
+		-lssl \
+		-lcrypto
 		
 
 all: $(BUILDDIR) $(TARGET)

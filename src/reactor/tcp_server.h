@@ -14,7 +14,6 @@ namespace reactor
 {
 
 class Reactor;
-class acceptor;
 
 /*
     reactor的个数应该与 thread 的个数相同，因为每个thread里会放一个reactor

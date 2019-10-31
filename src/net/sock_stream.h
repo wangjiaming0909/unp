@@ -1,88 +1,62 @@
-#ifndef _UNP_SOCK_STREAM_H_
-#define _UNP_SOCK_STREAM_H_
-#include <chrono>
-#include <sys/socket.h>
+#pragma once
 #include "inet_sock.h"
-#include <unistd.h>
-#include "unp.h"
-#include "macros.h"
-#include <boost/assert.hpp>
-#include "util/easylogging++.h"
 #include "reactor/buffer.h"
-namespace net{
+#include "boost/noncopyable.hpp"
+#include <chrono>
 
-//sock_stream does not contain the memory of the sock_fd
-//when need to use non-blocking read and write 
-//need to change the status of the fd first
-//then use sock_stream
-class sock_stream{
-public:
-	sock_stream() : sock_fd_(new inet_sock()){}
-	sock_stream(sock_stream&& other) {
-		this->sock_fd_ = other.sock_fd_;
-		other.sock_fd_ = nullptr;
-	}
-	~sock_stream() { delete sock_fd_; }
-    sock_stream(const sock_stream& other) = delete ;
-public:
-	void close_reader();
-	void close_writer();
-	void close();
-public:
-    using micro_seconds = std::chrono::microseconds; 
-	//read version use system call read which has no flags 
-    ssize_t read( void* buffer, size_t len, const micro_seconds* timeout = 0) const;
-	ssize_t read(reactor::buffer& buf, size_t len, const microseconds* timeout = 0) const;
-	//TODO
-	ssize_t write(const void* buffer, size_t len, const micro_seconds* timeout = 0) const;
-	//recv version use the system call recv which has a flags parameter
+namespace net
+{
 
-	//TODO
-	ssize_t recv(void* buffer, size_t len, int flags, const micro_seconds* timeout = 0) const;
-    ssize_t readv( iovec iov[], int n, const micro_seconds* timeout = 0)const;
+class SockStream : public boost::noncopyable{
+public:
+	SockStream() : sock_fd_{}{}
+
+public:
+	virtual ssize_t read(void *buffer, size_t len) = 0;
+	virtual ssize_t read(reactor::buffer &buf, size_t len) = 0;
+	virtual ssize_t write(const void *buffer, size_t len) = 0;
+	 //recv version use the system call recv which has a flags parameter
+	virtual ssize_t recv(void *buffer, size_t len, int flags) = 0;
+	virtual ssize_t readv(iovec iov[], int n) = 0;
 	//send alse has a flags parameter
-    ssize_t send( const void* buffer, size_t len, int flags, const micro_seconds* timeout = 0)const;
-    ssize_t writev( const iovec iov[], int n, const micro_seconds* timeout = 0) const;
+	virtual ssize_t send(const void *buffer, size_t len, int flags) = 0;
+	virtual ssize_t writev(const iovec iov[], int n) = 0;
+	virtual ssize_t recv_n(void *buffer, size_t len, int flags) = 0;
+	virtual ssize_t readv_n(iovec iov[], size_t n) = 0;
+	virtual ssize_t send_n(const void *buffer, size_t len, int flags) = 0;
+	virtual ssize_t writev_n(const void *buffer, size_t len) = 0;
 
 public:
-	int get_handle() const { return sock_fd_->get_handle(); }
-	int set_handle(int handle){
-        sock_fd_->set_handle(handle);
-        return sock_fd_->get_handle();
+	void close() { sock_fd_.close(); }
+	void closeReader() { sock_fd_.shut_down(SHUT_RD); }
+	void closeWriter() { sock_fd_.shut_down(SHUT_WR); }
+	int getHandle() const { return sock_fd_.get_handle(); }
+	//[handle] must be a opened socket handle
+	inline int setHandle(int handle);
+	bool hasHandle() const { return sock_fd_.get_handle() != INVALID_HANDLE; }
+	inet_sock& getSockFD() { return sock_fd_; }
+	int setNonBolcking() { return sock_fd_.set_non_blocking(); }
+	int restoreBlocking() { return sock_fd_.restore_blocking(); }
+	int openSockFD(int family, sock_type type, int protocol, int reuse_addr){
+		return sock_fd_.open(family, type, protocol, reuse_addr);
 	}
-	bool has_handle(){
-        return sock_fd_->get_handle() != INVALID_HANDLE;
-	}
-	int open_sock_fd(int family, sock_type type, int protocol, int reuse_addr){
-		return sock_fd_->open(family, type, protocol, reuse_addr);
-	}
-	inet_sock& get_sock_fd() const{ return *sock_fd_; }
 
-public:
-	//TODO need implementation
-	ssize_t recv_n(void *buffer, size_t len, int flags, 
-		const micro_seconds* timeout = 0, size_t *bytes_transfered = 0) const;
-	ssize_t readv_n(iovec iov[], size_t n,
-		const micro_seconds* timeout = 0, size_t *bytes_transfered = 0) const;
-	ssize_t send_n(const void *buffer, size_t len, int flags,
-		const micro_seconds* timeout = 0, size_t *bytes_transfered = 0) const;
-	ssize_t writev_n(const void *buffer, size_t len, 
-		const micro_seconds *timeout, size_t *bytes_transfered = 0) const;
+protected:
+	ssize_t read_imp(void *buffer, size_t len);
+	ssize_t send_imp(const void* buffer, size_t len, int flags);
+	ssize_t readv_imp(iovec iov[], int n);
+	ssize_t writev_imp(const iovec iov[], int n);
 
-private:
-    ssize_t read_imp(void* buffer, size_t len,
-        const micro_seconds* timeout = 0) const;
-	ssize_t send_imp(const void* buffer, size_t len, int flags,
-		const micro_seconds* timeout = 0) const;
-	ssize_t readv_imp(iovec iov[], int n, 
-		const micro_seconds* timeout = 0)const;
-	ssize_t writev_imp(const iovec iov[], int n,
-		const micro_seconds* timeout = 0) const;
-
-private:
-    inet_sock* sock_fd_;
+protected:
+	inet_sock sock_fd_;
 };
 
-}
+int SockStream::setHandle(int handle)
+{
+	if(handle == INVALID_HANDLE) return handle;
 
-#endif // _UNP_SOCK_STREAM_H_
+	if (sock_fd_.get_handle() != INVALID_HANDLE) sock_fd_.close();
+	sock_fd_.set_handle(handle);
+	return handle;
+}
+}

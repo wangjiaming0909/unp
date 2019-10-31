@@ -2,14 +2,19 @@
 #define _UNP_SOCK_ACCEPTOR_H_
 
 #include "inet_addr.h"
-#include "sock_stream.h"
+#include "inet_sock.h"
 #include <memory>
+#include <chrono>
 
 namespace net{
 #define DEFAULT_BACKLOG 5
 
+class SockStream;
+using namespace std::chrono_literals;
+
 class sock_acceptor{
 public:
+    using microseconds = std::chrono::microseconds;
     // sock_acceptor();
     sock_acceptor(const inet_addr& local_addr,
                 int reuse_addr = 0,
@@ -23,23 +28,20 @@ public:
                 int backlog = DEFAULT_BACKLOG,
                 int protocol = 0);
     int close();
-    int accept(sock_stream& new_stream,
+    int accept(SockStream& new_stream,
                inet_addr* remote_addr = 0,
-               microseconds* timeout = 0,
+               microseconds timeout = 0s,
                bool restart = true) const;
-    int get_handle() const;
+    int get_handle() const { return sock_fd_->get_handle(); }
+
 protected:
     int shared_open(const inet_addr& local_sap,
                     int protocol_family,
                     int backlog);
-    int shared_accept_start(microseconds *timeout,
-                    bool restart,
-                    int& in_blocking_mode) const;
-    int shared_accept_finish(sock_stream& client_stream,
-                    bool in_blocking_mode) const;
+    int shared_accept_start(microseconds timeout, bool restart) const;
 private:
     // inet_sock * sock_fd_;
-    std::shared_ptr<inet_sock> sock_fd_;
+    std::unique_ptr<inet_sock> sock_fd_;
 
 };
 }

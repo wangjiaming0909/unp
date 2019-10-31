@@ -2,7 +2,7 @@
 #define CONNECTION_H
 
 #include "reactor/EventHandler.h"
-#include "net/sock_stream.h"
+#include "net/inet_sock_stream.h"
 #include "reactor/buffer.h"
 #include "reactor/reactor.h"
 #include "util/easylogging++.h"
@@ -16,7 +16,7 @@ namespace reactor
 class connection_handler : public EventHandler
 {
 public:
-    connection_handler(Reactor &reactor);
+    connection_handler(Reactor &reactor, bool isSSL = false);
     //read data from sock_stream into buffer input_buffer_, if input_buffer size is below HIGH WATMARK
     //???如果input_buffer已经达到HIGH WATMARK 或者已经达到buffer的最大大小了怎么办
     //buffer do not have the maximum size, chain has
@@ -34,7 +34,7 @@ public:
     virtual ~connection_handler() override;
 
 public:
-    net::sock_stream &get_sock_stream() { return stream_; }
+    net::SockStream &get_sock_stream() { return *stream_; }
     //read 只是从intput_buffer中读取数据，并不会从socket中读取
     //return bytes read
     uint32_t read(char *data_out, uint32_t data_len);
@@ -72,6 +72,7 @@ protected:
     //    int write_i();
 
     void check_and_invoke_close_callback(int handle);
+    void initStream();
 
 public:
     //registering
@@ -83,13 +84,14 @@ public:
     void set_closed_callback(std::function<void(int)> callback) { closed_callback_ = std::move(callback); }
 
 protected:
-    net::sock_stream stream_;
+    std::shared_ptr<net::SockStream> stream_;
     buffer input_buffer_;
     buffer output_buffer_;
     bool read_enabled_;
     bool write_enabled_;
     static const unsigned int BUFFER_HIGH_WATER_MARK;
     std::function<void(int)> closed_callback_;
+    bool isSSL_;
 };
 
 //template <typename T>

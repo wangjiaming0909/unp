@@ -15,12 +15,11 @@ protected:
 
 class server : public testing::Test{
 protected:
-   server() : server_addr_(), acceptor_(server_addr_){} 
+   server() : server_addr_(), acceptor_(server_addr_, 1){} 
    ~server() override{}
     void SetUp() override{
         server_addr_ = inet_addr{};
         server_addr_.set_port_number(9090);
-        acceptor_ = net::sock_acceptor(server_addr_, 1);
     }
     void TearDown() override{}
     inet_addr server_addr_;
