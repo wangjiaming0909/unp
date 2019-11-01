@@ -25,6 +25,10 @@ public:
 	virtual ssize_t readv_n(iovec iov[], size_t n) = 0;
 	virtual ssize_t send_n(const void *buffer, size_t len, int flags) = 0;
 	virtual ssize_t writev_n(const void *buffer, size_t len) = 0;
+	virtual int openSockFD(int family, sock_type type, int protocol, int reuse_addr)
+	{
+		return sock_fd_.open(family, type, protocol, reuse_addr);
+	}
 
 public:
 	void close() { sock_fd_.close(); }
@@ -37,9 +41,6 @@ public:
 	inet_sock& getSockFD() { return sock_fd_; }
 	int setNonBolcking() { return sock_fd_.set_non_blocking(); }
 	int restoreBlocking() { return sock_fd_.restore_blocking(); }
-	int openSockFD(int family, sock_type type, int protocol, int reuse_addr){
-		return sock_fd_.open(family, type, protocol, reuse_addr);
-	}
 
 protected:
 	ssize_t read_imp(void *buffer, size_t len);

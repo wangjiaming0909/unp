@@ -258,11 +258,13 @@ int HttpDownloader::handle_input(int handle)
         if(codec_->hasError())
         {
             LOG(WARNING) << "Http parser parse error";
+            codec_->pause(1);
             return -1;
         }
         assert(bytesRead == chainLen);
         input_buffer_.drain(chainLen);
     }
+    return 0;
 }
 
 /*
