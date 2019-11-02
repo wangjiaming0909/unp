@@ -27,12 +27,12 @@
             "includePath": [
                 "${workspaceFolder}/src",
                 "/boost_1_70_0",
-                "/usr/local/include"
+                "/usr/include"
             ],
             "browse": {
                 "path": [
                     "${workspaceFolder}/src",
-                    "/usr/local/include",
+                    "/usr/include",
                     "/boost_1_70_0"
                 ]
             },

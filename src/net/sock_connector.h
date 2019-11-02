@@ -34,10 +34,12 @@ class sock_connector
         int ret = ::connect(new_stream.getHandle(),
                             reinterpret_cast<sockaddr *>(remote_addr.get_sockaddr_in_ptr().get()),
                             remote_addr.get_size());
-        return connect_error_handling(new_stream, ret, timeout); //timeout used to wait for the connect
+        ret = connect_error_handling(new_stream, ret, timeout); //timeout used to wait for the connect
+        if(ret != 0) return -1;
+        return new_stream.connect();
     }
 
-  protected:
+protected:
     //using SockStream, so the type is sock_type::stream
     int shared_open(SockStream &new_stream, int family,
                     int protocol, int reuse_addr)

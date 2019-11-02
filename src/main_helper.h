@@ -33,7 +33,7 @@ int print_Argc_Argv(int argc, char** argv){
             BOOST_ASSERT(argv + i != nullptr && "argc is matching the number of argv");
             cout << *(argv + i) << " ";
         }
-        catch(std::exception e){
+        catch(std::exception& e){
             std::cout << "exception catched" << std::endl; 
             std::cout << e.what() << std::endl;
             return -1;

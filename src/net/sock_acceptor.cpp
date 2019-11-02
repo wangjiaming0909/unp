@@ -76,8 +76,10 @@ int net::sock_acceptor::accept(
             LOG(INFO) << "interrupted... restarting.....";
             continue;
         } else if(client_fd == -1) return -1;//other errors
-        ret = client_stream.setHandle(client_fd);
-        if(remote_addr) {
+        ret = client_stream.setSockFD(client_fd);
+        //--log
+        if (remote_addr)
+        {
             auto addr_string = remote_addr->get_address_string();
             LOG(INFO) << "accepted a connection..." << addr_string;
         }
@@ -88,7 +90,14 @@ int net::sock_acceptor::accept(
             // LOG(INFO) << "settings size and family " << len << " " << addr.sa_family;
         }
         if(ret != INVALID_HANDLE)
+        {
+            ret = client_stream.accept();
+            if(ret == -1)
+            {
+                return -1;
+            }
             break;
+        }
     }
 
     return 0;
