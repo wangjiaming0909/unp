@@ -49,11 +49,11 @@ int HttpParserWrapper::onMessageBeginCB(http_parser* parser)
 }
 int HttpParserWrapper::onPathCB(http_parser* parser, const char* buf, size_t len)
 {
-
+    return 0;
 }
 int HttpParserWrapper::onQueryStringCB(http_parser* parser, const char* buf, size_t len)
 {
-
+    return 0;
 }
 int HttpParserWrapper::onUrlCB(http_parser* parser, const char* buf, size_t len)
 {
@@ -65,7 +65,7 @@ int HttpParserWrapper::onUrlCB(http_parser* parser, const char* buf, size_t len)
 
 int HttpParserWrapper::onReasonCB(http_parser* parser, const char* buf, size_t len)
 {
-    
+    return 0;
 }
 int HttpParserWrapper::onHeaderFieldCB(http_parser* parser, const char* buf, size_t len)
 {
@@ -97,11 +97,11 @@ int HttpParserWrapper::onBodyCB(http_parser* parser, const char* buf, size_t len
 }
 int HttpParserWrapper::onChunkHeaderCB(http_parser* parser)
 {
-    
+    return 0;
 }
 int HttpParserWrapper::onChunkCompleteCB(http_parser* parser)
 {
-    
+    return 0;
 }
 int HttpParserWrapper::onMessageCompleteCB(http_parser* parser)
 {

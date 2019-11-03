@@ -50,7 +50,7 @@ public:
     using const_iterator = std::add_const_t<iterator>;
     using size_type = std::size_t;
 public:
-    Range() : begin_(), end_(){}
+    Range() : begin_(nullptr), end_(nullptr){}
     Range(iterator begin, iterator end) : begin_(begin), end_(end){}
     Range(iterator begin, size_type size) : begin_(begin), end_(begin + size){}
 
@@ -67,6 +67,23 @@ public:
     {
         if(size() != range.size()) return false;
         return strncmp(cbegin(), range.cbegin(), size()) == 0;
+    }
+
+    //equal return 0, "abc".comapre("abcd") return -1
+    int compare(const Range& range) const 
+    {
+        if(*this == range) return 0;
+        auto minSize = std::min(size(), range.size());
+        auto ret = strncmp(cbegin(), range.cbegin(), minSize);
+        if(ret != 0) return ret;
+        if(minSize == size()) return -1;
+        else return 1;
+    }
+
+    iterator operator[](size_t pos)
+    {
+        if(pos > size()) return nullptr;
+        return begin_ + pos;
     }
 
 public:
@@ -144,6 +161,12 @@ private:
     iterator begin_;
     iterator end_;
 };
+
+template <typename T>
+bool operator < (const Range<T>& r1, const Range<T>& r2)
+{
+    return r1.compare(r2) < 0;
+}
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, Range<T> str)

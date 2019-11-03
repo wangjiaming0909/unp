@@ -68,5 +68,4 @@ private:
     SSLSockStreamState SSLstate_ = SSLSockStreamState::SSL_IDLE;
 };
 
-OpenSSLInitializer SSLSockStream::sslInitializer_ = OpenSSLInitializer{};
 } // namespace net

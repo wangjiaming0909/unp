@@ -106,6 +106,27 @@ TEST(string_piece, CaseInsensitiveEqual_member_function)
     ASSERT_EQ(ret, true);
 }
 
+TEST(string_piece, size)
+{
+    using namespace string_piece;
+    const_string_piece str1 = "abc";
+    ASSERT_EQ(str1.size(), 3);
+    str1 = "1";
+    ASSERT_EQ(str1.size(), 1);
+}
+
+TEST(string_piece, cmp)
+{
+    using namespace string_piece;
+    const_string_piece s1 = "abb";
+    const_string_piece s2 = "abcd";
+    auto b = s1 < s2;
+    ASSERT_TRUE(b);
+    s1 = "abc";
+    b = s1 < s2;
+    ASSERT_TRUE(b);
+}
+
 void test()
 {
     string_piece::mutable_string_piece str{};

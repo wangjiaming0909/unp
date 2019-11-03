@@ -29,5 +29,6 @@ enum class HTTPMethod
 
 boost::optional<HTTPMethod> stringToMethod(string_piece::const_string_piece methodName);
 
+const char* methodToString(HTTPMethod method);
 }
 #endif // _HTTP_METHOD_H_

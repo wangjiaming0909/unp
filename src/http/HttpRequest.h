@@ -4,6 +4,7 @@
 #include "net/inet_addr.h"
 #include "http/HttpMethod.h"
 #include <boost/variant/variant.hpp> 
+#include <boost/variant/get.hpp>
 #include <string>
 
 enum class HttpVersion
@@ -21,6 +22,11 @@ struct HttpRequest
     using addr_t = net::inet_addr;
     using string_t = std::string;
 
+    const char* getMethodString() const
+    {
+        return methodToString(method_);
+    }
+
     addr_t                                  clientAddr_; 
     string_t                                clientIP_;
     string_t                                clientPort_;
@@ -29,7 +35,7 @@ struct HttpRequest
     string_t                                url_;
     uint16_t                                pushStatus_;
     string_t                                pushStatusStr_;
-    boost::variant<string_t, HTTPMethod>    method_;
+    HTTPMethod                              method_;
 
     friend class HttpRequestBuilder;
 };

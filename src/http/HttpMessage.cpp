@@ -12,6 +12,28 @@ HttpMessage::HttpMessage()
 
 HttpMessage::~HttpMessage()
 {
+
+}
+
+const HttpMessage::string_t& HttpMessage::getVersionStr()
+{
+	if(version_.first == 0 && version_.second == 0)
+	{
+		return "";
+	}
+	if(versionStr_.size() > 0) return std::string("HTTP/").append(versionStr_);
+	auto format = boost::format("HTTP/%d.%d") % version_.first % version_.second;
+	return format.str();
+}
+
+std::shared_ptr<std::string> HttpMessage::buildRequestLine()
+{
+	if(message_.which() == 2) return nullptr;
+	std::shared_ptr<std::string> reqLine = std::make_shared<std::string>();
+	reqLine->append(methodToString(request().method_)).append(" ");
+	reqLine->append(request().path_).append(" ");
+	reqLine->append(getVersionStr()).append("\n");
+	return reqLine;
 }
 
 }//namespace http

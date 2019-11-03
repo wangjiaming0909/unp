@@ -4,6 +4,7 @@
 namespace net 
 {
 
+OpenSSLInitializer SSLSockStream::sslInitializer_ = OpenSSLInitializer{};
 SSLSockStream::~SSLSockStream()
 {
 	freeSSL();

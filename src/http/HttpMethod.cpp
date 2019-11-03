@@ -29,4 +29,17 @@ boost::optional<HTTPMethod> stringToMethod(string_piece::const_string_piece meth
     }
     return boost::none;
 }
+
+const char* methodToString(HTTPMethod method)
+{
+    switch(method)
+    {
+        case HTTPMethod::GET:
+            return "GET";
+        case HTTPMethod::POST:
+            return "POST";
+        default:
+            return "";
+    }
+}
 }

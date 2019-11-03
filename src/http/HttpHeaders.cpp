@@ -106,6 +106,17 @@ void HttpHeaders::add(HttpHeaderCode code, std::string&& headerValue)
     headerValues_.emplace_back(std::move(headerValue));
 }
 
+void HttpHeaders::add(HttpHeaderCode code, const_string_piece headerValue)
+{
+    if(code == HttpHeaderCode::HTTP_HEADER_NONE || code == HttpHeaderCode::HTTP_HEADER_OTHER)
+        return;
+
+    std::string value{headerValue.cbegin(), headerValue.size()};
+    codes_.push_back(code);
+    headerNames_.push_back(HttpCommomHeaders::getPointerWithHeaderCode(code));
+    headerValues_.emplace_back(std::move(value));
+}
+
 bool HttpHeaders::removeWithStdString(const std::string& headerName)
 {
     return remove(headerName);
@@ -175,6 +186,18 @@ void HttpHeaders::disposeHeaderNames()
         if(HttpHeaderCode::HTTP_HEADER_OTHER == codes_[i])
             ::free(const_cast<void*>(static_cast<const void*>(headerNames_[i])));
     }
+}
+
+std::shared_ptr<std::string> HttpHeaders::dump() const
+{
+    std::shared_ptr<std::string> ret = std::make_shared<std::string>();
+    if(headerNames_.size() == 0) return ret;
+    if(headerNames_.size() != headerValues_.size()) return ret;
+    for (size_t i = 0; i < headerNames_.size(); i++)
+    {
+        ret->append(headerNames_[i]).append(": ").append(headerValues_[i]).append("\n");
+    }
+    ret->append("\n\n");
 }
 
 const size_t HttpHeaders::INIT_VECTOR_RESERVE_SIZE = 16;

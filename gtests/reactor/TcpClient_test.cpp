@@ -4,6 +4,7 @@
 #include "reactor/connector.h"
 #include "reactor/echo_client_handler.h"
 #include "examples/HttpClientHandler.h"
+#include "examples/HttpsClientHandler.h"
 
 TEST(tcp_client, normal)
 {
@@ -51,7 +52,7 @@ TEST(tcp_client, normal)
     th1.join();
 }
 
-TEST(TCPCLIENT, Get_SHANGZHENGZHISHU)
+TEST(tcp_client, Get_SHANGZHENGZHISHU)
 {
     GTEST_SKIP();
     using namespace reactor;
@@ -152,4 +153,47 @@ TEST(httpDownloader, normal)
     std::thread th{run};
 
     th.join();
+}
+
+TEST(HttpsClientHandler, normal)
+{
+    using namespace reactor;
+    using namespace std::chrono_literals; 
+
+    tcp_client client{unp::reactor_imp_t_enum::USING_EPOLL};
+    using Connector_t = connector<examples::HttpsClientHandler>;
+
+    // net::inet_addr target_addr1{443, "61.135.169.121"};
+    net::inet_addr target_addr1{443, "119.167.143.64"};
+
+    std::string name = "downloader";
+
+    std::vector<Connector_t*> conns{};
+
+    // const char *url = "https://www.baidu.com";
+    const char *url = "https://www.baidupcs.com/rest/2.0/pcs/file?method=batchdownload&app_id=250528&zipcontent=%7B%22fs_id%22%3A%5B992917886813383%5D%7D&sign=DCb740ccc5511e5e8fedcff06b081203:GZfvNUxNdjYxcXjFJFcZx5%2Fb5Ps%3D&uid=556088867&time=1572860808&dp-logid=7114186001274374425&dp-callid=0&vuk=556088867&zipname=3DMGAME-The.Outer.Worlds.Cracked-3DM.part01.zip";
+
+    auto lambda = [&client, &conns](const char* url, net::inet_addr& addr)
+    {
+        auto* conn = client.addConnection<Connector_t>(url);
+        ASSERT_TRUE(conn != nullptr);
+        conns.push_back(conn);
+        auto* handler = conn->connect(addr, 2s);
+        if(handler == nullptr) FAIL();
+
+        auto ret = client.start();
+        client.closeConnection<Connector_t>(*conn, 1s);
+        ASSERT_TRUE(ret < 0);
+    };
+
+
+    auto run = [&]()
+    {
+        lambda(url, target_addr1);
+    };
+
+    std::thread th{run};
+
+    th.join();
+
 }

@@ -46,11 +46,12 @@ public:
     void add(const std::string& headerName, const std::string& headerValue);
     void add(const std::string& headerName, std::string&& headerValue);
     void add(HttpHeaderCode code, std::string&& headerValue);
+    void add(HttpHeaderCode code, const_string_piece headerValue);
 
     bool removeWithStdString(const std::string& headerName);
     bool remove(const_string_piece headerName);
     bool remove(HttpHeaderCode code);
-
+    std::shared_ptr<std::string> dump() const;
 
 private:
     void disposeHeaderNames();
