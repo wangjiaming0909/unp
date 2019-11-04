@@ -26,7 +26,8 @@ public:
 
     void setBufAndOpen(void* buf, Size_t size)
     {
-        if(!valid_ || isUsingConstomizedBuf_ || isUsingDefautBuf) return;
+        bytesWritten_ = 0;
+        if (!valid_ || isUsingConstomizedBuf_ || isUsingDefautBuf) return;
         fstream_.rdbuf()->pubsetbuf(static_cast<char*>(buf), size);
         fstream_.open(fileName_, fstream_.out | fstream_.in | fstream_.trunc);
         isUsingConstomizedBuf_ = true;
@@ -37,7 +38,8 @@ public:
         if(!isUsingConstomizedBuf_ && !isUsingDefautBuf) setDefaultBuffer();
         if(!valid_) return *this;
         auto streamBuf = fstream_.rdbuf();
-        streamBuf->sputn(data, size);
+        auto s = streamBuf->sputn(data, size);
+        bytesWritten_ += s;
         return *this;
     }
 
@@ -71,6 +73,6 @@ private:
     bool isUsingDefautBuf = false;
     bool isUsingConstomizedBuf_ =false;
     static const std::streamsize DEFAULTBUFFERSIZE = 10*1024*1024;
+    uint64_t bytesWritten_ = 0;
 };
-
 }

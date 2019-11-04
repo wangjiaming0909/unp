@@ -21,16 +21,16 @@ public:
     void setUrl(const char *url) { url_ = url; }
     const std::string &getUrl() const { return url_; }
 
-    int handle_input(int handle) override;
+    virtual int handle_input(int handle) override;
 
-    int open() override;
+    virtual int open() override;
     //HttpCodec::Callback methods
-    int onStatus(const char* buf, size_t len) override;
-    int onBody(const char* buf, size_t size) override;
+    virtual int onStatus(const char* buf, size_t len) override;
+    virtual int onBody(const char* buf, size_t size) override;
 
 
-private:
-    int parseUrl(const std::string &url)
+protected:
+    bool parseUrl(const std::string &url)
     {
         urlParser_.init(url);
         return urlParser_.valid();

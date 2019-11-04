@@ -177,7 +177,7 @@ int SetupRequest(http::HttpMessage& mes)
 
 TEST(HttpsClientHandler, normal)
 {
-    // GTEST_SKIP();
+    GTEST_SKIP();
     using namespace reactor;
     using namespace std::chrono_literals; 
 

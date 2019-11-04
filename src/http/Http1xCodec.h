@@ -54,6 +54,7 @@ public:
     http_parser_type parserType() const;
     bool isPaused() const;
     bool hasError() const {return hasError_;}
+    const HttpMessage& message() const {return *message_;}
 
 
 TEST_PRIVATE:
@@ -81,6 +82,6 @@ TEST_PRIVATE:
     CStringPiece_t          currentHeaderValue_;
     CodecState               state_ = CodecState::IDLE;
     bool                          hasError_ = false;
+    uint64_t contentLength_ = 0;
 };
-
 }

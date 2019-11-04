@@ -97,6 +97,11 @@ public:
         response().status_ = status;
     }
 
+    const std::string* getHeaderValue(HttpHeaderCode code) const
+    {
+        return headers_[code];
+    }
+
 private:
     HttpRequest& request()
     {

@@ -52,6 +52,12 @@ public:
     bool remove(const_string_piece headerName);
     bool remove(HttpHeaderCode code);
     std::shared_ptr<std::string> dump() const;
+    const std::string* operator[](HttpHeaderCode code) const
+    {
+        auto it = std::find(codes_.begin(), codes_.end(), code);
+        if(it == codes_.end()) return nullptr;
+        return &*(headerValues_.begin() + (it - codes_.begin()));
+    }
 
 private:
     void disposeHeaderNames();
