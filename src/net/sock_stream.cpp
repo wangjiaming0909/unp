@@ -1,4 +1,5 @@
 #include "sock_stream.h"
+#include <sys/uio.h>
 
 namespace net
 {
