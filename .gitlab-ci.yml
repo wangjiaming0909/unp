@@ -25,6 +25,7 @@ build:
   script:
     - pwd
     - cd /builds/wangjiaming0909/unp
+    - ./scripts/setup_ld.sh
     - make -j $(nproc)
     - make test -j $(nproc)
     - ./rt.sh
