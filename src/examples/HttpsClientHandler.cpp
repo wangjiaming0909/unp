@@ -3,12 +3,14 @@
 namespace examples
 {
 
-HttpsClientHandler::HttpsClientHandler(reactor::Reactor& react, const char* url) 
+HttpsClientHandler::HttpsClientHandler(reactor::Reactor& react, const char* url, MessageSetupCallback_t&& callback) 
     : connection_handler{react, true}
     , request_{}
     , urlParser_{}
     , codec_{http::HttpDirection::DOWNSTREAM}
     , url_{url}
+    , mesSetupCallback_{callback}
+    , writer_{"/tmp/unp.zip"}
 {
     codec_.setCallback(this);
     if (!parseUrl(url_))
@@ -20,13 +22,19 @@ HttpsClientHandler::HttpsClientHandler(reactor::Reactor& react, const char* url)
 
 int HttpsClientHandler::open()
 {
-    request_.setRequestMethod(http::HTTPMethod::GET);
-    request_.setHttpVersion(1, 1);
+    // request_.setRequestMethod(http::HTTPMethod::GET);
+    // request_.setHttpVersion(1, 1);
     request_.setRequestPath(urlParser_.path().cbegin());
     request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_HOST, urlParser_.host());
-    request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_USER_AGENT, USERAGENT);
-    request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT, ACCEPT);
-    request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT_ENCODING, ACCEPTENCODING);
+    // request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_USER_AGENT, USERAGENT);
+    // request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT, ACCEPT);
+    // request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT_ENCODING, ACCEPTENCODING);
+    int ret = 0;
+    if(mesSetupCallback_)
+    {
+        ret = mesSetupCallback_(request_);
+    }
+    if(ret != 0) return -1;
 
     auto messageStr = request_.buildRequestMessage();
     LOG(INFO) << *messageStr;
@@ -81,7 +89,8 @@ int HttpsClientHandler::onStatus(const char* buf, size_t len)
 
 int HttpsClientHandler::onBody(const char* buf, size_t size)
 {
-    LOG(INFO) << buf;
+    writer_.write(buf, size);
+    writer_.flush();
     return 0;
 }
 

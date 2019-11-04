@@ -3,17 +3,20 @@
 #include "http/Http1xCodec.h"
 #include "http/http_parser/URLParser.h"
 #include "http/Http1xCodec.h"
+#include "util/FileWriter.h"
 
 namespace examples
 {
 
-static string_piece::const_string_piece USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0";
-static string_piece::const_string_piece ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-static string_piece::const_string_piece ACCEPTENCODING = "gzip, deflate, br";
 
 class HttpsClientHandler : public reactor::connection_handler, public http::HttpCodec::Callback{
 public:
-    HttpsClientHandler(reactor::Reactor &react, const char *url);
+    using MessageSetupCallback_t = std::function<int(http::HttpMessage& mes)>;
+    HttpsClientHandler(reactor::Reactor &react, const char *url, MessageSetupCallback_t&& callback);
+    ~HttpsClientHandler()
+    {
+        if(writer_.isValid()) writer_.close();
+    }
 
     void setUrl(const char *url) { url_ = url; }
     const std::string &getUrl() const { return url_; }
@@ -38,5 +41,7 @@ private:
     http::URLParser urlParser_;
     http::Http1xCodec codec_;
     std::string url_;
+    MessageSetupCallback_t mesSetupCallback_;
+    utils::FileWriter writer_;
 };
 }

@@ -5,6 +5,7 @@
 #include "reactor/echo_client_handler.h"
 #include "examples/HttpClientHandler.h"
 #include "examples/HttpsClientHandler.h"
+#include "util/easylogging++.h"
 
 TEST(tcp_client, normal)
 {
@@ -155,6 +156,25 @@ TEST(httpDownloader, normal)
     th.join();
 }
 
+static string_piece::const_string_piece USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0";
+static string_piece::const_string_piece ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+static string_piece::const_string_piece ACCEPTENCODING = "gzip, deflate, br";
+static string_piece::const_string_piece ACCEPTLANGUAGE = "en-US,en;q=0.5";
+static string_piece::const_string_piece CONNECTION = "keep-alive";
+static string_piece::const_string_piece UPGRADE_INSECURE_REQUEST = "1";
+static const char* URL = "https://d11.baidupcs.com/file/cde7a2bffa229895da002ee6eb968d35?bkt=en-4d166c071887761595f0a1dcc28cd1950e766ac18491a7067532c0dd8c3ef963d120e56d7151fda3&xcode=dd3ed8191fcfbed0be28c2ebf14da789017f1bc0040e0d03587371082fe524e9c830214ff6ea44bfc1f7447f079d73159717ec4418c70769&fid=556088867-250528-1074812157753092&time=1572859687&sign=FDTAXGERLQBHSKfa-DCb740ccc5511e5e8fedcff06b081203-YC9cbIDWF9a50NxgfuecM%2FnVvR0%3D&to=d11&size=1048576000&sta_dx=1048576000&sta_cs=6206&sta_ft=rar&sta_ct=3&sta_mt=3&fm2=MH%2CYangquan%2CAnywhere%2C%2Cguangdong%2Cother&ctime=1571976868&mtime=1572019681&resv0=cdnback&resv1=0&resv2=&resv3=&resv4=1048576000&vuk=556088867&iv=0&htype=&randtype=&newver=1&newfm=1&secfm=1&flow_ver=3&pkey=en-68081b6cfceb6734477e9a421b43b956c8fe9e4237effe799fbf90cddb1065889b5bac86bae5c493&sl=76480590&expires=8h&rt=pr&r=548715997&mlogid=7137077980861615109&vbdid=4209523675&fin=3DMGAME-The.Outer.Worlds.Cracked-3DM.part23.rar&fn=3DMGAME-The.Outer.Worlds.Cracked-3DM.part23.rar&rtype=1&dp-logid=7137077980861615109&dp-callid=0.1.1&hps=1&tsl=80&csl=80&csign=ddiWqcmxmeFiDxTFrH9VH%2FlO3tY%3D&so=0&ut=6&uter=4&serv=0&uc=2392251241&ti=8525e99dbc6685b14e16db9273b3241002c09a90630ffbdf&reqlabel=250528_d&by=themis";
+
+int SetupRequest(http::HttpMessage& mes)
+{
+    mes.setHttpVersion(1, 1);
+    mes.setRequestMethod(http::HTTPMethod::GET);
+    mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_USER_AGENT, USERAGENT);
+    mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT, ACCEPT);
+    mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT_ENCODING, ACCEPTENCODING);
+    mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_CONNECTION, CONNECTION);
+    return 0;
+}
+
 TEST(HttpsClientHandler, normal)
 {
     using namespace reactor;
@@ -164,22 +184,25 @@ TEST(HttpsClientHandler, normal)
     using Connector_t = connector<examples::HttpsClientHandler>;
 
     // net::inet_addr target_addr1{443, "61.135.169.121"};
-    net::inet_addr target_addr1{443, "119.167.143.64"};
+    net::inet_addr target_addr1{443, "119.146.74.46"};
 
     std::string name = "downloader";
 
     std::vector<Connector_t*> conns{};
 
     // const char *url = "https://www.baidu.com";
-    const char *url = "https://www.baidupcs.com/rest/2.0/pcs/file?method=batchdownload&app_id=250528&zipcontent=%7B%22fs_id%22%3A%5B992917886813383%5D%7D&sign=DCb740ccc5511e5e8fedcff06b081203:GZfvNUxNdjYxcXjFJFcZx5%2Fb5Ps%3D&uid=556088867&time=1572860808&dp-logid=7114186001274374425&dp-callid=0&vuk=556088867&zipname=3DMGAME-The.Outer.Worlds.Cracked-3DM.part01.zip";
+    // const char *url = "https://www.baidupcs.com/rest/2.0/pcs/file?method=batchdownload&app_id=250528&zipcontent=%7B%22fs_id%22%3A%5B992917886813383%5D%7D&sign=DCb740ccc5511e5e8fedcff06b081203:GZfvNUxNdjYxcXjFJFcZx5%2Fb5Ps%3D&uid=556088867&time=1572860808&dp-logid=7114186001274374425&dp-callid=0&vuk=556088867&zipname=3DMGAME-The.Outer.Worlds.Cracked-3DM.part01.zip";
 
     auto lambda = [&client, &conns](const char* url, net::inet_addr& addr)
     {
-        auto* conn = client.addConnection<Connector_t>(url);
+        auto* conn = client.addConnection<Connector_t>(url, std::move(SetupRequest));
         ASSERT_TRUE(conn != nullptr);
         conns.push_back(conn);
         auto* handler = conn->connect(addr, 2s);
-        if(handler == nullptr) FAIL();
+        if(handler == nullptr) 
+        {
+            LOG(WARNING) << "connection error..." ;
+        }
 
         auto ret = client.start();
         client.closeConnection<Connector_t>(*conn, 1s);
@@ -189,7 +212,7 @@ TEST(HttpsClientHandler, normal)
 
     auto run = [&]()
     {
-        lambda(url, target_addr1);
+        lambda(URL, target_addr1);
     };
 
     std::thread th{run};

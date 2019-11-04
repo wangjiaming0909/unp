@@ -44,7 +44,7 @@ protected:
     int shared_open(SockStream &new_stream, int family,
                     int protocol, int reuse_addr)
     {
-        if (!new_stream.getHandle())
+        if (new_stream.getHandle() == INVALID_HANDLE)
         {
             if (new_stream.openSockFD(family, sock_type::stream, protocol, reuse_addr) == -1)
                 return -1;
