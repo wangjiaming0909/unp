@@ -20,6 +20,7 @@ public:
 		const char* host_name,
 		int address_family = AF_INET);
 	inet_addr(const inet_addr& rl);
+	inet_addr(const sockaddr_in& sockAddr);
 	inet_addr& operator=(const inet_addr& rl);
 	int set(host_byte_order_port port,
 		const char* host_name,

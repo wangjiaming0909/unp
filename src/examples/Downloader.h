@@ -9,6 +9,7 @@
 #include "http/http_parser/URLParser.h"
 #include "net/inet_addr.h"
 #include "examples/DownloaderHandler.h"
+#include "net/unp.h"
 
 namespace examples
 {
@@ -31,12 +32,12 @@ public:
     int getFileInfo();
     int download();
 
-private:
+TEST_PRIVATE:
     void initTcpClient();
     void retriveAddrFromUrl();
     int requestSetupCallback(http::HttpMessage &mes, http::HttpHeaderCode headerCode, const string_t& extraHeaderValue);
 
-private:
+TEST_PRIVATE:
     static constexpr char *DEFAULT_DOWNLOAD_PATH = "/tmp";
     bool isSSL_ = false;
     uint8_t connectNum_ = 1;

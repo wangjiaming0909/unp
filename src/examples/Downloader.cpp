@@ -2,6 +2,9 @@
 #include "util/easylogging++.h"
 #include "reactor/connector.h"
 #include <chrono>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 
 namespace examples
 {
@@ -27,7 +30,28 @@ Downloader::Downloader(const string_t& url)
 
 void Downloader::retriveAddrFromUrl()
 {
-    // targetAddr_ = ;
+    addrinfo* addrs = nullptr;
+
+    char host[64] = {};
+    memcpy(host, urlParser_.host().cbegin(), urlParser_.host().size());
+
+    int ret = ::getaddrinfo(host, nullptr, nullptr, &addrs);
+
+    if(addrs == nullptr)
+    {
+        LOG(ERROR) << "didn't get addrinfo: " << strerror(errno);
+    }
+
+    auto *ap = &addrs[0];
+
+    if(ap)
+    {
+        sockaddr_in* inaddr = (sockaddr_in*)(ap->ai_addr);
+        targetAddr_ = *inaddr;
+        // ap = ap->ai_next;
+    }
+
+    freeaddrinfo(addrs);
     if(isSSL_) targetAddr_.set_port_number(443);
     else targetAddr_.set_port_number(80);
 }
@@ -69,6 +93,11 @@ int Downloader::getFileInfo()
     }
     auto ret = clientPtr_->start();
 
+    if(connection->codec_.status() != 200) 
+    {
+        LOG(ERROR) << "Connect returned: " << connection->codec_.status();
+        return -1;
+    }
     fileSize_ = connection->codec_.contentLength();
     auto* cd = connection->codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_DISPOSITION);
     if(cd == nullptr) 

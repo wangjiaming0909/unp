@@ -25,6 +25,11 @@ net::inet_addr::inet_addr(host_byte_order_port port,
 }
 
 net::inet_addr::inet_addr(const inet_addr& rl) : addr(AF_INET, sizeof(in4_)), in4_(rl.in4_){ }
+net::inet_addr::inet_addr(const sockaddr_in& sockAddr)
+	: in4_{sockAddr} 
+{ 
+
+}
 
 net::inet_addr::~inet_addr() { }
 
