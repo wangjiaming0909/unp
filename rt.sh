@@ -5,6 +5,8 @@ cd gtests &&
 # ./test.out --gtest_filter=HttpsClientHandler.*
 ./test.out
 
+# ./test.out --gtest_filter=Downloader.download
+
 # ./test.out   --gtest_filter=TcpServer.*
 # ./test.out   --gtest_filter=HttpParser.*
 # ./test.out   --gtest_filter=TCPCLIENT.*

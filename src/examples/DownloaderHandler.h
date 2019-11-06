@@ -20,12 +20,14 @@ public:
         , codec_{http::HttpDirection::DOWNSTREAM}
         , mesSetupCallback_{callback}
     {
-
+        codec_.setCallback(this);
     }
 
-    ~DownloaderHandler()
+    virtual ~DownloaderHandler()
     {
-        if(fileWriterPtr_->isValid()) fileWriterPtr_->close();
+        if(fileWriterPtr_)
+            if(fileWriterPtr_->isValid())
+                fileWriterPtr_->close();
     }
 
     virtual int handle_input(int handle) override
@@ -56,7 +58,12 @@ public:
                 return -1;
             }
             assert(bytesRead == chainLen);
+            LOG(INFO) << chainLen << " bytes consumed...";
             input_buffer_.drain(chainLen);
+        }
+        if(isShouldClose_)
+        {
+            return -1;
         }
         return 0;
     }
@@ -78,21 +85,34 @@ public:
         return enable_reading();
     }
 
-    virtual int onStatus(const char* buf, size_t len) override
+    virtual int onHeadersComplete(size_t) override
     {
-        if(codec_.status() != 200)
-        {
-            LOG(WARNING) << "status is: " << codec_.status();
-            return -1;
-        }
     }
+
     virtual int onBody(const char* buf, size_t size) override
     {
+        if(fileWriterPtr_)
+        {
+            fileWriterPtr_->write(buf, size);
+            fileWriterPtr_->flush();
+        }
+        return 0;
+    }
 
+    virtual int onMessageComplete()
+    {
+        isShouldClose_ = true;
+        return 0;
+    }
+
+    void initFileWriter(const char* fileName)
+    {
+        fileWriterPtr_.reset(new utils::FileWriter{fileName});
     }
 
 
-private:
+protected:
+    bool isShouldClose_ = false;
     http::HttpMessage request_;
     http::Http1xCodec codec_;
     MessageSetupCallback_t mesSetupCallback_;

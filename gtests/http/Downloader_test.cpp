@@ -38,3 +38,17 @@ TEST(Downloader, RetriveAddrFromUrl)
     ASSERT_TRUE(downloader.targetAddr_.get_address_string().size() > 6);
     LOG(INFO) << downloader.targetAddr_.get_address_string();
 }
+
+TEST(Downloader, GetFileInfo){
+    const char* url = "https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz";
+    examples::Downloader d{url};
+    auto ret = d.getFileInfo();
+    ASSERT_EQ(ret, 0);
+}
+
+TEST(Downloader, download){
+    const char* url = "https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz";
+    examples::Downloader d{url};
+    auto ret = d.download();
+    ASSERT_EQ(ret, 0);
+}
