@@ -30,6 +30,13 @@ void URLParser::init(const_string_piece_t urlVal)
     initilized_ = true;
 }
 
+void URLParser::reset(const_string_piece_t url)
+{
+    url_ = url;
+    parse();
+    initilized_ = true;
+}
+
 void URLParser::parse()
 {
     if(!validateScheme(url_)) return;

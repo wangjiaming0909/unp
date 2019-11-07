@@ -23,6 +23,7 @@ public:
     ~URLParser();
 
     void init(const_string_piece_t urlVal);
+    void reset(const_string_piece_t url);
 
     const const_string_piece_t& url() const { return url_; }
     const const_string_piece_t& scheme() const { return scheme_; }

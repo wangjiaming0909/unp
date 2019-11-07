@@ -17,7 +17,7 @@ public:
     using String_t = std::string;
     friend class HttpParserWrapper;
 
-TEST_PRIVATE:
+public:
     enum class CodecState : uint8_t
     {
         ERROR,

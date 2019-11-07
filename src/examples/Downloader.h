@@ -45,9 +45,16 @@ TEST_PRIVATE:
     net::inet_addr targetAddr_;
     string_t url_;
     string_t fileName_;
-    string_t fileSize_;
+    uint64_t fileSize_;
     std::filesystem::path targetPath_;
     http::URLParser urlParser_;
     std::shared_ptr<reactor::tcp_client> clientPtr_;
 };
+
+static string_piece::const_string_piece USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0";
+static string_piece::const_string_piece ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+static string_piece::const_string_piece ACCEPTENCODING = "gzip, deflate, br";
+static string_piece::const_string_piece ACCEPTLANGUAGE = "en-US,en;q=0.5";
+static string_piece::const_string_piece CONNECTION = "keep-alive";
+
 }

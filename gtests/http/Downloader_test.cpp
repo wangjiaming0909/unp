@@ -38,3 +38,22 @@ TEST(Downloader, RetriveAddrFromUrl)
     ASSERT_TRUE(downloader.targetAddr_.get_address_string().size() > 6);
     LOG(INFO) << downloader.targetAddr_.get_address_string();
 }
+
+TEST(Downloader, GetFileInfo)
+{
+    examples::Downloader downloader{""};
+    auto ret = downloader.getFileInfo();
+    ASSERT_TRUE(ret == -1);
+}
+
+TEST(Downloader, GetFileInfo2)
+{
+    GTEST_SKIP();
+    examples::Downloader d{"https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.tar.gz"};
+    // examples::Downloader d{"https://github.com/wangjiaming0909/unp/archive/master.zip"};
+    auto ret = d.getFileInfo();
+    // ASSERT_TRUE(d.fileName_ == "boost_1_71_0.tar.gz");
+    ASSERT_EQ(ret , 0);
+    ret = d.download();
+    ASSERT_EQ(ret , 0);
+}

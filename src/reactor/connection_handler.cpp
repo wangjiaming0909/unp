@@ -52,7 +52,7 @@ int connection_handler::handle_input(int handle)
     if (ret < 0)
     {
         LOG(ERROR) << "Read error: " << strerror(errno);
-        return 0;
+        return -1;
     }
     if (ret == 0)
     {

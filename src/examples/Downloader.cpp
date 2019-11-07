@@ -18,7 +18,7 @@ Downloader::Downloader(const string_t& url)
     , urlParser_{}
     , clientPtr_{nullptr}
 {
-    urlParser_.init(url);
+    urlParser_.init(url_);
     if(!urlParser_.valid())
     {
         url_ = "";
@@ -57,7 +57,7 @@ void Downloader::retriveAddrFromUrl()
 }
 
 void Downloader::initTcpClient()
-{
+{    
     if(urlParser_.scheme() == "https")
     {
         isSSL_ = true;
@@ -65,25 +65,67 @@ void Downloader::initTcpClient()
         isSSL_ = false;
     }else{
         LOG(WARNING) << "unsuported scheme...";
-        return;
     }
     clientPtr_.reset(new reactor::tcp_client{unp::reactor_imp_t_enum::USING_EPOLL});
 }
 
 int Downloader::download()
 {
+    if(!urlParser_.valid()) return -1;
+    using namespace std::chrono_literals;
 
+    int r = 0;
+
+    std::string range1 = "bytes=0-";
+    range1.append(std::to_string(fileSize_/2));
+
+    std::string range2 = "bytes=";
+    range2.append(std::to_string(fileSize_/2 + 1)).append("-").append(std::to_string(fileSize_));
+
+    auto callback1 = std::bind(&Downloader::requestSetupCallback, this, std::placeholders::_1, http::HttpHeaderCode::HTTP_HEADER_RANGE, range1);
+    auto callback2 = std::bind(&Downloader::requestSetupCallback, this, std::placeholders::_1, http::HttpHeaderCode::HTTP_HEADER_RANGE, range2);
+    auto* connector1 = clientPtr_->addConnection<Connector_t>(std::move(callback1), isSSL_);
+    auto* connector2 = clientPtr_->addConnection<Connector_t>(std::move(callback2), isSSL_);
+
+    auto* connection1 = connector1->connect(targetAddr_, 2s);
+    auto* connection2 = connector2->connect(targetAddr_, 2s);
+    if(connection1 == nullptr || connection2 == nullptr)
+    {
+        LOG(ERROR) << "connect failed...";
+        return -1;
+    }
+    connection1->setWhenToCloseConnection(http::Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
+    connection2->setWhenToCloseConnection(http::Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
+    connection1->initWriter((fileName_ + "1").c_str());
+    connection2->initWriter((fileName_ + "2").c_str());
+    auto ret = clientPtr_->start();
+    clientPtr_->closeConnection<Connector_t>(*connector1, 2s);
+    clientPtr_->closeConnection<Connector_t>(*connector2, 2s);
+    return ret;
 }
 
 int Downloader::requestSetupCallback(http::HttpMessage &mes, http::HttpHeaderCode code, const string_t& extraHeaderValue)
 {
+    mes.setHttpVersion(1, 1);
+    mes.setRequestPath(urlParser_.path().cbegin());
+    mes.setRequestMethod(http::HTTPMethod::GET);
+    mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_HOST, urlParser_.host());
+    mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_USER_AGENT, USERAGENT);
+    mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT, ACCEPT);
+    mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT_ENCODING, ACCEPTENCODING);
+    // mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_CONNECTION, CONNECTION);
+    if(code != http::HttpHeaderCode::HTTP_HEADER_NONE) mes.addHeader(code, extraHeaderValue);
     return 0;
 }
 
 int Downloader::getFileInfo()
 {
+    if(!urlParser_.valid()) return -1;
     using namespace std::chrono_literals;
-    auto callback = std::bind(&Downloader::requestSetupCallback, this, std::placeholders::_1, http::HttpHeaderCode::HTTP_HEADER_RANGE, "bytes=1-1");
+
+    int r = 0;
+
+    auto callback = std::bind(&Downloader::requestSetupCallback, this, std::placeholders::_1, http::HttpHeaderCode::HTTP_HEADER_NONE, "");
     auto* connector = clientPtr_->addConnection<Connector_t>(std::move(callback), isSSL_);
     auto* connection = connector->connect(targetAddr_, 2s);
     if(connection == nullptr)
@@ -91,27 +133,53 @@ int Downloader::getFileInfo()
         LOG(ERROR) << "connect failed...";
         return -1;
     }
+    connection->setWhenToCloseConnection(http::Http1xCodec::CodecState::ON_HEADERS_COMPLETE);
     auto ret = clientPtr_->start();
 
-    if(connection->codec_.status() != 200) 
+    auto status = connection->codec_.status();
+
+    if(status != 200) 
     {
         LOG(ERROR) << "Connect returned: " << connection->codec_.status();
-        return -1;
     }
-    fileSize_ = connection->codec_.contentLength();
-    auto* cd = connection->codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_DISPOSITION);
-    if(cd == nullptr) 
+
+    if(status == 302)
     {
-        LOG(WARNING) << "get fileName error...";
-        fileName_ = "DEFAULTFILENAME.unp";
+        auto *location = connection->codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_LOCATION);
+        if(location == nullptr)
+        {
+            LOG(WARNING) << "server returned 302, but no LOCATION header...";
+            return -1;
+        }
+        url_ = *location;
+        urlParser_.reset(url_);
+        retriveAddrFromUrl();
+        return getFileInfo();
     }
-    else
+
+    if(status == 200)
     {
-        fileName_ = std::string{cd->begin() + strlen("attachment;"), cd->end()};
+        fileSize_ = connection->codec_.contentLength();
+        auto* cd = connection->codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_DISPOSITION);
+        if(cd == nullptr) 
+        {
+            LOG(WARNING) << "get fileName error...";
+            fileName_ = "DEFAULTFILENAME.unp";
+        }
+        else
+        {
+            fileName_ = std::string{cd->begin() + strlen("attachment; filename="), cd->end() - 1};
+            LOG(INFO) << "fileName: " << fileName_;
+            LOG(INFO) << "fileSize: " << fileSize_;
+        }
+        r = 0;
+    }else
+    {
+        r = -1;
     }
 
     clientPtr_->closeConnection<Connector_t>(*connector, 1s);
-    return 0;
+    return r;
 }
 
 Downloader::~Downloader()
