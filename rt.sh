@@ -4,6 +4,7 @@ cd gtests &&
 # ./test.out --gtest_filter=httpDownloader.*
 # ./test.out --gtest_filter=HttpsClientHandler.*
 # ./test.out --gtest_filter=Downloader.GetFileInfo2
+# ./test.out --gtest_filter=Downloader.DivideRanges
 ./test.out
 
 # ./test.out   --gtest_filter=TcpServer.*

@@ -36,6 +36,8 @@ TEST_PRIVATE:
     void initTcpClient();
     void retriveAddrFromUrl();
     int requestSetupCallback(http::HttpMessage &mes, http::HttpHeaderCode headerCode, const string_t& extraHeaderValue);
+	std::vector<std::string> divideRanges(uint8_t n);
+	std::vector<Connector_t*> rangeDownload(uint8_t n, const std::vector<std::string>& ranges);
 
 TEST_PRIVATE:
     static constexpr char *DEFAULT_DOWNLOAD_PATH = "/tmp";

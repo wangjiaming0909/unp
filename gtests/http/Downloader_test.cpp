@@ -49,11 +49,28 @@ TEST(Downloader, GetFileInfo)
 TEST(Downloader, GetFileInfo2)
 {
     GTEST_SKIP();
-    examples::Downloader d{"https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.tar.gz"};
+    // examples::Downloader d{"https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.tar.gz"};
+    examples::Downloader d{"http://d1.music.126.net/dmusic/netease-cloud-music_1.2.1_amd64_ubuntu_20190428.deb"};
     // examples::Downloader d{"https://github.com/wangjiaming0909/unp/archive/master.zip"};
     auto ret = d.getFileInfo();
     // ASSERT_TRUE(d.fileName_ == "boost_1_71_0.tar.gz");
     ASSERT_EQ(ret , 0);
     ret = d.download();
     ASSERT_EQ(ret , 0);
+}
+
+TEST(Downloader, DivideRanges)
+{
+    examples::Downloader d{"https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.tar.gz"};
+	d.fileSize_ = 99;
+	auto ranges = d.divideRanges(2);
+	ASSERT_EQ(ranges.size(), 2);
+	ASSERT_TRUE(ranges[0] == "bytes=0-49");
+	ASSERT_TRUE(ranges[1] == "bytes=50-99");
+
+	ranges = d.divideRanges(3);
+	ASSERT_EQ(ranges.size(), 3);
+	ASSERT_TRUE(ranges[0] == "bytes=0-33");
+	ASSERT_TRUE(ranges[1] == "bytes=34-67");
+	ASSERT_TRUE(ranges[2] == "bytes=68-99");
 }

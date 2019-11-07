@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <vector>
 
 namespace examples
 {
@@ -69,6 +70,69 @@ void Downloader::initTcpClient()
     clientPtr_.reset(new reactor::tcp_client{unp::reactor_imp_t_enum::USING_EPOLL});
 }
 
+std::vector<std::string> Downloader::divideRanges(uint8_t n)
+{
+	std::vector<std::string> ranges{};
+	if(fileSize_ <= 0) return ranges;
+	ranges.resize(n);
+	uint64_t start = 0;
+	uint64_t stop = -1;
+	for(uint8_t i = 0; i < n - 1; i++)
+	{
+		start = stop + 1;
+		stop = start + fileSize_ / n;
+		ranges[i].append("bytes=").append(std::to_string(start)).append("-").append(std::to_string(stop));
+	}
+	start = stop + 1;
+	ranges[n - 1].append("bytes=").append(std::to_string(start)).append("-").append(std::to_string(fileSize_));
+	return ranges;
+}
+
+std::vector<Downloader::Connector_t*> Downloader::rangeDownload(uint8_t n, const std::vector<std::string>& ranges)
+{
+	std::vector<Connector_t*> ret{};
+	if(n != ranges.size()) return ret;
+	ret.resize(n);
+	for(uint8_t i = 0; i < n; i++)
+	{
+		auto callback = std::bind(&Downloader::requestSetupCallback, this, std::placeholders::_1, http::HttpHeaderCode::HTTP_HEADER_RANGE, ranges[i]);
+		auto* connector = clientPtr_->addConnection<Connector_t>(std::move(callback), isSSL_);
+		auto* connection = connector->connect(targetAddr_, 2s);
+		if(connection == nullptr)
+		{
+			LOG(ERROR)	 << "connect failed...";
+			return ret;
+		}
+		connection->setWhenToCloseConnection(http::Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
+		connection->initWriter((fileName_.append(std::to_string(i))).c_str());
+		ret[i] = connector;
+	}
+	return ret;
+}
+
+
+int Downloader::download()
+{
+    if(!urlParser_.valid()) return -1;
+    using namespace std::chrono_literals;
+	
+	uint8_t n = 6;
+	
+	auto ranges = divideRanges(n);
+	if(ranges.size() == 0) return -1;
+	auto connectors = rangeDownload(n, ranges);
+	clientPtr_->start();
+
+	for(uint8_t i = 0; i < n; i++)
+	{
+		if(connectors[i] != nullptr)
+		{
+			clientPtr_->closeConnection<Connector_t>(*connectors[i], 1s);
+		}
+	}
+}
+
+/*
 int Downloader::download()
 {
     if(!urlParser_.valid()) return -1;
@@ -103,6 +167,7 @@ int Downloader::download()
     clientPtr_->closeConnection<Connector_t>(*connector2, 2s);
     return ret;
 }
+*/
 
 int Downloader::requestSetupCallback(http::HttpMessage &mes, http::HttpHeaderCode code, const string_t& extraHeaderValue)
 {
