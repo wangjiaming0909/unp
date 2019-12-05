@@ -101,6 +101,7 @@ public:
     {
         return headers_[code];
     }
+    bool hasHeader(HttpHeaderCode code) const;
 
 private:
     HttpRequest& request()

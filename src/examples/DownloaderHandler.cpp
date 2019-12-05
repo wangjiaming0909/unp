@@ -25,6 +25,7 @@ int DownloaderHandler::handle_input(int handle)
         if(data != nullptr && chainLen != 0)
         {
             std::string s{static_cast<char*>(data), chainLen};
+            LOG(INFO) << "received len: " << s.size();
             LOG(INFO) << "----------------received: " << s;
         }
         string_piece::const_string_piece sp{static_cast<const char*>(data), chainLen};

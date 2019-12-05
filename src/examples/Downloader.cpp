@@ -29,6 +29,10 @@ Downloader::Downloader(const string_t& url)
     retriveAddrFromUrl();
 }
 
+Downloader::~Downloader()
+{
+}
+
 void Downloader::retriveAddrFromUrl()
 {
     addrinfo* addrs = nullptr;
@@ -116,10 +120,13 @@ int Downloader::download()
     if(!urlParser_.valid()) return -1;
     using namespace std::chrono_literals;
 	
-	uint8_t n = 6;
-	
+
+	uint8_t n = 2;
 	auto ranges = divideRanges(n);
-	if(ranges.size() == 0) return -1;
+	if(ranges.size() == 0)
+    {
+        return -1;
+    } 
 	auto connectors = rangeDownload(n, ranges);
 	clientPtr_->start();
 
@@ -210,6 +217,11 @@ int Downloader::getFileInfo()
 
     if(status == 302)
     {
+        if(connection->codec_.message().hasHeader(http::HttpHeaderCode::HTTP_HEADER_CONTENT_LENGTH))
+        {
+            fileSize_ = connection->codec_.contentLength();
+        }
+        // else if(connection->codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING)))
         auto *location = connection->codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_LOCATION);
         if(location == nullptr)
         {
@@ -224,7 +236,10 @@ int Downloader::getFileInfo()
 
     if(status == 200)
     {
-        fileSize_ = connection->codec_.contentLength();
+        if(connection->codec_.message().hasHeader(http::HttpHeaderCode::HTTP_HEADER_CONTENT_LENGTH))
+        {
+            fileSize_ = connection->codec_.contentLength();
+        }
         auto* cd = connection->codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_DISPOSITION);
         if(cd == nullptr) 
         {
@@ -247,7 +262,4 @@ int Downloader::getFileInfo()
     return r;
 }
 
-Downloader::~Downloader()
-{
-}
 }

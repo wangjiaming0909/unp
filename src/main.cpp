@@ -7,8 +7,8 @@ INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char** argv)
 {
+    server_scoped_helper s_h{argc, argv};
     examples::Downloader d{"https://github.com/wangjiaming0909/unp/archive/master.zip"};
     d.getFileInfo();
     d.download();
-    server_scoped_helper s_h{argc, argv};
 }

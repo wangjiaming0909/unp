@@ -20,4 +20,4 @@ myeasylog.log
 unp.cxxflags
 unp.cflags
 compile_commands.json
-.clangd/**
+**/.clangd/**

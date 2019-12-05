@@ -36,4 +36,10 @@ std::shared_ptr<std::string> HttpMessage::buildRequestLine()
 	return reqLine;
 }
 
+    bool HttpMessage::hasHeader(HttpHeaderCode code) const
+    {
+        auto value = headers_[code];
+        return value != nullptr;
+    }
+
 }//namespace http
