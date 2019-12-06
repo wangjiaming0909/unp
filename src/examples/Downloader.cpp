@@ -114,12 +114,20 @@ std::vector<Downloader::Connector_t*> Downloader::rangeDownload(uint8_t n, const
 	return ret;
 }
 
+int Downloader::downloadChunked()
+{
+
+}
 
 int Downloader::download()
 {
     if(!urlParser_.valid()) return -1;
     using namespace std::chrono_literals;
 	
+    if(isChunked_) 
+    {
+        return downloadChunked();
+    }
 
 	uint8_t n = 2;
 	auto ranges = divideRanges(n);
@@ -209,6 +217,7 @@ int Downloader::getFileInfo()
     auto ret = clientPtr_->start();
 
     auto status = connection->codec_.status();
+    auto& message = connection->codec_.message();
 
     if(status != 200) 
     {
@@ -217,15 +226,16 @@ int Downloader::getFileInfo()
 
     if(status == 302)
     {
-        if(connection->codec_.message().hasHeader(http::HttpHeaderCode::HTTP_HEADER_CONTENT_LENGTH))
+        if(message.hasHeader(http::HttpHeaderCode::HTTP_HEADER_CONTENT_LENGTH))
         {
             fileSize_ = connection->codec_.contentLength();
         }
         // else if(connection->codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING)))
-        auto *location = connection->codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_LOCATION);
+        auto *location = message.getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_LOCATION);
         if(location == nullptr)
         {
             LOG(WARNING) << "server returned 302, but no LOCATION header...";
+            clientPtr_->closeConnection<Connector_t>(*connector, 1s);
             return -1;
         }
         url_ = *location;
@@ -236,11 +246,18 @@ int Downloader::getFileInfo()
 
     if(status == 200)
     {
-        if(connection->codec_.message().hasHeader(http::HttpHeaderCode::HTTP_HEADER_CONTENT_LENGTH))
+        if(message.hasHeader(http::HttpHeaderCode::HTTP_HEADER_CONTENT_LENGTH))
         {
             fileSize_ = connection->codec_.contentLength();
         }
-        auto* cd = connection->codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_DISPOSITION);
+        if(message.hasHeader(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING))
+        {
+            if(*message.getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING) == "chunked")
+            {
+                isChunked_ = true;
+            }
+        }
+        auto* cd = message.getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_DISPOSITION);
         if(cd == nullptr) 
         {
             LOG(WARNING) << "get fileName error...";

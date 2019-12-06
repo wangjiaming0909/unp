@@ -33,6 +33,7 @@ public:
     int download();
 
 TEST_PRIVATE:
+    int downloadChunked();
     void initTcpClient();
     void retriveAddrFromUrl();
     int requestSetupCallback(http::HttpMessage &mes, http::HttpHeaderCode headerCode, const string_t& extraHeaderValue);

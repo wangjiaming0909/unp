@@ -7,7 +7,7 @@
             "request":"launch",
             "program": "${workspaceFolder}/gtests/test.out",
             "args": [
-                "--gtest_filter=httpDownloader.*"
+                "--gtest_filter=Downloader.*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
