@@ -48,9 +48,16 @@ int connection_handler::handle_input(int handle)
 	 */
     recv_buf_size = recv_buf_size == 0 ? 4096 : recv_buf_size;
 
+    stream_->setNonBolcking();
     int ret = stream_->read(input_buffer_, recv_buf_size);
+    stream_->restoreBlocking();
     if (ret < 0)
     {
+        if(errno == EAGAIN)
+        {
+            // LOG(INFO) << "Read got EAGAIN...";
+            return 0;
+        } 
         LOG(ERROR) << "Read error: " << strerror(errno);
         return -1;
     }

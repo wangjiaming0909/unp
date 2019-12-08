@@ -9,6 +9,7 @@
 
 namespace examples
 {
+const std::string Downloader::DEFAULT_FILE_NAME = "unp.unp";
 
 Downloader::Downloader(const string_t& url)
     : targetAddr_{}
@@ -114,7 +115,7 @@ std::vector<Downloader::Connector_t*> Downloader::rangeDownload(uint8_t n, const
 	return ret;
 }
 
-int Downloader::downloadChunked()
+void Downloader::chunkDownload()
 {
 
 }
@@ -123,15 +124,12 @@ int Downloader::download()
 {
     if(!urlParser_.valid()) return -1;
     using namespace std::chrono_literals;
-	
-    if(isChunked_) 
-    {
-        return downloadChunked();
-    }
+    
+    if(isChunked_) return chunkDownload();
 
-	uint8_t n = 2;
-	auto ranges = divideRanges(n);
-	if(ranges.size() == 0)
+    uint8_t n = 2;
+    auto ranges = divideRanges(n);
+    if(ranges.size() == 0)
     {
         return -1;
     } 
@@ -145,6 +143,7 @@ int Downloader::download()
 			clientPtr_->closeConnection<Connector_t>(*connectors[i], 1s);
 		}
 	}
+	return 0;
 }
 
 /*
@@ -254,6 +253,7 @@ int Downloader::getFileInfo()
         {
             if(*message.getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING) == "chunked")
             {
+                LOG(WARNING) << "should not be chuncked...";
                 isChunked_ = true;
             }
         }
@@ -261,11 +261,11 @@ int Downloader::getFileInfo()
         if(cd == nullptr) 
         {
             LOG(WARNING) << "get fileName error...";
-            fileName_ = "DEFAULTFILENAME.unp";
+            fileName_ = DEFAULT_FILE_NAME;
         }
         else
         {
-            fileName_ = std::string{cd->begin() + strlen("attachment; filename="), cd->end() - 1};
+            retriveFileNameFromContentDisposition(*cd);
             LOG(INFO) << "fileName: " << fileName_;
             LOG(INFO) << "fileSize: " << fileSize_;
         }
@@ -279,4 +279,25 @@ int Downloader::getFileInfo()
     return r;
 }
 
+void Downloader::retriveFileNameFromContentDisposition(const std::string& cd)
+{
+    // fileName_ = std::string{cd.begin() + strlen("attachment; filename="), cd.end() - 1};
+    auto it = std::find(cd.begin(), cd.end(), '=');
+    if(it == cd.end())
+    {
+        LOG(WARNING) << "Unknown content disposition...";
+        fileName_ = DEFAULT_FILE_NAME;
+    }
+    std::string::const_iterator begin = ++it;
+    std::string::const_iterator end = cd.end();
+    if (*(it) == '"' || *(it) == '\'')
+    {
+        begin = ++it;
+    }
+    if(cd.back() == '"' || cd.back() == '\'')
+    {
+        end--;
+    }
+    fileName_ = std::string{begin, end};
+}
 }

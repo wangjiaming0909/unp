@@ -33,15 +33,17 @@ public:
     int download();
 
 TEST_PRIVATE:
-    int downloadChunked();
     void initTcpClient();
+    void chunkDownload();
     void retriveAddrFromUrl();
-    int requestSetupCallback(http::HttpMessage &mes, http::HttpHeaderCode headerCode, const string_t& extraHeaderValue);
-	std::vector<std::string> divideRanges(uint8_t n);
-	std::vector<Connector_t*> rangeDownload(uint8_t n, const std::vector<std::string>& ranges);
+    int requestSetupCallback(http::HttpMessage &mes, http::HttpHeaderCode headerCode, const string_t &extraHeaderValue);
+    std::vector<std::string> divideRanges(uint8_t n);
+    std::vector<Connector_t *> rangeDownload(uint8_t n, const std::vector<std::string> &ranges);
+    void retriveFileNameFromContentDisposition(const std::string &cd);
 
-TEST_PRIVATE:
+TEST_PRIVATE: 
     static constexpr char *DEFAULT_DOWNLOAD_PATH = "/tmp";
+    static const std::string DEFAULT_FILE_NAME;
     bool isSSL_ = false;
     uint8_t connectNum_ = 1;
     uint8_t threadNum_ = 1;
@@ -56,8 +58,9 @@ TEST_PRIVATE:
 };
 
 static string_piece::const_string_piece USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0";
-static string_piece::const_string_piece ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
-static string_piece::const_string_piece ACCEPTENCODING = "gzip, deflate, br";
+static string_piece::const_string_piece ACCEPT = "*/*";
+// static string_piece::const_string_piece ACCEPTENCODING = "gzip, deflate, br";
+static string_piece::const_string_piece ACCEPTENCODING = "identity";
 static string_piece::const_string_piece ACCEPTLANGUAGE = "en-US,en;q=0.5";
 static string_piece::const_string_piece CONNECTION = "keep-alive";
 

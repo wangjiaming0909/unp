@@ -51,7 +51,7 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
     }
     else if(n > 0)
     {
-        LOG(INFO) << n << " handle(s) ready...";
+        // LOG(INFO) << n << " handle(s) ready...";
         n = this->dispatch(n);
     }
     return 0;
@@ -75,7 +75,7 @@ int epoll_reactor_impl::register_handler(int handle, EventHandler *handler, Even
 {
     // std::lock_guard<std::mutex> guard(mutex_);
 
-    LOG(INFO) << "Registering handler, handle: " << handle << " event: " << event_type_to_string(type);
+    // LOG(INFO) << "Registering handler, handle: " << handle << " event: " << event_type_to_string(type);
     if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "Handle error or registered type error...";
         return -1;
@@ -128,7 +128,7 @@ int epoll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Ev
 {
     // std::lock_guard<std::mutex> guard(mutex_);
 
-    LOG(INFO) << "Unregistering handler, handle: " << handle << " event: " << event_type_to_string(type);
+    // LOG(INFO) << "Unregistering handler, handle: " << handle << " event: " << event_type_to_string(type);
     if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "Handle error or unregistered type error...";
         return -1;
@@ -158,7 +158,7 @@ int epoll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Ev
 
 int epoll_reactor_impl::epoll_wait(int milliseconds)
 {
-    LOG(INFO) << "Epoll waiting...";
+    // LOG(INFO) << "Epoll waiting...";
     {
         // std::lock_guard<std::mutex> guard(mutex_);
         ret_events_.clear();
@@ -234,7 +234,7 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
         
         handles_dispatched++;
 
-        LOG(INFO) << "Dispatching handle: " << current_fd << " event: " << event_type_to_string(type);
+        // LOG(INFO) << "Dispatching handle: " << current_fd << " event: " << event_type_to_string(type);
 
 
         EventHandler* handler = demux_table_.get_handler(current_fd, type);
@@ -244,7 +244,7 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
 
         if(ret < 0 && (handler != nullptr))
         {
-            LOG(INFO) << "Unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
+            // LOG(INFO) << "Unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
 
             if(type == EventHandler::READ_EVENT)
             {
@@ -256,7 +256,7 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
         } 
         else
         {
-            LOG(INFO) <<"Keep listening on handle: " << current_fd << " event: " << event_type_to_string(type);
+            // LOG(INFO) <<"Keep listening on handle: " << current_fd << " event: " << event_type_to_string(type);
         }
         bool isHasHandle = demux_table_.has_handle(current_fd);
         if(!isHasHandle && (handler != nullptr))
