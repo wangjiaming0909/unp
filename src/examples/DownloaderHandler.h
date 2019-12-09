@@ -61,5 +61,7 @@ private:
     http::Http1xCodec codec_;
     MessageSetupCallback_t mesSetupCallback_;
     std::shared_ptr<utils::FileWriter> fileWriterPtr_;
+    bool isChunked_ = false;
+    uint64_t fileSize_ = 0;
 };
 }

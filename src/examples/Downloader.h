@@ -34,7 +34,7 @@ public:
 
 TEST_PRIVATE:
     void initTcpClient();
-    void chunkDownload();
+    int chunkDownload();
     void retriveAddrFromUrl();
     int requestSetupCallback(http::HttpMessage &mes, http::HttpHeaderCode headerCode, const string_t &extraHeaderValue);
     std::vector<std::string> divideRanges(uint8_t n);

@@ -115,7 +115,7 @@ std::vector<Downloader::Connector_t*> Downloader::rangeDownload(uint8_t n, const
 	return ret;
 }
 
-void Downloader::chunkDownload()
+int Downloader::chunkDownload()
 {
 
 }

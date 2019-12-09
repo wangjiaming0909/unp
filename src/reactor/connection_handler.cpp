@@ -56,6 +56,7 @@ int connection_handler::handle_input(int handle)
         if(errno == EAGAIN)
         {
             // LOG(INFO) << "Read got EAGAIN...";
+            errno = 0;
             return 0;
         } 
         LOG(ERROR) << "Read error: " << strerror(errno);

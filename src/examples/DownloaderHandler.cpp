@@ -1,4 +1,6 @@
 #include "examples/DownloaderHandler.h"
+#include "http/HttpCodec.h"
+#include "http/gperf/HttpHeaderCode.h"
 
 namespace examples
 {
@@ -14,6 +16,8 @@ int DownloaderHandler::handle_input(int handle)
     if(input_buffer_.buffer_length() == 0) 
     {
         LOG(INFO) << "didn't get any data...";
+        if(isShouldClose_) 
+            return -1;
         return 0;
     }
 
@@ -40,7 +44,8 @@ int DownloaderHandler::handle_input(int handle)
         input_buffer_.drain(chainLen);
         // LOG(INFO) << "Consumed " << chainLen << " bytes...";
     }
-    if(isShouldClose_) return -1;
+    if(isShouldClose_) 
+        return -1;
     return 0;
 }
 
@@ -61,15 +66,32 @@ int DownloaderHandler::open()
     return enable_reading();
 }
 
-int DownloaderHandler::onStatus(const char* buf, size_t len)
+int DownloaderHandler::onStatus(const char* /*buf*/, size_t /*len*/)
 {
-    // if(codec_.status() != 200)
+    // if(codec_.status() == 302)
     // {
     //     LOG(WARNING) << "status is: " << codec_.status();
+    //     auto* location = codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_LOCATION);
+    //     if(location == nullptr) 
+    //     {
+    //         LOG(WARNING) << "server returned 302, but no location header...";
+    //         return -1;
+    //     }
+        
     //     return -1;
+    // }else if(codec_.status() == 200)
+    // {
+    //     if(codec_.message().hasHeader(http::HttpHeaderCode::HTTP_HEADER_CONTENT_LENGTH))
+    //     {
+    //         fileSize_ = codec_.contentLength();
+    //     }else if(*(codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING)) == "chunked")
+    //     {
+    //         isChunked_ = true;
+    //     }
     // }
     return 0;
 }
+
 int DownloaderHandler::onBody(const char* buf, size_t size)
 {
     if(fileWriterPtr_)
