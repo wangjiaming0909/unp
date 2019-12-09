@@ -28,9 +28,9 @@ int DownloaderHandler::handle_input(int handle)
         auto chainLen = firstChain.size();
         if(data != nullptr && chainLen != 0)
         {
-            // std::string s{static_cast<char*>(data), chainLen};
-            // LOG(INFO) << "received len: " << s.size();
-            // LOG(INFO) << "----------------received: " << s;
+            std::string s{static_cast<char*>(data), chainLen};
+            //LOG(INFO) << "received len: " << s.size();
+            LOG(INFO) << "----------------received: " << s;
         }
         string_piece::const_string_piece sp{static_cast<const char*>(data), chainLen};
         size_t bytesRead = codec_.onIngress(sp);
@@ -94,6 +94,12 @@ int DownloaderHandler::onStatus(const char* /*buf*/, size_t /*len*/)
 
 int DownloaderHandler::onBody(const char* buf, size_t size)
 {
+    if(usingRangeDownload_ && !codec_.message().hasHeader(http::HttpHeaderCode::HTTP_HEADER_CONTENT_RANGE))
+    {
+        isShouldClose_ = true;
+        return -1;
+    }
+    bytesDownloaded_ += size;
     if(fileWriterPtr_)
     {
         fileWriterPtr_->write(buf, size);

@@ -54,6 +54,13 @@ public:
     int onChunkHeader(size_t len) override;
     int onChunkComplete() override;
 
+    void setDownloadRange(uint64_t begin, uint64_t end)
+    {
+        usingRangeDownload_ = true;
+       rangeBegin_ = begin;
+       rangeEnd_ = end;
+    }
+
 private:
     http::Http1xCodec::CodecState whenToClose_ = http::Http1xCodec::CodecState::IDLE;
     bool isShouldClose_ = false;
@@ -61,7 +68,10 @@ private:
     http::Http1xCodec codec_;
     MessageSetupCallback_t mesSetupCallback_;
     std::shared_ptr<utils::FileWriter> fileWriterPtr_;
-    bool isChunked_ = false;
+    bool usingRangeDownload_ = false;
     uint64_t fileSize_ = 0;
+    uint64_t rangeBegin_ = 0;
+    uint64_t rangeEnd_ = 0;
+    uint64_t bytesDownloaded_ = 0;
 };
 }

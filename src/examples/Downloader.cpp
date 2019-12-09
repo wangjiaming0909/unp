@@ -108,6 +108,7 @@ std::vector<Downloader::Connector_t*> Downloader::rangeDownload(uint8_t n, const
 			LOG(ERROR)	 << "connect failed...";
 			return ret;
 		}
+//        connection->setDownloadRange(ranges
 		connection->setWhenToCloseConnection(http::Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
 		connection->initWriter((fileName_.append(std::to_string(i))).c_str());
 		ret[i] = connector;
@@ -117,7 +118,18 @@ std::vector<Downloader::Connector_t*> Downloader::rangeDownload(uint8_t n, const
 
 int Downloader::chunkDownload()
 {
-
+    auto callback = std::bind(&Downloader::requestSetupCallback, this, std::placeholders::_1, http::HttpHeaderCode::HTTP_HEADER_NONE, "");
+    auto* connector = clientPtr_->addConnection<Connector_t>(std::move(callback), isSSL_);
+    auto* connection = connector->connect(targetAddr_, 2s);
+    if(connection == nullptr)
+    {
+        LOG(ERROR)	 << "connect failed...";
+        return -1;
+    }
+    connection->setWhenToCloseConnection(http::Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
+    connection->initWriter(fileName_.c_str());
+    clientPtr_->start();
+    return 0;
 }
 
 int Downloader::download()
