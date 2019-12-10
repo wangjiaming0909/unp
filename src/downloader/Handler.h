@@ -3,30 +3,36 @@
 #include "http/Http1xCodec.h"
 #include "http/HttpMessage.h"
 #include "http/http_parser/URLParser.h"
+#include "util/FileWriter.h"
+
+#include <memory>
 
 namespace downloader
 {
+
+class Download;
 class Handler : public reactor::connection_handler, public http::HttpCodec::Callback
 {
-
-enum class HandlerStatus
-{
-    IDLE = 0,
-    REQUEST_SENT,
-    RECEIVED302,
-    NEW_LOCATION_GOT,
-	RECV302_WITHOUT_NEW_LOCATION,
-    RECEIVED200,
-	CHUNK_ENCODING,
-	NOT_RESPONDING_TO_RANGE,
-	RANGE_NOT_MATCH,
-	RANGE_MATCH,
-	PARTIALLY_DATA_GOT,
-	NO_CONTENT_DISPOSITION
-};
+public:
+    friend class Download;
+    enum class HandlerStatus
+    {
+        IDLE = 0,
+        REQUEST_SENT,
+        RECEIVED302,
+        NEW_LOCATION_GOT,
+        RECV302_WITHOUT_NEW_LOCATION,
+        RECEIVED200,
+        CHUNK_ENCODING,
+        NOT_RESPONDING_TO_RANGE,
+        RANGE_NOT_MATCH,
+        RANGE_MATCH,
+        PARTIALLY_DATA_GOT,
+        NO_CONTENT_DISPOSITION
+    };
 
 public:
-    Handler(reactor::Reactor& react, const std::string& url);
+    Handler(reactor::Reactor& react, const std::string& url, bool isSSL);
     virtual ~Handler() = default;
 
     virtual int handle_input(int handle) override;
@@ -46,6 +52,16 @@ public:
        usingRangeDownload_ = true;
        rangeBegin_ = begin;
        rangeEnd_ = end;
+    }
+    uint64_t bytesRemainToDownload() const 
+    {
+        if(!usingRangeDownload_) return 0;
+        return rangeEnd_ - rangeBegin_ - bytesDownloaded_ + 1;
+    }
+
+    void initFileWriter()
+    {
+        fileWriterPtr_.reset(new utils::FileWriter{fileName_.c_str()});
     }
 
 
@@ -68,6 +84,7 @@ private:
     std::string url_;
     HandlerStatus status_ = HandlerStatus::IDLE;
 	std::string fileName_;
+    std::shared_ptr<utils::FileWriter> fileWriterPtr_;
 };
 static string_piece::const_string_piece USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0";
 static string_piece::const_string_piece ACCEPT = "*/*";

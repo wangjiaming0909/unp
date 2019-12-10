@@ -6,12 +6,13 @@
 namespace downloader
 {
 
-Handler::Handler(reactor::Reactor& react, const std::string& url) 
-    : connection_handler(react)
+Handler::Handler(reactor::Reactor& react, const std::string& url, bool isSSL) 
+    : connection_handler(react, isSSL)
     , request_{}
     , codec_{http::HttpDirection::DOWNSTREAM}
     , urlParser_{}
     , url_{url}
+    , fileWriterPtr_{nullptr}
 {
     codec_.setCallback(this);
     urlParser_.init(url_);
@@ -31,7 +32,7 @@ int Handler::handle_input(int handle)
         LOG(ERROR) << "error in handle_input...";
         return -1;
     }
-    if(ret == 0 || input_buffer_.buffer_length() == 0)
+    if(input_buffer_.buffer_length() == 0)
     {
         LOG(WARNING) << "no data, retrying...";
         if(isShouldClose_)
@@ -92,7 +93,7 @@ int Handler::open()
     return enable_reading();
 }
 
-int Handler::onStatus(const char* buf, size_t len)
+int Handler::onStatus(const char* /*buf*/, size_t/* len*/)
 {
     switch(codec_.status())
 	{
@@ -110,10 +111,36 @@ int Handler::onStatus(const char* buf, size_t len)
 
 int Handler::onBody(const char* buf, size_t size)
 {
-	//if(status_ == )
+	if(status_ == HandlerStatus::CHUNK_ENCODING 
+            || status_ == HandlerStatus::NOT_RESPONDING_TO_RANGE)
+    {
+        bytesDownloaded_ += size;
+        if(!fileWriterPtr_) return 0;
+        fileWriterPtr_->write(buf, size);
+        fileWriterPtr_->flush();
+        //LOG(INFO) << "CHUNK_ENCODING With on body size: " << size;
+        return 0;
+        //bytesDownloaded_ += size;
+    }
+
+    if(status_ == HandlerStatus::RANGE_MATCH)
+    {
+        bytesDownloaded_ += size;
+        if(!fileWriterPtr_) return 0;
+        fileWriterPtr_->write(buf, size);
+        fileWriterPtr_->flush();
+        return 0;
+    }
+    
+    if(status_ == HandlerStatus::RANGE_NOT_MATCH)
+    {
+        isShouldClose_ = true;
+        return -1;
+    }
+    return 0;
 }
 
-int Handler::onHeadersComplete(size_t len)
+int Handler::onHeadersComplete(size_t /*len*/)
 {
 	if(status_ == HandlerStatus::RECEIVED302)
 	{
@@ -128,7 +155,10 @@ int Handler::onHeadersComplete(size_t len)
 		url_ = *locationHeader;
 		status_ = HandlerStatus::NEW_LOCATION_GOT;
 		isShouldClose_ = true;
-	}else if(status_ == HandlerStatus::RECEIVED200)
+        return -1;
+	}
+
+    if(status_ == HandlerStatus::RECEIVED200)
 	{
 		auto* cd = codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_DISPOSITION);
 		if(cd == nullptr) 
@@ -137,7 +167,9 @@ int Handler::onHeadersComplete(size_t len)
 			status_ = HandlerStatus::NO_CONTENT_DISPOSITION;
 			return -1;
 		}
+
 		retriveFileNameFromContentDisposition(*cd);
+        initFileWriter();
 
 		if(usingRangeDownload_)
 		{
@@ -156,7 +188,10 @@ int Handler::onHeadersComplete(size_t len)
 			auto pair = parseContentRangeHeader(*contentRangeHeader);
 			if(pair.first != rangeBegin_ && pair.second != rangeEnd_)
 			{
-				LOG(ERROR) << "Range error preset begin: " << rangeBegin_ << " end: " << rangeEnd_ << " got begin: " << pair.first << " end: " << pair.second;
+				LOG(ERROR) << "Range error preset begin: " << rangeBegin_ 
+                           << " end: " << rangeEnd_ 
+                           << " got begin: " << pair.first 
+                           << " end: " << pair.second;
 				status_ = HandlerStatus::RANGE_NOT_MATCH;
 				return -1;
 			}
@@ -169,7 +204,6 @@ int Handler::onHeadersComplete(size_t len)
 std::pair<uint64_t, uint64_t> Handler::parseContentRangeHeader(const std::string& headerValue)
 {
 	return std::make_pair(rangeBegin_, rangeEnd_);
-
 }
 
 void Handler::retriveFileNameFromContentDisposition(const std::string& cd)
@@ -179,6 +213,7 @@ void Handler::retriveFileNameFromContentDisposition(const std::string& cd)
     {
         LOG(WARNING) << "Unknown content disposition...";
         fileName_ = DEFAULT_FILE_NAME;
+        return;
     }
     std::string::const_iterator begin = ++it;
     std::string::const_iterator end = cd.end();
@@ -193,27 +228,32 @@ void Handler::retriveFileNameFromContentDisposition(const std::string& cd)
     fileName_ = std::string{begin, end};
 }
 
-int Handler::onHeaderField(const char *buf, size_t len)
+int Handler::onHeaderField(const char * /*buf*/, size_t /*len*/)
 {
+    return 0;
 }
 
-int Handler::onHeaderValue(const char *buf, size_t len)
+int Handler::onHeaderValue(const char * /*buf*/, size_t /*len*/)
 {
-
+    return 0;
 }
 
 int Handler::onMessageComplete()
 {
-
+    LOG(INFO) << "message completed... ";
+    isShouldClose_ = true;
+    return 0;
 }
 
 int Handler::onChunkHeader(size_t len)
 {
-
+    LOG(INFO) << "On chunked header len: " << len;
+    return 0;
 }
 
 int Handler::onChunkComplete()
 {
-
+    LOG(INFO) << "chunk completed...";
+    return 0;
 }
 } 
