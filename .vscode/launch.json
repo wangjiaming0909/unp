@@ -7,7 +7,7 @@
             "request":"launch",
             "program": "${workspaceFolder}/gtests/test.out",
             "args": [
-                "--gtest_filter=Downloader.GetFileInfoOfChunked"
+                "--gtest_filter=Download.*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

@@ -15,6 +15,8 @@ public:
         if(fileName != nullptr) valid_ = true;
     }
 
+	uint64_t bytesWritten() const{return bytesWritten_;}
+
     void setBufAndOpen(void* buf, Size_t size)
     {
         if(!valid_) return;
@@ -24,6 +26,7 @@ public:
 
     void write(const char* data)
     {
+		bytesWritten_ += strlen(data);
         fstream_ << data;
     }
 
@@ -32,6 +35,7 @@ public:
         if(!valid_) return *this;
         auto streamBuf = fstream_.rdbuf();
         streamBuf->sputn(data, size);
+		bytesWritten_ += size;
 
         return *this;
     }
@@ -51,6 +55,7 @@ private:
     std::string fileName_;
     std::fstream fstream_;
     bool valid_ = false;
+	uint64_t bytesWritten_ = 0;
 };
 
 TEST(FStream, normal)

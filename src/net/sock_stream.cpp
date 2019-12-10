@@ -11,7 +11,7 @@ ssize_t SockStream::read_imp(void *buffer, size_t len)
     int read_len = ::read(handle, static_cast<char *>(buffer), len);
     if(read_len > 0) 
     {
-        LOG(INFO) << "Read from: " << handle << " read: " << read_len << "bytes";
+        //LOG(INFO) << "Read from: " << handle << " read: " << read_len << "bytes";
     } 
     else if(read_len == 0)
     {

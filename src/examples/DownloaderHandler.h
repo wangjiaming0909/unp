@@ -57,8 +57,8 @@ public:
     void setDownloadRange(uint64_t begin, uint64_t end)
     {
         usingRangeDownload_ = true;
-       rangeBegin_ = begin;
-       rangeEnd_ = end;
+        rangeBegin_ = begin;
+        rangeEnd_ = end;
     }
 
 private:

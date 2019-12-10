@@ -6,13 +6,14 @@
 namespace downloader
 {
 
-Handler::Handler(reactor::Reactor& react, const std::string& url, bool isSSL) 
+Handler::Handler(reactor::Reactor& react, const std::string& url, bool isSSL, MessageSetupCallback_t&& callback) 
     : connection_handler(react, isSSL)
     , request_{}
     , codec_{http::HttpDirection::DOWNSTREAM}
     , urlParser_{}
     , url_{url}
     , fileWriterPtr_{nullptr}
+	, setupCallback_{std::move(callback)}
 {
     codec_.setCallback(this);
     urlParser_.init(url_);
@@ -22,6 +23,15 @@ Handler::Handler(reactor::Reactor& react, const std::string& url, bool isSSL)
         LOG(WARNING) << "url format error...";
         return;
     }
+}
+
+Handler::~Handler()
+{
+	if(fileWriterPtr_)
+	{
+		LOG(INFO) << "All written bytes: " << fileWriterPtr_->bytesWritten();
+		if(fileWriterPtr_->isValid()) fileWriterPtr_->close();
+	}
 }
 
 int Handler::handle_input(int handle)
@@ -34,7 +44,7 @@ int Handler::handle_input(int handle)
     }
     if(input_buffer_.buffer_length() == 0)
     {
-        LOG(WARNING) << "no data, retrying...";
+        //LOG(WARNING) << "no data, retrying...";
         if(isShouldClose_)
             return -1;
         return 0;
@@ -47,8 +57,8 @@ int Handler::handle_input(int handle)
         auto chainLen = firstChain.size();
         if(data != nullptr && chainLen != 0)
         {
-            std::string s{static_cast<char*>(data), chainLen};
-            LOG(INFO) << "----------------received: " << s;
+            //std::string s{static_cast<char*>(data), chainLen};
+            //LOG(INFO) << "----------------received:\n" << s;
         }
         string_piece::const_string_piece sp{static_cast<const char*>(data), chainLen};
         size_t bytesRead = codec_.onIngress(sp);
@@ -68,6 +78,7 @@ int Handler::handle_input(int handle)
 
 int Handler::open()
 {
+	if(setupCallback_) setupCallback_(*this);
     request_.setHttpVersion(1, 1);
     request_.setRequestPath(urlParser_.path().cbegin());
     request_.setRequestMethod(http::HTTPMethod::GET);
@@ -79,7 +90,7 @@ int Handler::open()
     {
         request_.addHeader(
             http::HttpHeaderCode::HTTP_HEADER_RANGE, 
-            "range: bytes=" 
+            "bytes=" 
             + std::to_string(rangeBegin_) 
             + "-" 
             + std::to_string(rangeEnd_));
@@ -101,6 +112,7 @@ int Handler::onStatus(const char* /*buf*/, size_t/* len*/)
 			status_ = HandlerStatus::RECEIVED302;
 			return 0;
 		case 200:
+		case 206:
 			status_ = HandlerStatus::RECEIVED200;
 			return 0;
 		default:
@@ -111,10 +123,12 @@ int Handler::onStatus(const char* /*buf*/, size_t/* len*/)
 
 int Handler::onBody(const char* buf, size_t size)
 {
+	//LOG(INFO) << "status: " << int(status_);
 	if(status_ == HandlerStatus::CHUNK_ENCODING 
             || status_ == HandlerStatus::NOT_RESPONDING_TO_RANGE)
     {
         bytesDownloaded_ += size;
+		//LOG(INFO) << bytesDownloaded_ << " bytes downloaded...";
         if(!fileWriterPtr_) return 0;
         fileWriterPtr_->write(buf, size);
         fileWriterPtr_->flush();
@@ -125,6 +139,7 @@ int Handler::onBody(const char* buf, size_t size)
 
     if(status_ == HandlerStatus::RANGE_MATCH)
     {
+		//LOG(INFO) << "range match...";
         bytesDownloaded_ += size;
         if(!fileWriterPtr_) return 0;
         fileWriterPtr_->write(buf, size);
@@ -135,6 +150,7 @@ int Handler::onBody(const char* buf, size_t size)
     if(status_ == HandlerStatus::RANGE_NOT_MATCH)
     {
         isShouldClose_ = true;
+		LOG(INFO) << "range not match ...";
         return -1;
     }
     return 0;
@@ -173,10 +189,14 @@ int Handler::onHeadersComplete(size_t /*len*/)
 
 		if(usingRangeDownload_)
 		{
-			if(*codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING) == "chunked")
+			if(codec_.message().hasHeader(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING))
 			{
-				status_ = HandlerStatus::CHUNK_ENCODING;
-				return 0;
+				if(*codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING) == "chunked")
+				{
+					LOG(INFO) << "chunked encoding...";
+					status_ = HandlerStatus::CHUNK_ENCODING;
+					return 0;
+				}
 			}
 			auto* contentRangeHeader = codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_RANGE);
 			if(contentRangeHeader == nullptr)
@@ -185,8 +205,9 @@ int Handler::onHeadersComplete(size_t /*len*/)
 				status_ = HandlerStatus::NOT_RESPONDING_TO_RANGE;
 				return 0;
 			}
+			LOG(INFO) << "content range: " << *contentRangeHeader;
 			auto pair = parseContentRangeHeader(*contentRangeHeader);
-			if(pair.first != rangeBegin_ && pair.second != rangeEnd_)
+			if(pair.first != rangeBegin_)
 			{
 				LOG(ERROR) << "Range error preset begin: " << rangeBegin_ 
                            << " end: " << rangeEnd_ 
@@ -194,6 +215,11 @@ int Handler::onHeadersComplete(size_t /*len*/)
                            << " end: " << pair.second;
 				status_ = HandlerStatus::RANGE_NOT_MATCH;
 				return -1;
+			}
+			if(rangeEnd_ != pair.second)
+			{
+				LOG(WARNING) << "received range end: " << pair.second << " expected: " << rangeEnd_;
+				rangeEnd_ = pair.second;
 			}
 			status_ = HandlerStatus::RANGE_MATCH;
 		}
@@ -203,6 +229,13 @@ int Handler::onHeadersComplete(size_t /*len*/)
 
 std::pair<uint64_t, uint64_t> Handler::parseContentRangeHeader(const std::string& headerValue)
 {
+	auto it = std::find(headerValue.begin(), headerValue.end(), '/');
+	std::string size;
+	if(it != headerValue.end())
+	{
+		size = std::string{it+1, headerValue.end()};
+	}
+	fileSize_ = std::stoull(size);
 	return std::make_pair(rangeBegin_, rangeEnd_);
 }
 

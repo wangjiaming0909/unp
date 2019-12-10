@@ -5,6 +5,7 @@
 #include "http/http_parser/URLParser.h"
 #include "util/FileWriter.h"
 
+#include <functional>
 #include <memory>
 
 namespace downloader
@@ -32,8 +33,9 @@ public:
     };
 
 public:
-    Handler(reactor::Reactor& react, const std::string& url, bool isSSL);
-    virtual ~Handler() = default;
+    using MessageSetupCallback_t = std::function<void(Handler& handler)>;
+    Handler(reactor::Reactor& react, const std::string& url, bool isSSL, MessageSetupCallback_t&& callback);
+    virtual ~Handler();
 
     virtual int handle_input(int handle) override;
     virtual int open() override;
@@ -85,6 +87,7 @@ private:
     HandlerStatus status_ = HandlerStatus::IDLE;
 	std::string fileName_;
     std::shared_ptr<utils::FileWriter> fileWriterPtr_;
+	MessageSetupCallback_t setupCallback_;
 };
 static string_piece::const_string_piece USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0";
 static string_piece::const_string_piece ACCEPT = "*/*";

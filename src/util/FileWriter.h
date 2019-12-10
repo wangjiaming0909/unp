@@ -24,6 +24,8 @@ public:
         return valid_;
     }
 
+	uint64_t bytesWritten() const {return bytesWritten_;}
+
     void setBufAndOpen(void* buf, Size_t size)
     {
         bytesWritten_ = 0;
