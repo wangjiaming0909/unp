@@ -35,7 +35,7 @@ TEST_PRIVATE:
     std::string url_;
     http::URLParser urlParser_;
     std::shared_ptr<reactor::tcp_client> clientPtr_;
-	uint64_t currentBegin_ = 1;
+	uint64_t currentBegin_ = 0;
 	uint64_t currentEnd_ = 1000;
 	uint64_t size_ = 0;
 

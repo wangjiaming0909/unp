@@ -110,7 +110,7 @@ int Download::downloadRemain(uint64_t remain, uint64_t start)
 	}
 	if(remain > 0)
 	{
-		auto pair = download_imp(start, remain - 1);
+		auto pair = download_imp(start, start + remain-1);
 		connectors.push_back(pair.first);
 		connections.push_back(pair.second);
 	}

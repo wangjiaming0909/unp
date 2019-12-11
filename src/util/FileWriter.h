@@ -19,6 +19,16 @@ public:
         if(isUsingDefautBuf) free(defaultBuf_);
     }
 
+    int resetFileName(const std::string& fileName)
+    {
+        if(bytesWritten_ > 0)
+        {
+            return -1;
+        }
+        fileName_ = fileName;
+        return 0;
+    }
+
     bool isValid() const 
     {
         return valid_;

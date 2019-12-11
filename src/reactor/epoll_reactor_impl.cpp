@@ -46,6 +46,11 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
     }
     else if(n < 0)
     {
+        if(n == -2)
+        {
+            LOG(INFO) << "no events to wait, exiting...";
+            return -1;
+        }
         LOG(WARNING) << "Epoll_wait returned 0 or -1" << strerror(errno);
         return -1;
     }
@@ -164,6 +169,7 @@ int epoll_reactor_impl::epoll_wait(int milliseconds)
         ret_events_.clear();
         ret_events_.resize(fd_count_);
     }
+    if(fd_count_ == 0) return -2;
 
     // int ret = ::epoll_wait(epoll_fd_, &ret_events_[0], fd_count_, milliseconds == 0 ? -1 : milliseconds);
     int ret = epoller_.epoll_wait(&ret_events_[0], fd_count_, milliseconds == 0 ? -1 : milliseconds);

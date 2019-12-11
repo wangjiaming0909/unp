@@ -1,6 +1,7 @@
 #include "Handler.h"
 #include "http/gperf/HttpHeaderCode.h"
 #include "util/easylogging++.h"
+#include <string>
 #include <utility>
 
 namespace downloader
@@ -142,6 +143,8 @@ int Handler::onBody(const char* buf, size_t size)
 		//LOG(INFO) << "range match...";
         bytesDownloaded_ += size;
         if(!fileWriterPtr_) return 0;
+        fileName_ += std::to_string(fileSize_);
+        fileWriterPtr_->resetFileName(fileName_);
         fileWriterPtr_->write(buf, size);
         fileWriterPtr_->flush();
         return 0;
@@ -205,7 +208,7 @@ int Handler::onHeadersComplete(size_t /*len*/)
 				status_ = HandlerStatus::NOT_RESPONDING_TO_RANGE;
 				return 0;
 			}
-			LOG(INFO) << "content range: " << *contentRangeHeader;
+			//LOG(INFO) << "content range: " << *contentRangeHeader;
 			auto pair = parseContentRangeHeader(*contentRangeHeader);
 			if(pair.first != rangeBegin_)
 			{
@@ -229,14 +232,26 @@ int Handler::onHeadersComplete(size_t /*len*/)
 
 std::pair<uint64_t, uint64_t> Handler::parseContentRangeHeader(const std::string& headerValue)
 {
-	auto it = std::find(headerValue.begin(), headerValue.end(), '/');
+    auto it = std::find(headerValue.begin(), headerValue.end(), 's');
+    it++;
+    auto endIt = std::find(it, headerValue.end(), '-');
+    uint64_t start = std::stoull(std::string(it, endIt));
+
+    it = endIt + 1;
+	endIt = std::find(headerValue.begin(), headerValue.end(), '/');
+
+    uint64_t end = std::stoull(std::string(it, endIt));
+
 	std::string size;
-	if(it != headerValue.end())
+	if(endIt != headerValue.end())
 	{
-		size = std::string{it+1, headerValue.end()};
+		size = std::string{endIt+1, headerValue.end()};
 	}
 	fileSize_ = std::stoull(size);
-	return std::make_pair(rangeBegin_, rangeEnd_);
+    LOG(INFO) << "file size: " << fileSize_;
+    LOG(INFO) << "start: " << start << " end: " << end;
+
+	return std::make_pair(start, end);
 }
 
 void Handler::retriveFileNameFromContentDisposition(const std::string& cd)
@@ -259,6 +274,8 @@ void Handler::retriveFileNameFromContentDisposition(const std::string& cd)
         end--;
     }
     fileName_ = std::string{begin, end};
+    std::string suffix = "_" + std::to_string(rangeBegin_) + "_" + std::to_string(rangeEnd_) + "_";
+    fileName_ += suffix;
 }
 
 int Handler::onHeaderField(const char * /*buf*/, size_t /*len*/)
