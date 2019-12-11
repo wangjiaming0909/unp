@@ -58,8 +58,8 @@ int Handler::handle_input(int handle)
         auto chainLen = firstChain.size();
         if(data != nullptr && chainLen != 0)
         {
-            //std::string s{static_cast<char*>(data), chainLen};
-            //LOG(INFO) << "----------------received:\n" << s;
+            // std::string s{static_cast<char*>(data), chainLen};
+            // LOG(INFO) << "----------------received:\n" << s;
         }
         string_piece::const_string_piece sp{static_cast<const char*>(data), chainLen};
         size_t bytesRead = codec_.onIngress(sp);
@@ -126,7 +126,8 @@ int Handler::onBody(const char* buf, size_t size)
 {
 	//LOG(INFO) << "status: " << int(status_);
 	if(status_ == HandlerStatus::CHUNK_ENCODING 
-            || status_ == HandlerStatus::NOT_RESPONDING_TO_RANGE)
+            || status_ == HandlerStatus::NOT_RESPONDING_TO_RANGE
+            || status_ == HandlerStatus::NO_CONTENT_DISPOSITION)
     {
         bytesDownloaded_ += size;
 		//LOG(INFO) << bytesDownloaded_ << " bytes downloaded...";
@@ -184,10 +185,9 @@ int Handler::onHeadersComplete(size_t /*len*/)
 		{
 			LOG(WARNING) << "no HTTP_HEADER_CONTENT_DISPOSITION heade...";
 			status_ = HandlerStatus::NO_CONTENT_DISPOSITION;
-			return -1;
 		}
 
-		retriveFileNameFromContentDisposition(*cd);
+		retriveFileNameFromContentDisposition(cd == nullptr ? "" : *cd);
         initFileWriter();
 
 		if(usingRangeDownload_)
