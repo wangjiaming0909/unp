@@ -32,6 +32,7 @@ int Download::download()
 	auto pair = download_imp(currentBegin_, currentEnd_);
 	clientPtr_->start();
 	auto* connection = pair.second;
+	if(connection == nullptr) return -1;
 	if(connection->status_ == Handler::HandlerStatus::NEW_LOCATION_GOT)
 	{
 		auto& newUrl = connection->url_;
