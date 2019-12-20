@@ -21,7 +21,11 @@ net::inet_addr::inet_addr(host_byte_order_port port,
 	if(set_port_number(port) != 0)
 		throw std::invalid_argument("invalid argument: port...");
 	if(set_address(host_name) != 0)
-		throw std::invalid_argument("invalid argument: host_name...");
+    {
+        std::string mes = "invalid argument: host_name: ";
+        mes += host_name;
+		throw std::invalid_argument(mes);
+    }
 }
 
 net::inet_addr::inet_addr(const inet_addr& rl) : addr(AF_INET, sizeof(in4_)), in4_(rl.in4_){ }
