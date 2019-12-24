@@ -1,24 +1,21 @@
-#include  "reactor/connection_handler.h"
-#include "reactor/reactor.h"
+#pragma once
+#include "reactor/connection_handler.h"
 
 namespace downloader
 {
 
-class ServerHandler : public reactor::connection_handler
+class DownloaderServerHandler : public reactor::connection_handler
 {
 
 public:
-    ServerHandler(reactor::Reactor& react) : connection_handler(react)
-    {
-    }
-    ~ServerHandler(){}
+    DownloaderServerHandler(reactor::Reactor &react);
 
-    virtual int handle_input(int handle) override
-    {
-    }
-    virtual int open() override
-    {
-    }
+    ~DownloaderServerHandler(){}
 
+    virtual int handle_input(int handle) override;
+
+    virtual int open() override;
+
+private:
 };
 }

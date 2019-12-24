@@ -3,9 +3,10 @@
 #include "util/easylogging++.h"
 #include "main_helper.h"
 #include "downloader/download.h"
+#include "downloader/serverhandler.h"
 #include "reactor/tcp_server.h"
-#include <string>
 #include "reactor/echo_connection_handler.h"
+#include <string>
 //#include "examples/Downloader.h"
 
 // INITIALIZE_NULL_EASYLOGGINGPP
@@ -35,7 +36,7 @@ int serve(int argc, char** argv)
     const char* addr = argv[1];
     in_port_t port = std::stoi(argv[2]);
     net::inet_addr lisAddr{port, addr};
-    reactor::tcp_server<reactor::echo_connection_handler> server{lisAddr};
+    reactor::tcp_server<downloader::DownloaderServerHandler> server{lisAddr};
     return server.start(unp::reactor_imp_t_enum::USING_EPOLL);
 }
 

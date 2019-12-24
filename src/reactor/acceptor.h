@@ -89,7 +89,7 @@ public:
     Acceptor(Reactor &react, const net::inet_addr &local_addr)
         : EventHandler(react), sock_acceptor_(local_addr), local_addr_(local_addr), read_handlers_(1024), external_reactors_()
     {
-        static_assert(std::is_base_of<connection_handler, Handler_t>::type, "Handler_t should derive from ConnectionHandler");
+        static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from ConnectionHandler");
         this->current_reactor_index_to_register_ = 0;
     }
     //close listen, close all read_handelrs
@@ -217,7 +217,7 @@ TEST_PRIVATE:
         }
 
         std::shared_ptr<connection_handler> handler{new Handler_t{reactor_to_register}};
-        handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
+        handler->set_closed_callback(std::bind(&Acceptor::close_read_handler, this, std::placeholders::_1));
 
         net::inet_addr peer_addr{};
 

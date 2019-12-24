@@ -29,9 +29,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/a.out",
             "args": [
-                "-listen",
-                "127.0.0.1",
-                "9000"
+                "0.0.0.0",
+                "8000"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

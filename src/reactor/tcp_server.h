@@ -43,7 +43,7 @@ class tcp_server
 public:
     using Acceptor_t = Acceptor<Handler_t>;
     using reactor_ptr_t	= std::shared_ptr<Reactor>;
-    using acceptor_ptr_t = acceptor*;
+    using acceptor_ptr_t = Acceptor_t*;
     using pool_ptr_t = std::shared_ptr<thread::thread_pool>;
     static const int DEFAULT_THREAD_NUM = 4;
 public:
@@ -210,7 +210,7 @@ typename tcp_server<Handler_t>::reactor_ptr_t tcp_server<Handler_t>::make_reacto
 template <typename Handler_t>
 void tcp_server<Handler_t>::make_acceptor()
 {
-    acceptor_ = new acceptor (*first_reactor_, local_addr_);
+    acceptor_ = new Acceptor_t(*first_reactor_, local_addr_);
 }
 
 template <class Handler_t>
