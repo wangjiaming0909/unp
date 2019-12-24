@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package httpmessage;
+
+message Mess{
+    enum Command{
+        DOWNLOAD = 0;
+        PAUSE = 1;
+        RESUME = 2;
+        REMOVE = 3;
+    }
+    required int32 id = 1;
+    required Command command = 2;
+    required string url = 3;
+}

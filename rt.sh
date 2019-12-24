@@ -6,7 +6,9 @@ cd gtests &&
 # ./test.out --gtest_filter=Downloader.GetFileInfo2
 # ./test.out --gtest_filter=Downloader.DivideRanges
 # ./test.out --gtest_filter=Downloader.GetFileInfoOfChunked
-./test.out --gtest_filter=Download.normal
+# ./test.out --gtest_filter=Download.normal
+./test.out --gtest_filter=proto.normal
+
 
 # ./test.out   --gtest_filter=TcpServer.*
 # ./test.out   --gtest_filter=HttpParser.*

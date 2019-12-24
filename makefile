@@ -21,7 +21,7 @@ OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES) )
 
 
 TARGET = $(BUILDDIR)/a.out
-LIBS = /boost_1_70_0/stage/lib
+LIBS = /boost_1_70_0/stage/lib 
 INCLUDES = /boost_1_70_0 -I $(SOURCEDIR)
 # LDFLAGS = -pthread -lboost_thread -lboost_system
 
@@ -33,7 +33,8 @@ TESTLDFLAG =  -pthread \
 		/usr/local/lib/libgtest.a \
 		/usr/local/lib/libgmock.a \
 		-lssl \
-		-lcrypto
+		-lcrypto\
+		/usr/lib/libprotobuf.so.22
 
 # /boost_1_70_0/stage/lib/libboost_thread.a 
 LDFLAGS = -pthread \
@@ -41,7 +42,8 @@ LDFLAGS = -pthread \
 		/boost_1_70_0/stage/lib/libboost_chrono.so.1.70.0 \
 		/boost_1_70_0/stage/lib/libboost_system.so.1.70.0 \
 		-lssl \
-		-lcrypto
+		-lcrypto\
+		/usr/lib/libprotobuf.so.22
 		
 
 all: $(BUILDDIR) $(TARGET)
