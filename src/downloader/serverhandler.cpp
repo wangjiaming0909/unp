@@ -6,6 +6,7 @@ namespace downloader
 
 DownloaderServerHandler::DownloaderServerHandler(reactor::Reactor& react) 
     : connection_handler(react)
+    , currentMess_{}
 {
 }
 
@@ -26,20 +27,20 @@ int DownloaderServerHandler::handle_input(int handle)
         auto firstChain = input_buffer_.begin().chain();
         auto data = firstChain.get_start_buffer();
         auto chainLen = firstChain.size();
-        long sizeInMes = 0;
-        httpmessage::Mess *mes = new httpmessage::Mess{};
-        //if the size we received is not enough for a mess
-        if(chainLen < (mes->ByteSizeLong() - sizeInMes))
+        currentMess_.ParsePartialFromArray(data, chainLen);
+        input_buffer_.drain(chainLen);
+        if (currentMess_.IsInitialized())
         {
-            mes->ParsePartialFromArray(data, chainLen);
-            input_buffer_.drain(chainLen);
-        }else
-        {
-            mes->ParseFromArray(data, mes->ByteSizeLong());
-            input_buffer_.drain(mes->ByteSizeLong());
+            saveCurrentMess();
         }
     }
     return 0;
+}
+
+void DownloaderServerHandler::saveCurrentMess()
+{
+
+
 }
 
 

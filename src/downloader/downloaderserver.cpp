@@ -20,6 +20,7 @@ DownloaderServer::DownloaderServer(net::inet_addr& listenAddr)
 int DownloaderServer::start()
 {
     server_.start(unp::reactor_imp_t_enum::USING_EPOLL);
+    return 0;
 }
 
 }

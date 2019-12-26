@@ -1,5 +1,7 @@
 #pragma once
+#include "proto/mess.pb.h"
 #include "reactor/connection_handler.h"
+#include <queue>
 
 namespace downloader
 {
@@ -17,5 +19,10 @@ public:
     virtual int open() override;
 
 private:
+    void saveCurrentMess();
+
+private:
+    httpmessage::Mess currentMess_;
+    std::queue<httpmessage::Mess*> downloadQueue_;
 };
 }
