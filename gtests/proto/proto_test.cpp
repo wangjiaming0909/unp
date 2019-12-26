@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <gtest/gtest.h>
 #include "proto/mess.pb.h"
 #include <iostream>
@@ -67,4 +68,69 @@ TEST(proto, normal)
 
     ::free(arr);
     arr = nullptr;
+}
+
+TEST(proto, merge_from)
+{
+    httpmessage::Mess m1{};
+    m1.set_id(1);
+    m1.set_command(httpmessage::Mess_Command::Mess_Command_DOWNLOAD);
+    m1.set_url("https://www.baidu.com");
+    auto m1Size = m1.ByteSizeLong();
+    ASSERT_TRUE(m1Size < 512);
+
+    httpmessage::Mess m2{};
+    m2.CopyFrom(m1);
+    m2.set_command(httpmessage::Mess_Command::Mess_Command_PAUSE);
+    auto m2Size = m2.ByteSizeLong();
+
+    char* d = (char*)::calloc(1024, 1);
+
+    m1.SerializeToArray(d, 1024);
+    std::cout << d << std::endl;
+
+    m2.SerializeToArray(d + m1Size, 1024 - m1Size);
+    std::cout << d << std::endl;
+
+    httpmessage::Mess m3{};
+
+    auto ret = m3.ParsePartialFromArray(d, m2Size + m1Size);
+    ASSERT_TRUE(ret);
+    ASSERT_EQ(m1.url(), m3.url());
+    ASSERT_EQ(m1.id(), m3.id());
+    ASSERT_EQ(m2.command(), m3.command());
+
+    m3.Clear();
+    m3.ParseFromArray(d, m1Size);
+    ASSERT_EQ(m1.url(), m3.url());
+    ASSERT_EQ(m1.id(), m3.id());
+    ASSERT_EQ(m1.command(), m3.command());
+    m3.Clear();
+    m3.ParseFromArray(d + m1Size, 1024 - m1Size);
+    ASSERT_EQ(m2.url(), m3.url());
+    ASSERT_EQ(m2.id(), m3.id());
+    ASSERT_EQ(m2.command(), m3.command());
+
+    free(d);
+    d = nullptr;
+}
+
+TEST(proto, parse_from_array)
+{
+    httpmessage::Mess m1{};
+    m1.set_id(1);
+    m1.set_command(httpmessage::Mess_Command::Mess_Command_DOWNLOAD);
+    m1.set_url("https://github.com/wangjiaming0909/unp");
+    auto m1Size = m1.ByteSizeLong();
+
+    httpmessage::Mess m2{m1};
+    m2.set_command(httpmessage::Mess_Command::Mess_Command_PAUSE);
+
+    char* d = (char*)::calloc(1024, 1);
+    m1.SerializeToArray(d, 1024);
+
+    m2.SerializeToArray(d+m1Size, 1024 - m1Size);
+
+    free(d);
+    d = nullptr;
 }

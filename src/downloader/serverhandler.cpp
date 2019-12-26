@@ -27,12 +27,10 @@ int DownloaderServerHandler::handle_input(int handle)
         auto firstChain = input_buffer_.begin().chain();
         auto data = firstChain.get_start_buffer();
         auto chainLen = firstChain.size();
-        currentMess_.ParsePartialFromArray(data, chainLen);
+        httpmessage::Mess tmpMes{};
+        tmpMes.ParsePartialFromArray(data, chainLen);
         input_buffer_.drain(chainLen);
-        if (currentMess_.IsInitialized())
-        {
-            saveCurrentMess();
-        }
+        currentMess_.MergeFrom(tmpMes);
     }
     return 0;
 }
