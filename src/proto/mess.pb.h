@@ -55,15 +55,15 @@ struct TableStruct_mess_2eproto {
   static const ::PROTOBUF_NAMESPACE_ID::uint32 offsets[];
 };
 extern const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_mess_2eproto;
-namespace httpmessage {
+namespace downloadmessage {
 class Mess;
 class MessDefaultTypeInternal;
 extern MessDefaultTypeInternal _Mess_default_instance_;
-}  // namespace httpmessage
+}  // namespace downloadmessage
 PROTOBUF_NAMESPACE_OPEN
-template<> ::httpmessage::Mess* Arena::CreateMaybeMessage<::httpmessage::Mess>(Arena*);
+template<> ::downloadmessage::Mess* Arena::CreateMaybeMessage<::downloadmessage::Mess>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
-namespace httpmessage {
+namespace downloadmessage {
 
 enum Mess_Command : int {
   Mess_Command_DOWNLOAD = 0,
@@ -93,7 +93,7 @@ inline bool Mess_Command_Parse(
 // ===================================================================
 
 class Mess :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:httpmessage.Mess) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:downloadmessage.Mess) */ {
  public:
   Mess();
   virtual ~Mess();
@@ -180,7 +180,7 @@ class Mess :
   void InternalSwap(Mess* other);
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName() {
-    return "httpmessage.Mess";
+    return "downloadmessage.Mess";
   }
   private:
   inline ::PROTOBUF_NAMESPACE_ID::Arena* GetArenaNoVirtual() const {
@@ -239,11 +239,11 @@ class Mess :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kUrlFieldNumber = 3,
-    kIdFieldNumber = 1,
-    kCommandFieldNumber = 2,
+    kUrlFieldNumber = 4,
+    kIdFieldNumber = 2,
+    kCommandFieldNumber = 3,
   };
-  // required string url = 3;
+  // required string url = 4;
   bool has_url() const;
   private:
   bool _internal_has_url() const;
@@ -263,7 +263,7 @@ class Mess :
   std::string* _internal_mutable_url();
   public:
 
-  // required int32 id = 1;
+  // required int32 id = 2;
   bool has_id() const;
   private:
   bool _internal_has_id() const;
@@ -276,20 +276,20 @@ class Mess :
   void _internal_set_id(::PROTOBUF_NAMESPACE_ID::int32 value);
   public:
 
-  // required .httpmessage.Mess.Command command = 2;
+  // required .downloadmessage.Mess.Command command = 3;
   bool has_command() const;
   private:
   bool _internal_has_command() const;
   public:
   void clear_command();
-  ::httpmessage::Mess_Command command() const;
-  void set_command(::httpmessage::Mess_Command value);
+  ::downloadmessage::Mess_Command command() const;
+  void set_command(::downloadmessage::Mess_Command value);
   private:
-  ::httpmessage::Mess_Command _internal_command() const;
-  void _internal_set_command(::httpmessage::Mess_Command value);
+  ::downloadmessage::Mess_Command _internal_command() const;
+  void _internal_set_command(::downloadmessage::Mess_Command value);
   public:
 
-  // @@protoc_insertion_point(class_scope:httpmessage.Mess)
+  // @@protoc_insertion_point(class_scope:downloadmessage.Mess)
  private:
   class _Internal;
 
@@ -315,7 +315,7 @@ class Mess :
 #endif  // __GNUC__
 // Mess
 
-// required int32 id = 1;
+// required int32 id = 2;
 inline bool Mess::_internal_has_id() const {
   bool value = (_has_bits_[0] & 0x00000002u) != 0;
   return value;
@@ -331,7 +331,7 @@ inline ::PROTOBUF_NAMESPACE_ID::int32 Mess::_internal_id() const {
   return id_;
 }
 inline ::PROTOBUF_NAMESPACE_ID::int32 Mess::id() const {
-  // @@protoc_insertion_point(field_get:httpmessage.Mess.id)
+  // @@protoc_insertion_point(field_get:downloadmessage.Mess.id)
   return _internal_id();
 }
 inline void Mess::_internal_set_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
@@ -340,10 +340,10 @@ inline void Mess::_internal_set_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
 }
 inline void Mess::set_id(::PROTOBUF_NAMESPACE_ID::int32 value) {
   _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:httpmessage.Mess.id)
+  // @@protoc_insertion_point(field_set:downloadmessage.Mess.id)
 }
 
-// required .httpmessage.Mess.Command command = 2;
+// required .downloadmessage.Mess.Command command = 3;
 inline bool Mess::_internal_has_command() const {
   bool value = (_has_bits_[0] & 0x00000004u) != 0;
   return value;
@@ -355,24 +355,24 @@ inline void Mess::clear_command() {
   command_ = 0;
   _has_bits_[0] &= ~0x00000004u;
 }
-inline ::httpmessage::Mess_Command Mess::_internal_command() const {
-  return static_cast< ::httpmessage::Mess_Command >(command_);
+inline ::downloadmessage::Mess_Command Mess::_internal_command() const {
+  return static_cast< ::downloadmessage::Mess_Command >(command_);
 }
-inline ::httpmessage::Mess_Command Mess::command() const {
-  // @@protoc_insertion_point(field_get:httpmessage.Mess.command)
+inline ::downloadmessage::Mess_Command Mess::command() const {
+  // @@protoc_insertion_point(field_get:downloadmessage.Mess.command)
   return _internal_command();
 }
-inline void Mess::_internal_set_command(::httpmessage::Mess_Command value) {
-  assert(::httpmessage::Mess_Command_IsValid(value));
+inline void Mess::_internal_set_command(::downloadmessage::Mess_Command value) {
+  assert(::downloadmessage::Mess_Command_IsValid(value));
   _has_bits_[0] |= 0x00000004u;
   command_ = value;
 }
-inline void Mess::set_command(::httpmessage::Mess_Command value) {
+inline void Mess::set_command(::downloadmessage::Mess_Command value) {
   _internal_set_command(value);
-  // @@protoc_insertion_point(field_set:httpmessage.Mess.command)
+  // @@protoc_insertion_point(field_set:downloadmessage.Mess.command)
 }
 
-// required string url = 3;
+// required string url = 4;
 inline bool Mess::_internal_has_url() const {
   bool value = (_has_bits_[0] & 0x00000001u) != 0;
   return value;
@@ -385,15 +385,15 @@ inline void Mess::clear_url() {
   _has_bits_[0] &= ~0x00000001u;
 }
 inline const std::string& Mess::url() const {
-  // @@protoc_insertion_point(field_get:httpmessage.Mess.url)
+  // @@protoc_insertion_point(field_get:downloadmessage.Mess.url)
   return _internal_url();
 }
 inline void Mess::set_url(const std::string& value) {
   _internal_set_url(value);
-  // @@protoc_insertion_point(field_set:httpmessage.Mess.url)
+  // @@protoc_insertion_point(field_set:downloadmessage.Mess.url)
 }
 inline std::string* Mess::mutable_url() {
-  // @@protoc_insertion_point(field_mutable:httpmessage.Mess.url)
+  // @@protoc_insertion_point(field_mutable:downloadmessage.Mess.url)
   return _internal_mutable_url();
 }
 inline const std::string& Mess::_internal_url() const {
@@ -407,26 +407,26 @@ inline void Mess::set_url(std::string&& value) {
   _has_bits_[0] |= 0x00000001u;
   url_.SetNoArena(
     &::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:httpmessage.Mess.url)
+  // @@protoc_insertion_point(field_set_rvalue:downloadmessage.Mess.url)
 }
 inline void Mess::set_url(const char* value) {
   GOOGLE_DCHECK(value != nullptr);
   _has_bits_[0] |= 0x00000001u;
   url_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:httpmessage.Mess.url)
+  // @@protoc_insertion_point(field_set_char:downloadmessage.Mess.url)
 }
 inline void Mess::set_url(const char* value, size_t size) {
   _has_bits_[0] |= 0x00000001u;
   url_.SetNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:httpmessage.Mess.url)
+  // @@protoc_insertion_point(field_set_pointer:downloadmessage.Mess.url)
 }
 inline std::string* Mess::_internal_mutable_url() {
   _has_bits_[0] |= 0x00000001u;
   return url_.MutableNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited());
 }
 inline std::string* Mess::release_url() {
-  // @@protoc_insertion_point(field_release:httpmessage.Mess.url)
+  // @@protoc_insertion_point(field_release:downloadmessage.Mess.url)
   if (!_internal_has_url()) {
     return nullptr;
   }
@@ -440,7 +440,7 @@ inline void Mess::set_allocated_url(std::string* url) {
     _has_bits_[0] &= ~0x00000001u;
   }
   url_.SetAllocatedNoArena(&::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited(), url);
-  // @@protoc_insertion_point(field_set_allocated:httpmessage.Mess.url)
+  // @@protoc_insertion_point(field_set_allocated:downloadmessage.Mess.url)
 }
 
 #ifdef __GNUC__
@@ -449,14 +449,14 @@ inline void Mess::set_allocated_url(std::string* url) {
 
 // @@protoc_insertion_point(namespace_scope)
 
-}  // namespace httpmessage
+}  // namespace downloadmessage
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <> struct is_proto_enum< ::httpmessage::Mess_Command> : ::std::true_type {};
+template <> struct is_proto_enum< ::downloadmessage::Mess_Command> : ::std::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::httpmessage::Mess_Command>() {
-  return ::httpmessage::Mess_Command_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::downloadmessage::Mess_Command>() {
+  return ::downloadmessage::Mess_Command_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

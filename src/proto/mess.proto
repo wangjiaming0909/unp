@@ -1,6 +1,6 @@
 syntax = "proto2";
 
-package httpmessage;
+package downloadmessage;
 
 message Mess{
     enum Command{
@@ -9,7 +9,7 @@ message Mess{
         RESUME = 2;
         REMOVE = 3;
     }
-    required int32 id = 1;
-    required Command command = 2;
-    required string url = 3;
+    required int32 id = 2;
+    required Command command = 3;
+    required string url = 4;
 }

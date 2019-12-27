@@ -22,7 +22,7 @@ private:
     void saveCurrentMess();
 
 private:
-    httpmessage::Mess currentMess_;
-    std::queue<httpmessage::Mess*> downloadQueue_;
+    downloadmessage::Mess currentMess_;
+    std::queue<downloadmessage::Mess*> downloadQueue_;
 };
 }

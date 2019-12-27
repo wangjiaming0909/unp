@@ -27,7 +27,7 @@ int DownloaderServerHandler::handle_input(int handle)
         auto firstChain = input_buffer_.begin().chain();
         auto data = firstChain.get_start_buffer();
         auto chainLen = firstChain.size();
-        httpmessage::Mess tmpMes{};
+        downloadmessage::Mess tmpMes{};
         tmpMes.ParsePartialFromArray(data, chainLen);
         input_buffer_.drain(chainLen);
         currentMess_.MergeFrom(tmpMes);
