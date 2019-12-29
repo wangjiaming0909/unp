@@ -1,5 +1,6 @@
 #include "serverhandler.h"
-#include "proto/mess.pb.h"
+#include "util/easylogging++.h"
+#include <cassert>
 
 namespace downloader
 {
@@ -20,22 +21,52 @@ int DownloaderServerHandler::handle_input(int handle)
     auto ret = connection_handler::handle_input(handle);
     if(ret < 0) return -1;
 
-    if(input_buffer_.buffer_length() == 0) return 0;
+	if (input_buffer_.buffer_length() == 0) return 0;
 
-    while(input_buffer_.buffer_length() > 0)
-    {
-        auto firstChain = input_buffer_.begin().chain();
-        auto chainLen = firstChain.size();
-		if (chainLen < sizeof(int32_t) && input_buffer_.total_len() > chainLen)
-		{
-		}
-        auto data = firstChain.get_start_buffer();
-        downloadmessage::Mess tmpMes{};
-        tmpMes.ParsePartialFromArray(data, chainLen);
-        input_buffer_.drain(chainLen);
-        currentMess_.MergeFrom(tmpMes);
-    }
+	if (decode() != 0) return -1;
     return 0;
+}
+
+int DownloaderServerHandler::decode()
+{
+	uint32_t bytesRemainToParse = 0;
+	if(bytesParsed_ == 0)//from start of a message
+	{
+		auto data = input_buffer_.pullup(sizeof(int32_t));
+		currentMess_.ParsePartialFromArray(data, sizeof(int32_t));
+		bytesParsed_ = sizeof(int32_t);
+		input_buffer_.drain(sizeof(int32_t));
+		if (!currentMess_.has_len())
+		{
+			LOG(ERROR) << "parse message len error";
+			return -1;
+		}
+		bytesRemainToParse = currentMess_.len() - sizeof(int32_t);
+	} else {// from some pos of a message
+		bytesRemainToParse = currentMess_.len() - bytesParsed_;
+	}
+	
+	assert(input_buffer_.buffer_length() > 0);
+	int32_t bytesGoingToParse = std::min(bytesRemainToParse, input_buffer_.buffer_length());
+	auto d = input_buffer_.pullup(bytesGoingToParse);
+	downloadmessage::Mess_WL tm{};
+	tm.ParsePartialFromArray(d, bytesGoingToParse);
+	input_buffer_.drain(bytesGoingToParse);
+	bytesParsed_ += bytesGoingToParse;
+	currentMess_.MergeFrom(tm);
+	if(bytesParsed_ == currentMess_.len())// only when the mes has been parsed thoroughly
+	{
+		dispatchMessage(currentMess_);
+		bytesParsed_ = 0;//one message has parsed already, set bytesParsed_ to 0
+		return 0;
+	}
+	else return 0;
+}
+
+
+void DownloaderServerHandler::dispatchMessage(downloadmessage::Mess_WL& mes)
+{
+
 }
 
 void DownloaderServerHandler::saveCurrentMess()
@@ -43,6 +74,5 @@ void DownloaderServerHandler::saveCurrentMess()
 
 
 }
-
 
 }
