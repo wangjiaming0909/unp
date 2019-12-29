@@ -25,8 +25,11 @@ int DownloaderServerHandler::handle_input(int handle)
     while(input_buffer_.buffer_length() > 0)
     {
         auto firstChain = input_buffer_.begin().chain();
-        auto data = firstChain.get_start_buffer();
         auto chainLen = firstChain.size();
+		if (chainLen < sizeof(int32_t) && input_buffer_.total_len() > chainLen)
+		{
+		}
+        auto data = firstChain.get_start_buffer();
         downloadmessage::Mess tmpMes{};
         tmpMes.ParsePartialFromArray(data, chainLen);
         input_buffer_.drain(chainLen);
