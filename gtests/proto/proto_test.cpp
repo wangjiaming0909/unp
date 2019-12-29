@@ -1,7 +1,9 @@
 #include <cstdlib>
 #include <gtest/gtest.h>
-#include "proto/mess.pb.h"
 #include <iostream>
+
+#include "proto/mess.pb.h"
+#include "proto/mess_wl.pb.h"
 
 const char* url = "https://www.github.com/wangjiaming0909";
 
@@ -141,4 +143,54 @@ TEST(proto, parse_from_array)
 
     free(d);
     d = nullptr;
+}
+
+TEST(proto2, normal)
+{
+	downloadmessage::Mess_WL m1{};
+	std::string urlstr{url};
+	m1.set_id(1);
+	m1.set_command(downloadmessage::Mess_WL_DownloadCommand::Mess_WL_DownloadCommand_DOWNLOAD);
+	m1.set_url(urlstr);
+	int32_t len = sizeof(int32_t) + sizeof(downloadmessage::Mess_WL_DownloadCommand) + urlstr.size() + sizeof(int32_t);
+	m1.set_len(len);
+	auto m1Size = m1.ByteSizeLong();
+	ASSERT_EQ(m1Size, len);
+
+	char* d = (char*)::calloc(1024, 1);
+	m1.SerializeToArray(d, 1024);
+	downloadmessage::Mess_WL m2{m1};
+	m2.SerializeToArray(d+m1Size, 1024-m1Size);
+
+	downloadmessage::Mess_WL m3{};
+	m3.ParsePartialFromArray(d, sizeof(int32_t));
+	//如果当前的buf 也就是d中的数据不够sizeof(int32_t),那么不要尝试解析
+	//首先需要获取到当前消息的长度字段
+	//assert 当前d中数据长度大于4
+	int32_t lenParsed = 0;
+	if(m3.has_len())
+	{
+		lenParsed = m3.len();
+	}else 
+	{
+		FAIL();
+	}
+	ASSERT_EQ(lenParsed, len);
+	std::cout << "lenParsed: " << lenParsed << std::endl;
+	auto lenRemained = lenParsed - sizeof(int32_t);
+	std::cout << "lenRemained: " << lenRemained << std::endl;
+
+	downloadmessage::Mess_WL m4{};
+	m4.ParsePartialFromArray(d+sizeof(int32_t), lenRemained);
+	std::cout << m4.id() << std::endl;
+	std::cout << m4.command() << std::endl;
+	std::cout << m4.url() << std::endl;
+	if(!m4.has_id() || !m4.has_url() || !m4.has_command())
+		FAIL();
+
+	m3.MergeFrom(m4);
+	ASSERT_EQ(m3.id(), m1.id());
+	ASSERT_EQ(m3.len(), m1.len());
+	ASSERT_EQ(m3.command(), m1.command());
+	ASSERT_EQ(m3.url(), m1.url());
 }

@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package downloadmessage;
+
+message Mess_WL{
+    enum DownloadCommand{
+        DOWNLOAD = 0;
+        PAUSE = 1;
+        RESUME = 2;
+        REMOVE = 3;
+    }
+	required int32 len = 1;
+    required int32 id = 2;
+    required DownloadCommand command = 3;
+    required string url = 4;
+}
