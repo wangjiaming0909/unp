@@ -7,7 +7,7 @@
             "request":"launch",
             "program": "${workspaceFolder}/gtests/test.out",
             "args": [
-                "--gtest_filter=proto.merge_from"
+                "--gtest_filter=downloadserver.*"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

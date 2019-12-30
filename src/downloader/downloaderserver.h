@@ -23,7 +23,7 @@ friend class DownloaderServerHandler;
 
 public:
     DownloaderServer(net::inet_addr& listenAddr);
-    ~DownloaderServer();
+    ~DownloaderServer(){}
 
     int start();
 

@@ -1,6 +1,7 @@
 #include "serverhandler.h"
 #include "util/easylogging++.h"
 #include <cassert>
+#include <memory>
 
 namespace downloader
 {
@@ -63,10 +64,41 @@ int DownloaderServerHandler::decode()
 	else return 0;
 }
 
+int DownloaderServerHandler::handle_close(int)
+{
+    if(!threadPtr_) return 0;
+    if (threadPtr_->joinable())
+    {
+        threadPtr_->join();
+        return 0;
+    }
+    else 
+    {
+        threadPtr_->detach();
+        return -1;
+    }
+}
 
 void DownloaderServerHandler::dispatchMessage(downloadmessage::Mess_WL& mes)
 {
-
+    auto command = mes.command();
+    using namespace downloadmessage;
+    switch(command)
+    {
+        case(Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_DOWNLOAD):
+            LOG(INFO) << "downloading: " << mes.url();
+            dPtr_ = std::make_shared<Downloader_t>(mes.url());
+            threadPtr_ = std::make_shared<std::thread>(&Downloader_t::download, &(*dPtr_));
+        case (Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_PAUSE):
+            LOG(INFO) << "pause: " << mes.url();
+        case (Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_RESUME):
+            LOG(INFO) << "resume: " << mes.url();
+        case (Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_REMOVE):
+            LOG(INFO) << "remove: " << mes.url();
+        default:
+            LOG(ERROR) << "unknown command...";
+            return;
+    }
 }
 
 void DownloaderServerHandler::saveCurrentMess()
