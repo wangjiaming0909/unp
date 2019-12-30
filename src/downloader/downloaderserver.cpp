@@ -23,4 +23,9 @@ int DownloaderServer::start()
     return 0;
 }
 
+int DownloaderServer::stop()
+{
+    return server_.stop(true);
+}
+
 }

@@ -26,6 +26,7 @@ EventFD::~EventFD() {
 
 void EventFD::wakeup()
 {
+	if(!handler_) return;
 	handler_->clear_input_buffer();
 	uint64_t one = 1;
 	handler_->get_sock_stream().write(&one, sizeof(one));

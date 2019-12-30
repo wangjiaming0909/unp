@@ -26,6 +26,7 @@ public:
     ~DownloaderServer(){}
 
     int start();
+    int stop();
 
 private:
 private:

@@ -61,7 +61,7 @@ public:
 
         char* d = (char*)::calloc(1024, 1);
         mes.SerializeToArray(d, 1024);
-        auto bytesWritten = write(d, 1024);
+        auto bytesWritten = write(d, len);
         free(d);
         LOG(INFO) << "mes len: " << len;
         LOG(INFO) << "bytes writen: " << bytesWritten;
@@ -77,7 +77,7 @@ TEST(downloadserver, normal)
 {
     using namespace std::chrono_literals;
     net::inet_addr listenArrd{8000, "0.0.0.0"};
-    std::string url = "https://github.com/wangjiaming0909/ace_fork/archive/master.zip";
+    std::string url = "https://github.com/wangjiaming0909/unp/archive/master.zip";
     DownloaderServer server{listenArrd};;
 
     std::thread st{&DownloaderServer::start, &server};
@@ -96,5 +96,7 @@ TEST(downloadserver, normal)
 
     client.closeConnection<Connector_t>(*connector, 2s);
 
-    st.join();
+    server.stop();
+    std::this_thread::sleep_for(2s);
+    st.detach();
 }
