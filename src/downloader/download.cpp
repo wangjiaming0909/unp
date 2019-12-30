@@ -10,8 +10,9 @@
 namespace downloader
 {
 
-Download::Download(const std::string& url) 
+Download::Download(const std::string& url, DownloadStateCallback* callback) 
     : url_{url}
+    , callback_(callback)
 {
     urlParser_.init(url_);
     if(!urlParser_.valid())
@@ -29,6 +30,7 @@ Download::~Download(){}
 int Download::download()
 {
 	using namespace std::chrono_literals;
+    int succeed = -1;
 	auto pair = download_imp(currentBegin_, currentEnd_);
 	clientPtr_->start();
 	auto* connection = pair.second;
@@ -40,7 +42,7 @@ int Download::download()
 		url_ = newUrl;
 		urlParser_.reset(url_);
 		retriveAddrFromUrl();
-		download();
+		succeed = download();
 		goto out;
     }
     if (connection->status_ == Handler::HandlerStatus::RANGE_MATCH)
@@ -49,6 +51,7 @@ int Download::download()
 		auto totalSize = connection->fileSize_;
 		if(totalSize == bytesShouldDownloaded) // completed
 		{
+            succeed = 0;
 			goto out;
 		}
 		if(connection->bytesDownloaded_ == bytesShouldDownloaded)
@@ -56,28 +59,32 @@ int Download::download()
 			LOG(INFO) << "range from: " << connection->rangeBegin_ << " to: " << connection->rangeEnd_ << " downloaded...";
 			auto bytesRemain = totalSize - connection->bytesDownloaded_;
 			LOG(INFO) << "remained: " << bytesRemain;
+            succeed = 1;
 			if(downloadRemain(bytesRemain, connection->rangeEnd_ + 1) < 0)
 			{
 				LOG(INFO) << "download remain error...";
+                succeed = -1;
 			}
 			goto out;
 		}
 		else if(retryTimes_ >= 0)
 		{
 			retryTimes_--;
-			download();
+			succeed = download();
 			retryTimes_++;
 			goto out;
 		}
     }
 	if(connection->status_ == Handler::HandlerStatus::NOT_RESPONDING_TO_RANGE)
 	{
-
+        LOG(ERROR) << "NOT_RESPONDING_TO_RANGE..";
+        succeed = -1;
 	}
 	
 out:
 	clientPtr_->closeConnection<Connector_t>(*pair.first, 2s);
-    return 0;
+    if (succeed && callback_)  callback_->taskCompleted(1);
+    return succeed;
 }
 
 int Download::downloadRemain(uint64_t remain, uint64_t start)

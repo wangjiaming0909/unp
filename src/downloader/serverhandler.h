@@ -10,7 +10,7 @@
 namespace downloader
 {
 
-class DownloaderServerHandler : public reactor::connection_handler
+class DownloaderServerHandler : public reactor::connection_handler, public downloader::Download::DownloadStateCallback
 {
 public:
     struct DownloadStateCallback
@@ -30,6 +30,13 @@ public:
     virtual int handle_close(int handle) override;
 
     virtual int open() override;
+
+    virtual void taskAdded(int id) override{}
+    virtual void taskFailed(int id) override{}
+    virtual void taskPaused(int id) override{}
+    virtual void taskRemove(int id)override{}
+    virtual void taskCompleted(int id)override;
+    virtual void taskResumed(int) override{}
 
 private:
 	int decode();

@@ -883,7 +883,7 @@ buffer_iter buffer::search_eol(uint32_t* eol_len_out, buffer_eol_style eol_style
     }
     case buffer_eol_style::BUFFER_EOL_LF:
         //找\n
-        it_ret = it_CRLF;
+        it_ret = it_LF;
         *eol_len_out = 1;
         break;
     case buffer_eol_style::BUFFER_EOL_NUL:

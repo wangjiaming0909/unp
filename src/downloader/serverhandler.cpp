@@ -87,7 +87,7 @@ void DownloaderServerHandler::dispatchMessage(downloadmessage::Mess_WL& mes)
     {
         case(Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_DOWNLOAD):
             LOG(INFO) << "downloading: " << mes.url();
-            dPtr_ = std::make_shared<Downloader_t>(mes.url());
+            dPtr_ = std::make_shared<Downloader_t>(mes.url(), this);
             threadPtr_ = std::make_shared<std::thread>(&Downloader_t::download, &(*dPtr_));
         case (Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_PAUSE):
             LOG(INFO) << "pause: " << mes.url();
@@ -105,6 +105,13 @@ void DownloaderServerHandler::saveCurrentMess()
 {
 
 
+}
+
+void DownloaderServerHandler::taskCompleted(int id)
+{
+    LOG(INFO) << "completed task id: " << id;
+    const char* mes = "F\n";
+    write(mes, strlen(mes));
 }
 
 }

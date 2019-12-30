@@ -13,9 +13,19 @@ namespace downloader
 class Download : boost::noncopyable
 {
 public:
+    struct DownloadStateCallback
+    {
+        virtual void taskAdded(int id) = 0;
+        virtual void taskPaused(int id) = 0;
+        virtual void taskRemove(int id) = 0;
+        virtual void taskResumed(int id) = 0;
+        virtual void taskCompleted(int id) = 0;
+        virtual void taskFailed(int id) = 0;
+    };
+public:
     using Connector_t = reactor::connector<Handler>;
 
-    Download(const std::string& url);
+    Download(const std::string& url, DownloadStateCallback* callback = nullptr);
     virtual ~Download();
 
     int download();
@@ -40,5 +50,6 @@ TEST_PRIVATE:
 	uint64_t size_ = 0;
 
 	int retryTimes_ = 3;
+    DownloadStateCallback* callback_;
 };
 }
