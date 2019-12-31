@@ -64,7 +64,7 @@ int connection_handler::handle_input(int handle)
     }
     if (ret == 0)
     {
-        LOG(INFO) << "Read EOF";
+        //LOG(INFO) << "Read EOF";
         return -1;
     }
     return 0;

@@ -89,12 +89,16 @@ void DownloaderServerHandler::dispatchMessage(downloadmessage::Mess_WL& mes)
             LOG(INFO) << "downloading: " << mes.url();
             dPtr_ = std::make_shared<Downloader_t>(mes.url(), this);
             threadPtr_ = std::make_shared<std::thread>(&Downloader_t::download, &(*dPtr_));
+            break;
         case (Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_PAUSE):
             LOG(INFO) << "pause: " << mes.url();
+            break;
         case (Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_RESUME):
             LOG(INFO) << "resume: " << mes.url();
+            break;
         case (Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_REMOVE):
             LOG(INFO) << "remove: " << mes.url();
+            break;
         default:
             LOG(ERROR) << "unknown command...";
             return;

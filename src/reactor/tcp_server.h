@@ -171,6 +171,7 @@ void tcp_server<Handler_t>::suspendConnectionReactor()
 template <typename Handler_t>
 int tcp_server<Handler_t>::stop(bool force)
 {
+    LOG(INFO) << "closing tcp_server...";
     suspend();
     //TODO wait until all the reactors are suspended
     if(!force)

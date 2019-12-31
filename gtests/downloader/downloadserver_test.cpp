@@ -98,5 +98,5 @@ TEST(downloadserver, normal)
 
     server.stop();
     std::this_thread::sleep_for(2s);
-    st.detach();
+    st.join();
 }
