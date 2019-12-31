@@ -32,6 +32,7 @@ public:
     
     
 TEST_PRIVATE:
+    int downloadEX();
     void initTcpClient();
     void retriveAddrFromUrl();
     std::pair<Connector_t*, Handler*> download_imp(uint64_t begin, uint64_t end);

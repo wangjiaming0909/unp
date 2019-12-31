@@ -97,7 +97,7 @@ public:
     {
         uint status = static_cast<uint>(ReactorStatus::SUSPENDING);
         status_.store(status);
-        wakeup();
+        if (eventFd_ptr_) wakeup();
     }
 
     void start()

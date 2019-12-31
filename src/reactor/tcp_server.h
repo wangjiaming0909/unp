@@ -198,7 +198,7 @@ typename tcp_server<Handler_t>::reactor_ptr_t tcp_server<Handler_t>::make_reacto
             reactor_ret = new Reactor(new poll_reactor_impl{}, true);
             break;
         case unp::reactor_imp_t_enum::USING_EPOLL:
-            reactor_ret = new Reactor(new epoll_reactor_impl{}, false);
+            reactor_ret = new Reactor(new epoll_reactor_impl{}, true);
             break;
         default:
 			break;
