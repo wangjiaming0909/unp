@@ -83,6 +83,7 @@ TEST(downloadserver, normal)
     std::thread st{&DownloaderServer::start, &server};
 
     //client
+	/*
     std::this_thread::sleep_for(2s);
     reactor::tcp_client client{unp::reactor_imp_t_enum::USING_EPOLL};
     using Connector_t = reactor::connector<ProtoTestHandler>;
@@ -95,8 +96,9 @@ TEST(downloadserver, normal)
     LOG(INFO) << "client ret: " << ret;
 
     client.closeConnection<Connector_t>(*connector, 2s);
+	*/
 
-    server.stop();
-    std::this_thread::sleep_for(2s);
+    //server.stop();
+    //std::this_thread::sleep_for(2s);
     st.join();
 }

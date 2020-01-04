@@ -62,7 +62,7 @@ tcp_client::reactor_ptr_t tcp_client::make_reactor(unp::reactor_imp_t_enum type)
         reactor_ = new Reactor(new poll_reactor_impl(), true);
         break;
     case unp::reactor_imp_t_enum::USING_EPOLL:
-        reactor_ = new Reactor(new epoll_reactor_impl());
+        reactor_ = new Reactor(new epoll_reactor_impl(), true);
         break;
     default:
         break;

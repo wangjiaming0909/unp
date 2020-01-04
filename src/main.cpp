@@ -7,6 +7,7 @@
 #include "reactor/tcp_server.h"
 #include "reactor/echo_connection_handler.h"
 #include <string>
+#include "downloader/downloaderserver.h"
 //#include "examples/Downloader.h"
 
 // INITIALIZE_NULL_EASYLOGGINGPP
@@ -40,11 +41,25 @@ int serve(int argc, char** argv)
     return server.start(unp::reactor_imp_t_enum::USING_EPOLL);
 }
 
+void downloaderServer()
+{
+
+    using namespace std::chrono_literals;
+    using namespace downloader;
+    net::inet_addr listenArrd{8000, "0.0.0.0"};
+    std::string url = "https://github.com/wangjiaming0909/unp/archive/master.zip";
+    DownloaderServer server{listenArrd};;
+
+    std::thread st{&DownloaderServer::start, &server};
+
+    st.join();
+}
+
 int main(int argc, char** argv)
 {
     server_scoped_helper s_h{argc, argv};
     //return download(argc, argv);
-    return serve(argc, argv);
+    // return serve(argc, argv);
+    downloaderServer();
 }
-
 

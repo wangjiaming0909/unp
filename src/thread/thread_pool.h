@@ -46,8 +46,9 @@ private:
     //only invoked in the add_task 
     //so it will always be locked
     bool has_task(){ return !_tasks.empty(); }
-    bool deque_full(){ return _tasks.size() > _n_of_threads; }
+    bool deque_full();
     void default_routine();
+
 private:
     size_t                                          _n_of_threads;
     bool                                            _running;

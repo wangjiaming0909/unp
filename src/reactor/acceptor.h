@@ -188,6 +188,7 @@ public:
         if (handle < 0 || static_cast<size_t>(handle) > read_handlers_.size())
         {
             LOG(ERROR) << "Close read Handler error, handle: " << handle;
+            return;
         }
         //一般也不会有别人会获得这些 connection_handler 的指针,因此 reset 之后就会析构此 connection_handler
         // read_handlers_[handle]->close();

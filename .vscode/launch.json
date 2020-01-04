@@ -7,7 +7,7 @@
             "request":"launch",
             "program": "${workspaceFolder}/gtests/test.out",
             "args": [
-                "--gtest_filter=downloadserver.*"
+                "--gtest_filter=downloadserver.normal"
             ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

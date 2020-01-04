@@ -27,6 +27,7 @@ public:
     ~DownloaderServerHandler(){}
 
     virtual int handle_input(int handle) override;
+    virtual int handle_output(int handle) override;
     virtual int handle_close(int handle) override;
 
     virtual int open() override;
@@ -39,7 +40,8 @@ public:
     virtual void taskResumed(int) override{}
 
 private:
-	int decode();
+    void destroy();
+    int decode();
     void saveCurrentMess();
 	void dispatchMessage(downloadmessage::Mess_WL& mes);
 
@@ -49,5 +51,7 @@ private:
     std::queue<downloadmessage::Mess_WL*> downloadQueue_;
     Downloader_ptr_t dPtr_;
     std::shared_ptr<std::thread> threadPtr_;
+    bool completed_ = false;
 };
-}
+
+} // namespace downloader

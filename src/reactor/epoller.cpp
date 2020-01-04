@@ -84,19 +84,26 @@ int epoller::del(int handle, uint32_t event)
 
     //exist 
     uint32_t* current_event = &handle_event_map_[handle]->events;
-    *current_event -= event;
     operation = EPOLL_CTL_MOD;
+    epoll_event ev = *(handle_event_map_[handle]);
+    ev.events &= ~event;
 
     //no more events
-    if(::epoll_ctl(epoll_fd_, operation, handle, handle_event_map_[handle].get()) != 0)
+    if(::epoll_ctl(epoll_fd_, operation, handle, &ev) != 0)
     {
-        // LOG(ERROR) << "epoll ctl error" << strerror(errno);
+        LOG(ERROR) << "epoll ctl error " << strerror(errno);
         return -1;
     }
+    *current_event &= ~event;
     if(*current_event == 0)
     {
-        handle_event_map_.erase(handle);
         operation = EPOLL_CTL_DEL;
+        if(::epoll_ctl(epoll_fd_, operation, handle, handle_event_map_[handle].get()) != 0)
+        {
+            LOG(ERROR) << "delete handle from epoll error... " << strerror(errno);
+            return -1;
+        }
+        handle_event_map_.erase(handle);
     }
 
     return 0;

@@ -156,6 +156,11 @@ void thread_pool::enable_cancellability_and_test(){
     pthread_testcancel();
 }
 
+bool thread_pool::deque_full()
+{ 
+    return _tasks.size() > 1000; 
+}
+
 void cancel_cleanup(void* guard) {
     if(guard == 0) return;
     auto g = static_cast<thread_pool::lock_gd*>(guard);
