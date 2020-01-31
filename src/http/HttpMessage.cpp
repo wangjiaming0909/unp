@@ -15,7 +15,7 @@ HttpMessage::~HttpMessage()
 
 }
 
-const HttpMessage::string_t& HttpMessage::getVersionStr()
+const HttpMessage::string_t HttpMessage::getVersionStr()
 {
 	if(version_.first == 0 && version_.second == 0)
 	{

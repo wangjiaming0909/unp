@@ -23,7 +23,7 @@ public:
     ~Downloader();
 
 public:
-    void setDownloadPath(const string_t &path)
+    void setDownloadPath(const string_t &/*path*/)
     {
     }
 
@@ -42,7 +42,7 @@ TEST_PRIVATE:
     void retriveFileNameFromContentDisposition(const std::string &cd);
 
 TEST_PRIVATE: 
-    static constexpr char *DEFAULT_DOWNLOAD_PATH = "/tmp";
+    static const char* DEFAULT_DOWNLOAD_PATH;
     static const std::string DEFAULT_FILE_NAME;
     bool isSSL_ = false;
     uint8_t connectNum_ = 1;

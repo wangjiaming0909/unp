@@ -47,11 +47,11 @@ int HttpParserWrapper::onMessageBeginCB(http_parser* parser)
     codec->onMessageBegin();
     return 0;
 }
-int HttpParserWrapper::onPathCB(http_parser* parser, const char* buf, size_t len)
+int HttpParserWrapper::onPathCB(http_parser*, const char*, size_t)
 {
     return 0;
 }
-int HttpParserWrapper::onQueryStringCB(http_parser* parser, const char* buf, size_t len)
+int HttpParserWrapper::onQueryStringCB(http_parser*, const char*, size_t)
 {
     return 0;
 }
@@ -63,7 +63,7 @@ int HttpParserWrapper::onUrlCB(http_parser* parser, const char* buf, size_t len)
     return 0;
 }
 
-int HttpParserWrapper::onReasonCB(http_parser* parser, const char* buf, size_t len)
+int HttpParserWrapper::onReasonCB(http_parser*, const char*, size_t)
 {
     return 0;
 }
@@ -95,11 +95,11 @@ int HttpParserWrapper::onBodyCB(http_parser* parser, const char* buf, size_t len
     codec->onBody(buf, len);
     return 0;
 }
-int HttpParserWrapper::onChunkHeaderCB(http_parser* parser)
+int HttpParserWrapper::onChunkHeaderCB(http_parser*)
 {
     return 0;
 }
-int HttpParserWrapper::onChunkCompleteCB(http_parser* parser)
+int HttpParserWrapper::onChunkCompleteCB(http_parser*)
 {
     return 0;
 }

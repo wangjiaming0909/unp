@@ -16,34 +16,35 @@ OBJDIR = $(BUILDDIR)/obj
 MKDIR = mkdir -p
 RM = rm -rf
 
-SOURCES=$(shell find $(SOURCEDIR) -type f -name '*.cpp')
+SOURCES = $(shell find $(SOURCEDIR) -type f -name '*.cpp')
 OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES) )
 
 
 TARGET = $(BUILDDIR)/a.out
-LIBS = /boost_1_70_0/stage/lib 
-INCLUDES = /boost_1_70_0 -I $(SOURCEDIR)
+LIBS = /usr/local/lib
+INCLUDES = $(SOURCEDIR) -I /usr/local/include
+# /boost_1_70_0  
 # LDFLAGS = -pthread -lboost_thread -lboost_system
 
 # /boost_1_70_0/stage/lib/libboost_thread.a 
-TESTLDFLAG =  -pthread \
-		/boost_1_70_0/stage/lib/libboost_system.so.1.70.0 \
-		/boost_1_70_0/stage/lib/libboost_timer.so.1.70.0 \
-		/boost_1_70_0/stage/lib/libboost_chrono.so.1.70.0 \
-		/usr/local/lib/libgtest.a \
-		/usr/local/lib/libgmock.a \
+TESTLDFLAG = -pthread \
+		/usr/local/lib/libboost_system.so.1.72.0 \
+		/usr/local/lib/libboost_timer.so.1.72.0 \
+		/usr/local/lib/libboost_chrono.so.1.72.0 \
+		-lgtest\
+		-lgmock\
 		-lssl \
 		-lcrypto\
-		/usr/lib/libprotobuf.so.22
+		/usr/local/lib/libprotobuf.so.22
 
 # /boost_1_70_0/stage/lib/libboost_thread.a 
 LDFLAGS = -pthread \
-		/boost_1_70_0/stage/lib/libboost_timer.so.1.70.0 \
-		/boost_1_70_0/stage/lib/libboost_chrono.so.1.70.0 \
-		/boost_1_70_0/stage/lib/libboost_system.so.1.70.0 \
+		/usr/local/lib/libboost_timer.so.1.72.0 \
+		/usr/local/lib/libboost_chrono.so.1.72.0 \
+		/usr/local/lib/libboost_system.so.1.72.0 \
 		-lssl \
 		-lcrypto\
-		/usr/lib/libprotobuf.so.22
+		/usr/local/lib/libprotobuf.so.22
 		
 
 all: $(BUILDDIR) $(TARGET)

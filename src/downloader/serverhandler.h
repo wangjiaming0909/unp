@@ -32,10 +32,10 @@ public:
 
     virtual int open() override;
 
-    virtual void taskAdded(int id) override{}
-    virtual void taskFailed(int id) override{}
-    virtual void taskPaused(int id) override{}
-    virtual void taskRemove(int id)override{}
+    virtual void taskAdded(int) override{}
+    virtual void taskFailed(int) override{}
+    virtual void taskPaused(int) override{}
+    virtual void taskRemove(int)override{}
     virtual void taskCompleted(int id)override;
     virtual void taskResumed(int) override{}
 

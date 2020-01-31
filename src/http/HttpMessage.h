@@ -62,7 +62,7 @@ public:
         versionStr_ = std::to_string(maj).append(".").append(std::to_string(min));
     }
 
-    const string_t& getVersionStr();
+    const string_t getVersionStr();
 
     //request
     void setRequestMethod(http::HTTPMethod method)
@@ -129,14 +129,14 @@ private:
         for ( ; subStr.size() > 0;)
         {
             auto posEqual = subStr.find('=');
-            if(posEqual >= 0 && posEqual < subStr.size())
+            if(int(posEqual) < int(subStr.size()))
             {
                 key.reset(subStr.cbegin(), subStr.cbegin() + posEqual);
                 subStr = subStr.sub_string(posEqual + 1, subStr.size() - posEqual - 1);
             }else break;
             CStringPiece_t col = "; ";
             auto posCol = subStr.find(col);
-            if(posCol >= 0 && posCol < subStr.size())
+            if(int(posCol) < int(subStr.size()))
             {
                 value.reset(subStr.cbegin(), subStr.cbegin() + posCol);
                 subStr = subStr.sub_string(posCol + 2, subStr.size() - posCol - 2);

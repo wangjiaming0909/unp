@@ -138,25 +138,25 @@ ssize_t SSLSockStream::writev(const iovec iov[], int n)
     return writev_imp(iov, n);
 }
 
-ssize_t SSLSockStream::recv(void *buffer, size_t len, int flags)
+ssize_t SSLSockStream::recv(void *, size_t, int)
 {
-
+    return 0;
 }
-ssize_t SSLSockStream::recv_n(void *buffer, size_t len, int flags)
+ssize_t SSLSockStream::recv_n(void *, size_t, int)
 {
-
+    return 0;
 }
-ssize_t SSLSockStream::readv_n(iovec iov[], size_t n)
+ssize_t SSLSockStream::readv_n(iovec [], size_t)
 {
-
+    return 0;
 }
-ssize_t SSLSockStream::send_n(const void *buffer, size_t len, int flags)
+ssize_t SSLSockStream::send_n(const void *, size_t, int)
 {
-
+    return 0;
 }
-ssize_t SSLSockStream::writev_n(const void *buffer, size_t len)
+ssize_t SSLSockStream::writev_n(const void *, size_t)
 {
-
+    return 0;
 }
 
 }

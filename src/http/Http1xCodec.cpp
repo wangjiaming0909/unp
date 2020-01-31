@@ -129,6 +129,7 @@ int Http1xCodec::onMessageComplete()
 int Http1xCodec::onParserError()
 {
     hasError_ = true;
+    return 0;
 }
 
 int Http1xCodec::pause(int pause)

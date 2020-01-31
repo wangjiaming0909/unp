@@ -11,6 +11,8 @@ namespace examples
 {
 const std::string Downloader::DEFAULT_FILE_NAME = "unp.unp";
 
+const char* Downloader::DEFAULT_DOWNLOAD_PATH = "/tmp";
+
 Downloader::Downloader(const string_t& url)
     : targetAddr_{}
     , url_{url}
@@ -41,7 +43,7 @@ void Downloader::retriveAddrFromUrl()
     char host[64] = {};
     memcpy(host, urlParser_.host().cbegin(), urlParser_.host().size());
 
-    int ret = ::getaddrinfo(host, nullptr, nullptr, &addrs);
+    ::getaddrinfo(host, nullptr, nullptr, &addrs);
 
     if(addrs == nullptr)
     {
@@ -225,7 +227,7 @@ int Downloader::getFileInfo()
         return -1;
     }
     connection->setWhenToCloseConnection(http::Http1xCodec::CodecState::ON_HEADERS_COMPLETE);
-    auto ret = clientPtr_->start();
+    clientPtr_->start();
 
     auto status = connection->codec_.status();
     auto& message = connection->codec_.message();

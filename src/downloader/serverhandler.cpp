@@ -82,7 +82,7 @@ int DownloaderServerHandler::decode()
 	else return 0;
 }
 
-int DownloaderServerHandler::handle_close(int fd)
+int DownloaderServerHandler::handle_close(int/* fd*/)
 {
     LOG(INFO) << "DownloaderServerhandler::Handle_close()";
     // connection_handler::close();
@@ -148,7 +148,7 @@ void DownloaderServerHandler::destroy()
 void DownloaderServerHandler::taskCompleted(int id)
 {
     LOG(INFO) << "completed task id: " << id;
-    const char* mes = "F\n";
+    //const char* mes = "F\n";
     // auto ret = write(mes, strlen(mes));
     completed_ = true;
     // if(ret == 0)//写入失败

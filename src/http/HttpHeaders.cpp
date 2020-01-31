@@ -198,6 +198,7 @@ std::shared_ptr<std::string> HttpHeaders::dump() const
         ret->append(headerNames_[i]).append(": ").append(headerValues_[i]).append("\n");
     }
     ret->append("\n\n");
+    return ret;
 }
 
 const size_t HttpHeaders::INIT_VECTOR_RESERVE_SIZE = 16;
@@ -215,10 +216,4 @@ char *copyFrom(const std::string &str)
     ::memcpy(data, str.data(), str.size());
     return data;
 }
-
-void __()
-{
-    (void)wordlist;
-}
-
 }

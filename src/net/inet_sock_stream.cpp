@@ -60,24 +60,24 @@ ssize_t InetSockStream::send_n(const void* buffer, size_t len, int flags,
 
 }
 */
-ssize_t InetSockStream::recv(void *buffer, size_t len, int flags)
+ssize_t InetSockStream::recv(void *, size_t, int)
 {
-
+    return 0;
 }
-ssize_t InetSockStream::recv_n(void *buffer, size_t len, int flags)
+ssize_t InetSockStream::recv_n(void *, size_t, int)
 {
-
+    return 0;
 }
-ssize_t InetSockStream::readv_n(iovec iov[], size_t n)
+ssize_t InetSockStream::readv_n(iovec [], size_t)
 {
-
+    return 0;
 }
-ssize_t InetSockStream::send_n(const void *buffer, size_t len, int flags)
+ssize_t InetSockStream::send_n(const void *, size_t, int)
 {
-
+    return 0;
 }
-ssize_t InetSockStream::writev_n(const void *buffer, size_t len)
+ssize_t InetSockStream::writev_n(const void *, size_t)
 {
-
+    return 0;
 }
 }

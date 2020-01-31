@@ -219,19 +219,21 @@ int HttpDownloader::get()
 }
 
 
-int HttpDownloader::onStatus(const char* buf, size_t len)
+int HttpDownloader::onStatus(const char*, size_t)
 {
     if(codec_->status() != 200)
     {
         LOG(WARNING) << "status is: " << codec_->status();
         return -1;
     }
+    return 0;
 }
 
 int HttpDownloader::onBody(const char* buf, size_t size)
 {
     writer_.write(buf, size);
     writer_.flush();
+    return 0;
 }
 
 int HttpDownloader::handle_input(int handle)

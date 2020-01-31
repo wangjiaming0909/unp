@@ -78,13 +78,14 @@ int HttpsClientHandler::handle_input(int handle)
 
 }
 
-int HttpsClientHandler::onStatus(const char* buf, size_t len)
+int HttpsClientHandler::onStatus(const char*, size_t)
 {
     if(codec_.status() != 200)
     {
         LOG(WARNING) << "status is: " << codec_.status();
         return -1;
     }
+    return 0;
 }
 
 int HttpsClientHandler::onBody(const char* buf, size_t size)
