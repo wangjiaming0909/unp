@@ -6,11 +6,6 @@ using namespace http;
 namespace http_test
 {
 
-void _1()
-{
-    (void)wordlist;
-}
-
 TEST(http_commom_headers, test_getHeaderCode_char_pointer){
     const char* headerName = ":Authority";
     auto ret = HttpCommomHeaders::getHeaderCode(headerName, strlen(headerName));

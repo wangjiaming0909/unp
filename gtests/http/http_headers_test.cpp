@@ -6,11 +6,6 @@ using namespace http;
 namespace http_test
 {
 
-void _()
-{
-    (void)wordlist;
-}
-
 void assertHeadersSize(const HttpHeaders& headers, size_t size)
 {
     ASSERT_EQ(headers.size(), size);
