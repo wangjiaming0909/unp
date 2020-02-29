@@ -14,3 +14,13 @@ message Mess_WL{
     required DownloadCommand command = 3;
     required string url = 4;
 }
+
+message Download_Response{
+    enum State{
+        DOWNLOADING = 0;
+        PAUSED = 1;
+        REMOVED = 2;
+    }
+    required int32 id = 1;
+    required float percent = 2;
+}

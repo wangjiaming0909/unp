@@ -19,7 +19,25 @@ class Mess_WLDefaultTypeInternal {
  public:
   ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<Mess_WL> _instance;
 } _Mess_WL_default_instance_;
+class Download_ResponseDefaultTypeInternal {
+ public:
+  ::PROTOBUF_NAMESPACE_ID::internal::ExplicitlyConstructed<Download_Response> _instance;
+} _Download_Response_default_instance_;
 }  // namespace downloadmessage
+static void InitDefaultsscc_info_Download_Response_mess_5fwl_2eproto() {
+  GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  {
+    void* ptr = &::downloadmessage::_Download_Response_default_instance_;
+    new (ptr) ::downloadmessage::Download_Response();
+    ::PROTOBUF_NAMESPACE_ID::internal::OnShutdownDestroyMessage(ptr);
+  }
+  ::downloadmessage::Download_Response::InitAsDefaultInstance();
+}
+
+::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Download_Response_mess_5fwl_2eproto =
+    {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_Download_Response_mess_5fwl_2eproto}, {}};
+
 static void InitDefaultsscc_info_Mess_WL_mess_5fwl_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
@@ -34,7 +52,7 @@ static void InitDefaultsscc_info_Mess_WL_mess_5fwl_2eproto() {
 ::PROTOBUF_NAMESPACE_ID::internal::SCCInfo<0> scc_info_Mess_WL_mess_5fwl_2eproto =
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_Mess_WL_mess_5fwl_2eproto}, {}};
 
-static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_mess_5fwl_2eproto[1];
+static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_mess_5fwl_2eproto[2];
 static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_mess_5fwl_2eproto[1];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_mess_5fwl_2eproto = nullptr;
 
@@ -52,13 +70,24 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_mess_5fwl_2eproto::offsets[] P
   2,
   3,
   0,
+  PROTOBUF_FIELD_OFFSET(::downloadmessage::Download_Response, _has_bits_),
+  PROTOBUF_FIELD_OFFSET(::downloadmessage::Download_Response, _internal_metadata_),
+  ~0u,  // no _extensions_
+  ~0u,  // no _oneof_case_
+  ~0u,  // no _weak_field_map_
+  PROTOBUF_FIELD_OFFSET(::downloadmessage::Download_Response, id_),
+  PROTOBUF_FIELD_OFFSET(::downloadmessage::Download_Response, percent_),
+  0,
+  1,
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 9, sizeof(::downloadmessage::Mess_WL)},
+  { 13, 20, sizeof(::downloadmessage::Download_Response)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
   reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::downloadmessage::_Mess_WL_default_instance_),
+  reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Message*>(&::downloadmessage::_Download_Response_default_instance_),
 };
 
 const char descriptor_table_protodef_mess_5fwl_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
@@ -67,20 +96,22 @@ const char descriptor_table_protodef_mess_5fwl_2eproto[] PROTOBUF_SECTION_VARIAB
   "\030\003 \002(\0162(.downloadmessage.Mess_WL.Downloa"
   "dCommand\022\013\n\003url\030\004 \002(\t\"B\n\017DownloadCommand"
   "\022\014\n\010DOWNLOAD\020\000\022\t\n\005PAUSE\020\001\022\n\n\006RESUME\020\002\022\n\n"
-  "\006REMOVE\020\003"
+  "\006REMOVE\020\003\"0\n\021Download_Response\022\n\n\002id\030\001 \002"
+  "(\005\022\017\n\007percent\030\002 \002(\002"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_mess_5fwl_2eproto_deps[1] = {
 };
-static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_mess_5fwl_2eproto_sccs[1] = {
+static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_mess_5fwl_2eproto_sccs[2] = {
+  &scc_info_Download_Response_mess_5fwl_2eproto.base,
   &scc_info_Mess_WL_mess_5fwl_2eproto.base,
 };
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_mess_5fwl_2eproto_once;
 static bool descriptor_table_mess_5fwl_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_mess_5fwl_2eproto = {
-  &descriptor_table_mess_5fwl_2eproto_initialized, descriptor_table_protodef_mess_5fwl_2eproto, "mess_wl.proto", 209,
-  &descriptor_table_mess_5fwl_2eproto_once, descriptor_table_mess_5fwl_2eproto_sccs, descriptor_table_mess_5fwl_2eproto_deps, 1, 0,
+  &descriptor_table_mess_5fwl_2eproto_initialized, descriptor_table_protodef_mess_5fwl_2eproto, "mess_wl.proto", 259,
+  &descriptor_table_mess_5fwl_2eproto_once, descriptor_table_mess_5fwl_2eproto_sccs, descriptor_table_mess_5fwl_2eproto_deps, 2, 0,
   schemas, file_default_instances, TableStruct_mess_5fwl_2eproto::offsets,
-  file_level_metadata_mess_5fwl_2eproto, 1, file_level_enum_descriptors_mess_5fwl_2eproto, file_level_service_descriptors_mess_5fwl_2eproto,
+  file_level_metadata_mess_5fwl_2eproto, 2, file_level_enum_descriptors_mess_5fwl_2eproto, file_level_service_descriptors_mess_5fwl_2eproto,
 };
 
 // Force running AddDescriptors() at dynamic initialization time.
@@ -459,11 +490,269 @@ void Mess_WL::InternalSwap(Mess_WL* other) {
 }
 
 
+// ===================================================================
+
+void Download_Response::InitAsDefaultInstance() {
+}
+class Download_Response::_Internal {
+ public:
+  using HasBits = decltype(std::declval<Download_Response>()._has_bits_);
+  static void set_has_id(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
+  static void set_has_percent(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
+  }
+};
+
+Download_Response::Download_Response()
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _internal_metadata_(nullptr) {
+  SharedCtor();
+  // @@protoc_insertion_point(constructor:downloadmessage.Download_Response)
+}
+Download_Response::Download_Response(const Download_Response& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message(),
+      _internal_metadata_(nullptr),
+      _has_bits_(from._has_bits_) {
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::memcpy(&id_, &from.id_,
+    static_cast<size_t>(reinterpret_cast<char*>(&percent_) -
+    reinterpret_cast<char*>(&id_)) + sizeof(percent_));
+  // @@protoc_insertion_point(copy_constructor:downloadmessage.Download_Response)
+}
+
+void Download_Response::SharedCtor() {
+  ::memset(&id_, 0, static_cast<size_t>(
+      reinterpret_cast<char*>(&percent_) -
+      reinterpret_cast<char*>(&id_)) + sizeof(percent_));
+}
+
+Download_Response::~Download_Response() {
+  // @@protoc_insertion_point(destructor:downloadmessage.Download_Response)
+  SharedDtor();
+}
+
+void Download_Response::SharedDtor() {
+}
+
+void Download_Response::SetCachedSize(int size) const {
+  _cached_size_.Set(size);
+}
+const Download_Response& Download_Response::default_instance() {
+  ::PROTOBUF_NAMESPACE_ID::internal::InitSCC(&::scc_info_Download_Response_mess_5fwl_2eproto.base);
+  return *internal_default_instance();
+}
+
+
+void Download_Response::Clear() {
+// @@protoc_insertion_point(message_clear_start:downloadmessage.Download_Response)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    ::memset(&id_, 0, static_cast<size_t>(
+        reinterpret_cast<char*>(&percent_) -
+        reinterpret_cast<char*>(&id_)) + sizeof(percent_));
+  }
+  _has_bits_.Clear();
+  _internal_metadata_.Clear();
+}
+
+const char* Download_Response::_InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
+  while (!ctx->Done(&ptr)) {
+    ::PROTOBUF_NAMESPACE_ID::uint32 tag;
+    ptr = ::PROTOBUF_NAMESPACE_ID::internal::ReadTag(ptr, &tag);
+    CHK_(ptr);
+    switch (tag >> 3) {
+      // required int32 id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 8)) {
+          _Internal::set_has_id(&has_bits);
+          id_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+        } else goto handle_unusual;
+        continue;
+      // required float percent = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 21)) {
+          _Internal::set_has_percent(&has_bits);
+          percent_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
+          ptr += sizeof(float);
+        } else goto handle_unusual;
+        continue;
+      default: {
+      handle_unusual:
+        if ((tag & 7) == 4 || tag == 0) {
+          ctx->SetLastTag(tag);
+          goto success;
+        }
+        ptr = UnknownFieldParse(tag, &_internal_metadata_, ptr, ctx);
+        CHK_(ptr != nullptr);
+        continue;
+      }
+    }  // switch
+  }  // while
+success:
+  _has_bits_.Or(has_bits);
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto success;
+#undef CHK_
+}
+
+::PROTOBUF_NAMESPACE_ID::uint8* Download_Response::_InternalSerialize(
+    ::PROTOBUF_NAMESPACE_ID::uint8* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:downloadmessage.Download_Response)
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = _has_bits_[0];
+  // required int32 id = 1;
+  if (cached_has_bits & 0x00000001u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteInt32ToArray(1, this->_internal_id(), target);
+  }
+
+  // required float percent = 2;
+  if (cached_has_bits & 0x00000002u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(2, this->_internal_percent(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields(), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:downloadmessage.Download_Response)
+  return target;
+}
+
+size_t Download_Response::RequiredFieldsByteSizeFallback() const {
+// @@protoc_insertion_point(required_fields_byte_size_fallback_start:downloadmessage.Download_Response)
+  size_t total_size = 0;
+
+  if (_internal_has_id()) {
+    // required int32 id = 1;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_id());
+  }
+
+  if (_internal_has_percent()) {
+    // required float percent = 2;
+    total_size += 1 + 4;
+  }
+
+  return total_size;
+}
+size_t Download_Response::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:downloadmessage.Download_Response)
+  size_t total_size = 0;
+
+  if (((_has_bits_[0] & 0x00000003) ^ 0x00000003) == 0) {  // All required fields are present.
+    // required int32 id = 1;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
+        this->_internal_id());
+
+    // required float percent = 2;
+    total_size += 1 + 4;
+
+  } else {
+    total_size += RequiredFieldsByteSizeFallback();
+  }
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::ComputeUnknownFieldsSize(
+        _internal_metadata_, total_size, &_cached_size_);
+  }
+  int cached_size = ::PROTOBUF_NAMESPACE_ID::internal::ToCachedSize(total_size);
+  SetCachedSize(cached_size);
+  return total_size;
+}
+
+void Download_Response::MergeFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_merge_from_start:downloadmessage.Download_Response)
+  GOOGLE_DCHECK_NE(&from, this);
+  const Download_Response* source =
+      ::PROTOBUF_NAMESPACE_ID::DynamicCastToGenerated<Download_Response>(
+          &from);
+  if (source == nullptr) {
+  // @@protoc_insertion_point(generalized_merge_from_cast_fail:downloadmessage.Download_Response)
+    ::PROTOBUF_NAMESPACE_ID::internal::ReflectionOps::Merge(from, this);
+  } else {
+  // @@protoc_insertion_point(generalized_merge_from_cast_success:downloadmessage.Download_Response)
+    MergeFrom(*source);
+  }
+}
+
+void Download_Response::MergeFrom(const Download_Response& from) {
+// @@protoc_insertion_point(class_specific_merge_from_start:downloadmessage.Download_Response)
+  GOOGLE_DCHECK_NE(&from, this);
+  _internal_metadata_.MergeFrom(from._internal_metadata_);
+  ::PROTOBUF_NAMESPACE_ID::uint32 cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  cached_has_bits = from._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      id_ = from.id_;
+    }
+    if (cached_has_bits & 0x00000002u) {
+      percent_ = from.percent_;
+    }
+    _has_bits_[0] |= cached_has_bits;
+  }
+}
+
+void Download_Response::CopyFrom(const ::PROTOBUF_NAMESPACE_ID::Message& from) {
+// @@protoc_insertion_point(generalized_copy_from_start:downloadmessage.Download_Response)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void Download_Response::CopyFrom(const Download_Response& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:downloadmessage.Download_Response)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool Download_Response::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  return true;
+}
+
+void Download_Response::InternalSwap(Download_Response* other) {
+  using std::swap;
+  _internal_metadata_.Swap(&other->_internal_metadata_);
+  swap(_has_bits_[0], other->_has_bits_[0]);
+  swap(id_, other->id_);
+  swap(percent_, other->percent_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata Download_Response::GetMetadata() const {
+  return GetMetadataStatic();
+}
+
+
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace downloadmessage
 PROTOBUF_NAMESPACE_OPEN
 template<> PROTOBUF_NOINLINE ::downloadmessage::Mess_WL* Arena::CreateMaybeMessage< ::downloadmessage::Mess_WL >(Arena* arena) {
   return Arena::CreateInternal< ::downloadmessage::Mess_WL >(arena);
+}
+template<> PROTOBUF_NOINLINE ::downloadmessage::Download_Response* Arena::CreateMaybeMessage< ::downloadmessage::Download_Response >(Arena* arena) {
+  return Arena::CreateInternal< ::downloadmessage::Download_Response >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 

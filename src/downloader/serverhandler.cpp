@@ -148,12 +148,16 @@ void DownloaderServerHandler::destroy()
 void DownloaderServerHandler::taskCompleted(int id)
 {
     LOG(INFO) << "completed task id: " << id;
-    //const char* mes = "F\n";
-    // auto ret = write(mes, strlen(mes));
+    downloadmessage::Download_Response response{};
+    response.set_id(id);
+    response.set_percent(1);
+    auto mes = response.SerializeAsString();
+    auto ret = write(mes.c_str(), mes.length());
     completed_ = true;
-    // if(ret == 0)//写入失败
-    // {
-        destroy();
-    // }
+    if(ret == 0)//写入失败
+    {
+        LOG(ERROR) << "Write complete mes error";
+    }
+    destroy();
 }
 }

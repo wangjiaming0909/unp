@@ -18,9 +18,10 @@ public:
         virtual void taskAdded(int id) = 0;
         virtual void taskPaused(int id) = 0;
         virtual void taskRemove(int id) = 0;
+        virtual void taskUpdated(int id, float finishPercent) = 0;
         virtual void taskResumed(int id) = 0;
         virtual void taskCompleted(int id) = 0;
-        virtual void taskFailed(int id) = 0;
+        virtual void taskFailed(int id, std::string& mes) = 0;
     };
 public:
     using Connector_t = reactor::connector<Handler>;
