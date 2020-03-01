@@ -31,7 +31,7 @@ public:
     inline int ioctl(int cmd, void*) const;
     inline int set_option(int level, int option, void *opt_val, socklen_t opt_len) const;
     inline int get_option(int level, int option, void *opt_val, socklen_t* opt_len) const;
-    inline int open(int family, sock_type type, int protocol, int reuse_addr = 1);
+    int open(int family, sock_type type, int protocol, int reuse_addr = 1);
     inline int close();
 	void shut_down(int how);
     int set_non_blocking() const;
@@ -69,19 +69,6 @@ inline int net::inet_sock::get_option(int level, int option, void *opt_val, sock
     return ::getsockopt(this->handle_, level, option, opt_val, opt_len);
 }
 
-inline int net::inet_sock::open(int family, sock_type type, int protocol, int reuse_addr){
-    this->handle_ = ::socket(family, (int)type, protocol);
-    // LOG(INFO) << "opening a socket..." << handle_; 
-	int one = 1;
-	if(handle_ == INVALID_HANDLE){
-		return -1;
-	} else if( reuse_addr && 
-			this->set_option(SOL_SOCKET, SO_REUSEADDR, &one, sizeof one) == -1){
-		close();
-		return -1;
-   }
-   return 0;
-}
 
 inline int net::inet_sock::close(){
     int ret = 0;

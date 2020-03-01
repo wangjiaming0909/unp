@@ -30,10 +30,11 @@ ssize_t SSLSockStream::read(void *buffer, size_t len)
 ssize_t SSLSockStream::read(reactor::buffer& buf, size_t len)
 {
     char* const data_p = static_cast<char*>(::calloc(len + 1, 1));
-    int read_len = SSL_read(ssl_, data_p, len);
-    if (read_len > 0)
+    int read_len = 0;
+    while( (read_len = SSL_read(ssl_, data_p, len)) > 0)
     {
         auto data_appended = buf.append(data_p, read_len);
+        memset(data_p, 0, len + 1);
         if(data_appended != read_len)
         {
             // LOG(WARNING) << "Read data from socket len: " << read_len << " appended into buffer len: " << data_appended;
