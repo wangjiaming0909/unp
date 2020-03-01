@@ -18,6 +18,7 @@ ssize_t InetSockStream::read(reactor::buffer& buf, size_t len)
         if(data_appended != read_len)
         {
             // LOG(WARNING) << "Read data from socket len: " << read_len << " appended into buffer len: " << data_appended;
+            free(data_p);
             return -1;
         }
     }

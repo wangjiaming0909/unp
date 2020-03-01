@@ -82,22 +82,10 @@ int DownloaderServerHandler::decode()
 	else return 0;
 }
 
-int DownloaderServerHandler::handle_close(int/* fd*/)
+int DownloaderServerHandler::handle_close(int fd)
 {
     LOG(INFO) << "DownloaderServerhandler::Handle_close()";
-    // connection_handler::close();
-    // int ret = 0;
-    // if (threadPtr_)
-    // {
-    //     if (threadPtr_->joinable())
-    //     {
-    //         threadPtr_->detach();
-    //         ret = 0;
-    //     }
-    //     else ret = -1;
-    // }
-    // else ret = -1;
-    return 0;
+    return connection_handler::handle_close(fd);
 }
 
 void DownloaderServerHandler::dispatchMessage(downloadmessage::Mess_WL& mes)
@@ -108,7 +96,7 @@ void DownloaderServerHandler::dispatchMessage(downloadmessage::Mess_WL& mes)
     {
         case(Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_DOWNLOAD):
             LOG(INFO) << "downloading: " << mes.url();
-            dPtr_ = std::make_shared<Downloader_t>(mes.url(), this);
+            dPtr_ = std::make_shared<Downloader_t>(mes.url(), this->shared_from_this());
             LOG(INFO) << "adding one download task";
             Pool::pool->add_task(
                 [=]() {
@@ -138,16 +126,18 @@ void DownloaderServerHandler::saveCurrentMess()
 
 void DownloaderServerHandler::destroy()
 {
-    if(threadPtr_ && threadPtr_->joinable())
-    {
-        threadPtr_->detach();
-    }
     connection_handler::handle_close(stream_->getHandle());
 }
 
+//this will be called in another thread
 void DownloaderServerHandler::taskCompleted(int id)
 {
     LOG(INFO) << "completed task id: " << id;
+    if(!this->stream_->hasHandle())
+    {
+        LOG(WARNING) << "Sending task completed, but peer socket has been closed...";
+        return;
+    }
     downloadmessage::Download_Response response{};
     response.set_id(id);
     response.set_percent(1);

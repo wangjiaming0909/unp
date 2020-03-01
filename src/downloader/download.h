@@ -21,12 +21,12 @@ public:
         virtual void taskUpdated(int id, float finishPercent) = 0;
         virtual void taskResumed(int id) = 0;
         virtual void taskCompleted(int id) = 0;
-        virtual void taskFailed(int id, std::string& mes) = 0;
+        virtual void taskFailed(int id, const std::string& mes) = 0;
     };
 public:
     using Connector_t = reactor::connector<Handler>;
 
-    Download(const std::string& url, DownloadStateCallback* callback = nullptr);
+    Download(const std::string& url, std::shared_ptr<DownloadStateCallback> callback = nullptr);
     virtual ~Download();
 
     int download();
@@ -52,6 +52,6 @@ TEST_PRIVATE:
 	uint64_t size_ = 0;
 
 	int retryTimes_ = 3;
-    DownloadStateCallback* callback_;
+    std::shared_ptr<DownloadStateCallback> callback_;
 };
 }

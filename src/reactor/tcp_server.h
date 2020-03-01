@@ -87,7 +87,7 @@ tcp_server<Handler_t>::tcp_server(const net::inet_addr& local_addr)
 template <typename Handler_t>
 tcp_server<Handler_t>::~tcp_server()
 {
-    if(acceptor_) close(true);
+    if(acceptor_) acceptor_->destroy_acceptor();
 }
 
 template <typename Handler_t>

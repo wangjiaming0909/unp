@@ -20,7 +20,7 @@ DownloaderServer::DownloaderServer(net::inet_addr& listenAddr)
 
 int DownloaderServer::start()
 {
-    Pool::pool = new thread::thread_pool{5};
+    Pool::pool = new thread::thread_pool{1};
     Pool::pool->start();
     server_.start(unp::reactor_imp_t_enum::USING_EPOLL);
     return 0;

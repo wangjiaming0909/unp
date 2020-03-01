@@ -10,7 +10,7 @@
 namespace downloader
 {
 
-Download::Download(const std::string& url, DownloadStateCallback* callback) 
+Download::Download(const std::string& url, std::shared_ptr<DownloadStateCallback> callback) 
     : url_{url}
     , callback_(callback)
 {
@@ -30,6 +30,7 @@ Download::~Download(){}
 int Download::downloadEX()
 {
 	using namespace std::chrono_literals;
+	if (url_ == "") return -1;
     int succeed = 1;
 	auto pair = download_imp(currentBegin_, currentEnd_);
 	clientPtr_->start();
@@ -79,6 +80,10 @@ int Download::downloadEX()
 	{
         LOG(ERROR) << "NOT_RESPONDING_TO_RANGE..";
         succeed = 1;
+	}
+	else
+	{
+		succeed = -1;
 	}
 	
 out:
