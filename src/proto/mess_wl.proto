@@ -23,4 +23,5 @@ message Download_Response{
     }
     required int32 id = 1;
     required float percent = 2;
+    required State state = 3;
 }

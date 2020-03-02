@@ -10,7 +10,7 @@
 namespace downloader
 {
 
-class Download : boost::noncopyable
+class Download : boost::noncopyable, public std::enable_shared_from_this<Download>
 {
 public:
     struct DownloadStateCallback
@@ -26,11 +26,10 @@ public:
 public:
     using Connector_t = reactor::connector<Handler>;
 
-    Download(const std::string& url, std::shared_ptr<DownloadStateCallback> callback = nullptr);
+    Download(int id, const std::string& url, std::shared_ptr<DownloadStateCallback> callback = nullptr);
     virtual ~Download();
-
     int download();
-    
+    void downloadUpdateCallback(uint64_t begin, uint64_t end, uint64_t bytesDone);
     
 TEST_PRIVATE:
     int downloadEX();
@@ -41,6 +40,7 @@ TEST_PRIVATE:
 	void HandlerSetupCallback(Handler& handler, uint64_t begin, uint64_t end);
 
 TEST_PRIVATE:
+    int id_ = 0;
     bool isSSL_ = false;
     uint8_t connectNum_ = 4;
     net::inet_addr targetAddr_;
@@ -50,6 +50,7 @@ TEST_PRIVATE:
 	uint64_t currentBegin_ = 0;
 	uint64_t currentEnd_ = 1000;
 	uint64_t size_ = 0;
+    uint64_t bytesRemained_ = 0;
 
 	int retryTimes_ = 3;
     std::shared_ptr<DownloadStateCallback> callback_;

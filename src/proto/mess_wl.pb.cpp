@@ -53,7 +53,7 @@ static void InitDefaultsscc_info_Mess_WL_mess_5fwl_2eproto() {
     {{ATOMIC_VAR_INIT(::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase::kUninitialized), 0, 0, InitDefaultsscc_info_Mess_WL_mess_5fwl_2eproto}, {}};
 
 static ::PROTOBUF_NAMESPACE_ID::Metadata file_level_metadata_mess_5fwl_2eproto[2];
-static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_mess_5fwl_2eproto[1];
+static const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* file_level_enum_descriptors_mess_5fwl_2eproto[2];
 static constexpr ::PROTOBUF_NAMESPACE_ID::ServiceDescriptor const** file_level_service_descriptors_mess_5fwl_2eproto = nullptr;
 
 const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_mess_5fwl_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
@@ -77,12 +77,14 @@ const ::PROTOBUF_NAMESPACE_ID::uint32 TableStruct_mess_5fwl_2eproto::offsets[] P
   ~0u,  // no _weak_field_map_
   PROTOBUF_FIELD_OFFSET(::downloadmessage::Download_Response, id_),
   PROTOBUF_FIELD_OFFSET(::downloadmessage::Download_Response, percent_),
+  PROTOBUF_FIELD_OFFSET(::downloadmessage::Download_Response, state_),
   0,
   1,
+  2,
 };
 static const ::PROTOBUF_NAMESPACE_ID::internal::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
   { 0, 9, sizeof(::downloadmessage::Mess_WL)},
-  { 13, 20, sizeof(::downloadmessage::Download_Response)},
+  { 13, 21, sizeof(::downloadmessage::Download_Response)},
 };
 
 static ::PROTOBUF_NAMESPACE_ID::Message const * const file_default_instances[] = {
@@ -96,8 +98,11 @@ const char descriptor_table_protodef_mess_5fwl_2eproto[] PROTOBUF_SECTION_VARIAB
   "\030\003 \002(\0162(.downloadmessage.Mess_WL.Downloa"
   "dCommand\022\013\n\003url\030\004 \002(\t\"B\n\017DownloadCommand"
   "\022\014\n\010DOWNLOAD\020\000\022\t\n\005PAUSE\020\001\022\n\n\006RESUME\020\002\022\n\n"
-  "\006REMOVE\020\003\"0\n\021Download_Response\022\n\n\002id\030\001 \002"
-  "(\005\022\017\n\007percent\030\002 \002(\002"
+  "\006REMOVE\020\003\"\234\001\n\021Download_Response\022\n\n\002id\030\001 "
+  "\002(\005\022\017\n\007percent\030\002 \002(\002\0227\n\005state\030\003 \002(\0162(.do"
+  "wnloadmessage.Download_Response.State\"1\n"
+  "\005State\022\017\n\013DOWNLOADING\020\000\022\n\n\006PAUSED\020\001\022\013\n\007R"
+  "EMOVED\020\002"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_mess_5fwl_2eproto_deps[1] = {
 };
@@ -108,7 +113,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_mes
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_mess_5fwl_2eproto_once;
 static bool descriptor_table_mess_5fwl_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_mess_5fwl_2eproto = {
-  &descriptor_table_mess_5fwl_2eproto_initialized, descriptor_table_protodef_mess_5fwl_2eproto, "mess_wl.proto", 259,
+  &descriptor_table_mess_5fwl_2eproto_initialized, descriptor_table_protodef_mess_5fwl_2eproto, "mess_wl.proto", 368,
   &descriptor_table_mess_5fwl_2eproto_once, descriptor_table_mess_5fwl_2eproto_sccs, descriptor_table_mess_5fwl_2eproto_deps, 2, 0,
   schemas, file_default_instances, TableStruct_mess_5fwl_2eproto::offsets,
   file_level_metadata_mess_5fwl_2eproto, 2, file_level_enum_descriptors_mess_5fwl_2eproto, file_level_service_descriptors_mess_5fwl_2eproto,
@@ -141,6 +146,29 @@ constexpr Mess_WL_DownloadCommand Mess_WL::REMOVE;
 constexpr Mess_WL_DownloadCommand Mess_WL::DownloadCommand_MIN;
 constexpr Mess_WL_DownloadCommand Mess_WL::DownloadCommand_MAX;
 constexpr int Mess_WL::DownloadCommand_ARRAYSIZE;
+#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Download_Response_State_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_mess_5fwl_2eproto);
+  return file_level_enum_descriptors_mess_5fwl_2eproto[1];
+}
+bool Download_Response_State_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      return true;
+    default:
+      return false;
+  }
+}
+
+#if (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
+constexpr Download_Response_State Download_Response::DOWNLOADING;
+constexpr Download_Response_State Download_Response::PAUSED;
+constexpr Download_Response_State Download_Response::REMOVED;
+constexpr Download_Response_State Download_Response::State_MIN;
+constexpr Download_Response_State Download_Response::State_MAX;
+constexpr int Download_Response::State_ARRAYSIZE;
 #endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || _MSC_VER >= 1900)
 
 // ===================================================================
@@ -503,6 +531,9 @@ class Download_Response::_Internal {
   static void set_has_percent(HasBits* has_bits) {
     (*has_bits)[0] |= 2u;
   }
+  static void set_has_state(HasBits* has_bits) {
+    (*has_bits)[0] |= 4u;
+  }
 };
 
 Download_Response::Download_Response()
@@ -516,15 +547,15 @@ Download_Response::Download_Response(const Download_Response& from)
       _has_bits_(from._has_bits_) {
   _internal_metadata_.MergeFrom(from._internal_metadata_);
   ::memcpy(&id_, &from.id_,
-    static_cast<size_t>(reinterpret_cast<char*>(&percent_) -
-    reinterpret_cast<char*>(&id_)) + sizeof(percent_));
+    static_cast<size_t>(reinterpret_cast<char*>(&state_) -
+    reinterpret_cast<char*>(&id_)) + sizeof(state_));
   // @@protoc_insertion_point(copy_constructor:downloadmessage.Download_Response)
 }
 
 void Download_Response::SharedCtor() {
   ::memset(&id_, 0, static_cast<size_t>(
-      reinterpret_cast<char*>(&percent_) -
-      reinterpret_cast<char*>(&id_)) + sizeof(percent_));
+      reinterpret_cast<char*>(&state_) -
+      reinterpret_cast<char*>(&id_)) + sizeof(state_));
 }
 
 Download_Response::~Download_Response() {
@@ -551,10 +582,10 @@ void Download_Response::Clear() {
   (void) cached_has_bits;
 
   cached_has_bits = _has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
+  if (cached_has_bits & 0x00000007u) {
     ::memset(&id_, 0, static_cast<size_t>(
-        reinterpret_cast<char*>(&percent_) -
-        reinterpret_cast<char*>(&id_)) + sizeof(percent_));
+        reinterpret_cast<char*>(&state_) -
+        reinterpret_cast<char*>(&id_)) + sizeof(state_));
   }
   _has_bits_.Clear();
   _internal_metadata_.Clear();
@@ -582,6 +613,18 @@ const char* Download_Response::_InternalParse(const char* ptr, ::PROTOBUF_NAMESP
           _Internal::set_has_percent(&has_bits);
           percent_ = ::PROTOBUF_NAMESPACE_ID::internal::UnalignedLoad<float>(ptr);
           ptr += sizeof(float);
+        } else goto handle_unusual;
+        continue;
+      // required .downloadmessage.Download_Response.State state = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::PROTOBUF_NAMESPACE_ID::uint8>(tag) == 24)) {
+          ::PROTOBUF_NAMESPACE_ID::uint64 val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
+          CHK_(ptr);
+          if (PROTOBUF_PREDICT_TRUE(::downloadmessage::Download_Response_State_IsValid(val))) {
+            _internal_set_state(static_cast<::downloadmessage::Download_Response_State>(val));
+          } else {
+            ::PROTOBUF_NAMESPACE_ID::internal::WriteVarint(3, val, mutable_unknown_fields());
+          }
         } else goto handle_unusual;
         continue;
       default: {
@@ -624,6 +667,13 @@ failure:
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteFloatToArray(2, this->_internal_percent(), target);
   }
 
+  // required .downloadmessage.Download_Response.State state = 3;
+  if (cached_has_bits & 0x00000004u) {
+    target = stream->EnsureSpace(target);
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::WriteEnumToArray(
+      3, this->_internal_state(), target);
+  }
+
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields(), target, stream);
@@ -648,13 +698,19 @@ size_t Download_Response::RequiredFieldsByteSizeFallback() const {
     total_size += 1 + 4;
   }
 
+  if (_internal_has_state()) {
+    // required .downloadmessage.Download_Response.State state = 3;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_state());
+  }
+
   return total_size;
 }
 size_t Download_Response::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:downloadmessage.Download_Response)
   size_t total_size = 0;
 
-  if (((_has_bits_[0] & 0x00000003) ^ 0x00000003) == 0) {  // All required fields are present.
+  if (((_has_bits_[0] & 0x00000007) ^ 0x00000007) == 0) {  // All required fields are present.
     // required int32 id = 1;
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::Int32Size(
@@ -662,6 +718,10 @@ size_t Download_Response::ByteSizeLong() const {
 
     // required float percent = 2;
     total_size += 1 + 4;
+
+    // required .downloadmessage.Download_Response.State state = 3;
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::EnumSize(this->_internal_state());
 
   } else {
     total_size += RequiredFieldsByteSizeFallback();
@@ -702,12 +762,15 @@ void Download_Response::MergeFrom(const Download_Response& from) {
   (void) cached_has_bits;
 
   cached_has_bits = from._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
+  if (cached_has_bits & 0x00000007u) {
     if (cached_has_bits & 0x00000001u) {
       id_ = from.id_;
     }
     if (cached_has_bits & 0x00000002u) {
       percent_ = from.percent_;
+    }
+    if (cached_has_bits & 0x00000004u) {
+      state_ = from.state_;
     }
     _has_bits_[0] |= cached_has_bits;
   }
@@ -728,7 +791,7 @@ void Download_Response::CopyFrom(const Download_Response& from) {
 }
 
 bool Download_Response::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
   return true;
 }
 
@@ -738,6 +801,7 @@ void Download_Response::InternalSwap(Download_Response* other) {
   swap(_has_bits_[0], other->_has_bits_[0]);
   swap(id_, other->id_);
   swap(percent_, other->percent_);
+  swap(state_, other->state_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata Download_Response::GetMetadata() const {

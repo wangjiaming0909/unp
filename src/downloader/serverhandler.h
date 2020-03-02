@@ -16,12 +16,6 @@ class DownloaderServerHandler :
     public std::enable_shared_from_this<DownloaderServerHandler>
 {
 public:
-    struct DownloadStateCallback
-    {
-        virtual void downloadStarted(int32_t id) = 0;
-        //virtual void 
-    };
-public:
 
     using Downloader_t = downloader::Download;
     using Downloader_ptr_t = std::shared_ptr<Downloader_t>;
@@ -36,7 +30,7 @@ public:
     virtual int open() override;
 
     virtual void taskAdded(int) override{}
-    virtual void taskUpdated(int id, float finishPercent) override{};
+    virtual void taskUpdated(int id, float finishPercent) override;
     virtual void taskFailed(int, const std::string&) override{}
     virtual void taskPaused(int) override{}
     virtual void taskRemove(int)override{}
@@ -53,7 +47,7 @@ private:
 	int bytesParsed_ = 0; 
     downloadmessage::Mess_WL currentMess_;
     std::queue<downloadmessage::Mess_WL*> downloadQueue_;
-    Downloader_ptr_t dPtr_;
+    std::vector<Downloader_ptr_t> dPtrs_;
     bool completed_ = false;
 };
 

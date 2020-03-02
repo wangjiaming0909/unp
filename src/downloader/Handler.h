@@ -34,7 +34,7 @@ public:
 
 public:
     using MessageSetupCallback_t = std::function<void(Handler& handler)>;
-    Handler(reactor::Reactor& react, const std::string& url, bool isSSL, MessageSetupCallback_t&& callback);
+    Handler(reactor::Reactor& react, const std::string& url, bool isSSL, uint64_t begin, uint64_t end, std::shared_ptr<Download> downloader);
     virtual ~Handler();
 
     virtual int handle_input(int handle) override;
@@ -87,7 +87,8 @@ private:
     HandlerStatus status_ = HandlerStatus::IDLE;
 	std::string fileName_;
     std::shared_ptr<utils::FileWriter> fileWriterPtr_;
-	MessageSetupCallback_t setupCallback_;
+	//MessageSetupCallback_t setupCallback_;
+    std::shared_ptr<Download> downloader_;
 };
 static string_piece::const_string_piece USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0";
 static string_piece::const_string_piece ACCEPT = "*/*";

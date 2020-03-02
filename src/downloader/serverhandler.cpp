@@ -96,11 +96,11 @@ void DownloaderServerHandler::dispatchMessage(downloadmessage::Mess_WL& mes)
     {
         case(Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_DOWNLOAD):
             LOG(INFO) << "downloading: " << mes.url();
-            dPtr_ = std::make_shared<Downloader_t>(mes.url(), this->shared_from_this());
+            dPtrs_.push_back(std::make_shared<Downloader_t>(mes.id(), mes.url(), this->shared_from_this()));
             LOG(INFO) << "adding one download task";
             Pool::pool->add_task(
                 [=]() {
-                    dPtr_->download();
+                    dPtrs_.back()->download();
                 });
             break;
         case (Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_PAUSE):
@@ -118,11 +118,7 @@ void DownloaderServerHandler::dispatchMessage(downloadmessage::Mess_WL& mes)
     }
 }
 
-void DownloaderServerHandler::saveCurrentMess()
-{
-
-
-}
+void DownloaderServerHandler::saveCurrentMess() { }
 
 void DownloaderServerHandler::destroy()
 {
@@ -138,16 +134,28 @@ void DownloaderServerHandler::taskCompleted(int id)
         LOG(WARNING) << "Sending task completed, but peer socket has been closed...";
         return;
     }
-    downloadmessage::Download_Response response{};
-    response.set_id(id);
-    response.set_percent(1);
-    auto mes = response.SerializeAsString();
-    auto ret = write(mes.c_str(), mes.length());
-    completed_ = true;
-    if(ret == 0)//写入失败
-    {
-        LOG(ERROR) << "Write complete mes error";
-    }
     destroy();
+}
+
+void DownloaderServerHandler::taskUpdated(int id, float finishPercent)
+{
+    LOG(INFO) << "task: " << id << " updating finished: " << finishPercent;
+    if(!this->stream_->hasHandle())
+    {
+        LOG(WARNING) << "Sending update, but peer socket has been closed...";
+        return;
+    }
+    downloadmessage::Download_Response resp{};
+    resp.set_state(downloadmessage::Download_Response::State::Download_Response_State_DOWNLOADING);
+    resp.set_id(id);
+    resp.set_percent(finishPercent);
+    char arr[128] = {};
+    resp.SerializeToArray(arr, 128);
+    auto ret = write(arr, sizeof(int) + sizeof(float) + sizeof(downloadmessage::Download_Response_State));
+    if(ret == 0)
+    {
+        LOG(ERROR) << "Write update mes error";
+    }
+
 }
 }

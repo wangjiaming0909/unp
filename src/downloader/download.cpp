@@ -10,8 +10,9 @@
 namespace downloader
 {
 
-Download::Download(const std::string& url, std::shared_ptr<DownloadStateCallback> callback) 
-    : url_{url}
+Download::Download(int id, const std::string& url, std::shared_ptr<DownloadStateCallback> callback) 
+    : id_(id)
+    , url_{url}
     , callback_(callback)
 {
     urlParser_.init(url_);
@@ -50,6 +51,7 @@ int Download::downloadEX()
     {
 		auto bytesShouldDownloaded = connection->rangeEnd_ - connection->rangeBegin_ + 1;
 		auto totalSize = connection->fileSize_;
+        size_ = bytesRemained_ = totalSize;
 		if(totalSize == bytesShouldDownloaded) // completed
 		{
             succeed = 0;
@@ -149,8 +151,8 @@ void Download::HandlerSetupCallback(Handler& handler, uint64_t begin, uint64_t e
 
 std::pair<Download::Connector_t*, Handler*>Download::download_imp(uint64_t begin, uint64_t end)
 {
-	auto callback = std::bind(&Download::HandlerSetupCallback, this, std::placeholders::_1, begin, end);
-    auto* connector = clientPtr_->addConnection<Connector_t>(url_, isSSL_, std::move(callback));
+	//auto callback = std::bind(&Download::HandlerSetupCallback, this, std::placeholders::_1, begin, end);
+    auto* connector = clientPtr_->addConnection<Connector_t>(url_, isSSL_, begin, end, shared_from_this());
     auto* connection = connector->connect(targetAddr_, 2s);
     if(connection == nullptr)
     {
@@ -201,5 +203,19 @@ void Download::retriveAddrFromUrl()
     else targetAddr_.set_port_number(80);
 }
 
+void Download::downloadUpdateCallback(uint64_t , uint64_t , uint64_t bytesDone)
+{
+    bytesRemained_ -= bytesDone;
+    float percent = 0.0;
+    if(size_ == 0)
+    {
+        LOG(WARNING) << "No size info...";
+        percent = 0;
+    }else
+    {
+        percent = (size_ - bytesRemained_) / size_;
+    }
+    callback_->taskUpdated(id_, percent);
+}
 
 }

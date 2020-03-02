@@ -1,20 +1,25 @@
 #include "Handler.h"
 #include "http/gperf/HttpHeaderCode.h"
 #include "util/easylogging++.h"
+#include <memory>
 #include <string>
 #include <utility>
+#include "downloader/download.h"
 
 namespace downloader
 {
 
-Handler::Handler(reactor::Reactor& react, const std::string& url, bool isSSL, MessageSetupCallback_t&& callback) 
+Handler::Handler(reactor::Reactor& react, const std::string& url, bool isSSL, uint64_t begin, uint64_t end, std::shared_ptr<Download> downloader) 
     : connection_handler(react, isSSL)
+    , rangeBegin_(begin)
+    , rangeEnd_(end)
     , request_{}
     , codec_{http::HttpDirection::DOWNSTREAM}
     , urlParser_{}
     , url_{url}
     , fileWriterPtr_{nullptr}
-	, setupCallback_{std::move(callback)}
+	//, setupCallback_{std::move(callback)}
+    , downloader_(downloader)
 {
     codec_.setCallback(this);
     urlParser_.init(url_);
@@ -79,7 +84,7 @@ int Handler::handle_input(int handle)
 
 int Handler::open()
 {
-	if(setupCallback_) setupCallback_(*this);
+	//if(setupCallback_) setupCallback_(*this);
     request_.setHttpVersion(1, 1);
     request_.setRequestPath(urlParser_.path().cbegin());
     request_.setRequestMethod(http::HTTPMethod::GET);
@@ -124,39 +129,34 @@ int Handler::onStatus(const char* /*buf*/, size_t/* len*/)
 
 int Handler::onBody(const char* buf, size_t size)
 {
-	//LOG(INFO) << "status: " << int(status_);
-	if(status_ == HandlerStatus::CHUNK_ENCODING 
-            || status_ == HandlerStatus::NOT_RESPONDING_TO_RANGE
-            || status_ == HandlerStatus::NO_CONTENT_DISPOSITION)
-    {
-        bytesDownloaded_ += size;
-		//LOG(INFO) << bytesDownloaded_ << " bytes downloaded...";
-        if(!fileWriterPtr_) return 0;
-        fileWriterPtr_->write(buf, size);
-        fileWriterPtr_->flush();
-        //LOG(INFO) << "CHUNK_ENCODING With on body size: " << size;
-        return 0;
-        //bytesDownloaded_ += size;
-    }
-
-    if(status_ == HandlerStatus::RANGE_MATCH)
-    {
-		//LOG(INFO) << "range match...";
-        bytesDownloaded_ += size;
-        if(!fileWriterPtr_) return 0;
-        fileName_ += std::to_string(fileSize_);
-        fileWriterPtr_->resetFileName(fileName_);
-        fileWriterPtr_->write(buf, size);
-        fileWriterPtr_->flush();
-        return 0;
-    }
-    
     if(status_ == HandlerStatus::RANGE_NOT_MATCH)
     {
         isShouldClose_ = true;
 		LOG(INFO) << "range not match ...";
         return -1;
     }
+
+    bytesDownloaded_ += size;
+    //LOG(INFO) << bytesDownloaded_ << " bytes downloaded...";
+    if(!fileWriterPtr_) return 0;
+
+	if(status_ == HandlerStatus::CHUNK_ENCODING 
+            || status_ == HandlerStatus::NOT_RESPONDING_TO_RANGE
+            || status_ == HandlerStatus::NO_CONTENT_DISPOSITION)
+    {
+        //LOG(INFO) << "CHUNK_ENCODING With on body size: " << size;
+    }
+
+    if(status_ == HandlerStatus::RANGE_MATCH)
+    {
+		//LOG(INFO) << "range match...";
+        fileName_ += std::to_string(fileSize_);
+        fileWriterPtr_->resetFileName(fileName_);
+    }
+
+    if(downloader_) downloader_->downloadUpdateCallback(rangeBegin_, rangeEnd_, size);
+    fileWriterPtr_->write(buf, size);
+    fileWriterPtr_->flush();
     return 0;
 }
 

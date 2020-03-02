@@ -94,6 +94,30 @@ inline bool Mess_WL_DownloadCommand_Parse(
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<Mess_WL_DownloadCommand>(
     Mess_WL_DownloadCommand_descriptor(), name, value);
 }
+enum Download_Response_State : int {
+  Download_Response_State_DOWNLOADING = 0,
+  Download_Response_State_PAUSED = 1,
+  Download_Response_State_REMOVED = 2
+};
+bool Download_Response_State_IsValid(int value);
+constexpr Download_Response_State Download_Response_State_State_MIN = Download_Response_State_DOWNLOADING;
+constexpr Download_Response_State Download_Response_State_State_MAX = Download_Response_State_REMOVED;
+constexpr int Download_Response_State_State_ARRAYSIZE = Download_Response_State_State_MAX + 1;
+
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Download_Response_State_descriptor();
+template<typename T>
+inline const std::string& Download_Response_State_Name(T enum_t_value) {
+  static_assert(::std::is_same<T, Download_Response_State>::value ||
+    ::std::is_integral<T>::value,
+    "Incorrect type passed to function Download_Response_State_Name.");
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfEnum(
+    Download_Response_State_descriptor(), enum_t_value);
+}
+inline bool Download_Response_State_Parse(
+    const std::string& name, Download_Response_State* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<Download_Response_State>(
+    Download_Response_State_descriptor(), name, value);
+}
 // ===================================================================
 
 class Mess_WL :
@@ -435,11 +459,44 @@ class Download_Response :
 
   // nested types ----------------------------------------------------
 
+  typedef Download_Response_State State;
+  static constexpr State DOWNLOADING =
+    Download_Response_State_DOWNLOADING;
+  static constexpr State PAUSED =
+    Download_Response_State_PAUSED;
+  static constexpr State REMOVED =
+    Download_Response_State_REMOVED;
+  static inline bool State_IsValid(int value) {
+    return Download_Response_State_IsValid(value);
+  }
+  static constexpr State State_MIN =
+    Download_Response_State_State_MIN;
+  static constexpr State State_MAX =
+    Download_Response_State_State_MAX;
+  static constexpr int State_ARRAYSIZE =
+    Download_Response_State_State_ARRAYSIZE;
+  static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+  State_descriptor() {
+    return Download_Response_State_descriptor();
+  }
+  template<typename T>
+  static inline const std::string& State_Name(T enum_t_value) {
+    static_assert(::std::is_same<T, State>::value ||
+      ::std::is_integral<T>::value,
+      "Incorrect type passed to function State_Name.");
+    return Download_Response_State_Name(enum_t_value);
+  }
+  static inline bool State_Parse(const std::string& name,
+      State* value) {
+    return Download_Response_State_Parse(name, value);
+  }
+
   // accessors -------------------------------------------------------
 
   enum : int {
     kIdFieldNumber = 1,
     kPercentFieldNumber = 2,
+    kStateFieldNumber = 3,
   };
   // required int32 id = 1;
   bool has_id() const;
@@ -467,6 +524,19 @@ class Download_Response :
   void _internal_set_percent(float value);
   public:
 
+  // required .downloadmessage.Download_Response.State state = 3;
+  bool has_state() const;
+  private:
+  bool _internal_has_state() const;
+  public:
+  void clear_state();
+  ::downloadmessage::Download_Response_State state() const;
+  void set_state(::downloadmessage::Download_Response_State value);
+  private:
+  ::downloadmessage::Download_Response_State _internal_state() const;
+  void _internal_set_state(::downloadmessage::Download_Response_State value);
+  public:
+
   // @@protoc_insertion_point(class_scope:downloadmessage.Download_Response)
  private:
   class _Internal;
@@ -479,6 +549,7 @@ class Download_Response :
   mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   ::PROTOBUF_NAMESPACE_ID::int32 id_;
   float percent_;
+  int state_;
   friend struct ::TableStruct_mess_5fwl_2eproto;
 };
 // ===================================================================
@@ -708,6 +779,35 @@ inline void Download_Response::set_percent(float value) {
   // @@protoc_insertion_point(field_set:downloadmessage.Download_Response.percent)
 }
 
+// required .downloadmessage.Download_Response.State state = 3;
+inline bool Download_Response::_internal_has_state() const {
+  bool value = (_has_bits_[0] & 0x00000004u) != 0;
+  return value;
+}
+inline bool Download_Response::has_state() const {
+  return _internal_has_state();
+}
+inline void Download_Response::clear_state() {
+  state_ = 0;
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline ::downloadmessage::Download_Response_State Download_Response::_internal_state() const {
+  return static_cast< ::downloadmessage::Download_Response_State >(state_);
+}
+inline ::downloadmessage::Download_Response_State Download_Response::state() const {
+  // @@protoc_insertion_point(field_get:downloadmessage.Download_Response.state)
+  return _internal_state();
+}
+inline void Download_Response::_internal_set_state(::downloadmessage::Download_Response_State value) {
+  assert(::downloadmessage::Download_Response_State_IsValid(value));
+  _has_bits_[0] |= 0x00000004u;
+  state_ = value;
+}
+inline void Download_Response::set_state(::downloadmessage::Download_Response_State value) {
+  _internal_set_state(value);
+  // @@protoc_insertion_point(field_set:downloadmessage.Download_Response.state)
+}
+
 #ifdef __GNUC__
   #pragma GCC diagnostic pop
 #endif  // __GNUC__
@@ -724,6 +824,11 @@ template <> struct is_proto_enum< ::downloadmessage::Mess_WL_DownloadCommand> : 
 template <>
 inline const EnumDescriptor* GetEnumDescriptor< ::downloadmessage::Mess_WL_DownloadCommand>() {
   return ::downloadmessage::Mess_WL_DownloadCommand_descriptor();
+}
+template <> struct is_proto_enum< ::downloadmessage::Download_Response_State> : ::std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::downloadmessage::Download_Response_State>() {
+  return ::downloadmessage::Download_Response_State_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE
