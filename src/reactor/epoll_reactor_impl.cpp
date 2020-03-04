@@ -56,7 +56,7 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
     }
     else if(n > 0)
     {
-        LOG(INFO) << n << " handle(s) ready...";
+        //LOG(INFO) << n << " handle(s) ready...";
         n = this->dispatch(n);
     }
     return 0;
@@ -78,13 +78,13 @@ int epoll_reactor_impl::unregister_handler(EventHandler *handler, Event_Type typ
 
 int epoll_reactor_impl::register_handler(int handle, EventHandler *handler, Event_Type type)
 {
-    // std::lock_guard<std::mutex> guard(mutex_);
+     std::lock_guard<std::mutex> guard(mutex_);
 
     if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "Handle error or registered type error...";
         return -1;
     }
-    LOG(INFO) << "Registering handler, handle: " << handle << " event: " << event_type_to_string(type);
+    //LOG(INFO) << "Registering handler, handle: " << handle << " event: " << event_type_to_string(type);
 
     //already existed in the table
     if(demux_table_.get_handler(handle, type) != 0)
@@ -131,13 +131,13 @@ int epoll_reactor_impl::register_handler(int handle, EventHandler *handler, Even
 
 int epoll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Event_Type type)
 {
-    // std::lock_guard<std::mutex> guard(mutex_);
+    std::lock_guard<std::mutex> guard(mutex_);
 
     if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "Handle error or unregistered type error...";
         return -1;
     }
-    LOG(INFO) << "Unregistering handler, handle: " << handle << " event: " << event_type_to_string(type);
+    //LOG(INFO) << "Unregistering handler, handle: " << handle << " event: " << event_type_to_string(type);
 
     //didn't find the handle and handler
     if(demux_table_.get_handler(handle, type) == 0)
@@ -263,7 +263,7 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
         } 
         else
         {
-            LOG(INFO) <<"Keep listening on handle: " << current_fd << " event: " << event_type_to_string(type);
+            //LOG(INFO) <<"Keep listening on handle: " << current_fd << " event: " << event_type_to_string(type);
         }
         bool isHasHandle = demux_table_.has_handle(current_fd);
         if(!isHasHandle && (handler != nullptr))

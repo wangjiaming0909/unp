@@ -85,6 +85,7 @@ int Handler::handle_input(int handle)
 int Handler::open()
 {
 	//if(setupCallback_) setupCallback_(*this);
+    setDownloadRange(rangeBegin_, rangeEnd_);
     request_.setHttpVersion(1, 1);
     request_.setRequestPath(urlParser_.path().cbegin());
     request_.setRequestMethod(http::HTTPMethod::GET);

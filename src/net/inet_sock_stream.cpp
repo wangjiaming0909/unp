@@ -38,7 +38,7 @@ ssize_t InetSockStream::send(const void *buffer, size_t len, int flags)
 
 ssize_t InetSockStream::write(const void* buffer, size_t len)
 {
-	if(sock_fd_.get_handle() == INVALID_HANDLE) return 0;
+	if(sock_fd_.get_handle() == INVALID_HANDLE || !sock_fd_.canWrite()) return 0;
 	int write_len = 0;
 	write_len = ::write(sock_fd_.get_handle(), buffer, len);
 	// LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";

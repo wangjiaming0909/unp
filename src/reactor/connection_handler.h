@@ -7,6 +7,7 @@
 #include "reactor/reactor.h"
 #include "util/easylogging++.h"
 #include <functional>
+#include <mutex>
 
 namespace reactor
 {
@@ -92,6 +93,7 @@ protected:
     static const unsigned int BUFFER_HIGH_WATER_MARK;
     std::function<void(int)> closed_callback_;
     bool isSSL_;
+    std::mutex mutex_;
 };
 
 //template <typename T>

@@ -37,6 +37,7 @@ int Download::downloadEX()
 	clientPtr_->start();
 	auto* connection = pair.second;
 	if(connection == nullptr) return -1;
+	size_ = bytesRemained_= connection->fileSize_;
 	if(connection->status_ == Handler::HandlerStatus::NEW_LOCATION_GOT)
 	{
 		auto& newUrl = connection->url_;
@@ -51,7 +52,6 @@ int Download::downloadEX()
     {
 		auto bytesShouldDownloaded = connection->rangeEnd_ - connection->rangeBegin_ + 1;
 		auto totalSize = connection->fileSize_;
-        size_ = bytesRemained_ = totalSize;
 		if(totalSize == bytesShouldDownloaded) // completed
 		{
             succeed = 0;
@@ -97,7 +97,8 @@ int Download::download()
 {
 	auto succeed = downloadEX();
     if (succeed >= 0 && callback_)  callback_->taskCompleted(1);
-	return succeed;
+	std::this_thread::sleep_for(1s);
+	return 0;
 }
 
 int Download::downloadRemain(uint64_t remain, uint64_t start)
@@ -209,11 +210,11 @@ void Download::downloadUpdateCallback(uint64_t , uint64_t , uint64_t bytesDone)
     float percent = 0.0;
     if(size_ == 0)
     {
-        LOG(WARNING) << "No size info...";
+        //LOG(WARNING) << "No size info...";
         percent = 0;
     }else
     {
-        percent = (size_ - bytesRemained_) / size_;
+        percent = (size_ - bytesRemained_) / (float)size_;
     }
     callback_->taskUpdated(id_, percent);
 }

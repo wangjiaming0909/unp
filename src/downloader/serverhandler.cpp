@@ -2,6 +2,7 @@
 #include "util/easylogging++.h"
 #include <cassert>
 #include <memory>
+#include <mutex>
 #include "d.h"
 
 namespace downloader
@@ -10,6 +11,8 @@ namespace downloader
 DownloaderServerHandler::DownloaderServerHandler(reactor::Reactor& react) 
     : connection_handler(react)
     , currentMess_{}
+    , downloaderMap_{}
+    , mutex_{}
 {
 }
 
@@ -27,13 +30,18 @@ int DownloaderServerHandler::handle_input(int handle)
 
 	if (input_buffer_.buffer_length() == 0) return 0;
 
-	if (decode() != 0) return -1;
+    while(input_buffer_.buffer_length() > 0 && decode() >= 0)
+    {
+        dispatchMessage(currentMess_);
+        currentMess_.Clear();
+    }
     return 0;
 }
 
 int DownloaderServerHandler::handle_output(int handle)
 {
-    LOG(INFO) << "DownloaderServerHandler::handle_output()";
+    std::lock_guard<std::mutex> guard{mutex_};
+    //LOG(INFO) << "DownloaderServerHandler::handle_output()";
     if(connection_handler::handle_output(handle) != 0)
     {
         LOG(ERROR) << "output error...";
@@ -73,13 +81,14 @@ int DownloaderServerHandler::decode()
 	input_buffer_.drain(bytesGoingToParse);
 	bytesParsed_ += bytesGoingToParse;
 	currentMess_.MergeFrom(tm);
-	if(bytesParsed_ == currentMess_.len())// only when the mes has been parsed thoroughly
+	if(bytesParsed_ != currentMess_.len())// only when the mes has been parsed thoroughly
 	{
-		dispatchMessage(currentMess_);
-		bytesParsed_ = 0;//one message has parsed already, set bytesParsed_ to 0
-		return 0;
+        LOG(INFO) << "mess not completed...";
+        return -1;
 	}
-	else return 0;
+    LOG(INFO) << "one mess parsed...";
+    bytesParsed_ = 0;//one message has parsed already, set bytesParsed_ to 0
+    return 0;
 }
 
 int DownloaderServerHandler::handle_close(int fd)
@@ -91,16 +100,23 @@ int DownloaderServerHandler::handle_close(int fd)
 void DownloaderServerHandler::dispatchMessage(downloadmessage::Mess_WL& mes)
 {
     auto command = mes.command();
+    int id = mes.id();
+    if(downloaderMap_.count(id) != 0)
+    {
+        LOG(INFO) << "id exited...";
+        return;
+    }
+    LOG(INFO) << "dispatching message id: " << id;
     using namespace downloadmessage;
     switch(command)
     {
         case(Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_DOWNLOAD):
             LOG(INFO) << "downloading: " << mes.url();
-            dPtrs_.push_back(std::make_shared<Downloader_t>(mes.id(), mes.url(), this->shared_from_this()));
+            downloaderMap_[id] = std::make_shared<Downloader_t>(id, mes.url(), this->shared_from_this());
             LOG(INFO) << "adding one download task";
             Pool::pool->add_task(
                 [=]() {
-                    dPtrs_.back()->download();
+                    downloaderMap_[id]->download();
                 });
             break;
         case (Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_PAUSE):
@@ -131,31 +147,48 @@ void DownloaderServerHandler::taskCompleted(int id)
     LOG(INFO) << "completed task id: " << id;
     if(!this->stream_->hasHandle())
     {
-        LOG(WARNING) << "Sending task completed, but peer socket has been closed...";
+        //LOG(WARNING) << "Sending task completed, but peer socket has been closed...";
         return;
     }
-    destroy();
+    if(downloaderMap_.size() == 0)
+    {
+        destroy();
+    }
 }
 
 void DownloaderServerHandler::taskUpdated(int id, float finishPercent)
 {
-    LOG(INFO) << "task: " << id << " updating finished: " << finishPercent;
+    static uint64_t counter = 0;
+    std::lock_guard<std::mutex> guard{mutex_};
     if(!this->stream_->hasHandle())
     {
-        LOG(WARNING) << "Sending update, but peer socket has been closed...";
+        // LOG(WARNING) << "Sending update, but peer socket has been closed...";
         return;
     }
+    if(!stream_->getSockFD().canWrite())
+    {
+        // LOG(WARNING) << "socket cannot write may be shutdown";
+        return ;
+    }
+    counter++;
+    // LOG(INFO) << "finish percent: " << finishPercent;
+    if(counter % 1000 != 0 && (1.0 - finishPercent) > 0.0001)
+    {
+        return;
+    }
+
     downloadmessage::Download_Response resp{};
     resp.set_state(downloadmessage::Download_Response::State::Download_Response_State_DOWNLOADING);
     resp.set_id(id);
     resp.set_percent(finishPercent);
     char arr[128] = {};
     resp.SerializeToArray(arr, 128);
+    LOG(INFO) << "task: " << id << " updating finished: " << finishPercent;
+
     auto ret = write(arr, sizeof(int) + sizeof(float) + sizeof(downloadmessage::Download_Response_State));
     if(ret == 0)
     {
         LOG(ERROR) << "Write update mes error";
     }
-
 }
 }

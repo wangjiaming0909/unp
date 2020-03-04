@@ -11,6 +11,7 @@ connection_handler::connection_handler(Reactor &reactor, bool isSSL)
     , read_enabled_(false)
     , write_enabled_(false)
     , isSSL_(isSSL)
+    , mutex_{}
 {
     initStream();
 }
@@ -58,8 +59,12 @@ int connection_handler::handle_input(int handle)
             // LOG(INFO) << "Read got EAGAIN...";
             errno = 0;
             return 0;
-        } 
-        LOG(ERROR) << "Read error: " << strerror(errno);
+        } else if(errno == ECONNRESET)
+        {
+            disable_reading();
+            disable_writing();
+        }
+        LOG(ERROR) << "Read error: " << strerror(errno) << "handle: " << handle;
         return -1;
     }
     if (ret == 0)
@@ -72,6 +77,7 @@ int connection_handler::handle_input(int handle)
 
 int connection_handler::handle_output(int handle)
 {
+    //std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
     if (output_buffer_.buffer_length() == 0)
     {
         return 0;
@@ -88,18 +94,32 @@ int connection_handler::handle_output(int handle)
 #ifndef DEFAULT_SEND_SIZE
 #define DEFAULT_SEND_SIZE 4096
 #endif
-
+    int bytes_send = 01;
     for (; try_times > 0; try_times--)
     {
         //行为： 最多pullup 4096 bytes
         size_t pullupSize = DEFAULT_SEND_SIZE > output_buffer_.buffer_length() ? output_buffer_.buffer_length() : DEFAULT_SEND_SIZE;
         auto data_p = output_buffer_.pullup(pullupSize);
-        int bytes_send = stream_->send(static_cast<const void *>(data_p), pullupSize, 0);
+        LOG(INFO) << "sending " << output_buffer_.buffer_length();
+        bytes_send = stream_->send(static_cast<const void *>(data_p), pullupSize, 0);
         if (bytes_send <= 0)
         {
-            LOG(ERROR) << "Send error: " << strerror(errno);
+            LOG(ERROR) << "Send error: " << strerror(errno) << " handle: " << handle;
+            if(errno == ECONNRESET)
+            {
+                disable_reading();
+                disable_writing();
+                return -1;
+            }
             LOG(INFO) << "retrying... " << try_times + 1 << " time";
             continue;
+        }
+
+        if (bytes_send < 0)
+        {
+            disable_writing();
+            stream_->closeWriter();
+            return -1;
         }
 
         //socket send buffer could be full, try 3 times, if can't send also, give up
@@ -182,6 +202,7 @@ uint32_t connection_handler::read_line(char *data_out, uint32_t data_len, buffer
 
 uint32_t connection_handler::write(const char *data, uint32_t len)
 {
+    //std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
     if (data == 0 || len == 0)
         return -1;
 
@@ -191,6 +212,7 @@ uint32_t connection_handler::write(const char *data, uint32_t len)
         return 0;
     }
 
+    //LOG(INFO) << "Writing data " << output_buffer_.buffer_length();
     auto bytesWritten = output_buffer_.append(data, len);
     if (!write_enabled_)
     {

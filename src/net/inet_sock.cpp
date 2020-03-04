@@ -12,11 +12,19 @@ int net::inet_sock::open(int family, sock_type type, int protocol, int reuse_add
         close();
         return -1;
     }
-    // this->set_option(SOL_SOCKET, SO_RCVLOWAT, &one, sizeof one == -1);
-    int ret = 0;
-    socklen_t len = sizeof ret;
-    int res = this->get_option(SOL_SOCKET, SO_RCVLOWAT, &ret, &len);
-    LOG(INFO) << strerror(errno);
+    canWrite_ = true;
+    canRead_ = true;
     return 0;
 }
+
+void net::inet_sock::set_handle(int handle)
+{
+    handle_ = handle;
+    if(handle_ != INVALID_HANDLE)
+    {
+        canWrite_ = true;
+        canRead_ = true;
+    }
+}
+
 }

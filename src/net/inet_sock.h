@@ -25,7 +25,7 @@ public:
     inline inet_sock(sock_type type, int protocol);
     inline ~inet_sock();
     int get_handle() const {return handle_;}
-    void set_handle(int handle) { handle_ = handle; }
+    void set_handle(int handle);
 	///fcntl 
     inline int fcntl(int cmd, long arg)const;
     inline int ioctl(int cmd, void*) const;
@@ -38,9 +38,13 @@ public:
     int restore_blocking() const;
     int get_flags() const;
     int set_flags(int cmd, long arg) const;
+    bool canWrite() const{return canWrite_;}
+    bool canRead() const{return canRead_;}
 private:
     inet_sock(const inet_sock&);
     int handle_;
+    bool canWrite_ = false;
+    bool canRead_ = false;
 };  
 
 }
@@ -76,14 +80,22 @@ inline int net::inet_sock::close(){
         // LOG(INFO) << "closing a socket..." << handle_;
         ret = ::close(this->handle_);
         this->handle_ = INVALID_HANDLE;
+        canRead_ = false;
+        canWrite_ = false;
     }
     return ret;
 }
 
 inline void net::inet_sock::shut_down(int how){
 	if(handle_ != INVALID_HANDLE){
-        // LOG(INFO) << "shutdown a socket..." << handle_;
 		::shutdown(handle_, how);
+        if(how == SHUT_RD)
+        {
+            canRead_ = false;
+        }else if (how == SHUT_WR)
+        {
+            canWrite_ = false;
+        }
 	}
 }
 

@@ -6,6 +6,8 @@
 #include <queue>
 #include <memory>
 #include <thread>
+#include <mutex>
+#include <unordered_map>
 
 namespace downloader
 {
@@ -48,7 +50,9 @@ private:
     downloadmessage::Mess_WL currentMess_;
     std::queue<downloadmessage::Mess_WL*> downloadQueue_;
     std::vector<Downloader_ptr_t> dPtrs_;
+    std::unordered_map<int, Downloader_ptr_t> downloaderMap_;
     bool completed_ = false;
+    std::mutex mutex_;
 };
 
 } // namespace downloader
