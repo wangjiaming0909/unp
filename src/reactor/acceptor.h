@@ -166,7 +166,7 @@ public:
     //不关闭 read_handler, 当需要关闭时, 自己调用 close_all
     int close()
     {
-        if(acceptorState_ == LISTEN_CLOSED || acceptorState_ == ALL_CLOSED) return 0;
+        //if(acceptorState_ == LISTEN_CLOSED || acceptorState_ == ALL_CLOSED) return 0;
 
         int ret = reactor_->unregister_handler(sock_acceptor_.get_handle(), this, ACCEPT_EVENT);
 
@@ -177,7 +177,7 @@ public:
         }
 
         if(connectionCount_ == 0) acceptorState_ = ALL_CLOSED;
-        else acceptorState_ = LISTEN_CLOSED;
+        //else acceptorState_ = LISTEN_CLOSED;
 
         return ret;
     }

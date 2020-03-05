@@ -35,7 +35,7 @@ TEST_PRIVATE:
     int downloadEX();
     void initTcpClient();
     void retriveAddrFromUrl();
-    std::pair<Connector_t*, Handler*> download_imp(uint64_t begin, uint64_t end);
+    std::pair<Connector_t*, Handler*> connect(uint64_t begin, uint64_t end);
 	int downloadRemain(uint64_t size, uint64_t start);
 	void HandlerSetupCallback(Handler& handler, uint64_t begin, uint64_t end);
 
@@ -54,5 +54,6 @@ TEST_PRIVATE:
 
 	int retryTimes_ = 3;
     std::shared_ptr<DownloadStateCallback> callback_;
+    std::vector<std::pair<uint64_t, uint64_t>> failedRanges_;
 };
 }

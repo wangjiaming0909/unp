@@ -13,20 +13,6 @@
 // INITIALIZE_NULL_EASYLOGGINGPP
 INITIALIZE_EASYLOGGINGPP
 
-int download(int argc, char** argv)
-{
-    if(argc < 2)
-    {
-        LOG(ERROR) << "a.out url";
-        return -1;
-    }
-    std::string url = argv[1];
-    downloader::Download d{url};
-    int ret = d.download();
-    std::cout << ret;
-    return ret;
-}
-
 int serve(int argc, char** argv)
 {
     if (argc < 3)

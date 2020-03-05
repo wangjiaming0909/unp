@@ -98,11 +98,11 @@ const char descriptor_table_protodef_mess_5fwl_2eproto[] PROTOBUF_SECTION_VARIAB
   "\030\003 \002(\0162(.downloadmessage.Mess_WL.Downloa"
   "dCommand\022\013\n\003url\030\004 \002(\t\"B\n\017DownloadCommand"
   "\022\014\n\010DOWNLOAD\020\000\022\t\n\005PAUSE\020\001\022\n\n\006RESUME\020\002\022\n\n"
-  "\006REMOVE\020\003\"\234\001\n\021Download_Response\022\n\n\002id\030\001 "
+  "\006REMOVE\020\003\"\266\001\n\021Download_Response\022\n\n\002id\030\001 "
   "\002(\005\022\017\n\007percent\030\002 \002(\002\0227\n\005state\030\003 \002(\0162(.do"
-  "wnloadmessage.Download_Response.State\"1\n"
+  "wnloadmessage.Download_Response.State\"K\n"
   "\005State\022\017\n\013DOWNLOADING\020\000\022\n\n\006PAUSED\020\001\022\013\n\007R"
-  "EMOVED\020\002"
+  "EMOVED\020\002\022\n\n\006FAILED\020\003\022\014\n\010FINISHED\020\004"
   ;
 static const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable*const descriptor_table_mess_5fwl_2eproto_deps[1] = {
 };
@@ -113,7 +113,7 @@ static ::PROTOBUF_NAMESPACE_ID::internal::SCCInfoBase*const descriptor_table_mes
 static ::PROTOBUF_NAMESPACE_ID::internal::once_flag descriptor_table_mess_5fwl_2eproto_once;
 static bool descriptor_table_mess_5fwl_2eproto_initialized = false;
 const ::PROTOBUF_NAMESPACE_ID::internal::DescriptorTable descriptor_table_mess_5fwl_2eproto = {
-  &descriptor_table_mess_5fwl_2eproto_initialized, descriptor_table_protodef_mess_5fwl_2eproto, "mess_wl.proto", 368,
+  &descriptor_table_mess_5fwl_2eproto_initialized, descriptor_table_protodef_mess_5fwl_2eproto, "mess_wl.proto", 394,
   &descriptor_table_mess_5fwl_2eproto_once, descriptor_table_mess_5fwl_2eproto_sccs, descriptor_table_mess_5fwl_2eproto_deps, 2, 0,
   schemas, file_default_instances, TableStruct_mess_5fwl_2eproto::offsets,
   file_level_metadata_mess_5fwl_2eproto, 2, file_level_enum_descriptors_mess_5fwl_2eproto, file_level_service_descriptors_mess_5fwl_2eproto,
@@ -156,6 +156,8 @@ bool Download_Response_State_IsValid(int value) {
     case 0:
     case 1:
     case 2:
+    case 3:
+    case 4:
       return true;
     default:
       return false;
@@ -166,6 +168,8 @@ bool Download_Response_State_IsValid(int value) {
 constexpr Download_Response_State Download_Response::DOWNLOADING;
 constexpr Download_Response_State Download_Response::PAUSED;
 constexpr Download_Response_State Download_Response::REMOVED;
+constexpr Download_Response_State Download_Response::FAILED;
+constexpr Download_Response_State Download_Response::FINISHED;
 constexpr Download_Response_State Download_Response::State_MIN;
 constexpr Download_Response_State Download_Response::State_MAX;
 constexpr int Download_Response::State_ARRAYSIZE;

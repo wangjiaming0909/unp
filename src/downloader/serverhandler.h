@@ -20,7 +20,7 @@ class DownloaderServerHandler :
 public:
 
     using Downloader_t = downloader::Download;
-    using Downloader_ptr_t = std::shared_ptr<Downloader_t>;
+    using Downloader_ptr_t = std::weak_ptr<Downloader_t>;
     DownloaderServerHandler(reactor::Reactor &react);
 
     ~DownloaderServerHandler(){}
@@ -33,7 +33,7 @@ public:
 
     virtual void taskAdded(int) override{}
     virtual void taskUpdated(int id, float finishPercent) override;
-    virtual void taskFailed(int, const std::string&) override{}
+    virtual void taskFailed(int, const std::string&) override;
     virtual void taskPaused(int) override{}
     virtual void taskRemove(int)override{}
     virtual void taskCompleted(int id)override;
@@ -44,6 +44,8 @@ private:
     int decode();
     void saveCurrentMess();
 	void dispatchMessage(downloadmessage::Mess_WL& mes);
+    void sendResponseMess(int id, float percent, downloadmessage::Download_Response_State state);
+    bool isWritable() const;
 
 private:
 	int bytesParsed_ = 0; 

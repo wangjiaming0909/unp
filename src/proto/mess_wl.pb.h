@@ -97,11 +97,13 @@ inline bool Mess_WL_DownloadCommand_Parse(
 enum Download_Response_State : int {
   Download_Response_State_DOWNLOADING = 0,
   Download_Response_State_PAUSED = 1,
-  Download_Response_State_REMOVED = 2
+  Download_Response_State_REMOVED = 2,
+  Download_Response_State_FAILED = 3,
+  Download_Response_State_FINISHED = 4
 };
 bool Download_Response_State_IsValid(int value);
 constexpr Download_Response_State Download_Response_State_State_MIN = Download_Response_State_DOWNLOADING;
-constexpr Download_Response_State Download_Response_State_State_MAX = Download_Response_State_REMOVED;
+constexpr Download_Response_State Download_Response_State_State_MAX = Download_Response_State_FINISHED;
 constexpr int Download_Response_State_State_ARRAYSIZE = Download_Response_State_State_MAX + 1;
 
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* Download_Response_State_descriptor();
@@ -466,6 +468,10 @@ class Download_Response :
     Download_Response_State_PAUSED;
   static constexpr State REMOVED =
     Download_Response_State_REMOVED;
+  static constexpr State FAILED =
+    Download_Response_State_FAILED;
+  static constexpr State FINISHED =
+    Download_Response_State_FINISHED;
   static inline bool State_IsValid(int value) {
     return Download_Response_State_IsValid(value);
   }

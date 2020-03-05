@@ -14,6 +14,7 @@ Download::Download(int id, const std::string& url, std::shared_ptr<DownloadState
     : id_(id)
     , url_{url}
     , callback_(callback)
+	, failedRanges_{}
 {
     urlParser_.init(url_);
     if(!urlParser_.valid())
@@ -33,7 +34,7 @@ int Download::downloadEX()
 	using namespace std::chrono_literals;
 	if (url_ == "") return -1;
     int succeed = 1;
-	auto pair = download_imp(currentBegin_, currentEnd_);
+	auto pair = connect(currentBegin_, currentEnd_);
 	clientPtr_->start();
 	auto* connection = pair.second;
 	if(connection == nullptr) return -1;
@@ -89,15 +90,22 @@ int Download::downloadEX()
 	}
 	
 out:
-	clientPtr_->closeConnection<Connector_t>(*pair.first, 2s);
+	clientPtr_->closeConnection<Connector_t>(*pair.first, 10ms);
     return succeed;
 }
 
 int Download::download()
 {
 	auto succeed = downloadEX();
-    if (succeed >= 0 && callback_)  callback_->taskCompleted(1);
-	std::this_thread::sleep_for(1s);
+    if (succeed >= 0 && callback_ && bytesRemained_ == 1001)  
+	{
+		callback_->taskCompleted(id_);
+	}
+	else if(callback_)
+	{
+		callback_->taskFailed(id_, "connect failed");
+		return -1;
+	}
 	return 0;
 }
 
@@ -110,21 +118,26 @@ int Download::downloadRemain(uint64_t remain, uint64_t start)
 	}
 	if(remain < connectNum_)
 	{
-		auto pair = download_imp(start, start + remain - 1);
+		auto pair = connect(start, start + remain - 1);
 		clientPtr_->start();
 		auto* connection = pair.second;
 		if(connection->status_ == Handler::HandlerStatus::NOT_RESPONDING_TO_RANGE)
 		{
 			LOG(INFO) << "download error should respond to range header....";
 		}
-		clientPtr_->closeConnection<Connector_t>(*pair.first, 2s);
+		clientPtr_->closeConnection<Connector_t>(*pair.first, 10ms);
 		return 0;
 	}
 	std::vector<Connector_t*> connectors{};
 	std::vector<Handler*> connections{};
 	for(int i = 0; i < connectNum_; i++)
 	{
-		auto pair = download_imp(start, start + remain / connectNum_ - 1);
+		auto pair = connect(start, start + remain / connectNum_ - 1);
+		if(pair.first == nullptr || pair.second == nullptr)
+		{
+			failedRanges_.push_back(std::make_pair(start, start + remain - 1));
+			continue;
+		}
 		start = start + remain / connectNum_;
 		remain -= remain / connectNum_;
 		connectors.push_back(pair.first);
@@ -132,15 +145,21 @@ int Download::downloadRemain(uint64_t remain, uint64_t start)
 	}
 	if(remain > 0)
 	{
-		auto pair = download_imp(start, start + remain-1);
-		connectors.push_back(pair.first);
-		connections.push_back(pair.second);
+		auto pair = connect(start, start + remain-1);
+		if(pair.first == nullptr || pair.second == nullptr)
+		{
+			failedRanges_.push_back(std::make_pair(start, start + remain - 1));
+		}else
+		{
+			connectors.push_back(pair.first);
+			connections.push_back(pair.second);
+		}
 	}
 	clientPtr_->start();
 
 	for(auto* connector : connectors)
 	{
-		clientPtr_->closeConnection<Connector_t>(*connector, 2s);
+		clientPtr_->closeConnection<Connector_t>(*connector, 10ms);
 	}
 	return 0;
 }
@@ -150,11 +169,11 @@ void Download::HandlerSetupCallback(Handler& handler, uint64_t begin, uint64_t e
 	handler.setDownloadRange(begin, end);
 }
 
-std::pair<Download::Connector_t*, Handler*>Download::download_imp(uint64_t begin, uint64_t end)
+std::pair<Download::Connector_t*, Handler*>Download::connect(uint64_t begin, uint64_t end)
 {
 	//auto callback = std::bind(&Download::HandlerSetupCallback, this, std::placeholders::_1, begin, end);
     auto* connector = clientPtr_->addConnection<Connector_t>(url_, isSSL_, begin, end, shared_from_this());
-    auto* connection = connector->connect(targetAddr_, 2s);
+    auto* connection = connector->connect(targetAddr_, 100ms);
     if(connection == nullptr)
     {
         LOG(ERROR) << "connect failed...";

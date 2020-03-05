@@ -99,6 +99,10 @@ buffer_chain::buffer_chain(buffer* parent, uint32_t capacity)
 
     // buffer_ = static_cast<void*>(new char[capacity_]);
     buffer_ = static_cast<char*>(::calloc(capacity_, 1));
+    if(capacity_ > 4096)
+    {
+        LOG(INFO) << "allocating memory in buffer chain size: " << capacity_ << " ------------------------------";
+    }
     assert(buffer_ != nullptr && ("new operator error size"));
 }
 
@@ -974,7 +978,7 @@ buffer_chain* buffer::expand_if_needed(uint32_t data_len)
             //要么是根本不存在next, 要么是next 不够(虽然是空的)
             free_trailing_empty_chains();
             buffer_chain _chain{this, data_len};
-            push_back(_chain);
+            push_back(std::move(_chain));
         }
     } else {
         //now we can resize lc 

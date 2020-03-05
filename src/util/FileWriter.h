@@ -84,7 +84,7 @@ private:
     void* defaultBuf_ = nullptr;
     bool isUsingDefautBuf = false;
     bool isUsingConstomizedBuf_ =false;
-    static const std::streamsize DEFAULTBUFFERSIZE = 10*1024*1024;
+    static const std::streamsize DEFAULTBUFFERSIZE = 4*1024;
     uint64_t bytesWritten_ = 0;
 };
 }

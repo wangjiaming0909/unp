@@ -7,6 +7,7 @@
 
 namespace downloader
 {
+using namespace downloadmessage;
 
 DownloaderServerHandler::DownloaderServerHandler(reactor::Reactor& react) 
     : connection_handler(react)
@@ -76,7 +77,7 @@ int DownloaderServerHandler::decode()
 	assert(input_buffer_.buffer_length() > 0);
 	int32_t bytesGoingToParse = std::min(bytesRemainToParse, input_buffer_.buffer_length());
 	auto d = input_buffer_.pullup(bytesGoingToParse);
-	downloadmessage::Mess_WL tm{};
+	Mess_WL tm{};
 	tm.ParsePartialFromArray(d, bytesGoingToParse);
 	input_buffer_.drain(bytesGoingToParse);
 	bytesParsed_ += bytesGoingToParse;
@@ -97,7 +98,7 @@ int DownloaderServerHandler::handle_close(int fd)
     return connection_handler::handle_close(fd);
 }
 
-void DownloaderServerHandler::dispatchMessage(downloadmessage::Mess_WL& mes)
+void DownloaderServerHandler::dispatchMessage(Mess_WL& mes)
 {
     auto command = mes.command();
     int id = mes.id();
@@ -107,17 +108,19 @@ void DownloaderServerHandler::dispatchMessage(downloadmessage::Mess_WL& mes)
         return;
     }
     LOG(INFO) << "dispatching message id: " << id;
-    using namespace downloadmessage;
     switch(command)
     {
         case(Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_DOWNLOAD):
-            LOG(INFO) << "downloading: " << mes.url();
-            downloaderMap_[id] = std::make_shared<Downloader_t>(id, mes.url(), this->shared_from_this());
-            LOG(INFO) << "adding one download task";
-            Pool::pool->add_task(
-                [=]() {
-                    downloaderMap_[id]->download();
-                });
+            {
+                LOG(INFO) << "downloading: " << mes.url();
+                auto downloaderPtr = std::make_shared<Downloader_t>(id, mes.url(), this->shared_from_this());
+                downloaderMap_[id] = Downloader_ptr_t(downloaderPtr);
+                LOG(INFO) << "adding one download task";
+                Pool::pool->add_task(
+                    [=]() {
+                        downloaderPtr->download();
+                    });
+            }
             break;
         case (Mess_WL::DownloadCommand::Mess_WL_DownloadCommand_PAUSE):
             LOG(INFO) << "pause: " << mes.url();
@@ -144,51 +147,64 @@ void DownloaderServerHandler::destroy()
 //this will be called in another thread
 void DownloaderServerHandler::taskCompleted(int id)
 {
-    LOG(INFO) << "completed task id: " << id;
-    if(!this->stream_->hasHandle())
+    std::lock_guard<std::mutex> guard{mutex_};
+    if(!this->stream_->hasHandle() || !stream_->getSockFD().canWrite())
     {
         //LOG(WARNING) << "Sending task completed, but peer socket has been closed...";
         return;
     }
+    sendResponseMess(id, 1.0, Download_Response_State_FINISHED);
     if(downloaderMap_.size() == 0)
     {
         destroy();
     }
 }
 
+bool DownloaderServerHandler::isWritable() const
+{
+    if(!this->stream_->hasHandle() || !stream_->getSockFD().canWrite())
+    {
+        return false;
+    }
+    return true;
+}
+
 void DownloaderServerHandler::taskUpdated(int id, float finishPercent)
 {
     static uint64_t counter = 0;
     std::lock_guard<std::mutex> guard{mutex_};
-    if(!this->stream_->hasHandle())
-    {
-        // LOG(WARNING) << "Sending update, but peer socket has been closed...";
-        return;
-    }
-    if(!stream_->getSockFD().canWrite())
-    {
-        // LOG(WARNING) << "socket cannot write may be shutdown";
-        return ;
-    }
     counter++;
+    if(!isWritable()) return;
     // LOG(INFO) << "finish percent: " << finishPercent;
     if(counter % 1000 != 0 && (1.0 - finishPercent) > 0.0001)
     {
         return;
     }
 
-    downloadmessage::Download_Response resp{};
-    resp.set_state(downloadmessage::Download_Response::State::Download_Response_State_DOWNLOADING);
+    // LOG(INFO) << "task: " << id << " updating finished: " << finishPercent;
+    sendResponseMess(id, finishPercent, Download_Response_State_DOWNLOADING);
+}
+
+void DownloaderServerHandler::sendResponseMess(int id, float percent, Download_Response_State state)
+{
+    if(!isWritable()) return;
+    Download_Response resp{};
+    resp.set_state(state);
     resp.set_id(id);
-    resp.set_percent(finishPercent);
+    resp.set_percent(percent);
     char arr[128] = {};
     resp.SerializeToArray(arr, 128);
-    LOG(INFO) << "task: " << id << " updating finished: " << finishPercent;
-
-    auto ret = write(arr, sizeof(int) + sizeof(float) + sizeof(downloadmessage::Download_Response_State));
+    auto ret = write(arr, sizeof(int) + sizeof(float) + sizeof(Download_Response_State));
     if(ret == 0)
     {
         LOG(ERROR) << "Write update mes error";
     }
 }
+
+void DownloaderServerHandler::taskFailed(int id, const std::string& mes)
+{
+    if(!isWritable()) return;
+    sendResponseMess(id, 0, Download_Response_State_FAILED);
+}
+
 }
