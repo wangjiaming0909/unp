@@ -8,7 +8,9 @@ cd gtests &&
 # ./test.out --gtest_filter=Downloader.GetFileInfoOfChunked
 # ./test.out --gtest_filter=Download.normal
 #./test.out --gtest_filter=proto2.*
-./test.out --gtest_filter=downloadserver.*
+#./test.out --gtest_filter=downloadserver.*
+
+./test.out --gtest_filter=DirMonitor.*
 
 
 # ./test.out   --gtest_filter=TcpServer.*
