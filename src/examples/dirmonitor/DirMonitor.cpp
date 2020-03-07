@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <memory>
 #include <thread>
+#include "util/easylogging++.h"
 
 namespace filesync
 {
@@ -44,6 +45,10 @@ void DirObservable::startObserve(const std::atomic_int8_t& cancelToken)
                 if(observer.second.expired()) continue;
                 std::shared_ptr<IDirObserver> ob{observer.second};
                 ob->onUpdate(entries_);
+            }
+            for(auto& pair : entries_)
+            {
+                pair.second.setIsSyncing();
             }
             entries_.insert(addedEs.begin(), addedEs.end());
         }
@@ -105,9 +110,14 @@ int DirObservable::subscribe(std::shared_ptr<IDirObserver> observer)
     return 0;
 }
 
-void DirObservable::unsubscribe(int id, std::shared_ptr<IDirObservable> observer)
+void DirObservable::unsubscribe(int id, std::shared_ptr<IDirObservable>)
 {
-
+    if(observers_.count(id) == 0)
+    {
+        LOG(WARNING) << "not subscribed, can't unsunscribe id: " << id;
+        return;
+    }
+    observers_.erase(id);
 }
 
 }
