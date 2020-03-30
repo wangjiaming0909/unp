@@ -10,7 +10,7 @@ struct OpenSSLInitializer
     OpenSSLInitializer()
     {
         SSL_library_init();
-        method = TLS_client_method();
+        method = DTLS_client_method();
         OpenSSL_add_all_ciphers();
         OpenSSL_add_all_algorithms();
     }
