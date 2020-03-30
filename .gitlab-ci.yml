@@ -6,12 +6,12 @@ build:
   # install the necessary build tools when needed
   before_script:
     - apt update && apt -y install make cmake
-    - wget https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.gz
-    - gunzip boost_1_70_0.tar.gz
-    - tar -xf boost_1_70_0.tar
-    - mv boost_1_70_0 /
+    - wget https://dl.bintray.com/boostorg/release/1.72.0/source/boost_1_72_0.tar.gz
+    - gunzip boost_1_72_0.tar.gz
+    - tar -xf boost_1_72_0.tar
+    - mv boost_1_72_0 /
     - pwd
-    - cd /boost_1_70_0/
+    - cd /boost_1_72_0/
     - ./bootstrap.sh
     - ./bjam --with-thread --with-system --with-timer
     - cd /
@@ -22,6 +22,17 @@ build:
     - make 
     - make install 
     - ls /
+    - cd /
+    - git clone https://github.com/protocolbuffers/protobuf.git
+    - cd protobuf
+    - git submodule update --init --recursive
+    - ./autogen.sh
+    - ./configure
+    - make
+    - make check
+    - sudo make install
+    - ldconfig # refresh shared library cache.
+
   script:
     - pwd
     - cd /builds/wangjiaming0909/unp

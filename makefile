@@ -22,7 +22,7 @@ OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES) )
 
 TARGET = $(BUILDDIR)/a.out
 LIBS = /usr/local/lib
-INCLUDES = $(SOURCEDIR) -I /usr/local/include
+INCLUDES = $(SOURCEDIR) -I /usr/local/include -I /boost_1_72_0/ -I /usr/include
 # /boost_1_70_0  
 # LDFLAGS = -pthread -lboost_thread -lboost_system
 
@@ -31,17 +31,24 @@ TESTLDFLAG = -pthread \
 		/usr/local/lib/libboost_system.so.1.72.0 \
 		/usr/local/lib/libboost_timer.so.1.72.0 \
 		/usr/local/lib/libboost_chrono.so.1.72.0 \
+		/boost_1_72_0/stage/lib/libboost_system.so.1.72.0 \
+		/boost_1_72_0/stage/lib/libboost_timer.so.1.72.0 \
+		/boost_1_72_0/stage/lib/libboost_chrono.so.1.72.0 \
 		-lgtest\
 		-lgmock\
 		-lssl \
 		-lcrypto\
 		/usr/local/lib/libprotobuf.so.22
+	
 
 # /boost_1_70_0/stage/lib/libboost_thread.a 
 LDFLAGS = -pthread \
 		/usr/local/lib/libboost_timer.so.1.72.0 \
 		/usr/local/lib/libboost_chrono.so.1.72.0 \
 		/usr/local/lib/libboost_system.so.1.72.0 \
+		/boost_1_72_0/stage/lib/libboost_system.so.1.72.0 \
+		/boost_1_72_0/stage/lib/libboost_timer.so.1.72.0 \
+		/boost_1_72_0/stage/lib/libboost_chrono.so.1.72.0 \
 		-lssl \
 		-lcrypto\
 		/usr/local/lib/libprotobuf.so.22
