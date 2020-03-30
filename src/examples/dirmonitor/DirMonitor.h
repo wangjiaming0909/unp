@@ -1,4 +1,5 @@
 #pragma once
+#if __cplusplus > 20110101
 #include <chrono>
 #include <filesystem>
 #include <vector>
@@ -74,3 +75,4 @@ private:
 };
 
 }
+#endif//__cplusplus

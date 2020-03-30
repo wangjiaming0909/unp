@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
+#if __cplusplus > 20130101
 #include <filesystem>
+#endif
 #include <memory>
 
 #include "boost/noncopyable.hpp"
@@ -51,7 +53,11 @@ TEST_PRIVATE:
     string_t url_;
     string_t fileName_;
     uint64_t fileSize_;
+#if __cplusplus > 20130101
     std::filesystem::path targetPath_;
+#else 
+    std::string targetPath_;
+#endif
     http::URLParser urlParser_;
     std::shared_ptr<reactor::tcp_client> clientPtr_;
     bool isChunked_ = false;

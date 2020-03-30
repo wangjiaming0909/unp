@@ -27,10 +27,12 @@ INCLUDES = $(SOURCEDIR) -I /usr/local/include -I /boost_1_72_0/ -I /usr/include
 # LDFLAGS = -pthread -lboost_thread -lboost_system
 
 # /boost_1_70_0/stage/lib/libboost_thread.a 
+
+#/usr/local/lib/libboost_system.so.1.72.0 \
+#/usr/local/lib/libboost_timer.so.1.72.0 \
+#/usr/local/lib/libboost_chrono.so.1.72.0 \
+
 TESTLDFLAG = -pthread \
-		/usr/local/lib/libboost_system.so.1.72.0 \
-		/usr/local/lib/libboost_timer.so.1.72.0 \
-		/usr/local/lib/libboost_chrono.so.1.72.0 \
 		/boost_1_72_0/stage/lib/libboost_system.so.1.72.0 \
 		/boost_1_72_0/stage/lib/libboost_timer.so.1.72.0 \
 		/boost_1_72_0/stage/lib/libboost_chrono.so.1.72.0 \
@@ -42,10 +44,11 @@ TESTLDFLAG = -pthread \
 	
 
 # /boost_1_70_0/stage/lib/libboost_thread.a 
+#/usr/local/lib/libboost_timer.so.1.72.0 \
+#/usr/local/lib/libboost_chrono.so.1.72.0 \
+#/usr/local/lib/libboost_system.so.1.72.0 \
+
 LDFLAGS = -pthread \
-		/usr/local/lib/libboost_timer.so.1.72.0 \
-		/usr/local/lib/libboost_chrono.so.1.72.0 \
-		/usr/local/lib/libboost_system.so.1.72.0 \
 		/boost_1_72_0/stage/lib/libboost_system.so.1.72.0 \
 		/boost_1_72_0/stage/lib/libboost_timer.so.1.72.0 \
 		/boost_1_72_0/stage/lib/libboost_chrono.so.1.72.0 \

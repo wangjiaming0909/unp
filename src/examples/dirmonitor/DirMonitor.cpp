@@ -1,3 +1,4 @@
+#if __cplusplus > 20110101
 #include "DirMonitor.h"
 #include <atomic>
 #include <chrono>
@@ -121,3 +122,4 @@ void DirObservable::unsubscribe(int id, std::shared_ptr<IDirObservable>)
 }
 
 }
+#endif
