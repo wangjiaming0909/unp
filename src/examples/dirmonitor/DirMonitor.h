@@ -1,5 +1,5 @@
 #pragma once
-#if __cplusplus > 20110101
+#if __cplusplus > 201103L
 #include <chrono>
 #include <filesystem>
 #include <vector>

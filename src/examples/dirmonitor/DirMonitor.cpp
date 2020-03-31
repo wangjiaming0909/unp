@@ -1,4 +1,4 @@
-#if __cplusplus > 20110101
+#if __cplusplus > 201103L
 #include "DirMonitor.h"
 #include <atomic>
 #include <chrono>
