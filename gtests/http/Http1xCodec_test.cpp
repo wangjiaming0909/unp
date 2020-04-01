@@ -2,14 +2,14 @@
 #include "http/Http1xCodec.h"
 #include <fstream>
 #include "util/easylogging++.h"
-#include <filesystem>
+#include "boost/filesystem.hpp"
 
 using namespace http;
 
 std::string ReadHttpRequestLineFromFile(const std::string& requestLineFullFileName)
 {
-    auto filePath = std::filesystem::path{requestLineFullFileName};
-    if(!std::filesystem::exists(filePath))
+    auto filePath = boost::filesystem::path{requestLineFullFileName};
+    if(!boost::filesystem::exists(filePath))
     {
         LOG(ERROR) << "headerFile: " << requestLineFullFileName << " does not exist...";
         return "";
@@ -30,8 +30,8 @@ std::string ReadHttpRequestLineFromFile(const std::string& requestLineFullFileNa
 
 std::string ReadHttpHeadersFromFile(const std::string& headerFileFullName)
 {
-    auto filePath = std::filesystem::path{headerFileFullName};
-    if(!std::filesystem::exists(filePath))
+    auto filePath = boost::filesystem::path{headerFileFullName};
+    if(!boost::filesystem::exists(filePath))
     {
         LOG(ERROR) << "headerFile: " << headerFileFullName << " does not exist...";
         return "";
@@ -53,8 +53,8 @@ std::string ReadHttpHeadersFromFile(const std::string& headerFileFullName)
 
 std::string ReadHttpBodyFromFile(const std::string& bodyFileFullName)
 {
-    auto filePath = std::filesystem::path{bodyFileFullName};
-    if(!std::filesystem::exists(filePath))
+    auto filePath = boost::filesystem::path{bodyFileFullName};
+    if(!boost::filesystem::exists(filePath))
     {
         LOG(ERROR) << "bodyFile: " << bodyFileFullName << " does not exist...";
         return "";

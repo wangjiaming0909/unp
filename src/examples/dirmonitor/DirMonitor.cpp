@@ -1,8 +1,6 @@
-#if __cplusplus > 20110101
 #include "DirMonitor.h"
 #include <atomic>
 #include <chrono>
-#include <filesystem>
 #include <memory>
 #include <thread>
 #include "util/easylogging++.h"
@@ -20,7 +18,7 @@ SyncEntryProperty::SyncEntryProperty(bool needSync)
 using namespace std::chrono_literals;
 const std::chrono::seconds DirObservable::syncInterval_ = 2s;
 
-DirObservable::DirObservable(const std::filesystem::path& path)
+DirObservable::DirObservable(const Path_t& path)
     : dir_(path)
     , entries_{}
     , observers_{}
@@ -33,7 +31,7 @@ DirObservable::DirObservable(const std::filesystem::path& path)
 
 DirObservable::~DirObservable(){}
 
-void DirObservable::startObserve(const std::atomic_int8_t& cancelToken)
+void DirObservable::startObserve(const std::atomic_int& cancelToken)
 {
     while(!cancelToken)
     {
@@ -68,7 +66,7 @@ void DirObservable::stopObserve()
     }
 }
 
-void DirObservable::startObserveAsync(const std::atomic_int8_t& cancelToken)
+void DirObservable::startObserveAsync(const std::atomic_int& cancelToken)
 {
     if(cancelToken) return;
     observeThread_.reset(new std::thread(&DirObservable::startObserve, this, std::ref(cancelToken)));
@@ -91,7 +89,7 @@ EntryMap DirObservable::addedEntries(const EntryMap& esNew, const EntryMap& esOl
 EntryMap DirObservable::getEntriesOfDir(const Entry& dir)
 {
     EntryMap eMap{};
-    for(auto& e : std::filesystem::recursive_directory_iterator(dir.path()))
+    for(auto& e : boost::filesystem::recursive_directory_iterator(dir.path()))
     {
         if(e == dir_) continue;
         eMap.emplace(e, SyncEntryProperty(true));
@@ -122,4 +120,3 @@ void DirObservable::unsubscribe(int id, std::shared_ptr<IDirObservable>)
 }
 
 }
-#endif
