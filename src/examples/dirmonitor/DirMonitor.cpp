@@ -3,6 +3,7 @@
 #include <chrono>
 #include <memory>
 #include <thread>
+#include "boost/filesystem/directory.hpp"
 #include "util/easylogging++.h"
 
 namespace filesync
@@ -11,12 +12,13 @@ namespace filesync
 SyncEntryProperty::SyncEntryProperty(bool needSync)
     : needSync_(needSync)
     , isSyncing_(false)
+    , isExisted_(true)
 {
 
 }
 
 using namespace std::chrono_literals;
-const std::chrono::seconds DirObservable::syncInterval_ = 2s;
+const std::chrono::seconds DirObservable::syncInterval_ = 1s;
 
 DirObservable::DirObservable(const Path_t& path)
     : dir_(path)
@@ -25,8 +27,7 @@ DirObservable::DirObservable(const Path_t& path)
     , observeThread_{nullptr}
     , isMonitoring_(false)
 {
-    auto es = getEntriesOfDir(dir_);
-    entries_.insert(es.begin(), es.end());
+    getEntriesOfDir(dir_, &entries_);
 }
 
 DirObservable::~DirObservable(){}
@@ -35,22 +36,27 @@ void DirObservable::startObserve(const std::atomic_int& cancelToken)
 {
     while(!cancelToken)
     {
-        auto es = getEntriesOfDir(dir_);
-        auto addedEs = addedEntries(es, entries_);
-        if(entries_.size() > 0)
+        auto addedAndDeletedEntries = monitorDir();
+        if(addedAndDeletedEntries.first.size() > 0)
+        {
+            for(auto& observer : observers_)
+            {
+                if(observer.second.expired()) continue; 
+                std::shared_ptr<IDirObserver> ob{observer.second};
+                ob->onUpdate(addedAndDeletedEntries.first);
+            }
+        }
+
+        if(addedAndDeletedEntries.second.size() > 0)
         {
             for(auto& observer : observers_)
             {
                 if(observer.second.expired()) continue;
                 std::shared_ptr<IDirObserver> ob{observer.second};
-                ob->onUpdate(entries_);
+                ob->onUpdate(addedAndDeletedEntries.second);
             }
-            for(auto& pair : entries_)
-            {
-                pair.second.setIsSyncing();
-            }
-            entries_.insert(addedEs.begin(), addedEs.end());
         }
+
         using namespace std::chrono_literals;
         std::this_thread::sleep_for(syncInterval_);
     }
@@ -86,15 +92,68 @@ EntryMap DirObservable::addedEntries(const EntryMap& esNew, const EntryMap& esOl
     return addedEntries;
 }
 
-EntryMap DirObservable::getEntriesOfDir(const Entry& dir)
+EntryMap DirObservable::getEntriesOfDir(const Entry& dir, EntryMap* entryMap)
 {
     EntryMap eMap{};
-    for(auto& e : boost::filesystem::recursive_directory_iterator(dir.path()))
+    if(entryMap != nullptr) 
     {
-        if(e == dir_) continue;
-        eMap.emplace(e, SyncEntryProperty(true));
+        for(auto& e : boost::filesystem::recursive_directory_iterator(dir.path()))
+        {
+            if(e == dir_) continue;
+            entryMap->emplace(e, SyncEntryProperty(true));
+        }
+        return eMap;
     }
-    return eMap;
+    else 
+    {
+        for(auto& e : boost::filesystem::recursive_directory_iterator(dir.path()))
+        {
+            if(e == dir_) continue;
+            eMap.emplace(e, SyncEntryProperty(true));
+        }
+        return eMap;
+    }
+}
+
+std::pair<EntryMap, EntryMap> DirObservable::monitorDir()
+{
+    EntryMap addedEntries{};
+    EntryMap deletedEntries = entries_;
+
+    for(auto& e : boost::filesystem::recursive_directory_iterator(dir_.path()))
+    {
+        if (e == dir_) continue;
+        if (entries_.count(e) != 0 && !entries_[e].isExisted())//deleted once
+        {
+            entries_[e].setIsExisted(true);
+            addedEntries.emplace(e, entries_[e]);
+            continue;
+        }
+        if (entries_.count(e) != 0 && entries_[e].isExisted()) //existed already
+        {
+            deletedEntries.erase(e);
+            continue;
+        }
+        if (entries_.count(e) == 0)//new added
+        {
+            addedEntries.emplace(e, SyncEntryProperty(true));
+            entries_.emplace(e, SyncEntryProperty(true));//update entries_ also
+            continue;
+        }
+    }
+
+    EntryMap newDeletedEntries{};
+    for(auto& e : deletedEntries)
+    {
+        auto& property = entries_[e.first];
+        if (property.isExisted()) 
+        {
+            property.setIsExisted(false);
+            newDeletedEntries.emplace(e.first, property);
+        }
+    }
+
+    return {addedEntries, newDeletedEntries};
 }
 
 int DirObservable::subscribe(std::shared_ptr<IDirObserver> observer)

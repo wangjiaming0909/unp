@@ -13,9 +13,13 @@ struct FakeDirObserver : public filesync::IDirObserver
     {
         for(auto& e : es)
         {
-            if(e.second.needSync() && !e.second.isSyncing())
+            if(e.second.needSync() && e.second.isExisted())
             {
                 LOG(INFO) << e.first.path().string() << " need sync...";
+            }
+            else if(!e.second.isExisted())
+            {
+              LOG(INFO) << e.first.path().string() << "deleted ...";
             }
         }
     }
@@ -34,7 +38,7 @@ TEST(DirMonitor, normal)
     observable.subscribe(observer);
     observable.startObserveAsync(cancelToken);
 
-    std::this_thread::sleep_for(4s);
+    std::this_thread::sleep_for(400000s);
     boost::filesystem::path folder123;
     std::string path123 = "/home/jiaming/Music/123";
     folder123.assign(path123.begin(), path123.end());

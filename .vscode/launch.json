@@ -10,7 +10,7 @@
                 "--gtest_filter=downloadserver.normal"
             ],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}/gtests",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",

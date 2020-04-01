@@ -26,10 +26,13 @@ public:
     bool isSyncing() const {return isSyncing_;}
     void setNeedSync() {needSync_ = true;}
     void setIsSyncing() {isSyncing_ = true;}
+    bool isExisted() const {return isExisted_;}
+    void setIsExisted(bool b) {isExisted_ = b;}
 
 private:
     bool needSync_;
     bool isSyncing_;
+    bool isExisted_;
 };
 
 using Entry = DirE_t;
@@ -63,7 +66,8 @@ public:
 private:
     void startObserve(const std::atomic_int& cancelToken);
     EntryMap addedEntries(const EntryMap& es1, const EntryMap& es2);
-    EntryMap getEntriesOfDir(const Entry& dir);
+    EntryMap getEntriesOfDir(const Entry& dir, EntryMap* entryMap);
+    std::pair<EntryMap, EntryMap> monitorDir();
 
 
 private:
