@@ -127,6 +127,7 @@ std::pair<EntryMap, EntryMap> DirObservable::monitorDir()
         {
             entries_[e].setIsExisted(true);
             addedEntries.emplace(e, entries_[e]);
+            deletedEntries.erase(e);
             continue;
         }
         if (entries_.count(e) != 0 && entries_[e].isExisted()) //existed already
