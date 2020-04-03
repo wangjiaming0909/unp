@@ -21,3 +21,6 @@ unp.cxxflags
 unp.cflags
 compile_commands.json
 **/.clangd/**
+examples/**/*.o
+sync_client
+sync_server

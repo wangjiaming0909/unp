@@ -35,7 +35,7 @@ private:
 
 private:
     // std::vector<IConnector*> connectors_;
-    ConnectionManager* manager_{nullptr};
+    ConnectionManager*  manager_{nullptr};
     reactor_ptr_t       reactor_{nullptr};
 };
 

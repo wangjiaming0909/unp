@@ -59,7 +59,7 @@ LDFLAGS = -pthread \
 		/usr/local/lib/libprotobuf.so.22
 		
 
-all: $(BUILDDIR) $(TARGET)
+all: $(BUILDDIR) $(TARGET) $(SYNC_CLIENT_TARGET)
 
 TEST_DIR = ./gtests
 TEST_OBJ_DIR = $(TEST_DIR)
@@ -71,7 +71,6 @@ TEST_USED_OBJECTS = $(filter-out ./build/obj/main.o, $(OBJECTS))
 
 test: $(TEST_TARGET)
 
-
 $(TEST_TARGET): $(TEST_USED_OBJECTS) $(TEST_OBJS)
 	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -L $(LIBS) $(TESTLDFLAG) -o $@ 
 
@@ -80,6 +79,43 @@ $(TEST_OBJS):$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
 
 $(BUILDDIR):
 	$(MKDIR) $@
+
+SYNC_CLIENT_DIR = ./examples/syncclient
+SYNC_CLIENT_OBJ_DIR = $(SYNC_CLIENT_DIR)
+SYNC_CLIENT_SOURCE = $(shell find $(SYNC_CLIENT_DIR) -type f -name '*.cpp')
+SYNC_CLIENT_OBJS = $(patsubst $(SYNC_CLIENT_DIR)/%.cpp, $(SYNC_CLIENT_OBJ_DIR)/%.o, $(SYNC_CLIENT_SOURCE))
+SYNC_CLIENT_TARGET = $(SYNC_CLIENT_DIR)/sync_client
+SYNC_CLIENT_USED_SOURCE = $(filter-out main.cpp, $(SOURCES))
+SYNC_CLIENT_USED_OBJECTS = $(filter-out ./build/obj/main.o, $(OBJECTS))
+
+sync_client: $(SYNC_CLIENT_TARGET)
+
+$(SYNC_CLIENT_TARGET): $(SYNC_CLIENT_USED_OBJECTS) $(SYNC_CLIENT_OBJS)
+	$(CC) $(SYNC_CLIENT_OBJS) $(SYNC_CLIENT_USED_OBJECTS) -L $(LIBS) $(LDFLAGS) -o $@
+	@echo "ok ....."
+
+$(SYNC_CLIENT_OBJS): $(SYNC_CLIENT_OBJ_DIR)/%.o: $(SYNC_CLIENT_DIR)/%.cpp
+	$(CC) $(DEFINES) $(FLAGS) $< -I $(INCLUDES) -o $@
+
+#sync server
+SYNC_SERVER_DIR = ./examples/syncserver
+SYNC_SERVER_OBJ_DIR = $(SYNC_SERVER_DIR)
+SYNC_SERVER_SOURCE = $(shell find $(SYNC_SERVER_DIR) -type f -name '*.cpp')
+SYNC_SERVER_OBJS = $(patsubst $(SYNC_SERVER_DIR)/%.cpp, $(SYNC_SERVER_OBJ_DIR)/%.o, $(SYNC_SERVER_SOURCE))
+SYNC_SERVER_TARGET = $(SYNC_SERVER_DIR)/sync_server
+SYNC_SERVER_USED_SOURCE = $(filter-out main.cpp, $(SOURCES))
+SYNC_SERVER_USED_OBJECTS = $(filter-out ./build/obj/main.o, $(OBJECTS))
+
+sync_server: $(SYNC_SERVER_TARGET)
+
+examples: $(SYNC_SERVER_TARGET) $(SYNC_CLIENT_TARGET)
+
+$(SYNC_SERVER_TARGET): $(SYNC_SERVER_USED_OBJECTS) $(SYNC_SERVER_OBJS)
+	$(CC) $(SYNC_SERVER_OBJS) $(SYNC_SERVER_USED_OBJECTS) -L $(LIBS) $(LDFLAGS) -o $@
+	@echo "ok ....."
+
+$(SYNC_SERVER_OBJS): $(SYNC_SERVER_OBJ_DIR)/%.o: $(SYNC_SERVER_DIR)/%.cpp
+	$(CC) $(DEFINES) $(FLAGS) $< -I $(INCLUDES) -o $@
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(OBJECTS) -L $(LIBS) $(LDFLAGS) -o $@
@@ -95,4 +131,10 @@ testclean:FORCE
 clean:FORCE
 	$(RM) $(OBJECTS) $(TARGET)
 	$(RM) $(TEST_OBJS) $(TEST_TARGET)
+
+exampleclean:FORCE
+	$(RM) $(SYNC_CLIENT_OBJS) $(SYNC_CLIENT_TARGET)
+	$(RM) $(SYNC_SERVER_OBJS) $(SYNC_SERVER_TARGET)
+
+
 FORCE:
