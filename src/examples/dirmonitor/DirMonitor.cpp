@@ -75,6 +75,7 @@ void DirObservable::stopObserve()
 void DirObservable::startObserveAsync(const std::atomic_int& cancelToken)
 {
     if(cancelToken) return;
+    LOG(INFO) << "start observing folder: " << dir_.path().string();
     observeThread_.reset(new std::thread(&DirObservable::startObserve, this, std::ref(cancelToken)));
     isMonitoring_ = true;
 }

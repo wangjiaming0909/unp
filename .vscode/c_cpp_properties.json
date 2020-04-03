@@ -27,14 +27,14 @@
             "name": "a.out",
             "includePath": [
                 "${workspaceFolder}/src",
-                "/boost_1_70_0",
+                "/boost_1_72_0",
                 "/usr/include"
             ],
             "browse": {
                 "path": [
                     "${workspaceFolder}/src",
                     "/usr/include",
-                    "/boost_1_70_0"
+                    "/boost_1_72_0"
                 ]
             },
             "defines": [],
