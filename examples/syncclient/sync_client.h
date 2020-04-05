@@ -3,7 +3,7 @@
 #include <memory>
 #include <atomic>
 
-#include "boost/filesystem.hpp"
+#include <boost/filesystem.hpp>
 #include "reactor/reactor.h"
 #include "net/inet_addr.h"
 #include "reactor/HHWheelTimer.h"
@@ -29,7 +29,7 @@ private:
 private:
     net::inet_addr serverAddr_;
     boost::filesystem::path syncPath_;
-    std::shared_ptr<reactor::Reactor> reactor_;
+    reactor::Reactor* reactor_;
     std::shared_ptr<reactor::HHWheelTimer> timer_;
     std::shared_ptr<reactor::ConnectionManager> manager_;
 };

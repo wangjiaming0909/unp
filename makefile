@@ -81,10 +81,10 @@ $(BUILDDIR):
 	$(MKDIR) $@
 
 SYNC_CLIENT_DIR = ./examples/syncclient
-SYNC_CLIENT_OBJ_DIR = $(SYNC_CLIENT_DIR)
+SYNC_CLIENT_OBJ_DIR = $(BUILDDIR)/examples/sync_client
 SYNC_CLIENT_SOURCE = $(shell find $(SYNC_CLIENT_DIR) -type f -name '*.cpp')
 SYNC_CLIENT_OBJS = $(patsubst $(SYNC_CLIENT_DIR)/%.cpp, $(SYNC_CLIENT_OBJ_DIR)/%.o, $(SYNC_CLIENT_SOURCE))
-SYNC_CLIENT_TARGET = $(SYNC_CLIENT_DIR)/sync_client
+SYNC_CLIENT_TARGET = $(SYNC_CLIENT_OBJ_DIR)/sync_client
 SYNC_CLIENT_USED_SOURCE = $(filter-out main.cpp, $(SOURCES))
 SYNC_CLIENT_USED_OBJECTS = $(filter-out ./build/obj/main.o, $(OBJECTS))
 
@@ -99,16 +99,22 @@ $(SYNC_CLIENT_OBJS): $(SYNC_CLIENT_OBJ_DIR)/%.o: $(SYNC_CLIENT_DIR)/%.cpp
 
 #sync server
 SYNC_SERVER_DIR = ./examples/syncserver
-SYNC_SERVER_OBJ_DIR = $(SYNC_SERVER_DIR)
+SYNC_SERVER_OBJ_DIR = $(BUILDDIR)/examples/sync_server
 SYNC_SERVER_SOURCE = $(shell find $(SYNC_SERVER_DIR) -type f -name '*.cpp')
 SYNC_SERVER_OBJS = $(patsubst $(SYNC_SERVER_DIR)/%.cpp, $(SYNC_SERVER_OBJ_DIR)/%.o, $(SYNC_SERVER_SOURCE))
-SYNC_SERVER_TARGET = $(SYNC_SERVER_DIR)/sync_server
+SYNC_SERVER_TARGET = $(SYNC_SERVER_OBJ_DIR)/sync_server
 SYNC_SERVER_USED_SOURCE = $(filter-out main.cpp, $(SOURCES))
 SYNC_SERVER_USED_OBJECTS = $(filter-out ./build/obj/main.o, $(OBJECTS))
 
 sync_server: $(SYNC_SERVER_TARGET)
 
-examples: $(SYNC_SERVER_TARGET) $(SYNC_CLIENT_TARGET)
+examples:  $(SYNC_CLIENT_OBJ_DIR) $(SYNC_SERVER_OBJ_DIR) $(SYNC_SERVER_TARGET) $(SYNC_CLIENT_TARGET)
+
+$(SYNC_CLIENT_OBJ_DIR):
+	$(MKDIR) $@
+
+$(SYNC_SERVER_OBJ_DIR):
+	$(MKDIR) $@
 
 $(SYNC_SERVER_TARGET): $(SYNC_SERVER_USED_OBJECTS) $(SYNC_SERVER_OBJS)
 	$(CC) $(SYNC_SERVER_OBJS) $(SYNC_SERVER_USED_OBJECTS) -L $(LIBS) $(LDFLAGS) -o $@

@@ -1,5 +1,4 @@
 #include <atomic>
-#include <boost/filesystem/operations.hpp>
 #include <boost/system/error_code.hpp>
 #include <memory>
 
@@ -21,16 +20,24 @@ SyncClient::SyncClient(const net::inet_addr& serverAddr)
     , manager_{nullptr}
 {
     using namespace reactor;
-    reactor_.reset(new Reactor(new epoll_reactor_impl(), true));
+    reactor_ = new Reactor(new epoll_reactor_impl(), true);
     manager_.reset(new ConnectionManager(*reactor_));
     timer_.reset(new HHWheelTimer(&*reactor_));
 }
 
-SyncClient::~SyncClient(){}
+SyncClient::~SyncClient()
+{
+    delete reactor_;
+}
 
 int SyncClient::start(const std::atomic_int& cancelToken)
 {
+    if(!cancelToken.load())
+    {
+        return -2;
+    }
 
+    return 0;
 }
 
 bool SyncClient::setMonitorFolder(const std::string& fullPath)
@@ -55,12 +62,15 @@ bool SyncClient::setMonitorFolder(const std::string& fullPath)
 
 void SyncClient::monitor()
 {
-    
+
 }
 
 int SyncClient::connect()
 {
-    manager_->makeConnection<reactor::connector<SyncHandler>>();
+    using namespace std::chrono_literals;
+    auto connection = manager_->makeConnection<reactor::connector<SyncHandler>>();
+    connection->connect(serverAddr_, 1s);
+    return 0;
 }
 
 }

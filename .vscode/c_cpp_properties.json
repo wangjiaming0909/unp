@@ -4,14 +4,14 @@
             "name": "Test",
             "includePath": [
                 "${workspaceFolder}/src",
-                "/boost_1_70_0",
+                "/boost_1_72_0",
                 "/usr/local/include"
             ],
             "browse": {
                 "path": [
                     "${workspaceFolder}/src",
                     "/usr/local/include",
-                    "/boost_1_70_0"
+                    "/boost_1_72_0"
                 ]
             },
             "defines": [
