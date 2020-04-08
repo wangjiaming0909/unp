@@ -8,6 +8,7 @@
 #include "net/inet_addr.h"
 #include "reactor/HHWheelTimer.h"
 #include "reactor/ConnectionManager.h"
+#include "reactor/TimeoutHandler.h"
 
 namespace filesync {
 class SyncClient
@@ -30,8 +31,9 @@ private:
     net::inet_addr serverAddr_;
     boost::filesystem::path syncPath_;
     reactor::Reactor* reactor_;
-    std::shared_ptr<reactor::HHWheelTimer> timer_;
-    std::shared_ptr<reactor::ConnectionManager> manager_;
+    std::unique_ptr<reactor::HHWheelTimer> timer_;
+    std::unique_ptr<reactor::ConnectionManager> manager_;
+    std::unique_ptr<reactor::TimeoutHandler> timeoutHandler_;
 };
 
 }
