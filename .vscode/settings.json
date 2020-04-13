@@ -67,7 +67,8 @@
         "future": "cpp",
         "shared_mutex": "cpp",
         "xstring": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "rope": "cpp"
     },
     "C_Cpp.dimInactiveRegions": false,
     "editor.quickSuggestionsDelay": 1,

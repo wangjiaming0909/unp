@@ -20,7 +20,6 @@ SyncClient::SyncClient(const net::inet_addr& serverAddr)
     , manager_{nullptr}
 {
     using namespace reactor;
-    using namespace std::chrono_literals;
     reactor_ = new Reactor(new epoll_reactor_impl(), true);
     manager_.reset(new ConnectionManager(*reactor_));
     timer_.reset(new HHWheelTimer(&*reactor_));
@@ -39,7 +38,10 @@ int SyncClient::start(const std::atomic_int& cancelToken)
     {
         return -2;
     }
-    connect();
+    if (!connect())
+    {
+        LOG(ERROR) << "connect to server failed...";
+    }
     monitorLocalFolder();
 
     reactor_->start();
@@ -76,17 +78,33 @@ void SyncClient::monitorLocalFolder()
 
 }
 
+
+void SyncClient::timeoutCallback(reactor::TimeoutHandler*)
+{
+    if (!serverMonitorHandler_) return;
+    auto hello = "hello";
+    auto bytesWritten = serverMonitorHandler_->write(hello, strlen(hello));
+    if (bytesWritten <= 0)
+    {
+        LOG(ERROR) << "client say hello failed...";
+        if (sayHelloFailedWaitInterval_ > 100) return;
+        timer_->scheduleTimeout(*timeoutHandler_, std::chrono::seconds(sayHelloFailedWaitInterval_*2));
+        return;
+    }
+    timer_->scheduleTimeout(*timeoutHandler_, 1s);
+    sayHelloFailedWaitInterval_ = 1;
+}
+
 int SyncClient::connect()
 {
     using namespace std::chrono_literals;
     auto* connection = manager_->makeConnection<reactor::connector<ServerMonitorHandler>>();
     serverMonitorHandler_ = connection->connect(serverAddr_, 1s);
     if (!serverMonitorHandler_) {
-        serverStatus_ = ServerStatus::disconnected;
         return -1;
     } 
-
-    serverStatus_ = ServerStatus::connected;
+    timeoutHandler_->timeoutCallback = std::bind(&SyncClient::timeoutCallback, this, std::placeholders::_1);
+    timer_->scheduleTimeout(*timeoutHandler_, 1s);
     return 0;
 }
 

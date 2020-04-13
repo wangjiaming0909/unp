@@ -22,7 +22,7 @@ OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES) )
 
 TARGET = $(BUILDDIR)/a.out
 LIBS = /usr/local/lib
-INCLUDES = $(SOURCEDIR) -I /usr/local/include -I /boost_1_72_0/ -I /usr/include
+INCLUDES = $(SOURCEDIR) -I /usr/local/include -I /boost_1_72_0/ -I /usr/include 
 # /boost_1_70_0  
 # LDFLAGS = -pthread -lboost_thread -lboost_system
 
@@ -95,7 +95,7 @@ $(SYNC_CLIENT_TARGET): $(SYNC_CLIENT_USED_OBJECTS) $(SYNC_CLIENT_OBJS)
 	@echo "ok ....."
 
 $(SYNC_CLIENT_OBJS): $(SYNC_CLIENT_OBJ_DIR)/%.o: $(SYNC_CLIENT_DIR)/%.cpp
-	$(CC) $(DEFINES) $(FLAGS) $< -I $(INCLUDES) -o $@
+	$(CC) $(DEFINES) $(FLAGS) $< -I $(INCLUDES) -I examples -o $@
 
 #sync server
 SYNC_SERVER_DIR = ./examples/syncserver
@@ -121,7 +121,7 @@ $(SYNC_SERVER_TARGET): $(SYNC_SERVER_USED_OBJECTS) $(SYNC_SERVER_OBJS)
 	@echo "ok ....."
 
 $(SYNC_SERVER_OBJS): $(SYNC_SERVER_OBJ_DIR)/%.o: $(SYNC_SERVER_DIR)/%.cpp
-	$(CC) $(DEFINES) $(FLAGS) $< -I $(INCLUDES) -o $@
+	$(CC) $(DEFINES) $(FLAGS) $< -I $(INCLUDES) -I examples -o $@
 
 $(TARGET): $(OBJECTS)
 	$(CC) $(OBJECTS) -L $(LIBS) $(LDFLAGS) -o $@

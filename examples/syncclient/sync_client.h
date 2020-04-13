@@ -9,13 +9,12 @@
 #include "reactor/HHWheelTimer.h"
 #include "reactor/ConnectionManager.h"
 #include "reactor/TimeoutHandler.h"
-#include "sync_handler.h"
-#include "monitor_handler.h"
+#include "syncclient/sync_handler.h"
+#include "syncclient/monitor_handler.h"
 
 namespace filesync {
 class SyncClient
 {
-enum class ServerStatus{idle, connected, disconnected, reconnecting};
 
 public:
     SyncClient(const net::inet_addr& serverAddr);
@@ -31,6 +30,8 @@ private:
     //connect to server
     int connect();
 
+    void timeoutCallback(reactor::TimeoutHandler*);
+
 private:
     net::inet_addr serverAddr_;
     boost::filesystem::path syncPath_;
@@ -43,8 +44,8 @@ private:
     FileMonitorHandler* fileMonitorHandler_ = nullptr;
 
 private:
-    ServerStatus serverStatus_;
     bool isSyncing = false;
+    uint32_t sayHelloFailedWaitInterval_ = 1;
 };
 
 }

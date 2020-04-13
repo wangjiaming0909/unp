@@ -4,10 +4,6 @@
         {
             "label": "build",
             "type": "shell",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
             "command": "make",
             "args": [
                 "test",
@@ -34,6 +30,20 @@
             "command": "make",
             "args": [
                 "test"
+            ],
+            "problemMatcher":"$eslint-compact"
+        },
+        {
+            "label": "examples",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "examples",
+                "-j$(nproc)"
             ],
             "problemMatcher":"$eslint-compact"
         }
