@@ -39,8 +39,16 @@ int SyncClient::start(const std::atomic_int& cancelToken)
     {
         return -2;
     }
+    connect();
+    monitorLocalFolder();
 
-    return 0;
+    reactor_->start();
+    int ret = 0;
+    while(ret >= 0)
+    {
+        ret = reactor_->handle_events();
+    }
+    return ret;
 }
 
 bool SyncClient::setMonitorFolder(const std::string& fullPath)
@@ -63,7 +71,7 @@ bool SyncClient::setMonitorFolder(const std::string& fullPath)
     return true;
 }
 
-void SyncClient::monitor()
+void SyncClient::monitorLocalFolder()
 {
 
 }
@@ -71,8 +79,14 @@ void SyncClient::monitor()
 int SyncClient::connect()
 {
     using namespace std::chrono_literals;
-    auto connection = manager_->makeConnection<reactor::connector<SyncHandler>>();
-    connection->connect(serverAddr_, 1s);
+    auto* connection = manager_->makeConnection<reactor::connector<ServerMonitorHandler>>();
+    serverMonitorHandler_ = connection->connect(serverAddr_, 1s);
+    if (!serverMonitorHandler_) {
+        serverStatus_ = ServerStatus::disconnected;
+        return -1;
+    } 
+
+    serverStatus_ = ServerStatus::connected;
     return 0;
 }
 

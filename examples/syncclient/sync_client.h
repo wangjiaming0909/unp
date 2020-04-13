@@ -9,10 +9,14 @@
 #include "reactor/HHWheelTimer.h"
 #include "reactor/ConnectionManager.h"
 #include "reactor/TimeoutHandler.h"
+#include "sync_handler.h"
+#include "monitor_handler.h"
 
 namespace filesync {
 class SyncClient
 {
+enum class ServerStatus{idle, connected, disconnected, reconnecting};
+
 public:
     SyncClient(const net::inet_addr& serverAddr);
     ~SyncClient();
@@ -23,7 +27,7 @@ public:
 
 private:
     //monitor dir
-    void monitor();
+    void monitorLocalFolder();
     //connect to server
     int connect();
 
@@ -34,6 +38,13 @@ private:
     std::unique_ptr<reactor::HHWheelTimer> timer_;
     std::unique_ptr<reactor::ConnectionManager> manager_;
     std::unique_ptr<reactor::TimeoutHandler> timeoutHandler_;
+
+    ServerMonitorHandler* serverMonitorHandler_ = nullptr;
+    FileMonitorHandler* fileMonitorHandler_ = nullptr;
+
+private:
+    ServerStatus serverStatus_;
+    bool isSyncing = false;
 };
 
 }
