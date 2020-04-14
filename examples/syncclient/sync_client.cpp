@@ -38,7 +38,7 @@ int SyncClient::start(const std::atomic_int& cancelToken)
     {
         return -2;
     }
-    if (!connect())
+    if (connect() != 0)
     {
         LOG(ERROR) << "connect to server failed...";
     }

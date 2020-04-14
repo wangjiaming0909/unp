@@ -57,7 +57,6 @@ void scan_(std::string str, thread::thread_pool* pool)
       net::InetSockStream stream{};
       std::chrono::microseconds timeout = 50ms;
       int ret = connector.connect(stream, targetAddr, &timeout, 1, 0);
-      LOG(INFO) << ::gethostbyaddr((sockaddr*)(&targetAddr.get_sockaddr_in()), sizeof(sockaddr), AF_INET);
       stream.close();
       if (ret != 0) 
       {

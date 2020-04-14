@@ -18,6 +18,12 @@ int SyncServerHandler::handle_input(int handle)
         return ret;
     }
 
+    if (input_buffer_.buffer_length() > 0)
+    {
+        auto p = input_buffer_.pullup(1024);
+        LOG(INFO) << "received: " << p;
+    }
+
     return 0;
 }
 
