@@ -1,11 +1,16 @@
 #include "net/inet_addr.h"
+#include "net/inet_sock_stream.h"
+#include "net/sock_stream.h"
 #include "net/unp.h"
+#include "thread/thread_pool.h"
 #include "util/easylogging++.h"
 #include "main_helper.h"
 #include "downloader/download.h"
 #include "downloader/serverhandler.h"
 #include "reactor/tcp_server.h"
 #include "reactor/echo_connection_handler.h"
+#include <cstdio>
+#include <netdb.h>
 #include <string>
 #include "downloader/downloaderserver.h"
 //#include "examples/Downloader.h"
@@ -41,11 +46,59 @@ void downloaderServer()
     st.join();
 }
 
+void scan_(std::string str, thread::thread_pool* pool)
+{
+    for(int i = 1; i < 255; i++)
+    {
+      auto netStr = str;
+      netStr.append(std::to_string(i));
+      net::inet_addr targetAddr{22, netStr.c_str()};
+      net::sock_connector connector{};
+      net::InetSockStream stream{};
+      std::chrono::microseconds timeout = 50ms;
+      int ret = connector.connect(stream, targetAddr, &timeout, 1, 0);
+      LOG(INFO) << ::gethostbyaddr((sockaddr*)(&targetAddr.get_sockaddr_in()), sizeof(sockaddr), AF_INET);
+      stream.close();
+      if (ret != 0) 
+      {
+        continue;
+      }
+      LOG(INFO) << netStr << " connect succeed...";
+      // std::string command = "sshpass -p \"123\" ssh wjm@" + netStr;
+      // auto file = popen(command.c_str(), "rw");
+      // char buffer[1024] = {};
+      // auto c = ::fgets(buffer, 1024, file);
+      // //std::cout << "buffer: " << buffer << std::endl;
+      // if (strcmp(buffer, "Permission denied") != 0) continue;
+      // LOG(INFO) << netStr << " ssh connect succeed ...";
+      // pool->cancel();
+    }
+}
+
+int scan()
+{
+  using namespace std::chrono_literals;
+  thread::thread_pool pool{2};
+  pool.start();
+  //172.16.70.1
+  for(int i = 70; i < 71; i++)
+  {
+    std::string str = "172.16.";
+    str = str + std::to_string(i) + ".";
+    pool.add_task(std::bind(scan_, str, &pool));
+  }
+  pool.wait(nullptr);
+  return -1;
+}
+
 int main(int argc, char** argv)
 {
-    server_scoped_helper s_h{argc, argv};
+    //server_scoped_helper s_h{argc, argv};
     //return download(argc, argv);
     // return serve(argc, argv);
-    downloaderServer();
+    //downloaderServer();
+    //
+    scan();
 }
+
 
