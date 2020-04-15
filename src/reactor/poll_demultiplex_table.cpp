@@ -4,6 +4,61 @@ namespace reactor
 {
 
 
+int PollEventRepo::bindNew(int handle, EventType event, EventHandler* handler) 
+{
+    Guard guard{mutex_};
+    if (handle == INVALID_HANDLE || event == EventHandler::NONE || handler == nullptr) 
+    {
+        LOG(WARNING) << "can't bind INVALID_HANDLE or NONE event or handler is nullptr";
+        return -1;
+    }
+
+    handleSet_.insert(handle);
+    auto h = static_cast<uint32_t>(handle);
+    if (eventsTable_.size() < h) eventsTable_.resize(h);
+    eventsTable_[h][event] = handler;
+    return 0;
+}
+
+int PollEventRepo::unbind(int handle, EventType event, const EventHandler* handler)
+{
+    Guard guard{mutex_};
+    if (handle == INVALID_HANDLE || event == EventHandler::NONE || handler == nullptr)
+    {
+        LOG(WARNING) << "can't unbind INVALID_HANDLE or NONE event or handler is nullptr";
+        return -1;
+    }
+    if (handleSet_.count(handle) == 0) 
+    {
+        LOG(WARNING) << "unbinding a noexisted handle: " << handle << " event: " << event;
+        return -1;
+    }
+    if (eventsTable_[handle].count(event) == 0)
+    {
+        LOG(WARNING) << "unbinding a noexisted event of handle: " << handle << " event: " << event;
+        return -1;
+    }
+    if (eventsTable_[handle][event] != handler)
+    {
+        LOG(WARNING) << "unbinding a wrong handler, handle: " << handle << " event: " << event;
+        return -1;
+    }
+    handleSet_.erase(handle);
+    eventsTable_[handle].erase(event);
+    return 0;
+}
+
+int PollEventRepo::unbind(int handle)
+{
+    Guard guard{mutex_};
+    if (handle == INVALID_HANDLE)
+    {
+        LOG(WARNING) << "can't unbind INVALID_HANDLE or NONE event or handler is nullptr";
+        return -1;
+    }
+
+}
+
 int poll_event_repo::bind_new(Event_Type type, EventHandler* handler)
 {
     if(type == EventHandler::NONE || handler == 0)

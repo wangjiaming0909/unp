@@ -3,6 +3,7 @@
 
 #include "reactor/EventHandler.h"
 #include <mutex>
+#include <set>
 
 namespace reactor
 {
@@ -27,12 +28,56 @@ public:
     int unbind(Event_Type type, const EventHandler* handler);
     void clear() {types_and_handlers_.clear();}
     EventHandler* get_handler(Event_Type type) const ;
-    int handle_count() const {return types_and_handlers_.size();};
+    int handle_count() const {return types_and_handlers_.size();}
 
 private:
     std::vector<event_tuple>::const_iterator find(Event_Type type) const;
 private:
     std::vector<event_tuple> types_and_handlers_;
+};
+
+struct PollEventRepo
+{
+public:
+    using EventType = EventHandler::Event_Type;
+    using Mutex = std::mutex;
+    using Guard = std::lock_guard<Mutex>;
+    PollEventRepo() = default;
+    ~PollEventRepo() = default;
+
+public:
+    int bindNew(int handle, EventType event, EventHandler* handler);
+    int unbind(int handle, EventType event, const EventHandler* handler);
+    int unbind(int handle);
+    EventHandler* getHandler(int handle, EventType type)
+    {
+        Guard guard{mutex_};
+        uint32_t h = static_cast<uint32_t>(handle);
+        if (eventsTable_.size() < h || eventsTable_[h].count(type) == 0)
+            return nullptr;
+        return eventsTable_[h][type];
+    }
+
+    bool hasHandle(int handle) const 
+    {
+        Guard guard{mutex_};
+        return handleSet_.count(handle) > 0; 
+    }
+    uint32_t handleCount() const 
+    {
+        Guard guard{mutex_};
+        return handleSet_.size(); 
+    }
+    void clear() 
+    { 
+        Guard guard{mutex_};
+        eventsTable_.clear(); 
+        handleSet_.clear(); 
+    }
+private:
+    std::set<int>                                     handleSet_;
+    std::vector<std::map<EventType, EventHandler*>>   eventsTable_;
+    mutable Mutex                                     mutex_;
 };
 
 class poll_demultiplex_table {
@@ -68,8 +113,8 @@ public:
     }
 private:
     std::vector<poll_event_repo>        table_;
-    int                                                 size_;
-    mutable mutex_t                             mutex_;
+    int                                 size_;
+    mutable mutex_t                     mutex_;
 
 };
 
