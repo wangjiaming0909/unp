@@ -16,7 +16,7 @@ int  poll_reactor_impl::register_handler(int handle, EventHandler *handler, Even
     }
 
     //already existed in the table
-    if(demux_table_.get_handler(handle, type) != 0)
+    if(demux_table_.getHandler(handle, type) != 0)
     {
         LOG(WARNING) << "Already existed in the demultiplex table, handle: " 
         << handle << " event: " << event_type_to_string(type);
@@ -33,7 +33,7 @@ int  poll_reactor_impl::register_handler(int handle, EventHandler *handler, Even
     wait_pfds_.push_back(pfd);
 
     //bind to the demultiplex table
-    return this->demux_table_.bind(handle, handler, type);
+    return this->demux_table_.bindNew(handle, type, handler);
 }
 
 int poll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Event_Type type)
@@ -45,7 +45,7 @@ int poll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Eve
     }
 
     //didn't find the handle and handler
-    if(demux_table_.get_handler(handle, type) == 0)
+    if(demux_table_.getHandler(handle, type) == 0)
     {
         LOG(WARNING) << "Can't unregister, didn't find the handle: " 
             << handle << " event: " << event_type_to_string(type);
@@ -63,7 +63,7 @@ int poll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Eve
         }
     }
 
-    return demux_table_.unbind(handle, handler, type);
+    return demux_table_.unbind(handle, type, handler);
 }
 
 int poll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
@@ -169,7 +169,7 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
         handles_dispatched++;
 
         LOG(INFO) << "Dispatching handle: " << current_fd << " event: " << event_type_to_string(type);
-        EventHandler* handler = demux_table_.get_handler(current_fd, type);
+        EventHandler* handler = demux_table_.getHandler(current_fd, type);
 
         if(handler != nullptr) ret = (handler->*callback)(current_fd);
         active_handles--;

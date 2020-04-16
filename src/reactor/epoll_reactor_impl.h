@@ -16,7 +16,8 @@ class epoll_reactor_impl : public reactor_implementation
 {
 public:
     typedef int (EventHandler::*HANDLER)(int);
-    using epoll_demultiplex_table = poll_demultiplex_table;
+    //using epoll_demultiplex_table = poll_demultiplex_table;
+    using epoll_demultiplex_table = PollEventRepo;
     epoll_reactor_impl();
     ~epoll_reactor_impl();
     int handle_events(std::chrono::microseconds *timeout) override;
@@ -39,13 +40,13 @@ private:
     int dispatch_io_epoll_sets(int active_handles, int handles_dispatched, Event_Type type, HANDLER callback);
 
 private:
-    int                                                             fd_count_;
-    int                                                             epoll_fd_;
-    struct epoll_event                                      cur_event_;
+    int                                             fd_count_;
+    int                                             epoll_fd_;
+    struct epoll_event                              cur_event_;
     std::vector<struct epoll_event>                 ret_events_;
-    epoll_demultiplex_table                             demux_table_;
-    std::mutex                                                  mutex_;
-    epoller                                                        epoller_;
+    epoll_demultiplex_table                         demux_table_;
+    std::mutex                                      mutex_;
+    epoller                                         epoller_;
 };
 
 } //namespace reactor

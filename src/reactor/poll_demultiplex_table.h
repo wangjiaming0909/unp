@@ -49,14 +49,7 @@ public:
     int bindNew(int handle, EventType event, EventHandler* handler);
     int unbind(int handle, EventType event, const EventHandler* handler);
     int unbind(int handle);
-    EventHandler* getHandler(int handle, EventType type)
-    {
-        Guard guard{mutex_};
-        uint32_t h = static_cast<uint32_t>(handle);
-        if (eventsTable_.size() < h || eventsTable_[h].count(type) == 0)
-            return nullptr;
-        return eventsTable_[h][type];
-    }
+    EventHandler* getHandler(int handle, EventType type);
 
     bool hasHandle(int handle) const 
     {
@@ -87,9 +80,9 @@ public:
     using lock_guard_t = std::lock_guard<mutex_t>;
 
     poll_demultiplex_table();
-    EventHandler *get_handler(int handle, Event_Type type) const;
+    EventHandler *getHandler(int handle, Event_Type type) const;
 
-    bool has_handle(int handle) const 
+    bool hasHandle(int handle) const 
     {
         lock_guard_t guard{mutex_};
         return table_.size() > static_cast<size_t>(handle) && table_[handle].handle_count() > 0;
@@ -101,11 +94,11 @@ public:
         return table_;
     }
 
-    int bind(int handle, EventHandler *handler, Event_Type type);
+    int bindNew(int handle, Event_Type type, EventHandler *handler);
 
     //unbind掉绑定到这个handle的所有事件处理器
     int unbind(int handle);
-    int unbind(int handle, const EventHandler *handler, Event_Type type)
+    int unbind(int handle, Event_Type type, const EventHandler *handler)
     {
         lock_guard_t guard{mutex_};
         size_--;

@@ -87,7 +87,7 @@ int epoll_reactor_impl::register_handler(int handle, EventHandler *handler, Even
     //LOG(INFO) << "Registering handler, handle: " << handle << " event: " << event_type_to_string(type);
 
     //already existed in the table
-    if(demux_table_.get_handler(handle, type) != 0)
+    if(demux_table_.getHandler(handle, type) != 0)
     {
         LOG(WARNING) << "Already existed in the demultiplex table, handle: " 
         << handle << " event: " << event_type_to_string(type);
@@ -123,7 +123,7 @@ int epoll_reactor_impl::register_handler(int handle, EventHandler *handler, Even
         return -1;
     }
 
-    ret = this->demux_table_.bind(handle, handler, type);
+    ret = this->demux_table_.bindNew(handle, type, handler);
     if(ret == 0)
         fd_count_++;
     return ret;
@@ -140,7 +140,7 @@ int epoll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Ev
     //LOG(INFO) << "Unregistering handler, handle: " << handle << " event: " << event_type_to_string(type);
 
     //didn't find the handle and handler
-    if(demux_table_.get_handler(handle, type) == 0)
+    if(demux_table_.getHandler(handle, type) == 0)
     {
         LOG(WARNING) << "Can't unregister, didn't find the handle: " 
             << handle << " event: " << event_type_to_string(type);
@@ -155,7 +155,7 @@ int epoll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Ev
         return -1;
     }
 
-    ret = this->demux_table_.unbind(handle, handler, type);
+    ret = this->demux_table_.unbind(handle, type, handler);
     if(ret == 0) 
         fd_count_--;
     return ret;
@@ -244,7 +244,7 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
         // LOG(INFO) << "Dispatching handle: " << current_fd << " event: " << event_type_to_string(type);
 
 
-        EventHandler* handler = demux_table_.get_handler(current_fd, type);
+        EventHandler* handler = demux_table_.getHandler(current_fd, type);
         if(handler != nullptr) ret = (handler->*callback)(current_fd);
 
         // mutex_.unlock();
@@ -265,7 +265,7 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
         {
             //LOG(INFO) <<"Keep listening on handle: " << current_fd << " event: " << event_type_to_string(type);
         }
-        bool isHasHandle = demux_table_.has_handle(current_fd);
+        bool isHasHandle = demux_table_.hasHandle(current_fd);
         if(!isHasHandle && (handler != nullptr))
         {
             LOG(INFO) << "closing handle: " << current_fd;

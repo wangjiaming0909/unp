@@ -96,13 +96,13 @@ int tcp_server<Handler_t>::start(unp::reactor_imp_t_enum impl)
     LOG(INFO) << "Starting server on " << local_addr_.get_address_string();
     first_reactor_ = make_reactor(impl);
     if(first_reactor_.get() == nullptr)
-		return -1;
+        return -1;
 
     make_acceptor();
-	if(acceptor_->open() != 0)
-	{
-		return -1;
-	}
+    if(acceptor_->open() != 0)
+    {
+        return -1;
+    }
     pool_ = std::make_shared<thread::thread_pool>(thread_num_);
 
     for(size_t i = 0; i < thread_num_; i++)
@@ -139,9 +139,8 @@ int tcp_server<Handler_t>::start(unp::reactor_imp_t_enum impl)
         }
     }
 
-	std::chrono::microseconds timeout = 2s;
-	pool_->wait(&timeout);
-
+    std::chrono::microseconds timeout = 2s;
+    pool_->wait(&timeout);
     return -1;
 }
 

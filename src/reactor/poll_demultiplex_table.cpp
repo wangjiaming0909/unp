@@ -15,7 +15,7 @@ int PollEventRepo::bindNew(int handle, EventType event, EventHandler* handler)
 
     handleSet_.insert(handle);
     auto h = static_cast<uint32_t>(handle);
-    if (eventsTable_.size() < h) eventsTable_.resize(h);
+    if (eventsTable_.size() <= h) eventsTable_.resize(h + 1);
     eventsTable_[h][event] = handler;
     return 0;
 }
@@ -48,6 +48,15 @@ int PollEventRepo::unbind(int handle, EventType event, const EventHandler* handl
     return 0;
 }
 
+EventHandler*PollEventRepo::getHandler(int handle, EventType type)
+{
+    Guard guard{mutex_};
+    uint32_t h = static_cast<uint32_t>(handle);
+    if (eventsTable_.size() <= h || eventsTable_[h].count(type) == 0)
+        return nullptr;
+    return eventsTable_[h][type];
+}
+
 int PollEventRepo::unbind(int handle)
 {
     Guard guard{mutex_};
@@ -56,7 +65,15 @@ int PollEventRepo::unbind(int handle)
         LOG(WARNING) << "can't unbind INVALID_HANDLE or NONE event or handler is nullptr";
         return -1;
     }
-
+    auto h = static_cast<uint32_t>(handle);
+    if (eventsTable_.size() <= h || eventsTable_[h].size() == 0)
+    {
+        LOG(WARNING) << "can't unbind, no this handle or no events of this handle: " << handle;
+        return -1;
+    }
+    handleSet_.clear(); 
+    eventsTable_[h].clear();
+    return 0;
 }
 
 int poll_event_repo::bind_new(Event_Type type, EventHandler* handler)
@@ -128,10 +145,9 @@ poll_demultiplex_table::poll_demultiplex_table()
     : table_()
     , size_()
     , mutex_()
-    {
-    }
+{ }
 
-EventHandler* poll_demultiplex_table::get_handler(int handle, Event_Type type) const 
+EventHandler* poll_demultiplex_table::getHandler(int handle, Event_Type type) const 
 {
     lock_guard_t guard{mutex_};
     if(table_.size() <= static_cast<size_t>(handle))
@@ -140,7 +156,7 @@ EventHandler* poll_demultiplex_table::get_handler(int handle, Event_Type type) c
     return table_[handle].get_handler(type);
 }
 
-int poll_demultiplex_table::bind(int handle, EventHandler* handler, Event_Type type){
+int poll_demultiplex_table::bindNew(int handle, Event_Type type, EventHandler* handler){
     lock_guard_t guard{mutex_};
     int64_t table_size = static_cast<int64_t>(table_.size());
     if((handle) >= (table_size))
