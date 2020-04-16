@@ -105,7 +105,6 @@ int select_demultiplex_table::unbind(int handle, const EventHandler* handler, Ev
 int select_demultiplex_table::bindTimeoutEvent(TimeoutHandler &handler)
 {
     timeoutHandlersMinHeap_.push(&handler);
-    handler.setRegistered();
     // LOG(INFO) << "binding..." << "size: " << timeoutHandlersMinHeap_.size() << " time: " << handler.expiration_.time_since_epoch().count();
     return 0;
 }

@@ -1,5 +1,5 @@
 #!/bin/bash
-cd gtests &&
+#cd gtests &&
 #run tests
 # ./test.out --gtest_filter=httpDownloader.*
 # ./test.out --gtest_filter=HttpsClientHandler.*
@@ -10,7 +10,7 @@ cd gtests &&
 #./test.out --gtest_filter=proto2.*
 #./test.out --gtest_filter=downloadserver.*
 
-./test.out --gtest_filter=DirMonitor.*
+#./test.out --gtest_filter=DirMonitor.*
 
 
 # ./test.out   --gtest_filter=TcpServer.*
@@ -18,3 +18,12 @@ cd gtests &&
 # ./test.out   --gtest_filter=TCPCLIENT.*
 
 # ./test.out --gtest_filter=Http1xCodec.*
+
+
+if [ $1 = 1 ]
+then
+  ./build/examples/sync_client/sync_client
+elif [ $1 = 2 ]
+then
+  ./build/examples/sync_server/sync_server
+fi

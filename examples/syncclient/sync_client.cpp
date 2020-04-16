@@ -21,20 +21,15 @@ SyncClient::SyncClient(const net::inet_addr& serverAddr)
 {
     using namespace reactor;
     reactor_ = new Reactor(new epoll_reactor_impl(), true);
-    LOG(INFO) << "asd0";
     manager_.reset(new ConnectionManager(*reactor_));
-    //char* p = (char*)::calloc(10, 1);
-    LOG(INFO) << "asd";
     timer_.reset(new HHWheelTimer(&*reactor_));
-    LOG(INFO) << "asd1";
     timeoutHandler_.reset(new TimeoutHandler(*reactor_));
-    LOG(INFO) << "asd2";
     //timer_->scheduleTimeout(*timeoutHandler_, 1s);
 }
 
 SyncClient::~SyncClient()
 {
-    delete reactor_;
+    //delete reactor_;
 }
 
 int SyncClient::start(const std::atomic_int& cancelToken)

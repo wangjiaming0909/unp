@@ -7,9 +7,32 @@ namespace reactor
 int PollEventRepo::bindNew(int handle, EventType event, EventHandler* handler) 
 {
     Guard guard{mutex_};
-    if (handle == INVALID_HANDLE || event == EventHandler::NONE || handler == nullptr) 
+    if (event == EventHandler::NONE || handler == nullptr) 
     {
-        LOG(WARNING) << "can't bind INVALID_HANDLE or NONE event or handler is nullptr";
+        LOG(WARNING) << "can't bind NONE event or handler is nullptr";
+        return -1;
+    }
+    if (event == EventHandler::TIMEOUT_EVENT) 
+    {
+        auto* h = dynamic_cast<TimeoutHandler*>(handler);
+        if (h == nullptr)
+        {
+            LOG(WARNING) << "binding a none timeout handler to a timeout handler";
+            return -1;
+        }
+        auto t = h->expirationTimePoint();
+        if (timeoutHandlers_[t].count(h) == 1)
+        {
+            LOG(WARNING) << "already binded this handler...";
+            return -1;
+        }
+        timeoutHandlers_[t].insert(h);
+        return 0;
+    }
+
+    if (handle == INVALID_HANDLE) 
+    {
+        LOG(WARNING) << "can't bind INVALID_HANDLE to none timeout handler";
         return -1;
     }
 
@@ -23,11 +46,35 @@ int PollEventRepo::bindNew(int handle, EventType event, EventHandler* handler)
 int PollEventRepo::unbind(int handle, EventType event, const EventHandler* handler)
 {
     Guard guard{mutex_};
-    if (handle == INVALID_HANDLE || event == EventHandler::NONE || handler == nullptr)
+    if (event == EventHandler::NONE || handler == nullptr)
     {
-        LOG(WARNING) << "can't unbind INVALID_HANDLE or NONE event or handler is nullptr";
+        LOG(WARNING) << "can't unbind NONE event or handler is nullptr";
         return -1;
     }
+    
+    if (event == EventHandler::TIMEOUT_EVENT) 
+    {
+        const auto* h = dynamic_cast<const TimeoutHandler*>(handler);
+        if (h == nullptr)
+        {
+            LOG(WARNING) << "binding a none timeout handler to a timeout handler";
+            return -1;
+        }
+        auto t = h->expirationTimePoint();
+        if (timeoutHandlers_.count(t) == 0)
+        {
+            LOG(WARNING) << "no this timeouthandler with timeout expirationTimePoint is: " << t.time_since_epoch().count();
+            return -1;
+        }
+        if (timeoutHandlers_[t].count(const_cast<TimeoutHandler*>(h)) == 0)
+        {
+            LOG(WARNING) << "can't unbind, no this timeoutHandler registered: " << t.time_since_epoch().count();
+            return -1;
+        }
+        timeoutHandlers_[t].erase(const_cast<TimeoutHandler*>(h));
+        return 0;
+    }
+
     if (handleSet_.count(handle) == 0) 
     {
         LOG(WARNING) << "unbinding a noexisted handle: " << handle << " event: " << event;

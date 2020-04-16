@@ -2,8 +2,10 @@
 #define POLL_DEMULTIPLEX_TABLE_H_
 
 #include "reactor/EventHandler.h"
+#include "reactor/TimeoutHandler.h"
 #include <mutex>
 #include <set>
+#include <map>
 
 namespace reactor
 {
@@ -42,6 +44,8 @@ public:
     using EventType = EventHandler::Event_Type;
     using Mutex = std::mutex;
     using Guard = std::lock_guard<Mutex>;
+    using TimePoint_T = TimeoutHandler::TimePoint_T;
+    using TOHandlerComp = TimeoutHandlerComparer<TimeoutHandler>;
     PollEventRepo() = default;
     ~PollEventRepo() = default;
 
@@ -50,11 +54,19 @@ public:
     int unbind(int handle, EventType event, const EventHandler* handler);
     int unbind(int handle);
     EventHandler* getHandler(int handle, EventType type);
-
+    TimePoint_T getLastestTimeoutPoint()
+    {
+        if (!hasTimeoutHandler()) return TimePoint_T::max();
+        return timeoutHandlers_.begin()->first;
+    }
     bool hasHandle(int handle) const 
     {
         Guard guard{mutex_};
         return handleSet_.count(handle) > 0; 
+    }
+    bool hasTimeoutHandler() const 
+    {
+        return timeoutHandlers_.size() != 0;
     }
     uint32_t handleCount() const 
     {
@@ -68,9 +80,10 @@ public:
         handleSet_.clear(); 
     }
 private:
-    std::set<int>                                     handleSet_;
-    std::vector<std::map<EventType, EventHandler*>>   eventsTable_;
-    mutable Mutex                                     mutex_;
+    std::set<int>                                           handleSet_;
+    std::vector<std::map<EventType, EventHandler*>>         eventsTable_;
+    std::map<TimePoint_T, std::set<TimeoutHandler*>>        timeoutHandlers_;
+    mutable Mutex                                           mutex_;
 };
 
 class poll_demultiplex_table {

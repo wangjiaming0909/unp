@@ -27,16 +27,20 @@ int epoll_reactor_impl::open()
 
 int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
 {
+    using namespace std::chrono;
     int n = 0;
-    if(timeout != 0)
+    if(timeout == 0 && !demux_table_.hasTimeoutHandler())
     {
-        std::chrono::milliseconds timeout_milli = std::chrono::duration_cast<std::chrono::milliseconds>(*timeout);
-
-        n = this->epoll_wait(timeout_milli.count());
+        n = this->epoll_wait(-1);
     }
     else
     {
-        n = this->epoll_wait(-1);
+        using TP = epoll_demultiplex_table::TimePoint_T;
+        TP::duration dura_of_timer = TP::duration::max();
+        if (demux_table_.hasTimeoutHandler())
+            dura_of_timer = demux_table_.getLastestTimeoutPoint() - steady_clock::now();
+        TP::duration nextTimeout = std::min(timeout == nullptr ? TP::duration::max() : duration_cast<TP::duration>(*timeout), dura_of_timer);
+        n = this->epoll_wait(nextTimeout.count());
     }
     
     if(n == 0) 
@@ -64,16 +68,24 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
 
 int epoll_reactor_impl::register_handler(EventHandler* handler, Event_Type type)
 {
-    (void)handler;
-    (void)type;
-	return 0;
+    if (handler == nullptr || type != EventHandler::TIMEOUT_EVENT)
+    {
+        LOG(WARNING) << "can't register none timeout handler with no handle";
+        return -1;
+    }
+    demux_table_.bindNew(INVALID_HANDLE, type, handler);
+	  return 0;
 }
 
 int epoll_reactor_impl::unregister_handler(EventHandler *handler, Event_Type type)
 {
-    (void)handler;
-    (void)type;
-	return 0;
+    if (handler == nullptr || type != EventHandler::TIMEOUT_EVENT)
+    {
+        LOG(WARNING) << "can't unregister none timeout handler with no handle";
+        return -1;
+    }
+    demux_table_.unbind(INVALID_HANDLE, type, handler);
+	  return 0;
 }
 
 int epoll_reactor_impl::register_handler(int handle, EventHandler *handler, Event_Type type)

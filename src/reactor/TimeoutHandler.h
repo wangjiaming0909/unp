@@ -3,7 +3,6 @@
 
 #include "reactor/EventHandler.h"
 #include "boost/intrusive/list_hook.hpp"
-#include "boost/intrusive/list_hook.hpp"
 #include <chrono>
 
 namespace reactor

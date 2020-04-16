@@ -31,13 +31,12 @@
                 "${workspaceFolder}/src",
                 "${workspaceFolder}/examples",
                 "/boost_1_72_0",
-                "/usr/include"
+                "/usr/local/include/c++/9.2.0"
             ],
             "browse": {
                 "path": [
                     "${workspaceFolder}/src",
                     "${workspaceFolder}/examples",
-                    "/usr/include",
                     "/boost_1_72_0"
                 ]
             },
@@ -45,7 +44,7 @@
             "compilerPath": "/usr/bin/gcc",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "gcc-x86"
         }
     ],
     "version": 4
