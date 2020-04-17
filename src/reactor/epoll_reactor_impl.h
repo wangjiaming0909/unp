@@ -38,6 +38,7 @@ private:
     int dispatch(int active_handle_count);
     int dispatch_io_handlers(int active_handles, int& handles_dispatched);
     int dispatch_io_epoll_sets(int active_handles, int handles_dispatched, Event_Type type, HANDLER callback);
+    int dispatch_timeout_events();
 
 private:
     int                                             fd_count_;
@@ -47,6 +48,7 @@ private:
     epoll_demultiplex_table                         demux_table_;
     std::mutex                                      mutex_;
     epoller                                         epoller_;
+    std::chrono::steady_clock::time_point                cached_now_;
 };
 
 } //namespace reactor

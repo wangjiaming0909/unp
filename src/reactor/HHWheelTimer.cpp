@@ -139,7 +139,6 @@ void HHWheelTimer::timeoutExpired(TimeoutHandler_t* handler) noexcept
     int index = expireTick_ & WHEEL_MASK;
     if(firstBucketBitSet_.test(index)) timerCount_--;
     LOG(INFO) << "-----------timer count--: " << timerCount_ << " expireTick: " << expireTick_;
-    firstBucketBitSet_.reset(index);
     LOG(INFO) << "reseting pos: " << index;
 
     //if there are lots of timer that are expired at the curTick
@@ -155,8 +154,12 @@ void HHWheelTimer::timeoutExpired(TimeoutHandler_t* handler) noexcept
                 cascadeTimers_(3, (expireTick_ >> (3 * WHEEL_BITS)) & WHEEL_MASK);
             }
         }
+        if(!firstBucketBitSet_.test(index)) 
+        {
+            expireTick_++;
+            continue;
+        }
         expireTick_++;
-        if(!firstBucketBitSet_.test(index)) continue;
 
         intrusive_list_t tmpList;
         tmpList.swap(handlers_[0][index]);

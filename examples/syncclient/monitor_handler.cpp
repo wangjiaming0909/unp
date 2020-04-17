@@ -13,7 +13,12 @@ FileMonitorHandler::FileMonitorHandler(reactor::Reactor& react)
 ServerMonitorHandler::ServerMonitorHandler(reactor::Reactor& react) 
     : reactor::connection_handler(react)
 {
-    sayHello();
+}
+
+int ServerMonitorHandler::open()
+{
+    this->enable_reading();
+    return sayHello();
 }
 
 int ServerMonitorHandler::handle_input(int handle)

@@ -40,12 +40,20 @@ TEST(HHWheelTimer, normal_test)
     HHWheelTimer *timer = new HHWheelTimer{&react};
     ASSERT_TRUE(timer != nullptr);
 
-    timer->scheduleTimeout(*handler1, 2ms);
-    timer->scheduleTimeout(*handler2, std::chrono::duration_cast<HHWheelTimer::Duration>(1s));
-    ASSERT_EQ(timer->getTimerCount(), 2);
+    timer->scheduleTimeout(*handler1, 1s);
+    // timer->scheduleTimeout(*handler2, std::chrono::duration_cast<HHWheelTimer::Duration>(1s));
+    // ASSERT_EQ(timer->getTimerCount(), 2);
 
     auto timeout = 2000000us;
     int i = 0;
+    while(i < 2)
+    {
+        react.handle_events(&timeout);
+        i++;
+    }
+
+    timer->scheduleTimeout(*handler1, 1s);
+    i = 0;
     while(i < 2)
     {
         react.handle_events(&timeout);

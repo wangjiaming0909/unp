@@ -2,6 +2,7 @@
 #include <boost/system/error_code.hpp>
 #include <memory>
 
+#include "reactor/TimeoutHandler.h"
 #include "reactor/epoll_reactor_impl.h"
 #include "reactor/reactor_implementation.h"
 #include "sync_client.h"
@@ -20,10 +21,11 @@ SyncClient::SyncClient(const net::inet_addr& serverAddr)
     , manager_{nullptr}
 {
     using namespace reactor;
+    using namespace std::chrono_literals;
     reactor_ = new Reactor(new epoll_reactor_impl(), true);
     manager_.reset(new ConnectionManager(*reactor_));
     timer_.reset(new HHWheelTimer(&*reactor_));
-    timeoutHandler_.reset(new TimeoutHandler(*reactor_));
+    timeoutHandler_.reset(new TimerHandler(*reactor_, 1s));
     //timer_->scheduleTimeout(*timeoutHandler_, 1s);
 }
 
@@ -91,7 +93,9 @@ void SyncClient::timeoutCallback(reactor::TimeoutHandler*)
         timer_->scheduleTimeout(*timeoutHandler_, std::chrono::seconds(sayHelloFailedWaitInterval_*2));
         return;
     }
-    timer_->scheduleTimeout(*timeoutHandler_, 1s);
+    //timeoutHandler_.reset(new reactor::TimeoutHandler(*reactor_));
+    //timeoutHandler_->timeoutCallback = std::bind(&SyncClient::timeoutCallback, this, std::placeholders::_1);
+    //timer_->scheduleTimeout(*timeoutHandler_, 1s);
     sayHelloFailedWaitInterval_ = 1;
 }
 

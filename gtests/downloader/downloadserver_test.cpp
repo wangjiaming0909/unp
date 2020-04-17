@@ -75,6 +75,7 @@ public:
 
 TEST(downloadserver, normal)
 {
+    GTEST_SKIP();
     using namespace std::chrono_literals;
     net::inet_addr listenArrd{8000, "0.0.0.0"};
     std::string url = "https://github.com/wangjiaming0909/unp/archive/master.zip";

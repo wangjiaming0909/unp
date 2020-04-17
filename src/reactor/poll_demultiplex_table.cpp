@@ -6,6 +6,10 @@ namespace reactor
 
 int PollEventRepo::bindNew(int handle, EventType event, EventHandler* handler) 
 {
+    if (event == EventHandler::ACCEPT_EVENT) 
+    {
+        event = EventHandler::READ_EVENT;
+    }
     Guard guard{mutex_};
     if (event == EventHandler::NONE || handler == nullptr) 
     {
@@ -95,13 +99,40 @@ int PollEventRepo::unbind(int handle, EventType event, const EventHandler* handl
     return 0;
 }
 
-EventHandler*PollEventRepo::getHandler(int handle, EventType type)
+int PollEventRepo::unbindTimeoutHandlers(const TimePoint_T& tp)
+{
+    if (timeoutHandlers_.count(tp) == 0)
+    {
+        LOG(WARNING) << "no this timeout handler at time point: " << tp.time_since_epoch().count();
+        return -1;
+    }
+    timeoutHandlers_.erase(tp);
+    return 0;
+}
+
+EventHandler* PollEventRepo::getHandler(int handle, EventType type)
 {
     Guard guard{mutex_};
+
+    if (handle == INVALID_HANDLE || type == EventHandler::NONE)
+    {
+        LOG(WARNING) << "can't get handler with INVALID_HANDLE or NONE event";
+        return nullptr;
+    }
+
     uint32_t h = static_cast<uint32_t>(handle);
     if (eventsTable_.size() <= h || eventsTable_[h].count(type) == 0)
         return nullptr;
     return eventsTable_[h][type];
+}
+
+std::set<TimeoutHandler*> PollEventRepo::getLatestTimeoutHandlers()
+{
+    if (!hasTimeoutHandler())
+    {
+        return std::set<TimeoutHandler*>{};
+    }
+    return timeoutHandlers_.begin()->second;
 }
 
 int PollEventRepo::unbind(int handle)

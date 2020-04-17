@@ -29,6 +29,8 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
 {
     using namespace std::chrono;
     int n = 0;
+    bool onlyTimeoutEvent = false;
+    cached_now_ = steady_clock::now();
     if(timeout == 0 && !demux_table_.hasTimeoutHandler())
     {
         n = this->epoll_wait(-1);
@@ -38,16 +40,22 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
         using TP = epoll_demultiplex_table::TimePoint_T;
         TP::duration dura_of_timer = TP::duration::max();
         if (demux_table_.hasTimeoutHandler())
-            dura_of_timer = demux_table_.getLastestTimeoutPoint() - steady_clock::now();
+            dura_of_timer = demux_table_.getLastestTimeoutPoint() - cached_now_;
         TP::duration nextTimeout = std::min(timeout == nullptr ? TP::duration::max() : duration_cast<TP::duration>(*timeout), dura_of_timer);
-        n = this->epoll_wait(nextTimeout.count());
+        if (nextTimeout.count() > 0) 
+        {
+            n = this->epoll_wait(nextTimeout.count());
+        } else
+        {
+            onlyTimeoutEvent = true;
+        }
+    }
+
+    if (onlyTimeoutEvent || n == 0) 
+    {
+        return dispatch_timeout_events();
     }
     
-    if(n == 0) 
-    {
-        LOG(WARNING) << "No events ready sleeping ...";
-        ::sleep(2);
-    }
     else if(n < 0)
     {
         if(n == -2)
@@ -227,6 +235,23 @@ int epoll_reactor_impl::dispatch_io_handlers(int active_handles, int& handles_di
         remain = this->dispatch_io_epoll_sets(remain, 0, EPOLLERR, &EventHandler::handle_output);
 
     return remain;
+}
+
+int epoll_reactor_impl::dispatch_timeout_events()
+{
+    auto latestTimeout = demux_table_.getLastestTimeoutPoint();
+    int ret = 1;
+    while(latestTimeout < cached_now_)
+    {
+        auto handleSet = demux_table_.getLatestTimeoutHandlers();
+        for(auto* h : handleSet)
+        {
+            ret = h->handle_timeout(-1) || ret;
+        }
+        demux_table_.unbindTimeoutHandlers(latestTimeout);
+        latestTimeout = demux_table_.getLastestTimeoutPoint();
+    }
+    return ret;
 }
 
 int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_dispatched, Event_Type type, HANDLER callback)

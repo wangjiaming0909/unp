@@ -11,6 +11,7 @@
 #include "reactor/TimeoutHandler.h"
 #include "syncclient/sync_handler.h"
 #include "syncclient/monitor_handler.h"
+#include "syncclient/timer_handler.h"
 
 namespace filesync {
 class SyncClient
@@ -38,7 +39,7 @@ private:
     reactor::Reactor* reactor_;
     std::unique_ptr<reactor::HHWheelTimer> timer_;
     std::unique_ptr<reactor::ConnectionManager> manager_;
-    std::unique_ptr<reactor::TimeoutHandler> timeoutHandler_;
+    std::unique_ptr<TimerHandler> timeoutHandler_;
 
     ServerMonitorHandler* serverMonitorHandler_ = nullptr;
     FileMonitorHandler* fileMonitorHandler_ = nullptr;

@@ -53,12 +53,15 @@ public:
     int bindNew(int handle, EventType event, EventHandler* handler);
     int unbind(int handle, EventType event, const EventHandler* handler);
     int unbind(int handle);
+    int unbindTimeoutHandlers(const TimePoint_T& tp);
     EventHandler* getHandler(int handle, EventType type);
+    std::set<TimeoutHandler*> getLatestTimeoutHandlers();
     TimePoint_T getLastestTimeoutPoint()
     {
         if (!hasTimeoutHandler()) return TimePoint_T::max();
         return timeoutHandlers_.begin()->first;
     }
+
     bool hasHandle(int handle) const 
     {
         Guard guard{mutex_};

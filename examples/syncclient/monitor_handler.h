@@ -21,6 +21,7 @@ public:
 
 public:
     virtual int handle_input(int handle) override;
+    virtual int open() override;
     ServerStatus getServerStatus() const {return serverStatus_;}
 
 private:
