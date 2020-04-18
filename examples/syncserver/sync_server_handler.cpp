@@ -20,8 +20,12 @@ int SyncServerHandler::handle_input(int handle)
 
     if (input_buffer_.buffer_length() > 0)
     {
-        auto p = input_buffer_.pullup(1024);
-        LOG(INFO) << "received: " << p;
+        //input_buffer_.readline()
+        auto firstChain = input_buffer_.begin().chain();
+        auto data = firstChain.get_start_buffer();
+        auto chainLen = firstChain.size();
+        std::string s{static_cast<char*>(data), chainLen};
+        LOG(INFO) << "----------------received:\n" << s;
     }
 
     return 0;

@@ -94,8 +94,9 @@ int PollEventRepo::unbind(int handle, EventType event, const EventHandler* handl
         LOG(WARNING) << "unbinding a wrong handler, handle: " << handle << " event: " << event;
         return -1;
     }
-    handleSet_.erase(handle);
     eventsTable_[handle].erase(event);
+    if (eventsTable_[handle].size() == 0)
+      handleSet_.erase(handle);
     return 0;
 }
 

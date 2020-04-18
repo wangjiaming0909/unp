@@ -80,11 +80,12 @@ void SyncClient::monitorLocalFolder()
 
 }
 
-
+//hello message format 
 void SyncClient::timeoutCallback(reactor::TimeoutHandler*)
 {
     if (!serverMonitorHandler_) return;
-    auto hello = "hello";
+    auto hello = "hello\n";
+    LOG(INFO) << hello << "......";
     auto bytesWritten = serverMonitorHandler_->write(hello, strlen(hello));
     if (bytesWritten <= 0)
     {

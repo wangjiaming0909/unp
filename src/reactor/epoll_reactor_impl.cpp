@@ -1,4 +1,5 @@
 #include "reactor/epoll_reactor_impl.h"
+#include <chrono>
 
 namespace reactor
 {
@@ -42,9 +43,17 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
         if (demux_table_.hasTimeoutHandler())
             dura_of_timer = demux_table_.getLastestTimeoutPoint() - cached_now_;
         TP::duration nextTimeout = std::min(timeout == nullptr ? TP::duration::max() : duration_cast<TP::duration>(*timeout), dura_of_timer);
+        auto nextTimeoutMilliSeconds = duration_cast<milliseconds>(nextTimeout);
+        if (nextTimeout.count() < 0)
+        {
+            LOG(INFO) << "epoll will directly dispatch timeout event, cause nextTimeout has expired...";
+        }else
+        {
+            LOG(INFO) << "epoll will wait: " << nextTimeoutMilliSeconds.count() << " milli seconds";
+        }
         if (nextTimeout.count() > 0) 
         {
-            n = this->epoll_wait(nextTimeout.count());
+            n = this->epoll_wait(nextTimeoutMilliSeconds.count());
         } else
         {
             onlyTimeoutEvent = true;
