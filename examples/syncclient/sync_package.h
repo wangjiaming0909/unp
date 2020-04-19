@@ -1,6 +1,7 @@
 #pragma once
 #include <stdint.h>
 #include <memory>
+#include <string>
 
 namespace filesync
 {
@@ -21,16 +22,17 @@ enum class Command : uint8_t
 
 struct Header
 {
+  ~Header() {free(headerContent);}
   PackageType type;
   Command command;
   uint32_t headerContentLen;
-  const void* headContent;
+  void* headerContent;
 };
 
 struct DepositeFileHeader
 {
   uint32_t fileNameLen;
-  void* fileName;
+  std::string fileName;
   uint64_t fileLen;
   uint64_t curSeqStart;
   uint64_t curSeqEnd;
@@ -43,16 +45,18 @@ enum class DepositeState : uint8_t
 
 struct SyncPackage 
 {
+  ~SyncPackage() { if (data_need_free) free(content); }
   Header header;
   uint64_t contentLen;
-  const void* content;
+  void* content;
+  bool data_need_free = false;
 };
 
 using SyncPackagePtr = std::shared_ptr<SyncPackage>;
 
 SyncPackagePtr getClientHelloPackage(const char* helloContent);
 SyncPackagePtr getServerHelloPackage(const char* helloContent);
-SyncPackagePtr getDepositeFilePackage(const char* fileName, uint64_t fileLen, uint64_t from, uint64_t to, void* data);
+SyncPackagePtr getDepositeFilePackage(const char* fileName, uint64_t fileLen, uint64_t from, uint64_t to, void* data, bool data_can_persist);
 SyncPackagePtr getReportStatePackage(DepositeState state);
 
 }
