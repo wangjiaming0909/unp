@@ -1,67 +1,63 @@
 #include "sync_package.h"
-#include <cstdlib>
-#include <memory>
-#include <cstring>
-#include <cstdio>
 
 namespace filesync
 {
 
-SyncPackagePtr getClientHelloPackage(const char* helloContent)
+SyncPackagePtr getHelloPackage(const char* hello, PackageType clientOrServer)
+{
+  SyncPackagePtr ret = std::make_shared<SyncPackage>();
+  auto* header = ret->mutable_header();
+  header->set_type(clientOrServer);
+  if (clientOrServer == PackageType::Client)
+    header->set_command(Command::ClientHello);
+  else if (clientOrServer == PackageType::Server)
+    header->set_command(Command::ServerHello);
+  header->set_headercontentlen(0);
+  header->set_contenttype(HeaderContentType::None);
+  ret->set_contentlen(strlen(hello));
+  ret->set_content(hello);
+  ret->set_len(ret->ByteSizeLong());
+  return ret;
+}
+
+SyncPackagePtr getDepositeFilePackage(const char* fileName, uint64_t fileLen, uint64_t from, uint64_t to, void* data)
 {
   SyncPackagePtr p = std::make_shared<SyncPackage>();
-  auto& header = p->header;
-  header.type = PackageType::Client;
-  header.command = Command::ClientHello;
-  header.headerContentLen = 0;
-  header.headerContent = nullptr;
-  p->contentLen = strlen(helloContent);
-  p->content = ::calloc(strlen(helloContent), 1);
-  std::memcpy(p->content, helloContent, p->contentLen);
-  p->data_need_free = true;
+  auto* header = p->mutable_header();
+  header->set_type(PackageType::Client);
+  header->set_command(Command::DepositeFile);
+  header->set_contenttype(HeaderContentType::DepositeFileContent);
+  auto* depositeFileHeader = header->mutable_depositefileheader();
+  depositeFileHeader->set_filename(fileName);
+  depositeFileHeader->set_filelen(fileLen);
+  depositeFileHeader->set_curseqstart(from);
+  depositeFileHeader->set_curseqend(to);
+  p->set_contentlen(to - from + 1);
+  p->set_content(data, p->contentlen());
+  p->set_len(p->ByteSizeLong());
   return p;
 }
 
-SyncPackagePtr getServerHelloPackage(const char* helloContent)
+SyncPackagePtr getReportStatePackage(DepositeState state)
 {
   SyncPackagePtr p = std::make_shared<SyncPackage>();
-  auto& header = p->header;
-  header.type = PackageType::Server;
-  header.command = Command::ServerHello;
-  header.headerContentLen = 0;
-  header.headerContent = nullptr;
-  p->contentLen = strlen(helloContent);
-  p->content = ::calloc(strlen(helloContent), 1);
-  std::memcpy(p->content, helloContent, p->contentLen);
-  p->data_need_free = true;
+  auto* header = p->mutable_header();
+  header->set_type(PackageType::Server);
+  header->set_command(Command::ReportState);
+  header->set_headercontentlen(0);
+  header->set_contenttype(HeaderContentType::DepositeStateContent);
+  header->set_depositestateheader(state);
+  p->set_contentlen(0);
+  p->set_content("No Content");
+  p->set_len(p->ByteSizeLong());
   return p;
 }
 
-SyncPackagePtr getDepositeFilePackage(const char* fileName, uint64_t fileLen, uint64_t from, uint64_t to, void* data, bool data_can_persist)
-{
-  SyncPackagePtr p = std::make_shared<SyncPackage>();
-  auto& header = p->header;
-  header.type = PackageType::Client;
-  header.command = Command::DepositeFile;
-  DepositeFileHeader* headerContent = (DepositeFileHeader*)::calloc(sizeof(DepositeFileHeader), 1);
-  headerContent->fileName = fileName;
-  headerContent->fileNameLen = strlen(fileName);
-  headerContent->fileLen = fileLen;
-  headerContent->curSeqStart = from;
-  headerContent->curSeqEnd = to;
-  header.headerContentLen = sizeof(DepositeFileHeader);
-  header.headerContent = headerContent;
-  p->contentLen = to - from + 1;
-  if(data_can_persist) {
-    p->content = data;
-  } else {
-    p->content = ::calloc(p->contentLen, 1);
-    std::memcpy(p->content, data, p->contentLen);
-  }
-  p->data_need_free = !data_can_persist;
-  return p;
-}
 
+}
+/*
+namespace filesync
+{
 SyncPackagePtr getReportStatePackage(DepositeState state)
 {
   SyncPackagePtr p = std::make_shared<SyncPackage>();
@@ -71,3 +67,5 @@ SyncPackagePtr getReportStatePackage(DepositeState state)
 }
 
 }
+
+*/

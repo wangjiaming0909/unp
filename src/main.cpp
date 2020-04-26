@@ -13,6 +13,7 @@
 #include <netdb.h>
 #include <string>
 #include "downloader/downloaderserver.h"
+#include "util/timer.h"
 //#include "examples/Downloader.h"
 
 // INITIALIZE_NULL_EASYLOGGINGPP
@@ -90,6 +91,33 @@ int scan()
   return -1;
 }
 
+void test_plus()
+{
+  using namespace std;
+  vector<int> v;
+  for (int i = 0; i < 10000000; i++)
+  {
+    v.push_back(i);
+  }
+
+  auto it = v.begin();
+  {
+    utils::timer _{"it++"};
+    for(; it != v.end(); it++)
+    {
+
+    }
+  }
+  it = v.begin();
+  {
+    utils::timer _{"++it"};
+    for(; it != v.end(); ++it)
+    {
+
+    }
+  }
+}
+
 int main(int argc, char** argv)
 {
     //server_scoped_helper s_h{argc, argv};
@@ -97,7 +125,9 @@ int main(int argc, char** argv)
     // return serve(argc, argv);
     //downloaderServer();
     //
-    scan();
+    //scan();
+    //test_plus();
+  std::string s{nullptr};
 }
 
 

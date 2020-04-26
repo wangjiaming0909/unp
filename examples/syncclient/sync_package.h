@@ -1,7 +1,26 @@
 #pragma once
+#include "sync_mess.pb.h"
+#include <memory>
+
+namespace filesync
+{
+  using SyncPackagePtr = std::shared_ptr<SyncPackage>;
+
+  SyncPackagePtr getHelloPackage(const char* hello, PackageType clientOrServer);
+  SyncPackagePtr getDepositeFilePackage(const char* fileName, uint64_t fileLen, uint64_t from, uint64_t to, void* data);
+  SyncPackagePtr getReportStatePackage(DepositeState state);
+
+
+}
+
+/*
+#include <sstream>
 #include <stdint.h>
 #include <memory>
 #include <string>
+#include <type_traits>
+#include "reactor/buffer.h"
+
 
 namespace filesync
 {
@@ -29,14 +48,46 @@ struct Header
   void* headerContent;
 };
 
-struct DepositeFileHeader
+
+template <typename T, bool b>
+struct HeaderRestriction_
+{
+  using value = std::false_type;
+};
+
+template <typename T>
+struct HeaderRestriction_<T, true>
+{
+  using value = std::true_type;
+};
+
+template <typename T>
+struct HeaderRestriction 
+{ 
+  using restriction = typename HeaderRestriction_<T, std::is_trivial<T>::value>::value;
+};
+
+
+class A
+{
+};
+
+using res = HeaderRestriction<A>::restriction;
+
+
+struct DepositeFileHeader //: HeaderRestriction<DepositeFileHeader>
 {
   uint32_t fileNameLen;
-  std::string fileName;
+  //std::string fileName;
+  const char* fileName;
   uint64_t fileLen;
   uint64_t curSeqStart;
   uint64_t curSeqEnd;
 };
+
+static_assert(HeaderRestriction<A>::restriction::value, "");
+static_assert(HeaderRestriction<int>::restriction::value, "");
+static_assert(HeaderRestriction<DepositeFileHeader>::restriction::value, "");
 
 enum class DepositeState : uint8_t
 {
@@ -60,3 +111,6 @@ SyncPackagePtr getDepositeFilePackage(const char* fileName, uint64_t fileLen, ui
 SyncPackagePtr getReportStatePackage(DepositeState state);
 
 }
+
+
+*/
