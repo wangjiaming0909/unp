@@ -53,7 +53,6 @@ SyncPackagePtr getReportStatePackage(DepositeState state)
   return p;
 }
 
-
 }
 /*
 namespace filesync

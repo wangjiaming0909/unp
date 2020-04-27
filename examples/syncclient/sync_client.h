@@ -12,12 +12,14 @@
 #include "syncclient/sync_handler.h"
 #include "syncclient/monitor_handler.h"
 #include "syncclient/timer_handler.h"
+#include "syncclient/sync_package.h"
 
 namespace filesync {
 class SyncClient
 {
 
 public:
+    using  SyncPackagePtr = std::shared_ptr<SyncPackage>;
     SyncClient(const net::inet_addr& serverAddr);
     ~SyncClient();
     int start(const std::atomic_int& cancelToken);
@@ -32,6 +34,7 @@ private:
     int connect();
 
     void timeoutCallback(reactor::TimeoutHandler*);
+    uint64_t sendPackage(SyncPackagePtr package);
 
 private:
     net::inet_addr serverAddr_;

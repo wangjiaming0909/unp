@@ -80,13 +80,13 @@ void SyncClient::monitorLocalFolder()
 
 }
 
-//hello message format 
 void SyncClient::timeoutCallback(reactor::TimeoutHandler*)
 {
     if (!serverMonitorHandler_) return;
     auto hello = "hello\n";
     LOG(INFO) << hello << "......";
-    auto bytesWritten = serverMonitorHandler_->write(hello, strlen(hello));
+    auto helloPacakgePtr = filesync::getHelloPackage(hello, PackageType::Client);
+    auto bytesWritten = sendPackage(helloPacakgePtr);
     if (bytesWritten <= 0)
     {
         LOG(ERROR) << "client say hello failed...";
@@ -98,6 +98,16 @@ void SyncClient::timeoutCallback(reactor::TimeoutHandler*)
     //timeoutHandler_->timeoutCallback = std::bind(&SyncClient::timeoutCallback, this, std::placeholders::_1);
     //timer_->scheduleTimeout(*timeoutHandler_, 1s);
     sayHelloFailedWaitInterval_ = 1;
+}
+
+uint64_t SyncClient::sendPackage(SyncPackagePtr package)
+{
+    auto size = package->ByteSize() + 1;
+    void* data = ::calloc(size, 1);
+    package->SerializeToArray(data, size);
+    auto bytesWritten = serverMonitorHandler_->write(data, size);
+    free(data);
+    return bytesWritten;
 }
 
 int SyncClient::connect()
