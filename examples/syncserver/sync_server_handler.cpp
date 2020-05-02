@@ -1,4 +1,5 @@
 #include "syncserver/sync_server_handler.h"
+#include "proto/decoder.h"
 
 namespace filesync
 {
@@ -24,8 +25,13 @@ int SyncServerHandler::handle_input(int handle)
         auto firstChain = input_buffer_.begin().chain();
         auto data = firstChain.get_start_buffer();
         auto chainLen = firstChain.size();
-        std::string s{static_cast<char*>(data), chainLen};
-        LOG(INFO) << "----------------received:\n" << s;
+
+        auto lenParsed = decoder_.decode(static_cast<char*>(data), chainLen);
+        input_buffer_.drain(lenParsed);
+        if (decoder_.isCompleted()) 
+        {
+          LOG(INFO) << decoder_.getMess().content();
+        }
     }
 
     return 0;

@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 
 void hide_pwd(std::string& conn_str)

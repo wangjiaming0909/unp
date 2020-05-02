@@ -4,6 +4,7 @@
 
 #include "proto/mess.pb.h"
 #include "proto/mess_wl.pb.h"
+#include "util/easylogging++.h"
 
 const char* url = "https://www.github.com/wangjiaming0909";
 
@@ -135,11 +136,18 @@ TEST(proto, parse_from_array)
 
     downloadmessage::Mess m3{};
 
-    m3.ParseFromArray(d, 1024);
+    m3.ParseFromArray(d, m1Size);
 
     ASSERT_EQ(m1.command(), m3.command());
     ASSERT_EQ(m1.url(), m3.url());
     ASSERT_EQ(m1.id(), m3.id());
+
+    downloadmessage::Mess m4{};
+
+    m4.ParseFromArray(d+m1Size, m1Size);
+    ASSERT_EQ(m4.command(), downloadmessage::Mess_Command::Mess_Command_PAUSE);
+    ASSERT_EQ(m4.url(), m1.url());
+    ASSERT_EQ(m4.id(), m1.id());
 
     free(d);
     d = nullptr;
@@ -195,4 +203,58 @@ TEST(proto2, normal)
 	ASSERT_EQ(m3.len(), m1.len());
 	ASSERT_EQ(m3.command(), m1.command());
 	ASSERT_EQ(m3.url(), m1.url());
+}
+
+TEST(proto, size)
+{
+  downloadmessage::Mess_WL m1{};
+  std::string urlStr{url};
+  m1.set_id(1);
+  m1.set_command(downloadmessage::Mess_WL_DownloadCommand::Mess_WL_DownloadCommand_DOWNLOAD);
+  m1.set_url(urlStr);
+  auto size = m1.ByteSizeLong();
+  m1.set_len(size);
+
+  char* d = (char*)::calloc(1024, 1);
+
+  m1.SerializeToArray(d, 1024);
+  LOG(INFO) << d;
+
+  using namespace downloadmessage;
+  Mess_WL m2{};
+  auto ret = m2.ParsePartialFromArray(d, sizeof(int32_t));
+  size_t bytesParsed = 0;
+
+  if (ret == 0) 
+  {
+    bytesParsed += sizeof(int32_t);
+  }
+
+  Mess_WL tmp{};
+  ret = tmp.ParsePartialFromArray(d+sizeof(int32_t), 1024 - sizeof(int32_t));
+
+  if (ret == 0) 
+  {
+    LOG(INFO) << "Parsed...";
+  }
+
+
+  m2.MergeFrom(tmp);
+
+  LOG(INFO) << "id: " << m2.id();
+  LOG(INFO) << "len: " <<  m2.len();
+  LOG(INFO) << "command: " << m2.command();
+  LOG(INFO) << "url: " << m2.url();
+
+  ASSERT_EQ(m2.id(), m1.id());
+  ASSERT_EQ(m2.len(), m1.len());
+  ASSERT_EQ(m2.command(), m1.command());
+  ASSERT_EQ(m2.url(), m1.url());
+
+  Mess_WL m3{};
+  LOG(INFO) << m1.ByteSizeLong();
+  LOG(INFO) << m2.ByteSizeLong();
+  LOG(INFO) << m3.ByteSizeLong();
+
+  free(d);
 }

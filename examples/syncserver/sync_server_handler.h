@@ -1,5 +1,7 @@
 #pragma once
+#include "proto/decoder.h"
 #include "reactor/connection_handler.h"
+#include "syncclient/sync_package.h"
 
 #include <map>
 #include <list>
@@ -25,5 +27,6 @@ public:
 private:
     DirE_t localStoreDirectory_;
     std::list<DirE_t*> receivedEntries_;
+    reactor::Decoder<SyncPackage, int64_t> decoder_;
 };
 }

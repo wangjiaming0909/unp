@@ -102,8 +102,8 @@ void SyncClient::timeoutCallback(reactor::TimeoutHandler*)
 
 uint64_t SyncClient::sendPackage(SyncPackagePtr package)
 {
-    auto size = package->ByteSize() + 1;
-    void* data = ::calloc(size, 1);
+    auto size = package->ByteSizeLong() + 1;
+    char* data = static_cast<char*>(::calloc(size, 1));
     package->SerializeToArray(data, size);
     auto bytesWritten = serverMonitorHandler_->write(data, size);
     free(data);
