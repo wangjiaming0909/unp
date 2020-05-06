@@ -98,6 +98,9 @@ TEST(decoder, multi_message_parse)
   auto len1 = m1.ByteSizeLong();
   m1.set_len(len1);
 
+  auto size2 = sizeof(decltype(m1.id())) + sizeof(decltype(m1.command()))
+    + url.size() + sizeof(decltype(m1.len()));
+
   char* d = (char*)::calloc(1024, 1);
   m1.SerializeToArray(d, 1024);
 
@@ -109,9 +112,13 @@ TEST(decoder, multi_message_parse)
   auto len2 = m2.ByteSizeLong();
   m2.set_len(len2);
 
-  m2.SerializeToArray(d + len1, 1024-len1);
+  auto size3 = sizeof(decltype(m2.id())) + sizeof(decltype(m2.command()))
+    + url2.size() + sizeof(decltype(m2.len()));
 
-  decoder.decode(d, 1024);
+
+  m2.SerializeToArray(d + size2, 1024-size2);
+
+  decoder.decode(d, len1);
 
   LOG(INFO) << "m1: --------";
   printMess(m1);
@@ -119,4 +126,62 @@ TEST(decoder, multi_message_parse)
   printMess(m2);
   LOG(INFO) << "decoder: --------";
   printMess(decoder.getMess());
+
+
+  Mess_WL m4{};
+  m4.ParseFromArray(d, size2);
+  LOG(INFO) << "m4: --------";
+  printMess(m4);
+
+  m4.Clear();
+  m4.ParseFromArray(d+size2, size3);
+
+  LOG(INFO) << "m4: --------";
+  printMess(m4);
+}
+
+TEST(proto, all)
+{
+  using namespace downloadmessage;
+  using namespace reactor;
+
+  Mess_WL m1{};
+  m1.set_id(1);
+  m1.set_command(Mess_WL_DownloadCommand::Mess_WL_DownloadCommand_DOWNLOAD);
+  std::string url = "https://github.com/wangjiaming0909";
+  m1.set_url(url);
+
+  auto sizeLong = m1.ByteSizeLong();
+  LOG(INFO) << "sizeLong: " << sizeLong;
+  m1.set_len(1);
+  sizeLong = m1.ByteSizeLong();
+  LOG(INFO) << "sizeLong: " << sizeLong;
+
+  char* d = (char*)::calloc(1024, 1);
+
+  m1.SerializeToArray(d, sizeLong);
+  
+  Mess_WL m2{};
+  auto ret = m2.ParseFromArray(d, sizeLong);
+  ASSERT_TRUE(ret);
+
+  m2.Clear();
+  ret = m2.ParseFromArray(d, sizeLong-1);
+  ASSERT_FALSE(ret);
+
+  m2.Clear();
+  ret = m2.ParsePartialFromArray(d, sizeLong-1);
+  ASSERT_FALSE(ret);
+
+  Mess_WL m3{};
+  LOG(INFO) << "non initialized size: " << m3.ByteSizeLong();
+  ret = m3.ParsePartialFromArray(d+sizeLong-1, 1);
+  LOG(INFO) << "initialized size: " << m3.ByteSizeLong();
+  ASSERT_FALSE(ret);
+
+  m2.MergeFrom(m3);
+
+  printMess(m1);
+  printMess(m2);
+  printMess(m3);
 }

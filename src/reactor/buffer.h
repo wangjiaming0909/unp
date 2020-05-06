@@ -216,6 +216,8 @@ public:
     int64_t drain(uint32_t len);
     int64_t copy_out_from(void* data, uint32_t data_len, Iter start);
     int64_t read_line(char * read_out, uint32_t n, buffer_eol_style eol_style);
+    template <typename T>
+    int32_t read_T(T& t_out, uint32_t);
 
     //search
     buffer_iter search(const char* what, uint32_t len, Iter start);
@@ -287,6 +289,15 @@ int64_t buffer::append(const T& data)
     this->total_len_ += size_needed;
     last_chain_with_data_ = chain;
     return size_needed;
+}
+
+template <typename T>
+int32_t buffer::read_T(T& t_out, uint32_t size)
+{
+  auto* d = pullup(size);
+  if (d == nullptr) return -1;
+  memcpy(&t_out, d, size);
+  return size;
 }
 
 template <typename T>

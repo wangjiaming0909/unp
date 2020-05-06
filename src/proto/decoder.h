@@ -2,9 +2,34 @@
 #include <cstring>
 #include <cstdint>
 #include <algorithm>
+#include <memory>
 
 namespace reactor
 {
+
+template <typename T, typename Len_T>
+class Mess
+{
+public:
+  using MessPtr = std::shared_ptr<T>;
+  Mess& operator==(const Mess&) = default;
+  ~Mess() {}
+  static MessPtr makeMess(const T& m)
+  {
+    Mess mess{};
+    mess.mess_ = new T{};
+    mess.len_ = m.ByteSizeLong();
+    return mess;
+  }
+
+  MessPtr getMess() const {return mess_;}
+  Len_T getLen() const {return len_;}
+protected:
+  Mess() : mess_{}, len_{0} { }
+private:
+  MessPtr mess_;
+  Len_T len_;
+};
 
 //every T should define len field in it's proto file
 template <typename T, typename Len_T>
@@ -20,16 +45,8 @@ public:
     ERROR
   };
 public:
-  Decoder()
-    : mess_{}, bytesParsed_{0}, bytesRemainToParse_{0}, state_{IDLE}
-  {
-
-  }
-
-  ~Decoder()
-  {
-
-  }
+  Decoder() : mess_{}, bytesParsed_{0}, bytesRemainToParse_{0}, state_{IDLE} { }
+  ~Decoder() { }
 
   Len_T decode(const char* d, Len_T len)
   {
