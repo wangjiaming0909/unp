@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "reactor/buffer.h"
 #include "proto/mess_wl.pb.h"
+#include "reactor/poll_demultiplex_table.h"
+#include "reactor/reactor_implementation.h"
 
 using namespace reactor;
 using namespace downloadmessage;
