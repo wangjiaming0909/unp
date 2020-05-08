@@ -25,6 +25,19 @@ public:
     virtual int handle_input(int handle) override;
 
 private:
+    void sayHello();
+    uint64_t sendPackage(SyncPackagePtr package)
+    {
+      int64_t size = package->ByteSizeLong();
+      char* data = static_cast<char*>(::calloc(size, 1));
+      package->SerializeToArray(data, size);
+      auto bytesWritten = write(size, false);
+      bytesWritten += write(data, size, true);
+      free(data);
+      return bytesWritten;
+    }
+
+private:
     DirE_t localStoreDirectory_;
     std::list<DirE_t*> receivedEntries_;
     reactor::Decoder<SyncPackage, int64_t> decoder_;

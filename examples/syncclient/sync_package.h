@@ -9,8 +9,6 @@ namespace filesync
   SyncPackagePtr getHelloPackage(const char* hello, PackageType clientOrServer);
   SyncPackagePtr getDepositeFilePackage(const char* fileName, uint64_t fileLen, uint64_t from, uint64_t to, void* data);
   SyncPackagePtr getReportStatePackage(DepositeState state);
-
-
 }
 
 /*

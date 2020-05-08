@@ -50,22 +50,24 @@ void HHWheelTimer::cancelAll()
 
 void HHWheelTimer::scheduleTimeout(TimeoutHandler_t &handler, Duration timeout)
 {
-    timeout = std::max(timeout, Duration::zero());
-    auto now = getCurTime();
-    auto currentTick = tickOfCurTime(now);
-    handler.setSheduled(*this, now + timeout);
+  timeout = std::max(timeout, Duration::zero());
+  auto now = getCurTime();
+  auto currentTick = tickOfCurTime(now);
+  handler.setSheduled(*this, now + timeout);
 
-    int64_t timeoutTicks = getTickFromDuration(timeout);
-    int64_t thisTimerExpireTick = timeoutTicks + currentTick;
+  int64_t timeoutTicks = getTickFromDuration(timeout);
+  int64_t thisTimerExpireTick = timeoutTicks + currentTick;
 
-    timerCount_++;
-    LOG(INFO) << "--------count++: " << timerCount_ << " thisTimerExpireTick: " << thisTimerExpireTick << " expireTick: " << expireTick_;
-    scheduleTimeoutImpl_(handler, currentTick, thisTimerExpireTick);
+  timerCount_++;
+  LOG(INFO) << "--------count++: " << timerCount_ << " thisTimerExpireTick: " << thisTimerExpireTick << " expireTick: " << expireTick_;
+  scheduleTimeoutImpl_(handler, currentTick, thisTimerExpireTick);
 
-    if(!reactor_->hasEvent(EventHandler::TIMEOUT_EVENT) || thisTimerExpireTick <= expireTick_)
-    {
-        scheduleNextTimeoutInReactor_(&handler, currentTick, thisTimerExpireTick);
-    }
+  /*
+  if(!reactor_->hasEvent(EventHandler::TIMEOUT_EVENT) || thisTimerExpireTick <= expireTick_) {
+    scheduleNextTimeoutInReactor_(&handler, currentTick, thisTimerExpireTick);
+  }
+  */
+  scheduleNextTimeoutInReactor_(nullptr, currentTick, -1);
 }
 
 void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler_t& handler, int64_t baseTick, int64_t thisTimerExpireTick)

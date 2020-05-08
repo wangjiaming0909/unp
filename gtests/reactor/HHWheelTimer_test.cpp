@@ -3,6 +3,7 @@
 #include "reactor/HHWheelTimer.h"
 #include "reactor/reactor.h"
 #include "reactor/select_reactor_impl.h"
+#include "reactor/epoll_reactor_impl.h"
 #include "util/easylogging++.h"
 
 using namespace std::chrono_literals;
@@ -27,10 +28,10 @@ void timeoutCallback22(reactor::TimeoutHandler*)
     LOG(INFO) << "----------------------timer expired...";
 }
 
-TEST(HHWheelTimer, normal_test)
+TEST(timer, normal_test)
 {
     using namespace reactor;
-    Reactor react{new select_reactor_impl{}, true};
+    Reactor react{new epoll_reactor_impl{}, true};
     react.start();
     TimeoutHandler *handler1 = new FakeTimeoutHandler{react, "1"};
     TimeoutHandler *handler2 = new FakeTimeoutHandler{react, "2"};
@@ -52,7 +53,7 @@ TEST(HHWheelTimer, normal_test)
         i++;
     }
 
-    timer->scheduleTimeout(*handler1, 1s);
+    timer->scheduleTimeout(*handler1, 5s);
     i = 0;
     while(i < 2)
     {
@@ -261,7 +262,7 @@ TEST(HHWheelTimer, scheduleTimeout_with_reverse_order)
 
 }
 
-TEST(HHWheelTimer, timeoutExpired){
+TEST(timer, timeoutExpired){
     using namespace reactor;
     Reactor react{new select_reactor_impl{}, true};
 
@@ -271,7 +272,7 @@ TEST(HHWheelTimer, timeoutExpired){
     TimeoutHandler *handler2 = new FakeTimeoutHandler{react, "2"};
     TimeoutHandler *handler3 = new FakeTimeoutHandler{react, "3"};
 
-    timer.scheduleTimeout(*handler1, 3s);
+    timer.scheduleTimeout(*handler1, 5s);
     // timer.scheduleTimeout(*handler2, 1s);
     // timer.scheduleTimeout(*handler3, 2s);
 

@@ -25,7 +25,7 @@ SyncClient::SyncClient(const net::inet_addr& serverAddr)
     reactor_ = new Reactor(new epoll_reactor_impl(), true);
     manager_.reset(new ConnectionManager(*reactor_));
     timer_.reset(new HHWheelTimer(&*reactor_));
-    timeoutHandler_.reset(new TimerHandler(*reactor_, 50ms));
+    timeoutHandler_.reset(new TimerHandler(*reactor_, 4s));
     //timer_->scheduleTimeout(*timeoutHandler_, 1s);
 }
 

@@ -29,10 +29,19 @@ int SyncServerHandler::handle_input(int handle)
           if (mes->header().command() == Command::ClientHello)
           {
             LOG(INFO) << "Received client hello...";
+            sayHello();
+            LOG(INFO) << "Send server hello...";
           }
         }
         decoder_.reset();
     }
     return 0;
+}
+
+void SyncServerHandler::sayHello()
+{
+  const char* hello = "hello";
+  auto helloPackage = getHelloPackage(hello, PackageType::Server);
+  sendPackage(helloPackage);
 }
 }
