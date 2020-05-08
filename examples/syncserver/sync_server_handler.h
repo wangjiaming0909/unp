@@ -1,7 +1,7 @@
 #pragma once
 #include "proto/decoder.h"
 #include "reactor/connection_handler.h"
-#include "syncclient/sync_package.h"
+#include "../examples/syncclient/sync_package.h"
 
 #include <map>
 #include <list>

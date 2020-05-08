@@ -22,7 +22,7 @@ OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES) )
 
 TARGET = $(BUILDDIR)/a.out
 LIBS = /usr/local/lib
-INCLUDES = $(SOURCEDIR) -I /usr/local/include -I /boost_1_72_0/ -I /usr/include 
+INCLUDES = $(SOURCEDIR) -I /usr/local/include -I /boost_1_72_0/ -I /usr/include
 # /boost_1_70_0  
 # LDFLAGS = -pthread -lboost_thread -lboost_system
 

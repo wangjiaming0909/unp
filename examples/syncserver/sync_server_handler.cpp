@@ -1,4 +1,4 @@
-#include "syncserver/sync_server_handler.h"
+#include "../examples/syncserver/sync_server_handler.h"
 #include "proto/decoder.h"
 
 namespace filesync
@@ -21,19 +21,16 @@ int SyncServerHandler::handle_input(int handle)
 
     if (input_buffer_.buffer_length() > 0)
     {
-        //input_buffer_.readline()
         auto firstChain = input_buffer_.begin().chain();
         auto data = firstChain.get_start_buffer();
         auto chainLen = firstChain.size();
 
-        auto lenParsed = decoder_.decode(static_cast<char*>(data), chainLen);
-        input_buffer_.drain(lenParsed);
-        if (decoder_.isCompleted()) 
+        auto lenParsed = decoder_.decode(input_buffer_);
+        if (decoder_.getMess())
         {
-          LOG(INFO) << decoder_.getMess().content();
+          LOG(INFO) << decoder_.getMess()->header().command();
         }
     }
-
     return 0;
 }
 

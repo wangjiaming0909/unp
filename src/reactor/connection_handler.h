@@ -46,9 +46,9 @@ public:
     //所以handle_output会被频繁调用
     //write 仅仅是将data写进output缓冲区的末尾，至于什么时候会被写进socket中，看buffer中有多少数据
     //return bytes written
-    uint32_t write(const char *data, uint32_t len);
+    uint32_t write(const char *data, uint32_t len, bool is_flush = true);
     template <typename T>
-    int write(const T &data);
+    int write(const T &data, bool is_flush = false);
 
     virtual int open();
     void close();
@@ -96,11 +96,16 @@ protected:
     std::mutex mutex_;
 };
 
-//template <typename T>
-//int connection_handler::write(const T& data)
-//{
-
-//}
+template <typename T>
+int connection_handler::write(const T& data, bool is_flush)
+{
+  output_buffer_.append(data);
+  if (is_flush && !write_enabled_)
+  {
+    enable_writing();
+  }
+  return sizeof(data);
+}
 
 } // namespace reactor
 #endif /* CONNECTION_H */
