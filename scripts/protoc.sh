@@ -3,7 +3,5 @@
 cd ~/codes/unp/scripts
 protoc -I=../src/proto/ --cpp_out=../src/proto/ ../src/proto/mess_wl.proto && mv ../src/proto/mess_wl.pb.cc ../src/proto/mess_wl.pb.cpp
 protoc -I=../src/proto/ --cpp_out=../src/proto/ ../src/proto/mess.proto && mv ../src/proto/mess.pb.cc ../src/proto/mess.pb.cpp
-protoc -I=../examples/syncclient/ --cpp_out=../examples/syncclient ../examples/syncclient/sync_mess.proto \
-&& mv ../examples/syncclient/sync_mess.pb.cc ../examples/syncclient/sync_mess.pb.cpp \
-&& cp ../examples/syncclient/sync_mess.pb.h ../examples/syncserver/ \
-&& cp ../examples/syncclient/sync_mess.pb.cpp ../examples/syncserver/
+protoc -I=../src/proto/ --cpp_out=../src/proto/ ../src/proto/sync_mess.proto \
+&& mv ../src/proto/sync_mess.pb.cc ../src/proto/sync_mess.pb.cpp

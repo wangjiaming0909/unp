@@ -1,4 +1,4 @@
-#include "sync_package.h"
+#include "proto/sync_package.h"
 
 namespace filesync
 {

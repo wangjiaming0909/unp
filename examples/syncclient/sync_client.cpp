@@ -26,7 +26,6 @@ SyncClient::SyncClient(const net::inet_addr& serverAddr)
     manager_.reset(new ConnectionManager(*reactor_));
     timer_.reset(new HHWheelTimer(&*reactor_));
     timeoutHandler_.reset(new TimerHandler(*reactor_, 4s));
-    //timer_->scheduleTimeout(*timeoutHandler_, 1s);
 }
 
 SyncClient::~SyncClient()
@@ -94,9 +93,6 @@ void SyncClient::timeoutCallback(reactor::TimeoutHandler*)
         timer_->scheduleTimeout(*timeoutHandler_, std::chrono::seconds(sayHelloFailedWaitInterval_*2));
         return;
     }
-    //timeoutHandler_.reset(new reactor::TimeoutHandler(*reactor_));
-    //timeoutHandler_->timeoutCallback = std::bind(&SyncClient::timeoutCallback, this, std::placeholders::_1);
-    //timer_->scheduleTimeout(*timeoutHandler_, 1s);
     sayHelloFailedWaitInterval_ = 1;
 }
 

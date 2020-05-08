@@ -12,12 +12,11 @@
 #include "syncclient/sync_handler.h"
 #include "syncclient/monitor_handler.h"
 #include "syncclient/timer_handler.h"
-#include "syncclient/sync_package.h"
+#include "proto/sync_package.h"
 
 namespace filesync {
 class SyncClient
 {
-
 public:
     using  SyncPackagePtr = std::shared_ptr<SyncPackage>;
     SyncClient(const net::inet_addr& serverAddr);

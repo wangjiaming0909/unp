@@ -44,21 +44,21 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
             dura_of_timer = demux_table_.getLastestTimeoutPoint() - cached_now_;
         TP::duration nextTimeout = std::min(timeout == nullptr ? TP::duration::max() : duration_cast<TP::duration>(*timeout), dura_of_timer);
         auto nextTimeoutMilliSeconds = duration_cast<milliseconds>(nextTimeout);
-        LOG(INFO) << "nextTimeout count: " << nextTimeout.count();
-        LOG(INFO) << "nextTimeoutMilliSeconds count: " << nextTimeoutMilliSeconds.count();
+        //LOG(INFO) << "nextTimeout count: " << nextTimeout.count();
+        //LOG(INFO) << "nextTimeoutMilliSeconds count: " << nextTimeoutMilliSeconds.count();
         if (nextTimeout.count() < 0 || nextTimeoutMilliSeconds.count() <= 0)
         {
-            LOG(INFO) << "epoll will directly dispatch timeout event, cause nextTimeout has expired...";
+            //LOG(INFO) << "epoll will directly dispatch timeout event, cause nextTimeout has expired...";
         }else
         {
-            LOG(INFO) << "epoll will wait: " << nextTimeoutMilliSeconds.count() << " milli seconds";
+            //LOG(INFO) << "epoll will wait: " << nextTimeoutMilliSeconds.count() << " milli seconds";
         }
         if (nextTimeout.count() > 0 && nextTimeoutMilliSeconds.count() > 0) 
         {
             n = this->epoll_wait(nextTimeoutMilliSeconds.count());
         } else
         {
-            LOG(INFO) << "dispatching only timeout events";
+            //LOG(INFO) << "dispatching only timeout events";
             onlyTimeoutEvent = true;
         }
     }
@@ -215,7 +215,7 @@ int epoll_reactor_impl::epoll_wait(int milliseconds)
 
     if(ret == 0 && milliseconds != 0)
     {
-        LOG(WARNING) << "Poll timed out...";
+        //LOG(WARNING) << "Poll timed out...";
         return 0;
     }
 

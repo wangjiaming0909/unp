@@ -59,7 +59,7 @@ void HHWheelTimer::scheduleTimeout(TimeoutHandler_t &handler, Duration timeout)
   int64_t thisTimerExpireTick = timeoutTicks + currentTick;
 
   timerCount_++;
-  LOG(INFO) << "--------count++: " << timerCount_ << " thisTimerExpireTick: " << thisTimerExpireTick << " expireTick: " << expireTick_;
+  //LOG(INFO) << "--------count++: " << timerCount_ << " thisTimerExpireTick: " << thisTimerExpireTick << " expireTick: " << expireTick_;
   scheduleTimeoutImpl_(handler, currentTick, thisTimerExpireTick);
 
   /*
@@ -80,17 +80,17 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler_t& handler, int64_t baseT
         handlerList = &handlers_[0][baseTick & WHEEL_MASK];
         firstBucketBitSet_.set(baseTick & WHEEL_MASK);
         handler.slotInBucket_ = (baseTick & WHEEL_MASK);
-        LOG(INFO) << "seting pos: " << (baseTick & WHEEL_MASK);
+        //LOG(INFO) << "seting pos: " << (baseTick & WHEEL_MASK);
     }else if(diff < WHEEL_SIZE) {
         handlerList = &handlers_[0][thisTimerExpireTick & WHEEL_MASK];
         firstBucketBitSet_.set(thisTimerExpireTick & WHEEL_MASK);
-        LOG(INFO) << "seting pos: " << (thisTimerExpireTick & WHEEL_MASK) << " thisTimerExpireTick: " << thisTimerExpireTick;
+        //LOG(INFO) << "seting pos: " << (thisTimerExpireTick & WHEEL_MASK) << " thisTimerExpireTick: " << thisTimerExpireTick;
         handler.slotInBucket_ = (thisTimerExpireTick & WHEEL_MASK);
     } else if(diff < 1 << (2 * WHEEL_BITS)){
-        LOG(INFO) << "!!!!thisTimerExpireTick: " << thisTimerExpireTick;
+        //LOG(INFO) << "!!!!thisTimerExpireTick: " << thisTimerExpireTick;
         handlerList = &handlers_[1][(thisTimerExpireTick >> WHEEL_BITS) & WHEEL_MASK];
     } else if(diff < 1 << (3 * WHEEL_BITS)){
-        LOG(INFO) << "!!!!thisTimerExpireTick: " << thisTimerExpireTick;
+        //LOG(INFO) << "!!!!thisTimerExpireTick: " << thisTimerExpireTick;
         handlerList = &handlers_[2][(thisTimerExpireTick >> (2 * WHEEL_BITS)) & WHEEL_MASK];
     }else {
         if(diff > LARGEST_SLOT)
@@ -98,7 +98,7 @@ void HHWheelTimer::scheduleTimeoutImpl_(TimeoutHandler_t& handler, int64_t baseT
             diff = LARGEST_SLOT;
             thisTimerExpireTick = diff + baseTick;
         }
-        LOG(INFO) << ".0.0.0.0.0.0.0.0.0.0.0.0";
+        //LOG(INFO) << ".0.0.0.0.0.0.0.0.0.0.0.0";
         handlerList = &handlers_[3][(thisTimerExpireTick >> (3 * WHEEL_BITS)) & WHEEL_MASK];
     }
     handlerList->push_back(handler);
@@ -113,10 +113,10 @@ void HHWheelTimer::scheduleNextTimeoutInReactor_(TimeoutHandler_t *handler, int6
         {
             int64_t tickToGo = WHEEL_SIZE - (baseTick & WHEEL_MASK);
             thisTimerExpireTick = baseTick + tickToGo;
-            LOG(INFO) << "setting expireTick: " << expireTick_;
+            //LOG(INFO) << "setting expireTick: " << expireTick_;
             // scheduleTimeoutFn([=](TimeoutHandler*){LOG(INFO) << "|||||||||||||||||||||expired...";}, thisTimerExpireTick * interval_);
             handler = new TimeoutHandler_t(*reactor_);
-            handler->timeoutCallback = [](TimeoutHandler_t*){LOG(INFO) << "|||||||||||||||||||||expired...";};
+            handler->timeoutCallback = [](TimeoutHandler_t*){/*LOG(INFO) << "|||||||||||||||||||||expired...";*/};
             handler->setSheduled(*this, startTime_ + thisTimerExpireTick * interval_);
         }else 
         {
@@ -130,7 +130,7 @@ void HHWheelTimer::scheduleNextTimeoutInReactor_(TimeoutHandler_t *handler, int6
         reactor_->register_handler(handler, EventHandler::TIMEOUT_EVENT);
     }
     expireTick_ = thisTimerExpireTick;
-    LOG(INFO) << "setting expireTick: " << expireTick_;
+    //LOG(INFO) << "setting expireTick: " << expireTick_;
 }
 
 void HHWheelTimer::timeoutExpired(TimeoutHandler_t* handler) noexcept
@@ -140,12 +140,12 @@ void HHWheelTimer::timeoutExpired(TimeoutHandler_t* handler) noexcept
     intrusive_list_t expiredTimers;
     int index = expireTick_ & WHEEL_MASK;
     if(firstBucketBitSet_.test(index)) timerCount_--;
-    LOG(INFO) << "-----------timer count--: " << timerCount_ << " expireTick: " << expireTick_;
-    LOG(INFO) << "reseting pos: " << index;
+    //LOG(INFO) << "-----------timer count--: " << timerCount_ << " expireTick: " << expireTick_;
+    //LOG(INFO) << "reseting pos: " << index;
 
     //if there are lots of timer that are expired at the curTick
     //we get them out and handle it
-    LOG(INFO) << "expireTick: " << expireTick_ << " curTick: " << curTick;
+    //LOG(INFO) << "expireTick: " << expireTick_ << " curTick: " << curTick;
     while(expireTick_ <= curTick)
     {
         index = expireTick_ & WHEEL_MASK;
@@ -174,7 +174,7 @@ void HHWheelTimer::timeoutExpired(TimeoutHandler_t* handler) noexcept
             if(&callback == handler || handler->isRegistered()) continue;
             expiredTimers.push_back(callback);
             timerCount_--;
-            LOG(INFO) << "-----------timer count--: " << timerCount_;;
+            //LOG(INFO) << "-----------timer count--: " << timerCount_;;
         }
         firstBucketBitSet_.reset(index);
     }
@@ -191,7 +191,7 @@ void HHWheelTimer::timeoutExpired(TimeoutHandler_t* handler) noexcept
 
 int HHWheelTimer::cascadeTimers_(int bucket, int tick)
 {
-    LOG(INFO) << "-------------------cascading timeouts bucket: " << bucket << " tick: " << tick;
+    //LOG(INFO) << "-------------------cascading timeouts bucket: " << bucket << " tick: " << tick;
     intrusive_list_t tmp;
     tmp.swap(handlers_[bucket][tick]);
     auto now = getCurTime();

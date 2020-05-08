@@ -1,15 +1,18 @@
 #pragma once
+#include "proto/decoder.h"
 #include "reactor/connection_handler.h"
 #include "reactor/reactor.h"
+#include "proto/sync_package.h"
+#include "examples/dirmonitor/DirMonitor.h"
 
 namespace filesync
 {
 
-
-class FileMonitorHandler : public reactor::connection_handler
+class FileMonitorHandler : public reactor::connection_handler, public IDirObserver
 {
 public:
-    FileMonitorHandler(reactor::Reactor& react);
+	virtual void onUpdate(const EntryMap& es);
+  FileMonitorHandler(reactor::Reactor& react);
 };
 
 class ServerMonitorHandler : public reactor::connection_handler
@@ -25,8 +28,8 @@ public:
     ServerStatus getServerStatus() const {return serverStatus_;}
 
 private:
-    int sayHello();
     ServerStatus serverStatus_;
+    reactor::Decoder<SyncPackage, int64_t> decoder_;
 };
 
 }

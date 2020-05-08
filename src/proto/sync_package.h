@@ -1,5 +1,5 @@
 #pragma once
-#include "sync_mess.pb.h"
+#include "proto/sync_mess.pb.h"
 #include <memory>
 
 namespace filesync
