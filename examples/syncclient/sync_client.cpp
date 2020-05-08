@@ -25,7 +25,7 @@ SyncClient::SyncClient(const net::inet_addr& serverAddr)
     reactor_ = new Reactor(new epoll_reactor_impl(), true);
     manager_.reset(new ConnectionManager(*reactor_));
     timer_.reset(new HHWheelTimer(&*reactor_));
-    timeoutHandler_.reset(new TimerHandler(*reactor_, 1s));
+    timeoutHandler_.reset(new TimerHandler(*reactor_, 50ms));
     //timer_->scheduleTimeout(*timeoutHandler_, 1s);
 }
 
@@ -102,10 +102,11 @@ void SyncClient::timeoutCallback(reactor::TimeoutHandler*)
 
 uint64_t SyncClient::sendPackage(SyncPackagePtr package)
 {
-    auto size = package->ByteSizeLong() + 1;
+    int64_t size = package->ByteSizeLong();
     char* data = static_cast<char*>(::calloc(size, 1));
     package->SerializeToArray(data, size);
-    auto bytesWritten = serverMonitorHandler_->write(data, size);
+    auto bytesWritten = serverMonitorHandler_->write(size, false);
+    bytesWritten += serverMonitorHandler_->write(data, size, true);
     free(data);
     return bytesWritten;
 }

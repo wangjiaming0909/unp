@@ -141,6 +141,8 @@ private:
       reset();
       return 0;
     }
+    bytesParsed_ += messLen_;
+    bytesRemainToParse_ -= messLen_;
     buf.drain(messLen_);
     return messLen_;
   }

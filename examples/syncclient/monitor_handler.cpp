@@ -17,8 +17,7 @@ ServerMonitorHandler::ServerMonitorHandler(reactor::Reactor& react)
 
 int ServerMonitorHandler::open()
 {
-    this->enable_reading();
-    return sayHello();
+    return this->enable_reading();
 }
 
 int ServerMonitorHandler::handle_input(int handle)

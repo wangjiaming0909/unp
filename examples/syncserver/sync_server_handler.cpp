@@ -19,22 +19,20 @@ int SyncServerHandler::handle_input(int handle)
         return ret;
     }
 
-    if (input_buffer_.buffer_length() > 0)
+    while (input_buffer_.buffer_length() > sizeof(int64_t))
     {
-        auto firstChain = input_buffer_.begin().chain();
-        auto data = firstChain.get_start_buffer();
-        auto chainLen = firstChain.size();
-
         auto lenParsed = decoder_.decode(input_buffer_);
-        if (decoder_.getMess())
+        if (lenParsed <= 0) return -1;
+        auto mes = decoder_.getMess();
+        if (mes)
         {
-          LOG(INFO) << decoder_.getMess()->header().command();
+          if (mes->header().command() == Command::ClientHello)
+          {
+            LOG(INFO) << "Received client hello...";
+          }
         }
+        decoder_.reset();
     }
     return 0;
 }
-
-
-
-
 }
