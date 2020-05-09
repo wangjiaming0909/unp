@@ -19,6 +19,8 @@ SyncClient::SyncClient(const net::inet_addr& serverAddr)
     , reactor_{nullptr}
     , timer_{nullptr}
     , manager_{nullptr}
+    , monitor_{nullptr}
+    , cancelToken_(false)
 {
     using namespace reactor;
     using namespace std::chrono_literals;
@@ -76,7 +78,15 @@ bool SyncClient::setMonitorFolder(const std::string& fullPath)
 
 void SyncClient::monitorLocalFolder()
 {
-
+  monitor_.reset(new DirObservable(syncPath_));
+  auto* connection = manager_->makeConnection<reactor::connector<FileMonitorHandler>>(*monitor_);
+  fileMonitorHandler_ = connection->connect(serverAddr_, 1s);
+  if (!fileMonitorHandler_) {
+    LOG(ERROR) << "fileMonitorHandler connect failed..";
+    return;
+  }
+  fileMonitorHandler_->subscribe();
+  monitor_->startObserveAsync(cancelToken_);
 }
 
 void SyncClient::timeoutCallback(reactor::TimeoutHandler*)

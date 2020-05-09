@@ -17,6 +17,16 @@ SyncEntryProperty::SyncEntryProperty(bool needSync)
 
 }
 
+int IDirObserver::subscribe()
+{
+  return id_ = observable_.subscribe(*this);
+}
+int IDirObserver::unsubscribe()
+{
+  observable_.unsubscribe(id_, *this);
+  return 0;
+}
+
 using namespace std::chrono_literals;
 const std::chrono::seconds DirObservable::syncInterval_ = 1s;
 
@@ -41,9 +51,7 @@ void DirObservable::startObserve(const std::atomic_int& cancelToken)
         {
             for(auto& observer : observers_)
             {
-                if(observer.second.expired()) continue; 
-                std::shared_ptr<IDirObserver> ob{observer.second};
-                ob->onUpdate(addedAndDeletedEntries.first);
+                observer.second->onUpdate(addedAndDeletedEntries.first);
             }
         }
 
@@ -51,9 +59,7 @@ void DirObservable::startObserve(const std::atomic_int& cancelToken)
         {
             for(auto& observer : observers_)
             {
-                if(observer.second.expired()) continue;
-                std::shared_ptr<IDirObserver> ob{observer.second};
-                ob->onUpdate(addedAndDeletedEntries.second);
+                observer.second->onUpdate(addedAndDeletedEntries.second);
             }
         }
 
@@ -158,7 +164,7 @@ std::pair<EntryMap, EntryMap> DirObservable::monitorDir()
     return {addedEntries, newDeletedEntries};
 }
 
-int DirObservable::subscribe(std::shared_ptr<IDirObserver> observer)
+int DirObservable::subscribe(IDirObserver& observer)
 {
     if(isMonitoring_) return -1;
     int id = 0;
@@ -166,11 +172,11 @@ int DirObservable::subscribe(std::shared_ptr<IDirObserver> observer)
     {
         id++;
     }
-    observers_[id] = observer;
-    return 0;
+    observers_[id] = &observer;
+    return id;
 }
 
-void DirObservable::unsubscribe(int id, std::shared_ptr<IDirObservable>)
+void DirObservable::unsubscribe(int id, IDirObserver&)
 {
     if(observers_.count(id) == 0)
     {

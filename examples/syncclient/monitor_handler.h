@@ -11,8 +11,9 @@ namespace filesync
 class FileMonitorHandler : public reactor::connection_handler, public IDirObserver
 {
 public:
-	virtual void onUpdate(const EntryMap& es);
-  FileMonitorHandler(reactor::Reactor& react);
+  FileMonitorHandler(reactor::Reactor& react, IDirObservable& observable);
+	virtual void onUpdate(const EntryMap& es) override;
+  virtual int handle_close(int handle) override;
 };
 
 class ServerMonitorHandler : public reactor::connection_handler

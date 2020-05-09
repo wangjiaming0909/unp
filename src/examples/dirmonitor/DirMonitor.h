@@ -39,15 +39,21 @@ using Entry = DirE_t;
 using EntryVector = std::vector<Entry>;
 using EntryMap = std::map<Entry, SyncEntryProperty>;
 
+struct IDirObservable;
 struct IDirObserver
 {
+  IDirObserver(IDirObservable& observable) : observable_(observable) {}
 	virtual void onUpdate(const EntryMap& es) = 0;
+  virtual int subscribe();
+  virtual int unsubscribe();
+  IDirObservable& observable_;
+  int id_;
 };
 
 struct IDirObservable
 {
-	virtual int subscribe(std::shared_ptr<IDirObserver> observer) = 0;
-	virtual void unsubscribe(int id, std::shared_ptr<IDirObservable> observer) = 0;
+	virtual int subscribe(IDirObserver& observer) = 0;
+	virtual void unsubscribe(int id, IDirObserver& observer) = 0;
 };
 
 class DirObservable : public IDirObservable
@@ -57,8 +63,8 @@ public:
   virtual ~DirObservable();
 
 public:
-	virtual int subscribe(std::shared_ptr<IDirObserver> observer) override;
-	virtual void unsubscribe(int id, std::shared_ptr<IDirObservable> observer) override;
+	virtual int subscribe(IDirObserver& observer) override;
+	virtual void unsubscribe(int id, IDirObserver& observer) override;
 	void startObserveAsync(const std::atomic_int& cancelToken);
   void stopObserve();
   EntryMap& entries() {return entries_;}
@@ -74,7 +80,7 @@ private:
 	Entry dir_;
 	EntryMap entries_;
 
-	std::unordered_map<int, std::weak_ptr<IDirObserver>> observers_;
+	std::unordered_map<int, IDirObserver*> observers_;
   std::shared_ptr<std::thread> observeThread_;
 
   std::atomic_int isMonitoring_;

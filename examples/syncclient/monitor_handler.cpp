@@ -6,11 +6,9 @@
 namespace filesync
 {
 
-FileMonitorHandler::FileMonitorHandler(reactor::Reactor& react) 
-    : reactor::connection_handler(react)
-{
-
-}
+FileMonitorHandler::FileMonitorHandler(reactor::Reactor& react, IDirObservable& observable) 
+    : reactor::connection_handler(react), IDirObserver(observable)
+{ }
 
 void FileMonitorHandler::onUpdate(const EntryMap& es)
 {
@@ -30,6 +28,11 @@ void FileMonitorHandler::onUpdate(const EntryMap& es)
       free(data);
     }
   }
+}
+
+int FileMonitorHandler::handle_close(int)
+{
+  return unsubscribe();
 }
 
 ServerMonitorHandler::ServerMonitorHandler(reactor::Reactor& react) 

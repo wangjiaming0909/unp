@@ -13,6 +13,7 @@
 #include "syncclient/monitor_handler.h"
 #include "syncclient/timer_handler.h"
 #include "proto/sync_package.h"
+#include "examples/dirmonitor/DirMonitor.h"
 
 namespace filesync {
 class SyncClient
@@ -49,6 +50,8 @@ private:
 private:
     bool isSyncing = false;
     uint32_t sayHelloFailedWaitInterval_ = 1;
+    std::unique_ptr<DirObservable> monitor_;
+    std::atomic_int cancelToken_;
 };
 
 }
