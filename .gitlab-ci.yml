@@ -40,4 +40,4 @@ build:
     - make -j $(nproc)
     - make examples -j $(nproc)
     - make test -j $(nproc)
-    - ./rt.sh buffer
+    - ./rt.sh
