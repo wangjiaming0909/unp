@@ -5,7 +5,7 @@
 #include "reactor/TimeoutHandler.h"
 #include "reactor/epoll_reactor_impl.h"
 #include "reactor/reactor_implementation.h"
-#include "sync_client.h"
+#include "syncclient/sync_client.h"
 #include "net/inet_addr.h"
 #include "sync_handler.h"
 #include "reactor/connector.h"

@@ -88,6 +88,7 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
 
 int epoll_reactor_impl::register_handler(EventHandler* handler, Event_Type type)
 {
+    std::lock_guard<std::mutex> guard(mutex_);
     if (handler == nullptr || type != EventHandler::TIMEOUT_EVENT)
     {
         LOG(WARNING) << "can't register none timeout handler with no handle";
@@ -99,6 +100,7 @@ int epoll_reactor_impl::register_handler(EventHandler* handler, Event_Type type)
 
 int epoll_reactor_impl::unregister_handler(EventHandler *handler, Event_Type type)
 {
+    std::lock_guard<std::mutex> guard(mutex_);
     if (handler == nullptr || type != EventHandler::TIMEOUT_EVENT)
     {
         LOG(WARNING) << "can't unregister none timeout handler with no handle";
@@ -110,7 +112,7 @@ int epoll_reactor_impl::unregister_handler(EventHandler *handler, Event_Type typ
 
 int epoll_reactor_impl::register_handler(int handle, EventHandler *handler, Event_Type type)
 {
-     std::lock_guard<std::mutex> guard(mutex_);
+    std::lock_guard<std::mutex> guard(mutex_);
 
     if(handle == INVALID_HANDLE || handler == 0 || type == EventHandler::NONE){
         LOG(ERROR) << "Handle error or registered type error...";

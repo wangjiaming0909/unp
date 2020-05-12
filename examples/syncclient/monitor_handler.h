@@ -14,6 +14,9 @@ public:
   FileMonitorHandler(reactor::Reactor& react, IDirObservable& observable);
 	virtual void onUpdate(const EntryMap& es) override;
   virtual int handle_close(int handle) override;
+
+private:
+  EntryMap entries_;
 };
 
 class ServerMonitorHandler : public reactor::connection_handler

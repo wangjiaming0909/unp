@@ -7,7 +7,9 @@ namespace filesync
 {
 
 FileMonitorHandler::FileMonitorHandler(reactor::Reactor& react, IDirObservable& observable) 
-    : reactor::connection_handler(react), IDirObserver(observable)
+    : reactor::connection_handler(react)
+    , IDirObserver(observable)
+    , entries_{}
 { }
 
 void FileMonitorHandler::onUpdate(const EntryMap& es)
