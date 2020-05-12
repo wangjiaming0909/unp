@@ -77,7 +77,7 @@ int connection_handler::handle_input(int handle)
 
 int connection_handler::handle_output(int handle)
 {
-    //std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
+    std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
     if (output_buffer_.buffer_length() == 0)
     {
         return 0;
@@ -100,7 +100,7 @@ int connection_handler::handle_output(int handle)
         //行为： 最多pullup 4096 bytes
         size_t pullupSize = DEFAULT_SEND_SIZE > output_buffer_.buffer_length() ? output_buffer_.buffer_length() : DEFAULT_SEND_SIZE;
         auto data_p = output_buffer_.pullup(pullupSize);
-        LOG(INFO) << "sending " << output_buffer_.buffer_length();
+        //LOG(INFO) << "sending " << output_buffer_.buffer_length();
         bytes_send = stream_->send(static_cast<const void *>(data_p), pullupSize, 0);
         if (bytes_send <= 0)
         {
@@ -172,6 +172,7 @@ void connection_handler::set_handle(int)
 
 uint32_t connection_handler::read(char *data_out, uint32_t data_len)
 {
+    std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
     if (data_out == 0 || data_len == 0)
         return -1;
 
@@ -194,6 +195,7 @@ uint32_t connection_handler::read_line(char *data_out, uint32_t data_len, buffer
     if (data_out == 0 || data_len == 0)
         return -1;
 
+    std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
     if (output_buffer_.buffer_length() == 0)
         return 0;
 
@@ -202,7 +204,7 @@ uint32_t connection_handler::read_line(char *data_out, uint32_t data_len, buffer
 
 uint32_t connection_handler::write(const char *data, uint32_t len, bool is_flush)
 {
-    //std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
+    std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
     if (data == 0 || len == 0)
         return -1;
 

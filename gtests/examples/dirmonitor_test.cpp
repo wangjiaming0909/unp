@@ -28,6 +28,7 @@ struct FakeDirObserver : public filesync::IDirObserver
 TEST(DirMonitor, normal)
 {
     GTEST_SKIP();
+    /*
     boost::filesystem::path p = boost::filesystem::current_path();
     filesync::DirObservable observable(p);
     auto& entriesExisted = observable.entries();
@@ -54,4 +55,5 @@ TEST(DirMonitor, normal)
 
     std::this_thread::sleep_for(10s);
     observable.stopObserve();
+    */
 }

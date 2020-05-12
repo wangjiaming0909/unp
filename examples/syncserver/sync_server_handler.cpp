@@ -28,9 +28,14 @@ int SyncServerHandler::handle_input(int handle)
         {
           if (mes->header().command() == Command::ClientHello)
           {
-            LOG(INFO) << "Received client hello...";
+            //LOG(INFO) << "Received client hello...";
             sayHello();
-            LOG(INFO) << "Send server hello...";
+            //LOG(INFO) << "Send server hello...";
+          }
+          if (mes->header().command() == Command::DepositeFile) 
+          {
+            LOG(INFO) << "Received deposite file mess...";
+            LOG(INFO) << "File name: " << mes->header().depositefileheader().filename();
           }
         }
         decoder_.reset();

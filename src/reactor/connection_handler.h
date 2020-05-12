@@ -84,7 +84,20 @@ public:
     int disable_writing();
     void set_closed_callback(std::function<void(int)> callback) { closed_callback_ = std::move(callback); }
 
+#ifdef TESTING
+    void drain_output_buffer(uint32_t size)
+    {
+      std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
+      size = std::min(size, output_buffer_.buffer_length());
+      output_buffer_.drain(size);
+    }
+#endif
+
+#ifdef TESTING
+public:
+#else
 protected:
+#endif
     std::shared_ptr<net::SockStream> stream_;
     buffer input_buffer_;
     buffer output_buffer_;
@@ -99,6 +112,7 @@ protected:
 template <typename T>
 int connection_handler::write(const T& data, bool is_flush)
 {
+  std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
   output_buffer_.append(data);
   if (is_flush && !write_enabled_)
   {

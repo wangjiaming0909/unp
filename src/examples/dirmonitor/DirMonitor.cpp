@@ -46,21 +46,26 @@ void DirObservable::startObserve(const std::atomic_int& cancelToken)
 {
     while(!cancelToken)
     {
-        auto addedAndDeletedEntries = monitorDir();
-        if(addedAndDeletedEntries.first.size() > 0)
-        {
-            for(auto& observer : observers_)
-            {
-                observer.second->onUpdate(addedAndDeletedEntries.first);
-            }
-        }
+        try {
+          auto addedAndDeletedEntries = monitorDir();
+          if(addedAndDeletedEntries.first.size() > 0)
+          {
+              for(auto& observer : observers_)
+              {
+                  observer.second->onUpdate(addedAndDeletedEntries.first);
+              }
+          }
 
-        if(addedAndDeletedEntries.second.size() > 0)
-        {
-            for(auto& observer : observers_)
-            {
-                observer.second->onUpdate(addedAndDeletedEntries.second);
-            }
+          if(addedAndDeletedEntries.second.size() > 0)
+          {
+              for(auto& observer : observers_)
+              {
+                  observer.second->onUpdate(addedAndDeletedEntries.second);
+              }
+          }
+        } catch (...) {
+          LOG(ERROR) << "get error ...";
+          continue;
         }
 
         using namespace std::chrono_literals;
@@ -126,7 +131,6 @@ std::pair<EntryMap, EntryMap> DirObservable::monitorDir()
 {
     EntryMap addedEntries{};
     EntryMap deletedEntries = entries_;
-
     for(auto& e : boost::filesystem::recursive_directory_iterator(dir_.path()))
     {
         if (e == dir_) continue;

@@ -27,6 +27,7 @@ SyncPackagePtr getDepositeFilePackage(const char* fileName, uint64_t fileLen, ui
   header->set_type(PackageType::Client);
   header->set_command(Command::DepositeFile);
   header->set_contenttype(HeaderContentType::DepositeFileContent);
+  header->set_headercontentlen(0);
   auto* depositeFileHeader = header->mutable_depositefileheader();
   depositeFileHeader->set_filename(fileName);
   depositeFileHeader->set_filelen(fileLen);

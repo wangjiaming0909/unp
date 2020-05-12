@@ -93,7 +93,7 @@ void SyncClient::timeoutCallback(reactor::TimeoutHandler*)
 {
     if (!serverMonitorHandler_) return;
     auto hello = "hello\n";
-    LOG(INFO) << hello << "......";
+    //LOG(INFO) << hello << "......";
     auto helloPacakgePtr = filesync::getHelloPackage(hello, PackageType::Client);
     auto bytesWritten = sendPackage(helloPacakgePtr);
     if (bytesWritten <= 0)

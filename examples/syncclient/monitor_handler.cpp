@@ -14,6 +14,9 @@ void FileMonitorHandler::onUpdate(const EntryMap& es)
 {
   for(auto& pair : es) {
     if (pair.second.needSync()) {
+      if (!pair.second.isExisted()) {
+        break;
+      }
       auto& d_e = pair.first;
       auto fileSize = boost::filesystem::file_size(d_e.path());
       void* d = (void*)"a";
@@ -57,7 +60,7 @@ int ServerMonitorHandler::handle_input(int handle)
     auto mes = decoder_.getMess();
     if (mes) {
       if (mes->header().command() == Command::ServerHello) {
-        LOG(INFO) << "Received server hello...";
+        //LOG(INFO) << "Received server hello...";
         serverStatus_ = ServerStatus::connected;
       }
     }
