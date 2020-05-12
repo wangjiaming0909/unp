@@ -36,6 +36,7 @@ int SyncServerHandler::handle_input(int handle)
           {
             LOG(INFO) << "Received deposite file mess...";
             LOG(INFO) << "File name: " << mes->header().depositefileheader().filename();
+            LOG(INFO) << "File size: " << mes->header().depositefileheader().filelen();
           }
         }
         decoder_.reset();

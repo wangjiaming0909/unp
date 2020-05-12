@@ -87,7 +87,7 @@ public:
 #ifdef TESTING
     void drain_output_buffer(uint32_t size)
     {
-      std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
+      std::lock_guard<std::mutex> gurad{mutex_};
       size = std::min(size, output_buffer_.buffer_length());
       output_buffer_.drain(size);
     }
@@ -112,7 +112,7 @@ protected:
 template <typename T>
 int connection_handler::write(const T& data, bool is_flush)
 {
-  std::unique_lock<std::mutex> gurad{mutex_, std::try_to_lock};
+  std::lock_guard<std::mutex> gurad(mutex_);
   output_buffer_.append(data);
   if (is_flush && !write_enabled_)
   {

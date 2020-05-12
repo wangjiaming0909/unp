@@ -60,7 +60,7 @@ int ServerMonitorHandler::handle_input(int handle)
     auto mes = decoder_.getMess();
     if (mes) {
       if (mes->header().command() == Command::ServerHello) {
-        //LOG(INFO) << "Received server hello...";
+        LOG(INFO) << "Server OK...";
         serverStatus_ = ServerStatus::connected;
       }
     }
