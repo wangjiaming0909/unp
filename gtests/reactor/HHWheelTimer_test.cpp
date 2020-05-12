@@ -30,6 +30,7 @@ void timeoutCallback22(reactor::TimeoutHandler*)
 
 TEST(timer, normal_test)
 {
+    GTEST_SKIP();
     using namespace reactor;
     Reactor react{new epoll_reactor_impl{}, true};
     react.start();
@@ -196,6 +197,7 @@ TEST(HHWheelTimer, cancel)
 
 TEST(HHWheelTimer, scheduleTimeout_with_reverse_order)
 {
+    GTEST_SKIP();
     using namespace reactor;
     Reactor react{new select_reactor_impl{}, true};
     react.start();

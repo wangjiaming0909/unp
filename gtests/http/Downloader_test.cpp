@@ -77,7 +77,7 @@ TEST(Downloader, DivideRanges)
 
 TEST(Downloader, GetFileInfoOfChunked)
 {
-//    GTEST_SKIP();
+    GTEST_SKIP();
     // examples::Downloader d{"https://dl.bintray.com/boostorg/release/1.71.0/source/boost_1_71_0.tar.gz"};
 //    examples::Downloader d{"http://d1.music.126.net/dmusic/netease-cloud-music_1.2.1_amd64_ubuntu_20190428.deb"};
     // examples::Downloader d{"https://github.com/wangjiaming0909/unp/archive/master.zip"};

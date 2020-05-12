@@ -75,7 +75,7 @@ TEST_PRIVATE:
     //并且会轮流register, 如果可以做到: 查看 这些 reactor上的当前事件有多少,然后针对事件比较少的进行register就更好了
     size_t current_reactor_index_to_register_;
     std::vector<std::shared_ptr<Reactor>> external_reactors_;
-    AcceptorStateEnum acceptorState_;
+    AcceptorStateEnum acceptorState_ = ALL_CLOSED;
     size_t connectionCount_{0};
 };
 

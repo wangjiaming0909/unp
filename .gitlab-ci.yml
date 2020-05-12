@@ -19,8 +19,8 @@ build:
     - cd googletest
     - mkdir build && cd build
     - cmake ..
-    - make 
-    - make install 
+    - make -j $(nproc)
+    - sudo make install 
     - ls /
     - cd /
     - git clone https://github.com/protocolbuffers/protobuf.git
@@ -28,15 +28,16 @@ build:
     - git submodule update --init --recursive
     - ./autogen.sh
     - ./configure
-    - make
-    - make check
+    - make -j $(nproc)
     - sudo make install
     - ldconfig # refresh shared library cache.
 
   script:
     - pwd
     - cd /builds/wangjiaming0909/unp
+    - ./scripts/protoc.sh
     - ./scripts/setup_ld.sh
     - make -j $(nproc)
+    - make examples -j $(nproc)
     - make test -j $(nproc)
     - ./rt.sh buffer

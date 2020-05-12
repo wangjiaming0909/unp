@@ -7,6 +7,7 @@
 
 TEST(acceptor, normal_without_handlers)
 {
+    GTEST_SKIP();
     using namespace reactor;
     Reactor react{new select_reactor_impl{}};
     net::inet_addr localAddr{9090, "127.0.0.1"};
@@ -14,12 +15,10 @@ TEST(acceptor, normal_without_handlers)
     acpt->open();
     ASSERT_EQ(acpt->acceptorState_, REGISTERED);
 
-    // acpt->close()
+    acpt->close();
     acpt->destroy_acceptor();
     ASSERT_EQ(acpt->acceptorState_, ALL_CLOSED);
 }
-
-
 
 TEST(acceptor, normal_with_handlers){
     using namespace reactor;
