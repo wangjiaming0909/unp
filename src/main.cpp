@@ -127,7 +127,6 @@ int main(int argc, char** argv)
     //
     //scan();
     //test_plus();
-  std::string s{nullptr};
 }
 
 
