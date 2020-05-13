@@ -7,10 +7,10 @@ namespace filesync
 {
 
 FileMonitorHandler::FileMonitorHandler(reactor::Reactor& react, IDirObservable& observable) 
-    : reactor::connection_handler(react)
-    , IDirObserver(observable)
-    , entries_{}
-{ }
+  : reactor::connection_handler(react)
+  , IDirObserver(observable)
+  , entries_{}
+{}
 
 void FileMonitorHandler::onUpdate(const EntryMap& es)
 {
@@ -42,13 +42,13 @@ int FileMonitorHandler::handle_close(int)
 }
 
 ServerMonitorHandler::ServerMonitorHandler(reactor::Reactor& react) 
-    : reactor::connection_handler(react)
-    , decoder_{}
+  : reactor::connection_handler(react)
+  , decoder_{}
 { }
 
 int ServerMonitorHandler::open()
 {
-    return this->enable_reading();
+  return this->enable_reading();
 }
 
 int ServerMonitorHandler::handle_input(int handle)

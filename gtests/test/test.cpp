@@ -2,6 +2,9 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <unistd.h>
+#include <fcntl.h>
+#include "util/easylogging++.h"
 
 
 void hide_pwd(std::string& conn_str)
@@ -59,4 +62,29 @@ TEST(remove_pwd, normal)
     connStr = "DRIVER=MySQL ODBC 5.3;DATABASE=mysql;SERVER=127.0.0.1;PORT=13006;UID=root;PWD ={012a;sapwd=;ABC=10;";
     hide_pwd(connStr);
     std::cout << connStr << std::endl;
+}
+
+void print_filelock(const flock& lock)
+{
+  LOG(INFO) << "lock type: " << lock.l_type;
+  LOG(INFO) << "lock len: " << lock.l_len;
+  LOG(INFO) << "lock start: " << lock.l_start;
+  LOG(INFO) << "lock pid: " << lock.l_pid;
+  LOG(INFO) << "lock whence: " << lock.l_whence;
+}
+
+void print_filelock_of_file(const char* filename)
+{
+  auto fd = ::open(filename, O_CREAT | O_APPEND);
+  flock lock{};
+  ::fcntl(fd, F_GETLK, &lock);
+  print_filelock(lock);
+  ::close(fd);
+}
+
+TEST(fcntl, file_lock)
+{
+  print_filelock_of_file("filelock");
+  print_filelock_of_file("test.out");
+  print_filelock_of_file("boost_1_72_0.tar");
 }

@@ -24,16 +24,16 @@ class ServerMonitorHandler : public reactor::connection_handler
 public:
 enum class ServerStatus{idle, connected, disconnected, reconnecting};
 public:
-    ServerMonitorHandler(reactor::Reactor& react);
+  ServerMonitorHandler(reactor::Reactor& react);
 
 public:
-    virtual int handle_input(int handle) override;
-    virtual int open() override;
-    ServerStatus getServerStatus() const {return serverStatus_;}
+  virtual int handle_input(int handle) override;
+  virtual int open() override;
+  ServerStatus getServerStatus() const {return serverStatus_;}
 
 private:
-    ServerStatus serverStatus_;
-    reactor::Decoder<SyncPackage, int64_t> decoder_;
+  ServerStatus serverStatus_;
+  reactor::Decoder<SyncPackage, int64_t> decoder_;
 };
 
 }
