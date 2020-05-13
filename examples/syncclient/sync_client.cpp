@@ -120,8 +120,8 @@ uint64_t SyncClient::sendPackage(SyncPackagePtr package)
 int SyncClient::connect()
 {
     using namespace std::chrono_literals;
-    auto* connection = manager_->makeConnection<reactor::connector<ServerMonitorHandler>>();
-    serverMonitorHandler_ = connection->connect(serverAddr_, 1s);
+    auto* connector = manager_->makeConnection<reactor::connector<ServerMonitorHandler>>();
+    serverMonitorHandler_ = connector->connect(serverAddr_, 1s);
     if (!serverMonitorHandler_) {
         return -1;
     } 

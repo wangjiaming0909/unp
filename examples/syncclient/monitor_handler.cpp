@@ -37,6 +37,7 @@ void FileMonitorHandler::onUpdate(const EntryMap& es)
 
 int FileMonitorHandler::handle_close(int)
 {
+  LOG(INFO) << "File Monitor Handler handle close...";
   return unsubscribe();
 }
 
