@@ -14,7 +14,7 @@ Download::Download(int id, const std::string& url, std::shared_ptr<DownloadState
     : id_(id)
     , url_{url}
     , callback_(callback)
-	, failedRanges_{}
+	  , failedRanges_{}
 {
     urlParser_.init(url_);
     if(!urlParser_.valid())

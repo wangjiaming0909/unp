@@ -1,3 +1,4 @@
+#include <bitset>
 #include <gtest/gtest.h>
 #include <string>
 #include "reactor/HHWheelTimer.h"
@@ -283,4 +284,17 @@ TEST(timer, timeoutExpired){
     delete handler1;
     delete handler2;
     delete handler3;
+}
+
+TEST(bitset, normal)
+{
+  std::bitset<8> s{};
+  s.set(0);
+  auto it = s._Find_first();
+  std::cout << "it: " << it << std::endl;
+  std::cout << "size: " << s.size() << std::endl;
+  s.set(0, false);
+  it = s._Find_first();
+  std::cout << "it: " << it << std::endl;
+  std::cout << s;
 }

@@ -14,47 +14,47 @@ class HttpParserWrapper;
 class Http1xCodec : public HttpCodec
 {
 public:
-    using String_t = std::string;
-    friend class HttpParserWrapper;
+  using String_t = std::string;
+  friend class HttpParserWrapper;
 
 public:
-    enum class CodecState : uint8_t
-    {
-        ERROR,
-        IDLE,
-        PAUSED,
-        ON_URL,
-        ON_STATUS,
-        ON_MESSAGEBEGIN,
-        ON_HEADERFIELD,
-        ON_HEADERVALUE,
-        ON_HEADERS_COMPLETE,
-        ON_CHUNKHEADER,
-        ON_CHUNKCOMPLETE,
-        ON_BODY,
-        ON_MESSAGE_COMPLETE
-    };
+  enum class CodecState : uint8_t
+  {
+    ERROR,
+    IDLE,
+    PAUSED,
+    ON_URL,
+    ON_STATUS,
+    ON_MESSAGEBEGIN,
+    ON_HEADERFIELD,
+    ON_HEADERVALUE,
+    ON_HEADERS_COMPLETE,
+    ON_CHUNKHEADER,
+    ON_CHUNKCOMPLETE,
+    ON_BODY,
+    ON_MESSAGE_COMPLETE
+  };
 
 public:
-    Http1xCodec(HttpDirection direction);
-    ~Http1xCodec();
+  Http1xCodec(HttpDirection direction);
+  ~Http1xCodec();
 
 public:
-    virtual void setCallback(Callback* callback) override;
-    virtual size_t onIngress(CStringPiece_t buf) override;
+  virtual void setCallback(Callback* callback) override;
+  virtual size_t onIngress(CStringPiece_t buf) override;
 
-    int pause(int pause);
+  int pause(int pause);
 
-    uint64_t contentLength() const;
-    short httpMajor() const;
-    short httpMinor() const;
-    int status() const;
-    int method() const;
-    int upgrade() const;
-    http_parser_type parserType() const;
-    bool isPaused() const;
-    bool hasError() const {return hasError_;}
-    const HttpMessage& message() const {return *message_;}
+  uint64_t contentLength() const;
+  short httpMajor() const;
+  short httpMinor() const;
+  int status() const;
+  int method() const;
+  int upgrade() const;
+  http_parser_type parserType() const;
+  bool isPaused() const;
+  bool hasError() const {return hasError_;}
+  const HttpMessage& message() const {return *message_;}
 
 
 TEST_PRIVATE:
@@ -72,16 +72,16 @@ TEST_PRIVATE:
   int onParserError();
 
 TEST_PRIVATE:
-    std::unique_ptr<HttpMessage> message_;
-    Callback*               callback_;
-    std::unique_ptr<HttpParserWrapper> parser_;
+  std::unique_ptr<HttpMessage> message_;
+  Callback*               callback_;
+  std::unique_ptr<HttpParserWrapper> parser_;
 
 
-    String_t                    url_;
-    String_t                    currentHeaderFiled_;
-    CStringPiece_t          currentHeaderValue_;
-    CodecState               state_ = CodecState::IDLE;
-    bool                          hasError_ = false;
-    uint64_t contentLength_ = 0;
+  String_t                    url_;
+  String_t                    currentHeaderFiled_;
+  CStringPiece_t          currentHeaderValue_;
+  CodecState               state_ = CodecState::IDLE;
+  bool                          hasError_ = false;
+  uint64_t contentLength_ = 0;
 };
 }

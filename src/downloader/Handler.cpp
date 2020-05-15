@@ -130,35 +130,35 @@ int Handler::onStatus(const char* /*buf*/, size_t/* len*/)
 
 int Handler::onBody(const char* buf, size_t size)
 {
-    if(status_ == HandlerStatus::RANGE_NOT_MATCH)
-    {
-        isShouldClose_ = true;
-		LOG(INFO) << "range not match ...";
-        return -1;
-    }
+  if(status_ == HandlerStatus::RANGE_NOT_MATCH)
+  {
+    isShouldClose_ = true;
+    LOG(INFO) << "range not match ...";
+    return -1;
+  }
 
-    bytesDownloaded_ += size;
-    //LOG(INFO) << bytesDownloaded_ << " bytes downloaded...";
-    if(!fileWriterPtr_) return 0;
+  bytesDownloaded_ += size;
+  //LOG(INFO) << bytesDownloaded_ << " bytes downloaded...";
+  if(!fileWriterPtr_) return 0;
 
-	if(status_ == HandlerStatus::CHUNK_ENCODING 
-            || status_ == HandlerStatus::NOT_RESPONDING_TO_RANGE
-            || status_ == HandlerStatus::NO_CONTENT_DISPOSITION)
-    {
-        //LOG(INFO) << "CHUNK_ENCODING With on body size: " << size;
-    }
+  if(status_ == HandlerStatus::CHUNK_ENCODING 
+      || status_ == HandlerStatus::NOT_RESPONDING_TO_RANGE
+      || status_ == HandlerStatus::NO_CONTENT_DISPOSITION)
+  {
+    //LOG(INFO) << "CHUNK_ENCODING With on body size: " << size;
+  }
 
-    if(status_ == HandlerStatus::RANGE_MATCH)
-    {
-		//LOG(INFO) << "range match...";
-        fileName_ += std::to_string(fileSize_);
-        fileWriterPtr_->resetFileName(fileName_);
-    }
+  if(status_ == HandlerStatus::RANGE_MATCH)
+  {
+    //LOG(INFO) << "range match...";
+    fileName_ += std::to_string(fileSize_);
+    fileWriterPtr_->resetFileName(fileName_);
+  }
 
-    if(downloader_) downloader_->downloadUpdateCallback(rangeBegin_, rangeEnd_, size);
-    fileWriterPtr_->write(buf, size);
-    fileWriterPtr_->flush();
-    return 0;
+  if(downloader_) downloader_->downloadUpdateCallback(rangeBegin_, rangeEnd_, size);
+  fileWriterPtr_->write(buf, size);
+  fileWriterPtr_->flush();
+  return 0;
 }
 
 int Handler::onHeadersComplete(size_t /*len*/)
@@ -179,36 +179,36 @@ int Handler::onHeadersComplete(size_t /*len*/)
         return -1;
 	}
 
-    if(status_ == HandlerStatus::RECEIVED200)
-	{
-		auto* cd = codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_DISPOSITION);
-		if(cd == nullptr) 
-		{
-			LOG(WARNING) << "no HTTP_HEADER_CONTENT_DISPOSITION heade...";
-			status_ = HandlerStatus::NO_CONTENT_DISPOSITION;
-		}
+  if(status_ == HandlerStatus::RECEIVED200)
+  {
+    auto* cd = codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_DISPOSITION);
+    if(cd == nullptr) 
+    {
+      LOG(WARNING) << "no HTTP_HEADER_CONTENT_DISPOSITION heade...";
+      status_ = HandlerStatus::NO_CONTENT_DISPOSITION;
+    }
 
-		retriveFileNameFromContentDisposition(cd == nullptr ? "" : *cd);
-        initFileWriter();
+    retriveFileNameFromContentDisposition(cd == nullptr ? "" : *cd);
+    initFileWriter();
 
-		if(usingRangeDownload_)
-		{
-			if(codec_.message().hasHeader(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING))
-			{
-				if(*codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING) == "chunked")
-				{
-					LOG(INFO) << "chunked encoding...";
-					status_ = HandlerStatus::CHUNK_ENCODING;
-					return 0;
-				}
-			}
-			auto* contentRangeHeader = codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_RANGE);
-			if(contentRangeHeader == nullptr)
-			{
-				LOG(ERROR) << "trying to get data with range header, but server didn't respond with range...";
-				status_ = HandlerStatus::NOT_RESPONDING_TO_RANGE;
-				return 0;
-			}
+    if(usingRangeDownload_)
+    {
+      if(codec_.message().hasHeader(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING))
+      {
+        if(*codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_TRANSFER_ENCODING) == "chunked")
+        {
+          LOG(INFO) << "chunked encoding...";
+          status_ = HandlerStatus::CHUNK_ENCODING;
+          return 0;
+        }
+      }
+      auto* contentRangeHeader = codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_RANGE);
+      if(contentRangeHeader == nullptr)
+      {
+        LOG(ERROR) << "trying to get data with range header, but server didn't respond with range...";
+        status_ = HandlerStatus::NOT_RESPONDING_TO_RANGE;
+        return 0;
+      }
 			//LOG(INFO) << "content range: " << *contentRangeHeader;
 			auto pair = parseContentRangeHeader(*contentRangeHeader);
 			if(pair.first != rangeBegin_)
@@ -233,78 +233,78 @@ int Handler::onHeadersComplete(size_t /*len*/)
 
 std::pair<uint64_t, uint64_t> Handler::parseContentRangeHeader(const std::string& headerValue)
 {
-    auto it = std::find(headerValue.begin(), headerValue.end(), 's');
-    it++;
-    auto endIt = std::find(it, headerValue.end(), '-');
-    uint64_t start = std::stoull(std::string(it, endIt));
+  auto it = std::find(headerValue.begin(), headerValue.end(), 's');
+  it++;
+  auto endIt = std::find(it, headerValue.end(), '-');
+  uint64_t start = std::stoull(std::string(it, endIt));
 
-    it = endIt + 1;
-	endIt = std::find(headerValue.begin(), headerValue.end(), '/');
+  it = endIt + 1;
+  endIt = std::find(headerValue.begin(), headerValue.end(), '/');
 
-    uint64_t end = std::stoull(std::string(it, endIt));
+  uint64_t end = std::stoull(std::string(it, endIt));
 
-	std::string size;
-	if(endIt != headerValue.end())
-	{
-		size = std::string{endIt+1, headerValue.end()};
-	}
-	fileSize_ = std::stoull(size);
-    LOG(INFO) << "file size: " << fileSize_;
-    LOG(INFO) << "start: " << start << " end: " << end;
+  std::string size;
+  if(endIt != headerValue.end())
+  {
+    size = std::string{endIt+1, headerValue.end()};
+  }
+  fileSize_ = std::stoull(size);
+  LOG(INFO) << "file size: " << fileSize_;
+  LOG(INFO) << "start: " << start << " end: " << end;
 
-	return std::make_pair(start, end);
+  return std::make_pair(start, end);
 }
 
 void Handler::retriveFileNameFromContentDisposition(const std::string& cd)
 {
-    auto it = std::find(cd.begin(), cd.end(), '=');
-    if(it == cd.end())
-    {
-        LOG(WARNING) << "Unknown content disposition...";
-        fileName_ = DEFAULT_FILE_NAME;
-        return;
-    }
-    std::string::const_iterator begin = ++it;
-    std::string::const_iterator end = cd.end();
-    if (*(it) == '"' || *(it) == '\'')
-    {
-        begin = ++it;
-    }
-    if(cd.back() == '"' || cd.back() == '\'')
-    {
-        end--;
-    }
-    fileName_ = std::string{begin, end};
-    std::string suffix = "_" + std::to_string(rangeBegin_) + "_" + std::to_string(rangeEnd_) + "_";
-    fileName_ += suffix;
+  auto it = std::find(cd.begin(), cd.end(), '=');
+  if(it == cd.end())
+  {
+    LOG(WARNING) << "Unknown content disposition...";
+    fileName_ = DEFAULT_FILE_NAME;
+    return;
+  }
+  std::string::const_iterator begin = ++it;
+  std::string::const_iterator end = cd.end();
+  if (*(it) == '"' || *(it) == '\'')
+  {
+    begin = ++it;
+  }
+  if(cd.back() == '"' || cd.back() == '\'')
+  {
+    end--;
+  }
+  fileName_ = std::string{begin, end};
+  std::string suffix = "_" + std::to_string(rangeBegin_) + "_" + std::to_string(rangeEnd_) + "_";
+  fileName_ += suffix;
 }
 
 int Handler::onHeaderField(const char * /*buf*/, size_t /*len*/)
 {
-    return 0;
+  return 0;
 }
 
 int Handler::onHeaderValue(const char * /*buf*/, size_t /*len*/)
 {
-    return 0;
+  return 0;
 }
 
 int Handler::onMessageComplete()
 {
-    LOG(INFO) << "message completed... ";
-    isShouldClose_ = true;
-    return 0;
+  LOG(INFO) << "message completed... ";
+  isShouldClose_ = true;
+  return 0;
 }
 
 int Handler::onChunkHeader(size_t len)
 {
-    LOG(INFO) << "On chunked header len: " << len;
-    return 0;
+  LOG(INFO) << "On chunked header len: " << len;
+  return 0;
 }
 
 int Handler::onChunkComplete()
 {
-    LOG(INFO) << "chunk completed...";
-    return 0;
+  LOG(INFO) << "chunk completed...";
+  return 0;
 }
 } 

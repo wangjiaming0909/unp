@@ -72,7 +72,7 @@ TEST_PRIVATE:
     void scheduleNextTimeoutInReactor_(TimeoutHandler_t *handler, int64_t baseTick, int64_t thisTimerExpireTick);
     // find the right place to put the timeout
     void scheduleTimeoutImpl_(TimeoutHandler_t& handler, int64_t baseTick, int64_t thisTimerExpireTick);
-    int cascadeTimers_(int bucket, int tick);
+    int cascadeTimers_(int bucket, int tick, int64_t curTick);
     template<typename Duration2>
     int64_t getTickFromDuration(Duration2 duration)
     {

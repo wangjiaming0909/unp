@@ -7,21 +7,21 @@ namespace http
 
 
 Http1xCodec::Http1xCodec(HttpDirection direction)
-    : callback_{nullptr}
-    , parser_{nullptr}
+  : callback_{nullptr}
+  , parser_{nullptr}
 {
-    switch (direction)
-    {
+  switch (direction)
+  {
     case HttpDirection::UPSTREAM:
-        parser_ = std::make_unique<HttpParserWrapper>(*this, http_parser_type::HTTP_REQUEST);
-        break;
+      parser_ = std::make_unique<HttpParserWrapper>(*this, http_parser_type::HTTP_REQUEST);
+      break;
     case HttpDirection::DOWNSTREAM:
-        parser_ = std::make_unique<HttpParserWrapper>(*this, http_parser_type::HTTP_RESPONSE);
-        break;
+      parser_ = std::make_unique<HttpParserWrapper>(*this, http_parser_type::HTTP_RESPONSE);
+      break;
     default:
-        parser_ = std::make_unique<HttpParserWrapper>(*this, http_parser_type::HTTP_BOTH);
-        break;
-    }
+      parser_ = std::make_unique<HttpParserWrapper>(*this, http_parser_type::HTTP_BOTH);
+      break;
+  }
 }
 
 Http1xCodec::~Http1xCodec()
