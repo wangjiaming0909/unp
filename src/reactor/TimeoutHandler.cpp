@@ -27,12 +27,12 @@ int TimeoutHandler::handle_timeout(int) noexcept
     LOG(INFO) << "TimeoutHandler::handle_timeout got unknow error: ";
   }
 
+  isRegistered_ = false;
   wheel_->timeoutExpired(this);
   if(needDestroy()) {
     // LOG(INFO) << "preparing to destructoring TimeoutHandler...";
     destroy();
   }
-  isRegistered_ = false;
   return 0;
 }
 
