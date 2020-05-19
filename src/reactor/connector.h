@@ -39,6 +39,7 @@ struct IConnector : public ServiceT
     int open() override {return 0;}
     int close() override { disconnect(); return 0;}
     virtual ~IConnector() = default;
+    ConnectionHandlerPtr_t get_connection_handler() {return handlerPtr_;}
 TEST_PROTECTED:
     net::sock_connector connector_;
     ConnectionHandlerPtr_t handlerPtr_;

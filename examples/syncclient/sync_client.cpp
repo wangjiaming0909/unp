@@ -8,7 +8,6 @@
 #include "syncclient/sync_client.h"
 #include "net/inet_addr.h"
 #include "sync_handler.h"
-#include "reactor/connector.h"
 
 namespace filesync
 {
@@ -47,6 +46,18 @@ int SyncClient::start(const std::atomic_int& cancelToken)
   int ret = 0;
   while(ret >= 0)
     ret = reactor_->handle_events();
+  using namespace std::chrono_literals;
+  if (monitor_) {
+    if (fileMonitorConnector_)
+      manager_->closeConnection(*fileMonitorConnector_, 1s);
+    cancelToken_.store(true);
+    monitor_->stopObserve();
+  }
+  if (timer_) {
+    timer_->cancelAll();
+    timeoutHandler_.reset();
+  }
+
   return ret;
 }
 
@@ -70,8 +81,8 @@ bool SyncClient::setMonitorFolder(const std::string& fullPath)
 void SyncClient::monitorLocalFolder()
 {
   monitor_.reset(new DirObservable(syncPath_));
-  auto* connection = manager_->makeConnection<reactor::connector<FileMonitorHandler>>(*monitor_);
-  fileMonitorHandler_ = connection->connect(serverAddr_, 1s);
+  fileMonitorConnector_ = manager_->makeConnection<reactor::connector<FileMonitorHandler>>(*monitor_);
+  fileMonitorHandler_ = fileMonitorConnector_->connect(serverAddr_, 1s);
   if (!fileMonitorHandler_) {
     LOG(ERROR) << "fileMonitorHandler connect failed..";
     return;
@@ -84,7 +95,6 @@ void SyncClient::timeoutCallback(reactor::TimeoutHandler*)
 {
   if (!serverMonitorHandler_) return;
   auto hello = "hello\n";
-  //LOG(INFO) << hello << "......";
   auto helloPacakgePtr = filesync::getHelloPackage(hello, PackageType::Client);
   auto bytesWritten = sendPackage(helloPacakgePtr);
   if (bytesWritten <= 0) {

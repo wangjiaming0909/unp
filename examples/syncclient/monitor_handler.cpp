@@ -53,9 +53,8 @@ int ServerMonitorHandler::open()
 
 int ServerMonitorHandler::handle_input(int handle)
 {
-  if (connection_handler::handle_input(handle) < 0) {
+  if (connection_handler::handle_input(handle) < 0)
     return -1;
-  }
 
   while (input_buffer_.total_len() > sizeof(int64_t)) {
     auto lenParsed = decoder_.decode(input_buffer_);

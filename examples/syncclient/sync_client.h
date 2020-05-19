@@ -14,6 +14,7 @@
 #include "syncclient/timer_handler.h"
 #include "proto/sync_package.h"
 #include "examples/dirmonitor/DirMonitor.h"
+#include "reactor/connector.h"
 
 namespace filesync {
 class SyncClient
@@ -46,6 +47,7 @@ private:
 
     ServerMonitorHandler* serverMonitorHandler_ = nullptr;
     FileMonitorHandler* fileMonitorHandler_ = nullptr;
+    reactor::connector<FileMonitorHandler>* fileMonitorConnector_ = nullptr;
 
 private:
     bool isSyncing = false;

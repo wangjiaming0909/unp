@@ -13,7 +13,7 @@ TimeoutHandler::TimeoutHandler(Reactor& reactor, bool needDestroy)
 
 TimeoutHandler::~TimeoutHandler()
 {
-  LOG(INFO) << "destructoring TimeoutHandler...";
+  //LOG(INFO) << "destructoring TimeoutHandler...";
 }
 
 
