@@ -7,7 +7,7 @@ namespace filesync
 {
 
 FileMonitorHandler::FileMonitorHandler(reactor::Reactor& react, IDirObservable& observable) 
-  : reactor::connection_handler(react)
+  : reactor::sock_connection_handler(react)
   , IDirObserver(observable)
   , entries_{}
 {}
@@ -42,7 +42,7 @@ int FileMonitorHandler::handle_close(int)
 }
 
 ServerMonitorHandler::ServerMonitorHandler(reactor::Reactor& react) 
-  : reactor::connection_handler(react)
+  : reactor::sock_connection_handler(react)
   , decoder_{}
 { }
 
@@ -53,7 +53,7 @@ int ServerMonitorHandler::open()
 
 int ServerMonitorHandler::handle_input(int handle)
 {
-  if (connection_handler::handle_input(handle) < 0)
+  if (sock_connection_handler::handle_input(handle) < 0)
     return -1;
 
   while (input_buffer_.total_len() > sizeof(int64_t)) {

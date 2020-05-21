@@ -1,5 +1,5 @@
 #pragma once
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 #include "http/Http1xCodec.h"
 #include "http/http_parser/URLParser.h"
 #include "http/Http1xCodec.h"
@@ -9,7 +9,7 @@ namespace examples
 {
 
 
-class HttpsClientHandler : public reactor::connection_handler, public http::HttpCodec::Callback{
+class HttpsClientHandler : public reactor::sock_connection_handler, public http::HttpCodec::Callback{
 public:
     using MessageSetupCallback_t = std::function<int(http::HttpMessage& mes)>;
     HttpsClientHandler(reactor::Reactor &react, const char *url, MessageSetupCallback_t&& callback);

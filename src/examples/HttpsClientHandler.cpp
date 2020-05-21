@@ -4,7 +4,7 @@ namespace examples
 {
 
 HttpsClientHandler::HttpsClientHandler(reactor::Reactor& react, const char* url, MessageSetupCallback_t&& callback) 
-    : connection_handler{react, true}
+    : sock_connection_handler{react, true}
     , request_{}
     , urlParser_{}
     , codec_{http::HttpDirection::DOWNSTREAM}
@@ -46,9 +46,9 @@ int HttpsClientHandler::open()
 
 int HttpsClientHandler::handle_input(int handle)
 {
-    if(connection_handler::handle_input(handle) < 0)
+    if(sock_connection_handler::handle_input(handle) < 0)
     {
-        LOG(WARNING) << "error when connection_handler::handle_input";
+        LOG(WARNING) << "error when sock_connection_handler::handle_input";
         return -1;
     }
 

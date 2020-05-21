@@ -8,7 +8,7 @@
 #include "net/unp.h"
 #include "proto/mess.pb.h"
 #include "reactor/buffer.h"
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 #include "reactor/connector.h"
 #include "reactor/reactor.h"
 #include "reactor/tcp_client.h"
@@ -16,16 +16,16 @@
 
 using namespace downloader;
 
-struct ProtoTestHandler : public reactor::connection_handler
+struct ProtoTestHandler : public reactor::sock_connection_handler
 {
 public:
     ProtoTestHandler(reactor::Reactor& react, const std::string& url) 
-        : connection_handler(react)
+        : sock_connection_handler(react)
         ,url_(url) {}
 
     virtual int handle_input(int handle) override
     {
-        if(connection_handler::handle_input(handle) < 0)
+        if(sock_connection_handler::handle_input(handle) < 0)
         {
             return -1;
         }

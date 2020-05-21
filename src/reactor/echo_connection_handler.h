@@ -1,13 +1,13 @@
 #ifndef ECHO_CONNECTION_HANDLER_H_
 #define ECHO_CONNECTION_HANDLER_H_
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 #include "boost/asio/buffer.hpp"
 #include "boost/beast/core/error.hpp"
 
 namespace reactor
 {
 
-class echo_connection_handler : public connection_handler
+class echo_connection_handler : public sock_connection_handler
 {
 public:
     echo_connection_handler(Reactor& reactor);
@@ -18,9 +18,9 @@ private:
 };
 
 
-struct Stream{
-    connection_handler& handler_;
-    Stream(connection_handler& handler) : handler_(handler){}
+struct Stream1{
+    sock_connection_handler& handler_;
+    Stream1(sock_connection_handler& handler) : handler_(handler){}
 
     void operator()(boost::beast::error_code&, const boost::asio::mutable_buffer&)
     {
@@ -44,9 +44,9 @@ struct Stream{
 
 class WriteLambda
 {
-    connection_handler& handler_;
+    sock_connection_handler& handler_;
 public:
-    explicit WriteLambda(connection_handler& handler) : handler_(handler) { }
+    explicit WriteLambda(sock_connection_handler& handler) : handler_(handler) { }
 
     template<class ConstBufferSequence>
     void operator()(boost::beast::error_code& , ConstBufferSequence const& buffers)

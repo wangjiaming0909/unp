@@ -112,7 +112,7 @@ void acceptor::close_read_handler(int handle)
     {
         LOG(ERROR) << "Close read Handler error, handle: " << handle;
     }
-    //一般也不会有别人会获得这些 connection_handler 的指针,因此 reset 之后就会析构此 connection_handler
+    //一般也不会有别人会获得这些 sock_connection_handler 的指针,因此 reset 之后就会析构此 sock_connection_handler
     // read_handlers_[handle]->close();
     read_handlers_[handle].reset();
     connectionCount_--;
@@ -132,7 +132,7 @@ int acceptor::make_read_handler(Reactor &reactor_to_register)
         return -1;
     }
 
-    std::shared_ptr<connection_handler> handler{new echo_connection_handler{reactor_to_register}};
+    std::shared_ptr<sock_connection_handler> handler{new echo_connection_handler{reactor_to_register}};
     handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
 
     net::inet_addr peer_addr{};

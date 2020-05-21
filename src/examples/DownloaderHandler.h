@@ -1,5 +1,5 @@
 #pragma once
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 #include "http/Http1xCodec.h"
 #include "http/http_parser/URLParser.h"
 #include "util/FileWriter.h"
@@ -10,12 +10,12 @@ namespace examples
 
 class Downloader;
 
-class DownloaderHandler : public reactor::connection_handler, http::HttpCodec::Callback{
+class DownloaderHandler : public reactor::sock_connection_handler, http::HttpCodec::Callback{
 public:
     friend class Downloader;
     using MessageSetupCallback_t = std::function<int(http::HttpMessage &mes)>;
     DownloaderHandler(reactor::Reactor &react, MessageSetupCallback_t&& callback, bool isSSL)
-        : connection_handler{react, isSSL}
+        : sock_connection_handler{react, isSSL}
         , request_{}
         , codec_{http::HttpDirection::DOWNSTREAM}
         , mesSetupCallback_{callback}

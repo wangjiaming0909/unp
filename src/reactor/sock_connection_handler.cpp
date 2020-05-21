@@ -1,10 +1,11 @@
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 #include "net/ssl_sock_stream.h"
+#include "net/inet_sock_stream.h"
 #include <mutex>
 
 using namespace reactor;
 
-connection_handler::connection_handler(Reactor &reactor, bool isSSL)
+sock_connection_handler::sock_connection_handler(Reactor &reactor, bool isSSL)
   : EventHandler(reactor)
   , stream_{}
   , input_buffer_()
@@ -17,19 +18,19 @@ connection_handler::connection_handler(Reactor &reactor, bool isSSL)
   initStream();
 }
 
-connection_handler::~connection_handler()
+sock_connection_handler::~sock_connection_handler()
 {
   close();
   closeStream();
 }
 
-const unsigned int connection_handler::BUFFER_HIGH_WATER_MARK = 100 * buffer_chain::MAXIMUM_CHAIN_SIZE;
+const unsigned int sock_connection_handler::BUFFER_HIGH_WATER_MARK = 100 * buffer_chain::MAXIMUM_CHAIN_SIZE;
 
-int connection_handler::handle_input(int handle)
+int sock_connection_handler::handle_input(int handle)
 {
   if(!stream_) 
     return -1;
-  if (input_buffer_.total_len() >= connection_handler::BUFFER_HIGH_WATER_MARK)
+  if (input_buffer_.total_len() >= sock_connection_handler::BUFFER_HIGH_WATER_MARK)
     return 0;
 
   if (handle != stream_->getHandle() || handle == INVALID_HANDLE) {
@@ -70,7 +71,7 @@ int connection_handler::handle_input(int handle)
   return 0;
 }
 
-int connection_handler::handle_output(int handle)
+int sock_connection_handler::handle_output(int handle)
 {
   std::lock_guard<std::mutex> gurad{mutex_};
   if (output_buffer_.buffer_length() == 0)
@@ -126,12 +127,12 @@ int connection_handler::handle_output(int handle)
   return 0;
 }
 
-int connection_handler::handle_timeout(int) noexcept
+int sock_connection_handler::handle_timeout(int) noexcept
 {
   return 0;
 }
 
-int connection_handler::handle_close(int)
+int sock_connection_handler::handle_close(int)
 {
   int handle = stream_->getHandle();
   close();
@@ -139,21 +140,21 @@ int connection_handler::handle_close(int)
   return 0;
 }
 
-int connection_handler::handle_signal(int)
+int sock_connection_handler::handle_signal(int)
 {
   return 0;
 }
 
-int connection_handler::get_handle() const
+int sock_connection_handler::get_handle() const
 {
   return stream_->getHandle();
 }
 
-void connection_handler::set_handle(int)
+void sock_connection_handler::set_handle(int)
 {
 }
 
-uint32_t connection_handler::read(char *data_out, uint32_t data_len)
+uint32_t sock_connection_handler::read(char *data_out, uint32_t data_len)
 {
   std::lock_guard<std::mutex> gurad{mutex_};
   if (data_out == 0 || data_len == 0)
@@ -171,7 +172,7 @@ uint32_t connection_handler::read(char *data_out, uint32_t data_len)
   return len_gonna_pullup;
 }
 
-uint32_t connection_handler::read_line(char *data_out, uint32_t data_len, buffer_eol_style eol)
+uint32_t sock_connection_handler::read_line(char *data_out, uint32_t data_len, buffer_eol_style eol)
 {
   if (data_out == 0 || data_len == 0)
     return -1;
@@ -183,7 +184,7 @@ uint32_t connection_handler::read_line(char *data_out, uint32_t data_len, buffer
   return input_buffer_.read_line(data_out, data_len, eol);
 }
 
-uint32_t connection_handler::write(const char *data, uint32_t len, bool is_flush)
+uint32_t sock_connection_handler::write(const char *data, uint32_t len, bool is_flush)
 {
   std::lock_guard<std::mutex> gurad{mutex_};
   if (data == 0 || len == 0)
@@ -201,7 +202,7 @@ uint32_t connection_handler::write(const char *data, uint32_t len, bool is_flush
   return bytesWritten;
 }
 
-void connection_handler::initStream()
+void sock_connection_handler::initStream()
 {
   if(isSSL_)
     stream_.reset(new net::SSLSockStream());
@@ -209,12 +210,12 @@ void connection_handler::initStream()
     stream_.reset(new net::InetSockStream());
 }
 
-int connection_handler::open()
+int sock_connection_handler::open()
 {
   return enable_reading();
 }
 
-void connection_handler::close()
+void sock_connection_handler::close()
 {
   if (read_enabled_)
     disable_reading();
@@ -223,13 +224,13 @@ void connection_handler::close()
   closeStream();
 }
 
-void connection_handler::closeStream()
+void sock_connection_handler::closeStream()
 {
   if(stream_)
     stream_->close();
 }
 
-int connection_handler::close_read(int)
+int sock_connection_handler::close_read(int)
 {
   if(!stream_) 
     return -1;
@@ -238,7 +239,7 @@ int connection_handler::close_read(int)
   return 0;
 }
 
-int connection_handler::close_write(int)
+int sock_connection_handler::close_write(int)
 {
   if(!stream_) return -1;
   if (write_enabled_) disable_writing();
@@ -246,7 +247,7 @@ int connection_handler::close_write(int)
   return 0;
 }
 
-void connection_handler::check_and_invoke_close_callback(int handle)
+void sock_connection_handler::check_and_invoke_close_callback(int handle)
 {
   // if(!read_enabled_ && !write_enabled_)
   // {
@@ -255,7 +256,7 @@ void connection_handler::check_and_invoke_close_callback(int handle)
     // }
 }
 
-int connection_handler::enable_reading()
+int sock_connection_handler::enable_reading()
 {
   if (read_enabled_ == true)
     return 0;
@@ -263,7 +264,7 @@ int connection_handler::enable_reading()
   return reactor_->register_handler(stream_->getHandle(), this, EventHandler::READ_EVENT);
 }
 
-int connection_handler::enable_writing()
+int sock_connection_handler::enable_writing()
 {
   if (write_enabled_ == true) 
     return 0;
@@ -271,7 +272,7 @@ int connection_handler::enable_writing()
   return reactor_->register_handler(stream_->getHandle(), this, EventHandler::WRITE_EVENT);
 }
 
-int connection_handler::disable_reading()
+int sock_connection_handler::disable_reading()
 {
   if (read_enabled_ == false) 
     return 0;
@@ -281,7 +282,7 @@ int connection_handler::disable_reading()
   return ret;
 }
 
-int connection_handler::disable_writing()
+int sock_connection_handler::disable_writing()
 {
   if (write_enabled_ == false)
     return 0;

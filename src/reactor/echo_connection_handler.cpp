@@ -11,7 +11,7 @@ using namespace reactor;
 
 // int echo_connection_handler::i = 0;
 
-echo_connection_handler::echo_connection_handler(Reactor& reactor) : connection_handler(reactor)
+echo_connection_handler::echo_connection_handler(Reactor& reactor) : sock_connection_handler(reactor)
 {
     // util::string time = util::Time::now().toString();
     // std::cout << "constructing echo connectin handler " << i << std::endl;
@@ -29,7 +29,7 @@ echo_connection_handler::~echo_connection_handler()
 int echo_connection_handler::handle_input(int handle)
 {
     LOG(INFO) << "handle: " << handle << " going to read...";
-    if(input_buffer_.total_len() >= connection_handler::BUFFER_HIGH_WATER_MARK)
+    if(input_buffer_.total_len() >= sock_connection_handler::BUFFER_HIGH_WATER_MARK)
     {
         return 0;
     }

@@ -1,6 +1,6 @@
 #pragma once
 #include "proto/decoder.h"
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 #include "proto/sync_package.h"
 
 #include <map>
@@ -15,7 +15,7 @@ enum DirEntryStatus
     idle, syncing, syncInterrupted, syncFailed, syncSucceed
 };
 
-class SyncServerHandler : public reactor::connection_handler
+class SyncServerHandler : public reactor::sock_connection_handler
 {
 public:
     using DirE_t = boost::filesystem::directory_entry;

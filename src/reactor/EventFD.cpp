@@ -2,7 +2,7 @@
 #include "EventFD.h"
 #include "util/easylogging++.h"
 #include "reactor/reactor.h"
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 
 
 using namespace reactor;
@@ -36,7 +36,7 @@ void EventFD::wakeup()
 int EventFD::registerInto(Reactor& reactor)
 {
 	if(event_fd_ < 0) return -1;
-	handler_ = std::make_shared<connection_handler>(reactor);
+	handler_ = std::make_shared<sock_connection_handler>(reactor);
 	handler_->get_sock_stream().setSockFD(event_fd_);
 	return handler_->enable_reading();
 }

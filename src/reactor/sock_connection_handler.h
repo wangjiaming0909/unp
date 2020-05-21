@@ -2,7 +2,7 @@
 #define CONNECTION_H
 
 #include "reactor/EventHandler.h"
-#include "net/inet_sock_stream.h"
+#include "net/sock_stream.h"
 #include "reactor/buffer.h"
 #include "reactor/reactor.h"
 #include "util/easylogging++.h"
@@ -12,12 +12,12 @@
 namespace reactor
 {
 
-//TODO 增加一个字段, 指示此 connection_handler 是否应该被关闭了, 在handle_input 和 handle_output 中检查此字段,
+//TODO 增加一个字段, 指示此 sock_connection_handler 是否应该被关闭了, 在handle_input 和 handle_output 中检查此字段,
 // return -1, 调用 handle_close
-class connection_handler : public EventHandler
+class sock_connection_handler : public EventHandler
 {
 public:
-  connection_handler(Reactor &reactor, bool isSSL = false);
+  sock_connection_handler(Reactor &reactor, bool isSSL = false);
   //read data from sock_stream into buffer input_buffer_, if input_buffer size is below HIGH WATMARK
   //???如果input_buffer已经达到HIGH WATMARK 或者已经达到buffer的最大大小了怎么办
   //buffer do not have the maximum size, chain has
@@ -32,7 +32,7 @@ public:
   virtual int handle_signal(int) override;
   virtual int get_handle() const override;
   virtual void set_handle(int) override;
-  virtual ~connection_handler() override;
+  virtual ~sock_connection_handler() override;
 
 public:
   net::SockStream &get_sock_stream() { return *stream_; }
@@ -109,8 +109,8 @@ protected:
   std::mutex mutex_;
 };
 
-  template <typename T>
-int connection_handler::write(const T& data, bool is_flush)
+template <typename T>
+int sock_connection_handler::write(const T& data, bool is_flush)
 {
   std::lock_guard<std::mutex> gurad(mutex_);
   output_buffer_.append(data);

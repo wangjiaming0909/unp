@@ -224,6 +224,7 @@ TEST(HttpsClientHandler, normal)
 
 TEST(zufang, http)
 {
+    GTEST_SKIP();
     using namespace reactor;
     using namespace std::chrono_literals; 
 

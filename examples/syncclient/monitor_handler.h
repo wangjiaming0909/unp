@@ -1,6 +1,6 @@
 #pragma once
 #include "proto/decoder.h"
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 #include "reactor/reactor.h"
 #include "proto/sync_package.h"
 #include "examples/dirmonitor/DirMonitor.h"
@@ -11,7 +11,7 @@ namespace filesync
 // DirMonitor thread will add modified entries into FileMonitorHandler
 // which thread will pack the `send file packages` and write it to output_buffer_? FileMonitor thread or reactor thread or a new thread?
 //  using FileMonitor thread:
-//    FileMonitor thread need to read all contents of files that need to sync, and write it to connection_handler's out buffer
+//    FileMonitor thread need to read all contents of files that need to sync, and write it to sock_connection_handler's out buffer
 //    reading and writing takes lots of time, and output_buffer_ could be full, 
 //    when output_buffer_ is full, how to send the remaining contents?
 //
@@ -27,7 +27,7 @@ namespace filesync
 //      this thread need to do some accounting job to record the synced offset of entries, it will be useful when output_buffer_ is full
 //      as long as there are syncing tasks need to be done, this thread will continue to read from file and write to output_buffer_
 //    where should we put this new thread?
-class FileMonitorHandler : public reactor::connection_handler, public IDirObserver
+class FileMonitorHandler : public reactor::sock_connection_handler, public IDirObserver
 {
 public:
   FileMonitorHandler(reactor::Reactor& react, IDirObservable& observable);
@@ -38,7 +38,7 @@ private:
   EntryMap entries_;
 };
 
-class ServerMonitorHandler : public reactor::connection_handler
+class ServerMonitorHandler : public reactor::sock_connection_handler
 {
 public:
 enum class ServerStatus{idle, connected, disconnected, reconnecting};

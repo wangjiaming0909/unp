@@ -14,7 +14,7 @@ namespace examples
 
 
 HttpClientHandler::HttpClientHandler(reactor::Reactor &react, const char* url, const char* userAgent, const std::string& displayName) 
-    : connection_handler(react)
+    : sock_connection_handler(react)
     , url_{url}
     , userAgent_(userAgent)
     , req_{beast::http::verb::get, url_.begin(), 11}
@@ -61,7 +61,7 @@ int HttpClientHandler::get()
 int HttpClientHandler::handle_input(int handle)
 {
     bool shouldCloseHandle = false;
-    if(connection_handler::handle_input(handle) < 0)
+    if(sock_connection_handler::handle_input(handle) < 0)
     {
         shouldCloseHandle = true;
     }
@@ -150,7 +150,7 @@ int HttpClientHandler::handle_input(int handle)
 }
 
 HttpDownloader::HttpDownloader(reactor::Reactor &react, const char* url, const char* userAgent, const std::string& displayName)
-    : connection_handler(react)
+    : sock_connection_handler(react)
     , url_{url}
     , userAgent_(userAgent)
     , request_{beast::http::verb::get, url_.c_str(), 11}
@@ -238,10 +238,10 @@ int HttpDownloader::onBody(const char* buf, size_t size)
 
 int HttpDownloader::handle_input(int handle)
 {
-    int ret = connection_handler::handle_input(handle);
+    int ret = sock_connection_handler::handle_input(handle);
     if(ret < 0)
     {
-        LOG(WARNING) << "error when connection_handler::handle_input";
+        LOG(WARNING) << "error when sock_connection_handler::handle_input";
         return -1;
     }
     if(input_buffer_.buffer_length() == 0) 
@@ -272,10 +272,10 @@ int HttpDownloader::handle_input(int handle)
 /*
 int handle_input(int handle)
 {
-    int ret = connection_handler::handle_input(handle);
+    int ret = sock_connection_handler::handle_input(handle);
     if(ret < 0)
     {
-        LOG(WARNING) << "error when connection_handler::handle_input";
+        LOG(WARNING) << "error when sock_connection_handler::handle_input";
         return -1;
     }
 

@@ -1,7 +1,7 @@
 #pragma once
 #include "proto/mess.pb.h"
 #include "proto/mess_wl.pb.h"
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 #include "download.h"
 #include <queue>
 #include <memory>
@@ -13,7 +13,7 @@ namespace downloader
 {
 
 class DownloaderServerHandler : 
-    public reactor::connection_handler, 
+    public reactor::sock_connection_handler, 
     public downloader::Download::DownloadStateCallback,
     public std::enable_shared_from_this<DownloaderServerHandler>
 {

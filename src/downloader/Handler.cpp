@@ -10,7 +10,7 @@ namespace downloader
 {
 
 Handler::Handler(reactor::Reactor& react, const std::string& url, bool isSSL, uint64_t begin, uint64_t end, std::shared_ptr<Download> downloader) 
-    : connection_handler(react, isSSL)
+    : sock_connection_handler(react, isSSL)
     , rangeBegin_(begin)
     , rangeEnd_(end)
     , request_{}
@@ -42,7 +42,7 @@ Handler::~Handler()
 
 int Handler::handle_input(int handle)
 {
-    auto ret = connection_handler::handle_input(handle);
+    auto ret = sock_connection_handler::handle_input(handle);
     if(ret < 0)
     {
         LOG(ERROR) << "error in handle_input...";

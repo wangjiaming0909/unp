@@ -32,8 +32,8 @@ class Reactor;
     TODO reactor内部的线程安全性问题
         reactor 的register, unregister等操作都是在第一线程中完成的
         而handle_events操作都是在其对应的线程中完成的
-    TODO connection_handler 内部的线程安全性问题
-        connection_handler 的get_handle, open, enable_reading等方法都是在第一线程中调用的(在reactor内部)
+    TODO sock_connection_handler 内部的线程安全性问题
+        sock_connection_handler 的get_handle, open, enable_reading等方法都是在第一线程中调用的(在reactor内部)
         而 handle_input, handle_output 都是在对应的reactor线程中被调用的
 */
 

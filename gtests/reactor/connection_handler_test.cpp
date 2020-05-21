@@ -1,14 +1,14 @@
 #include <gtest/gtest.h>
 #include <thread>
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 #include "reactor/epoll_reactor_impl.h"
 #include "reactor/reactor.h"
 
 using namespace reactor;
-TEST(connection_handler, test_thread_safety_of_output_buffer)
+TEST(sock_connection_handler, test_thread_safety_of_output_buffer)
 {
   reactor::Reactor react(new reactor::epoll_reactor_impl());
-  connection_handler handler(react);
+  sock_connection_handler handler(react);
 
   char* d = (char*)::calloc(1024, 1);
 

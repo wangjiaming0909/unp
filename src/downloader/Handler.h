@@ -1,5 +1,5 @@
 #pragma once
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 #include "http/Http1xCodec.h"
 #include "http/HttpMessage.h"
 #include "http/http_parser/URLParser.h"
@@ -12,7 +12,7 @@ namespace downloader
 {
 
 class Download;
-class Handler : public reactor::connection_handler, public http::HttpCodec::Callback
+class Handler : public reactor::sock_connection_handler, public http::HttpCodec::Callback
 {
 public:
     friend class Download;

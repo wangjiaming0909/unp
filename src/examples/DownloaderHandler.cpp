@@ -7,9 +7,9 @@ namespace examples
 
 int DownloaderHandler::handle_input(int handle)
 {
-    if(connection_handler::handle_input(handle) < 0)
+    if(sock_connection_handler::handle_input(handle) < 0)
     {
-        LOG(WARNING) << "error when connection_handler::handle_input";
+        LOG(WARNING) << "error when sock_connection_handler::handle_input";
         return -1;
     }
 

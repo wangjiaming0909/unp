@@ -4,7 +4,7 @@
 #include "net/sock_acceptor.h"
 #include "net/inet_addr.h"
 #include "reactor/reactor.h"
-// #include "reactor/connection_handler.h"
+// #include "reactor/sock_connection_handler.h"
 #include "reactor/echo_connection_handler.h"
 #include "net/unp.h"
 #include <memory>
@@ -28,7 +28,7 @@ enum AcceptorStateEnum
 class acceptor : public EventHandler
 {
 public:
-    using connection_handler_ptr_type = std::shared_ptr<connection_handler>;
+    using connection_handler_ptr_type = std::shared_ptr<sock_connection_handler>;
 
 public:
     acceptor(Reactor &react, const net::inet_addr &local_addr);
@@ -49,7 +49,7 @@ public:
     //unregister listen event from reactor, close the listen fd
     //不关闭 read_handler, 当需要关闭时, 自己调用 close_all
     int close();
-    //connection_handler do not need acceptor to close it, reactor will close it when the connection is over
+    //sock_connection_handler do not need acceptor to close it, reactor will close it when the connection is over
     //so here just remove all handler from read_handlers
     void close_read_handler(int handle);
     int close_all_handlers();
@@ -60,7 +60,7 @@ public:
 
 TEST_PRIVATE:
     //make a read_handler, insert into the vector
-    //reactor_to_register specify the reactor that the new connection_handler will register on
+    //reactor_to_register specify the reactor that the new sock_connection_handler will register on
     int make_read_handler(Reactor &reactor_to_register);
     int activate_read_handler(int handle);
     void increase_current_reactor_index();
@@ -83,13 +83,13 @@ template <typename Handler_t>
 class Acceptor : public EventHandler
 {
 public:
-    using connection_handler_ptr_type = std::shared_ptr<connection_handler>;
+    using connection_handler_ptr_type = std::shared_ptr<sock_connection_handler>;
 
 public:
     Acceptor(Reactor &react, const net::inet_addr &local_addr)
         : EventHandler(react), sock_acceptor_(local_addr), local_addr_(local_addr), read_handlers_(1024), external_reactors_()
     {
-        static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from ConnectionHandler");
+        static_assert(std::is_base_of<sock_connection_handler, Handler_t>::value, "Handler_t should derive from ConnectionHandler");
         this->current_reactor_index_to_register_ = 0;
     }
     //close listen, close all read_handelrs
@@ -181,7 +181,7 @@ public:
 
         return ret;
     }
-    //connection_handler do not need acceptor to close it, reactor will close it when the connection is over
+    //sock_connection_handler do not need acceptor to close it, reactor will close it when the connection is over
     //so here just remove all handler from read_handlers
     void close_read_handler(int handle)
     {
@@ -190,7 +190,7 @@ public:
             LOG(ERROR) << "Close read Handler error, handle: " << handle;
             return;
         }
-        //一般也不会有别人会获得这些 connection_handler 的指针,因此 reset 之后就会析构此 connection_handler
+        //一般也不会有别人会获得这些 sock_connection_handler 的指针,因此 reset 之后就会析构此 sock_connection_handler
         // read_handlers_[handle]->close();
         read_handlers_[handle].reset();
         connectionCount_--;
@@ -208,7 +208,7 @@ public:
 
 TEST_PRIVATE:
     //make a read_handler, insert into the vector
-    //reactor_to_register specify the reactor that the new connection_handler will register on
+    //reactor_to_register specify the reactor that the new sock_connection_handler will register on
     int make_read_handler(Reactor &reactor_to_register)
     {
         if (read_handlers_.size() >= INT32_MAX)
@@ -217,7 +217,7 @@ TEST_PRIVATE:
             return -1;
         }
 
-        std::shared_ptr<connection_handler> handler{new Handler_t{reactor_to_register}};
+        std::shared_ptr<sock_connection_handler> handler{new Handler_t{reactor_to_register}};
         handler->set_closed_callback(std::bind(&Acceptor::close_read_handler, this, std::placeholders::_1));
 
         net::inet_addr peer_addr{};

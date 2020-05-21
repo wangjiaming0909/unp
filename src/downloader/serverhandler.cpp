@@ -10,7 +10,7 @@ namespace downloader
 using namespace downloadmessage;
 
 DownloaderServerHandler::DownloaderServerHandler(reactor::Reactor& react) 
-    : connection_handler(react)
+    : sock_connection_handler(react)
     , currentMess_{}
     , downloaderMap_{}
     , mutex_{}
@@ -26,7 +26,7 @@ int DownloaderServerHandler::open()
 int DownloaderServerHandler::handle_input(int handle)
 {
     LOG(INFO) << "DownloaderServerHandler::handler_input()";
-    auto ret = connection_handler::handle_input(handle);
+    auto ret = sock_connection_handler::handle_input(handle);
     if(ret < 0) return -1;
 
 	if (input_buffer_.buffer_length() == 0) return 0;
@@ -43,7 +43,7 @@ int DownloaderServerHandler::handle_output(int handle)
 {
     std::lock_guard<std::mutex> guard{mutex_};
     //LOG(INFO) << "DownloaderServerHandler::handle_output()";
-    if(connection_handler::handle_output(handle) != 0)
+    if(sock_connection_handler::handle_output(handle) != 0)
     {
         LOG(ERROR) << "output error...";
         return -1;
@@ -95,7 +95,7 @@ int DownloaderServerHandler::decode()
 int DownloaderServerHandler::handle_close(int fd)
 {
     LOG(INFO) << "DownloaderServerhandler::Handle_close()";
-    return connection_handler::handle_close(fd);
+    return sock_connection_handler::handle_close(fd);
 }
 
 void DownloaderServerHandler::dispatchMessage(Mess_WL& mes)
@@ -141,7 +141,7 @@ void DownloaderServerHandler::saveCurrentMess() { }
 
 void DownloaderServerHandler::destroy()
 {
-    connection_handler::handle_close(stream_->getHandle());
+    sock_connection_handler::handle_close(stream_->getHandle());
 }
 
 //this will be called in another thread

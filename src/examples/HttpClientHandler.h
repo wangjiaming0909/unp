@@ -1,6 +1,6 @@
 #pragma once
 
-#include "reactor/connection_handler.h"
+#include "reactor/sock_connection_handler.h"
 #include "util/string_piece/string_piece.h"
 #include "boost/beast/http.hpp"
 #include "boost/beast/core.hpp"
@@ -16,7 +16,7 @@ namespace examples
 
 using namespace boost;
 
-class HttpClientHandler : public reactor::connection_handler
+class HttpClientHandler : public reactor::sock_connection_handler
 {
 private:
     string_piece::const_string_piece url_;
@@ -35,7 +35,7 @@ private:
 };
 
 
-class HttpDownloader : public reactor::connection_handler, public http::HttpCodec::Callback
+class HttpDownloader : public reactor::sock_connection_handler, public http::HttpCodec::Callback
 {
 public:
     HttpDownloader(reactor::Reactor &react, const char* url, const char* userAgent, const std::string& displayName);

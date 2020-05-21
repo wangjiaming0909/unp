@@ -8,11 +8,11 @@
 
 static int state = 0;
 
-struct FakeConnectionHandler : public reactor::connection_handler
+struct FakeConnectionHandler : public reactor::sock_connection_handler
 {
 public:
     FakeConnectionHandler(reactor::Reactor& react, const std::string& name) 
-        : connection_handler(react)
+        : sock_connection_handler(react)
         , name(name)
         {
             state = 1;

@@ -6,7 +6,7 @@ namespace filesync
 
 
   SyncHandler::SyncHandler(reactor::Reactor& react)
-    : connection_handler(react)
+    : sock_connection_handler(react)
   {}
 
   SyncHandler::~SyncHandler()

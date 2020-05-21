@@ -5,7 +5,7 @@ namespace filesync
 {
 
 SyncServerHandler::SyncServerHandler(reactor::Reactor& react)
-    : connection_handler(react)
+    : sock_connection_handler(react)
     , localStoreDirectory_{boost::filesystem::current_path()}
     , receivedEntries_{}
 {
@@ -13,7 +13,7 @@ SyncServerHandler::SyncServerHandler(reactor::Reactor& react)
 
 int SyncServerHandler::handle_input(int handle)
 {
-    int ret = connection_handler::handle_input(handle);
+    int ret = sock_connection_handler::handle_input(handle);
     if (ret < 0)
     {
         return ret;

@@ -6,7 +6,7 @@ namespace reactor{
 
 class Reactor;
 class EventHandler;
-class connection_handler;
+class sock_connection_handler;
 
 class EventFD {
 public:
@@ -21,7 +21,7 @@ public:
 	void wakeup();
 private:
 	int event_fd_;
-	std::shared_ptr<connection_handler> handler_;
+	std::shared_ptr<sock_connection_handler> handler_;
 };
 
 }

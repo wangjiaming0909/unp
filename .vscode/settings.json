@@ -96,7 +96,7 @@
             }
         ]
     },
-    "catch2TestExplorer.executables": [
+    "testMate.cpp.test.advancedExecutables": [
         {
             "name": "${filename}",
             "description": "${relDirpath}/",
