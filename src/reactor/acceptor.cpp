@@ -1,4 +1,5 @@
 #include "reactor/acceptor.h"
+#include "net/sock_stream.h"
 
 using namespace reactor;
 
@@ -137,7 +138,12 @@ int acceptor::make_read_handler(Reactor &reactor_to_register)
 
     net::inet_addr peer_addr{};
 
-    int ret = sock_acceptor_.accept(handler->get_sock_stream(), &peer_addr);
+    auto* sock_stream = dynamic_cast<net::SockStream*>(handler->get_stream());
+    if (sock_stream == nullptr) {
+      return -1;
+    }
+
+    int ret = sock_acceptor_.accept(*sock_stream, &peer_addr);
     if (ret != 0)
     {
         LOG(ERROR) << "Acceptor error..." << strerror(errno);
@@ -166,7 +172,7 @@ int acceptor::activate_read_handler(int handle)
 
     return handler->open();
 
-    // if(handler->get_sock_stream().get_sock_fd().set_non_blocking() != 0)
+    // if(handler->get_stream().get_sock_fd().set_non_blocking() != 0)
     // {
     //     LOG(ERROR) << "Set nonblock error, handle : " << handle << " error: " << strerror(errno);
     //     return -1;

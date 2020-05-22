@@ -91,9 +91,9 @@ int SSLSockStream::initSSL()
     return 0;
 }
 
-int SSLSockStream::setSockFD(int handle)
+int SSLSockStream::set_handle(int handle)
 {
-    return (SockStream::setSockFD(handle) >= 0) && initSSL();
+    return (SockStream::set_handle(handle) >= 0) && initSSL();
 }
 
 int SSLSockStream::doHandShake()

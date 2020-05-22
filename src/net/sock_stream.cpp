@@ -55,4 +55,14 @@ ssize_t SockStream::writev_imp(const iovec iov[], int n)
   return writeLen;
 }
 
+int SockStream::set_handle(int handle)
+{
+  if(handle == INVALID_HANDLE)
+    return -1;
+  if (sock_fd_.get_handle() != INVALID_HANDLE)
+    sock_fd_.close();
+  sock_fd_.set_handle(handle);
+  return handle;
+}
+
 }

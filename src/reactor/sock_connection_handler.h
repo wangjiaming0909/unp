@@ -3,9 +3,8 @@
 
 #include "reactor/EventHandler.h"
 #include "net/sock_stream.h"
-#include "reactor/buffer.h"
-#include "reactor/reactor.h"
 #include "util/easylogging++.h"
+#include "connection_handler.h"
 #include <functional>
 #include <mutex>
 
@@ -14,7 +13,7 @@ namespace reactor
 
 //TODO 增加一个字段, 指示此 sock_connection_handler 是否应该被关闭了, 在handle_input 和 handle_output 中检查此字段,
 // return -1, 调用 handle_close
-class sock_connection_handler : public EventHandler
+class sock_connection_handler : public connection_handler
 {
 public:
   sock_connection_handler(Reactor &reactor, bool isSSL = false);
@@ -35,32 +34,28 @@ public:
   virtual ~sock_connection_handler() override;
 
 public:
-  net::SockStream &get_sock_stream() { return *stream_; }
+  //net::SockStream &get_sock_stream() { return *stream_; }
   //read 只是从intput_buffer中读取数据，并不会从socket中读取
   //return bytes read
-  uint32_t read(char *data_out, uint32_t data_len);
+  //virtual uint32_t read(char *data_out, uint32_t data_len);
   //data_len means the length of data_out
   //not the returned length of data_out
-  uint32_t read_line(char *data_out, uint32_t data_len, buffer_eol_style eol);
+  //uint32_t read_line(char *data_out, uint32_t data_len, buffer_eol_style eol);
   //最初我们不注册 write事件，因为sock_stream一直都是可写，直到达到 socket 出缓冲区的 HIGH WATER MARK 为止
   //所以handle_output会被频繁调用
   //write 仅仅是将data写进output缓冲区的末尾，至于什么时候会被写进socket中，看buffer中有多少数据
   //return bytes written
-  uint32_t write(const char *data, uint32_t len, bool is_flush = true);
-  template <typename T>
-  int write(const T &data, bool is_flush = false);
+  //uint32_t write(const char *data, uint32_t len, bool is_flush = true);
+  //template <typename T>
+  //int write(const T &data, bool is_flush = false);
 
-  virtual int open();
-  void close();
-  void closeStream();
-  void clear_input_buffer()
-  {
-    input_buffer_.drain(1);
-  }
+  //virtual int open();
+  //void close();
+  //void closeStream();
 
 protected:
-  virtual int close_read(int) override;
-  virtual int close_write(int) override;
+  //virtual int close_read(int) override;
+  //virtual int close_write(int) override;
 
   //check input_buffer,
   //1, if input_buffer has enough data
@@ -73,15 +68,9 @@ protected:
   //    int write_i();
 
   void check_and_invoke_close_callback(int handle);
-  void initStream();
+  virtual void init_stream() override;
 
 public:
-  //registering
-  int enable_reading();
-  //registering
-  int enable_writing();
-  int disable_reading();
-  int disable_writing();
   void set_closed_callback(std::function<void(int)> callback) { closed_callback_ = std::move(callback); }
 
 #ifdef TESTING
@@ -98,26 +87,9 @@ public:
 #else
 protected:
 #endif
-  std::shared_ptr<net::SockStream> stream_;
-  buffer input_buffer_;
-  buffer output_buffer_;
-  bool read_enabled_;
-  bool write_enabled_;
-  static const unsigned int BUFFER_HIGH_WATER_MARK;
   std::function<void(int)> closed_callback_;
   bool isSSL_;
-  std::mutex mutex_;
 };
-
-template <typename T>
-int sock_connection_handler::write(const T& data, bool is_flush)
-{
-  std::lock_guard<std::mutex> gurad(mutex_);
-  output_buffer_.append(data);
-  if (is_flush && !write_enabled_)
-    enable_writing();
-  return sizeof(data);
-}
 
 } // namespace reactor
 #endif /* CONNECTION_H */

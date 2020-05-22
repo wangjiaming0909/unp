@@ -19,11 +19,9 @@ public:
   virtual ssize_t recv(void *buffer, size_t len, int flags) = 0;
   virtual ssize_t readv(iovec iov[], int n) = 0;
   //send alse has a flags parameter
-  virtual ssize_t send(const void *buffer, size_t len, int flags) = 0;
   virtual ssize_t writev(const iovec iov[], int n) = 0;
   virtual ssize_t recv_n(void *buffer, size_t len, int flags) = 0;
   virtual ssize_t readv_n(iovec iov[], size_t n) = 0;
-  virtual ssize_t send_n(const void *buffer, size_t len, int flags) = 0;
   virtual int connect() { return 0; }
   virtual int accept() { return 0; }
   //when connecting, open a sockfd first
@@ -32,15 +30,14 @@ public:
     return sock_fd_.open(family, type, protocol, reuse_addr);
   }
   //when accepting, the fd will be open by ::accept, so set it into the sockstream
-  virtual inline int setSockFD(int handle);
+  virtual int set_handle(int handle) override;
 
 public:
-  void closeReader() { sock_fd_.shut_down(SHUT_RD); }
-  void closeWriter() { sock_fd_.shut_down(SHUT_WR); }
+  virtual void close_read() override { sock_fd_.shut_down(SHUT_RD); }
+  virtual void close_write() override { sock_fd_.shut_down(SHUT_WR); }
   int getHandle() const override { return sock_fd_.get_handle(); }
   //[handle] must be a opened socket handle
   bool hasHandle() const override { return sock_fd_.get_handle() != INVALID_HANDLE; }
-  inet_sock& getSockFD() { return sock_fd_; }
   int setNonBolcking() override { return sock_fd_.set_non_blocking(); }
   int restoreBlocking() override { return sock_fd_.restore_blocking(); }
 
@@ -54,13 +51,4 @@ protected:
   inet_sock sock_fd_;
 };
 
-int SockStream::setSockFD(int handle)
-{
-  if(handle == INVALID_HANDLE)
-    return -1;
-  if (sock_fd_.get_handle() != INVALID_HANDLE)
-    sock_fd_.close();
-  sock_fd_.set_handle(handle);
-  return handle;
-}
 }

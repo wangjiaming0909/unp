@@ -50,7 +50,7 @@ public:
   int connect() override;
   int accept() override;
   int openSockFD(int family, sock_type type, int protocol, int reuse_addr) override;
-  int setSockFD(int handle) override;
+  int set_handle(int handle) override;
 
 protected:
   int initSSL();

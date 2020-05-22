@@ -76,7 +76,7 @@ int net::sock_acceptor::accept(
             LOG(INFO) << "interrupted... restarting.....";
             continue;
         } else if(client_fd == -1) return -1;//other errors
-        ret = client_stream.setSockFD(client_fd);
+        ret = client_stream.set_handle(client_fd);
         //--log
         if (remote_addr)
         {

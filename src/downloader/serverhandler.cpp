@@ -148,7 +148,7 @@ void DownloaderServerHandler::destroy()
 void DownloaderServerHandler::taskCompleted(int id)
 {
     std::lock_guard<std::mutex> guard{mutex_};
-    if(!this->stream_->hasHandle() || !stream_->getSockFD().canWrite())
+    if(!this->stream_->hasHandle() || !stream_->get_handle().canWrite())
     {
         //LOG(WARNING) << "Sending task completed, but peer socket has been closed...";
         return;
@@ -162,7 +162,7 @@ void DownloaderServerHandler::taskCompleted(int id)
 
 bool DownloaderServerHandler::isWritable() const
 {
-    if(!this->stream_->hasHandle() || !stream_->getSockFD().canWrite())
+    if(!this->stream_->hasHandle() || !stream_->get_handle().canWrite())
     {
         return false;
     }
