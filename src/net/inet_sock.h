@@ -2,10 +2,11 @@
 #define _UNP_SOCK_H_
 
 #include <sys/socket.h>
+#include <unistd.h>
+
 #include "unp.h"
 #include "inet_addr.h"
 #include "handle_set.h"
-#include <unistd.h>
 #include "util/easylogging++.h"
 #include "net/fd.h"
 namespace net{
