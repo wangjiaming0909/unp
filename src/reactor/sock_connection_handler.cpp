@@ -25,7 +25,7 @@ int sock_connection_handler::handle_input(int handle)
   if (input_buffer_.total_len() >= sock_connection_handler::BUFFER_HIGH_WATER_MARK)
     return 0;
 
-  if (handle != stream_->getHandle() || handle == INVALID_HANDLE) {
+  if (handle != stream_->get_handle() || handle == INVALID_HANDLE) {
     LOG(ERROR) << "Register error: handle error: " << handle;
     return -1;
   }
@@ -69,7 +69,7 @@ int sock_connection_handler::handle_output(int handle)
   if (output_buffer_.buffer_length() == 0)
     return 0;
 
-  if (handle != stream_->getHandle() || handle == INVALID_HANDLE) {
+  if (handle != stream_->get_handle() || handle == INVALID_HANDLE) {
     LOG(ERROR) << "Register error: handle error: " << handle;
     return -1;
   }
@@ -123,7 +123,7 @@ int sock_connection_handler::handle_timeout(int) noexcept { return 0; }
 
 int sock_connection_handler::handle_close(int)
 {
-  int handle = stream_->getHandle();
+  int handle = stream_->get_handle();
   close();
   check_and_invoke_close_callback(handle);
   return 0;
@@ -133,7 +133,7 @@ int sock_connection_handler::handle_signal(int) { return 0; }
 
 int sock_connection_handler::get_handle() const
 {
-  return stream_->getHandle();
+  return stream_->get_handle();
 }
 
 void sock_connection_handler::set_handle(int)
@@ -143,9 +143,9 @@ void sock_connection_handler::set_handle(int)
 void sock_connection_handler::init_stream()
 {
   if(isSSL_)
-    stream_.reset(new net::SSLSockStream());
+    stream_ = new net::SSLSockStream();
   else
-    stream_.reset(new net::InetSockStream());
+    stream_ = new net::InetSockStream();
 }
 void sock_connection_handler::check_and_invoke_close_callback(int handle)
 {

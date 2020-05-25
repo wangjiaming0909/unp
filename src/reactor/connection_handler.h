@@ -4,6 +4,7 @@
 
 #include "reactor/EventHandler.h"
 #include "reactor/buffer.h"
+#include "net/unp.h"
 
 namespace reactor
 {
@@ -39,7 +40,16 @@ public:
     input_buffer_.drain(1);
   }
 
-protected:
+#ifdef TESTING
+  void drain_output_buffer(uint32_t size)
+  {
+    std::lock_guard<std::mutex> gurad{output_mutex_};
+    size = std::min(size, output_buffer_.buffer_length());
+    output_buffer_.drain(size);
+  }
+#endif
+
+TEST_PROTECTED:
   Stream* stream_;
   buffer input_buffer_;
   buffer output_buffer_;

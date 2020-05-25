@@ -76,7 +76,7 @@ public:
 #ifdef TESTING
   void drain_output_buffer(uint32_t size)
   {
-    std::lock_guard<std::mutex> gurad{mutex_};
+    std::lock_guard<std::mutex> gurad{output_mutex_};
     size = std::min(size, output_buffer_.buffer_length());
     output_buffer_.drain(size);
   }

@@ -34,7 +34,7 @@ int echo_connection_handler::handle_input(int handle)
         return 0;
     }
 
-    if(handle != stream_->getHandle() || handle == INVALID_HANDLE)
+    if(handle != stream_->get_handle() || handle == INVALID_HANDLE)
     {
         LOG(ERROR) << "Register error: handle error: " << handle;
         return -1;

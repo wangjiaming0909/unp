@@ -91,14 +91,14 @@ int connection_handler::enable_reading()
   if (read_enabled_ == true)
     return 0;
   read_enabled_ = true;
-  return reactor_->register_handler(stream_->getHandle(), this, EventHandler::READ_EVENT);
+  return reactor_->register_handler(stream_->get_handle(), this, EventHandler::READ_EVENT);
 }
 int connection_handler::enable_writing()
 {
   if (write_enabled_ == true) 
     return 0;
   write_enabled_ = true;
-  return reactor_->register_handler(stream_->getHandle(), this, EventHandler::WRITE_EVENT);
+  return reactor_->register_handler(stream_->get_handle(), this, EventHandler::WRITE_EVENT);
 }
 
 int connection_handler::disable_reading()
@@ -106,7 +106,7 @@ int connection_handler::disable_reading()
   if (read_enabled_ == false) 
     return 0;
   read_enabled_ = false;
-  int ret = reactor_->unregister_handler(stream_->getHandle(), this, EventHandler::READ_EVENT);
+  int ret = reactor_->unregister_handler(stream_->get_handle(), this, EventHandler::READ_EVENT);
   //    check_and_invoke_close_callback();
   return ret;
 }
@@ -116,7 +116,7 @@ int connection_handler::disable_writing()
   if (write_enabled_ == false)
     return 0;
   write_enabled_ = false;
-  int ret = reactor_->unregister_handler(stream_->getHandle(), this, EventHandler::WRITE_EVENT);
+  int ret = reactor_->unregister_handler(stream_->get_handle(), this, EventHandler::WRITE_EVENT);
   //    check_and_invoke_close_callback();
   return ret;
 }

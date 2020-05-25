@@ -141,14 +141,14 @@ void DownloaderServerHandler::saveCurrentMess() { }
 
 void DownloaderServerHandler::destroy()
 {
-    sock_connection_handler::handle_close(stream_->getHandle());
+    sock_connection_handler::handle_close(stream_->get_handle());
 }
 
 //this will be called in another thread
 void DownloaderServerHandler::taskCompleted(int id)
 {
     std::lock_guard<std::mutex> guard{mutex_};
-    if(!this->stream_->hasHandle() || !stream_->get_handle().canWrite())
+    if(!this->stream_->has_handle() || !stream_->get_handle())
     {
         //LOG(WARNING) << "Sending task completed, but peer socket has been closed...";
         return;
@@ -162,7 +162,7 @@ void DownloaderServerHandler::taskCompleted(int id)
 
 bool DownloaderServerHandler::isWritable() const
 {
-    if(!this->stream_->hasHandle() || !stream_->get_handle().canWrite())
+    if(!this->stream_->has_handle() || !stream_->can_write())
     {
         return false;
     }
@@ -201,7 +201,7 @@ void DownloaderServerHandler::sendResponseMess(int id, float percent, Download_R
     }
 }
 
-void DownloaderServerHandler::taskFailed(int id, const std::string& mes)
+void DownloaderServerHandler::taskFailed(int id, const std::string&/* mes*/)
 {
     if(!isWritable()) return;
     sendResponseMess(id, 0, Download_Response_State_FAILED);

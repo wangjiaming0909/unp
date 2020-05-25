@@ -27,7 +27,7 @@ public:
     auto addr_str = remote_addr.get_address_string();
     auto port = remote_addr.get_port_number();
     LOG(INFO) << "trying to connect to: " << addr_str << ":" << port;
-    int ret = ::connect(new_stream.getHandle(),
+    int ret = ::connect(new_stream.get_handle(),
         reinterpret_cast<sockaddr *>(remote_addr.get_sockaddr_in_ptr().get()),
         remote_addr.get_size());
     ret = connect_error_handling(new_stream, ret, timeout); //timeout used to wait for the connect
@@ -40,14 +40,12 @@ protected:
   int shared_open(SockStream &new_stream, int family,
       int protocol, int reuse_addr)
   {
-    if (new_stream.getHandle() == INVALID_HANDLE) {
-      if (new_stream.openSockFD(family, sock_type::stream, protocol, reuse_addr) == -1)
-        return -1;
-    } else {
+    if (new_stream.get_handle() != INVALID_HANDLE) {
       new_stream.close();
-      if (new_stream.openSockFD(family, sock_type::stream, protocol, reuse_addr) == -1)
-        return -1;
     }
+    new_stream.set_sock_info(family, protocol, reuse_addr);
+    if (new_stream.open() == -1)
+      return -1;
     return 0;
   }
 
@@ -71,7 +69,7 @@ private:
     //TODO what if timeout is nullptr
     auto timeout_milli_seconds = std::chrono::duration_cast<milliseconds>(*timeout);
     int h = unp::handle_timed_connect_using_select(
-        new_stream.getHandle(),
+        new_stream.get_handle(),
         &timeout_milli_seconds);
     //timeout or poll error
     if (h == INVALID_HANDLE) {

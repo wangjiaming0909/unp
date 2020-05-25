@@ -152,7 +152,7 @@ public:
     //open a socket, bind to local_addr, listen, acceptor, and register to reactor
     int open()
     {
-        if (sock_acceptor_.open(local_addr_) != 0)
+        if (sock_acceptor_.open() != 0)
         {
             LOG(ERROR) << "Opening a socket error..." << strerror(errno);
             return -1;
