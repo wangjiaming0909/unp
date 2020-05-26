@@ -1,5 +1,6 @@
 #include "net/sock_stream.h"
 #include <sys/uio.h>
+#include "reactor/buffer.h"
 
 namespace net
 {
@@ -14,7 +15,7 @@ ssize_t SockStream::read_imp(void *buffer, size_t len)
 {
   auto handle = fd_->get_fd();
   if (handle == INVALID_HANDLE || !fd_->canRead())
-    return -1;
+    return 0;
   int read_len = ::read(handle, static_cast<char *>(buffer), len);
   if(read_len > 0) {
     //LOG(INFO) << "Read from: " << handle << " read: " << read_len << "bytes";

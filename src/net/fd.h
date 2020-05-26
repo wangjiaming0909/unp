@@ -1,10 +1,12 @@
 #pragma once
+#include "boost/core/noncopyable.hpp"
 #include "net/macros.h"
 #include <fcntl.h>
+#include <boost/noncopyable.hpp>
 
 namespace unp
 {
-struct fd
+struct fd : public boost::noncopyable
 {
   fd();
   virtual ~fd();

@@ -17,10 +17,10 @@ inet_sock::inet_sock()
   , type_(sock_type::unknown)
   , protocol_(0)
   , reuse_addr_(false)
-{
-}
+{ }
+
 inet_sock::~inet_sock()
-{ 
+{
   if (canRead_ || canWrite_) {
     close(-1);
   }

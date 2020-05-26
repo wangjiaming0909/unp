@@ -8,11 +8,13 @@ class FileFD : public fd
 {
 public:
   FileFD();
-  FileFD(const char* file_path);
+  FileFD(const char* file_path, int flags);
   ~FileFD();
-  virtual int open() = 0;
-  virtual int close(int how) = 0;
+  void set_open_flags(int flags) {open_flags_ = flags;}
+  virtual int open() override;
+  virtual int close(int how) override;
 TEST_PRIVATE:
   std::string file_path_;
+  int open_flags_;
 };
 }

@@ -1,6 +1,5 @@
 #pragma once
 #include "inet_sock.h"
-#include "reactor/buffer.h"
 #include "boost/noncopyable.hpp"
 #include "net/stream.h"
 
@@ -31,39 +30,39 @@ public:
 
 public:
   virtual void close_read() override
-  { 
+  {
     if (fd_)
-      fd_->close(SHUT_RD); 
+      fd_->close(SHUT_RD);
   }
   virtual void close_write() override
-  { 
+  {
     if (fd_)
-      fd_->close(SHUT_WR); 
+      fd_->close(SHUT_WR);
   }
   virtual int set_handle(int handle) override;
-  virtual int get_handle() const override 
-  { 
+  virtual int get_handle() const override
+  {
     if (fd_)
-      return fd_->get_fd(); 
+      return fd_->get_fd();
     return INVALID_HANDLE;
   }
-  virtual bool has_handle() const override 
-  { 
+  virtual bool has_handle() const override
+  {
     if (!fd_)
       return false;
-    return fd_->get_fd() != INVALID_HANDLE; 
+    return fd_->get_fd() != INVALID_HANDLE;
   }
-  int setNonBolcking() override 
-  { 
+  int setNonBolcking() override
+  {
     if (!fd_)
       return -1;
-    return fd_->set_non_blocking(); 
+    return fd_->set_non_blocking();
   }
-  int restoreBlocking() override 
-  { 
+  int restoreBlocking() override
+  {
     if (!fd_)
       return -1;
-    return fd_->restore_blocking(); 
+    return fd_->restore_blocking();
   }
 
 protected:

@@ -1,5 +1,6 @@
 #include "ssl_sock_stream.h"
 #include <openssl/err.h>
+#include "reactor/buffer.h"
 
 namespace net 
 {

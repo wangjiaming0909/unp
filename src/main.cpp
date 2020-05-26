@@ -14,6 +14,7 @@
 #include <string>
 #include "downloader/downloaderserver.h"
 #include "util/timer.h"
+#include <set>
 //#include "examples/Downloader.h"
 
 // INITIALIZE_NULL_EASYLOGGINGPP
@@ -127,6 +128,24 @@ int main(int argc, char** argv)
     //
     //scan();
     //test_plus();
+    //
+  std::set<string> s{};
+  s.insert("asd1");
+  s.insert("asd2");
+  s.insert("asd3");
+  s.insert("asd4");
+  s.insert("asd5");
+
+  auto it = s.begin();
+  bool b = 1;
+  for(; it != s.end(); ++it)
+  {
+    if (b)
+    {
+      auto it2 = s.begin();
+      s.erase(++it2);
+    }
+  }
 }
 
 

@@ -43,7 +43,7 @@ private:
   int protocol_;
   bool reuse_addr_;
   inet_sock(const inet_sock&);
-};  
+};
 
 }
 

@@ -24,8 +24,18 @@ struct Stream : public boost::noncopyable
   virtual int restoreBlocking() = 0;
   virtual void close_read() = 0;
   virtual void close_write() = 0;
-  bool can_write() const {return fd_->canWrite();}
-  bool can_read() const {return fd_->canRead();}
+  bool can_write() const 
+  {
+    if(!fd_)
+      return false;
+    return fd_->canWrite();
+  }
+  bool can_read() const
+  {
+    if (!fd_)
+      return false;
+    return fd_->canRead();
+  }
 
 protected:
   unp::fd* fd_ = nullptr;
