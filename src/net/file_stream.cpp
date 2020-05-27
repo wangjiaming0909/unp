@@ -126,8 +126,7 @@ int FileStream::get_handle() const
 bool FileStream::has_handle() const
 {
   if (!fd_)
-    return false;
-  return fd_->get_fd() != INVALID_HANDLE;
+    return false; return fd_->get_fd() != INVALID_HANDLE;
 }
 
 int FileStream::setNonBolcking()
@@ -142,6 +141,25 @@ int FileStream::restoreBlocking()
   if (fd_)
     return fd_->restore_blocking();
   return -1;
+}
+
+void FileStream::set_path(const char* path)
+{
+  if (!fd_)
+    return;
+  auto file_fd = dynamic_cast<unp::FileFD*>(fd_);
+  if (!file_fd)
+    return
+  file_fd->set_file_path(path);
+}
+
+void FileStream::set_open_flags(int flags)
+{
+  if (!fd_) return;
+  auto file_fd = dynamic_cast<unp::FileFD*>(fd_);
+  if (!file_fd)
+    return
+  file_fd->set_open_flags(flags);
 }
 
 }

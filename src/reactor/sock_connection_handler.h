@@ -74,15 +74,6 @@ public:
   void set_closed_callback(std::function<void(int)> callback) { closed_callback_ = std::move(callback); }
 
 #ifdef TESTING
-  void drain_output_buffer(uint32_t size)
-  {
-    std::lock_guard<std::mutex> gurad{output_mutex_};
-    size = std::min(size, output_buffer_.buffer_length());
-    output_buffer_.drain(size);
-  }
-#endif
-
-#ifdef TESTING
 public:
 #else
 protected:

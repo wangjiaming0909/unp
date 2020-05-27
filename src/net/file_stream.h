@@ -28,6 +28,7 @@ public:
   virtual int setNonBolcking() override;
   virtual int restoreBlocking() override;
 
+  void set_path(const char* path);
   void set_open_flags(int flags);
 private:
   int handle_;

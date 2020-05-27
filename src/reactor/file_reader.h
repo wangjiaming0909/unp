@@ -7,7 +7,10 @@ template <typename Handler_T>
 class FileReader : public ServiceT
 {
 public:
-  FileReader() : ServiceT() {}
+  FileReader(Handler_T* handler)
+    : ServiceT()
+    , handler_(handler)
+  {}
   ~FileReader() = default;
 public:
   virtual int open() override;
