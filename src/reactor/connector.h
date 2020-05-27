@@ -1,6 +1,7 @@
 #ifndef _UNP_REACTOR_CONNECTOR_H_
 #define _UNP_REACTOR_CONNECTOR_H_
 
+#include "net/sock_stream.h"
 #include "reactor/EventHandler.h"
 #include "net/sock_connector.h"
 #include "thread/thread_pool.h"
@@ -55,8 +56,11 @@ public:
 template <typename Handler_t>
 typename connector<Handler_t>::ConnectionHandlerPtr_t connector<Handler_t>::connect(const net::inet_addr& target_addr, micro_seconds timeout)
 {
-  auto &stream = this->handlerPtr_->get_sock_stream();
-  if (this->connector_.connect(stream, target_addr, &timeout, 1, 0) != 0) {
+  auto *stream = dynamic_cast<net::SockStream*>(this->handlerPtr_->get_stream());
+  if (!stream) {
+    return nullptr;
+  }
+  if (this->connector_.connect(*stream, target_addr, &timeout, 1, 0) != 0) {
     LOG(WARNING) << "connect to " << target_addr.get_address_string() << " error...";
     return nullptr;
   }

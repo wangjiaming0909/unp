@@ -79,59 +79,59 @@ void Downloader::initTcpClient()
 
 std::vector<std::string> Downloader::divideRanges(uint8_t n)
 {
-	std::vector<std::string> ranges{};
-	if(fileSize_ <= 0) return ranges;
-	ranges.resize(n);
-	uint64_t start = 0;
-	uint64_t stop = -1;
-	for(uint8_t i = 0; i < n - 1; i++)
-	{
-		start = stop + 1;
-		stop = start + fileSize_ / n;
-		ranges[i].append("bytes=").append(std::to_string(start)).append("-").append(std::to_string(stop));
-	}
-	start = stop + 1;
-	ranges[n - 1].append("bytes=").append(std::to_string(start)).append("-").append(std::to_string(fileSize_));
-	return ranges;
+  std::vector<std::string> ranges{};
+  if(fileSize_ <= 0) return ranges;
+  ranges.resize(n);
+  uint64_t start = 0;
+  uint64_t stop = -1;
+  for(uint8_t i = 0; i < n - 1; i++)
+  {
+    start = stop + 1;
+    stop = start + fileSize_ / n;
+    ranges[i].append("bytes=").append(std::to_string(start)).append("-").append(std::to_string(stop));
+  }
+  start = stop + 1;
+  ranges[n - 1].append("bytes=").append(std::to_string(start)).append("-").append(std::to_string(fileSize_));
+  return ranges;
 }
 
 std::vector<Downloader::Connector_t*> Downloader::rangeDownload(uint8_t n, const std::vector<std::string>& ranges)
 {
-	std::vector<Connector_t*> ret{};
-	if(n != ranges.size()) return ret;
-	ret.resize(n);
-	for(uint8_t i = 0; i < n; i++)
-	{
-		auto callback = std::bind(&Downloader::requestSetupCallback, this, std::placeholders::_1, http::HttpHeaderCode::HTTP_HEADER_RANGE, ranges[i]);
-		auto* connector = clientPtr_->addConnection<Connector_t>(std::move(callback), isSSL_);
-		auto* connection = connector->connect(targetAddr_, 2s);
-		if(connection == nullptr)
-		{
-			LOG(ERROR)	 << "connect failed...";
-			return ret;
-		}
-//        connection->setDownloadRange(ranges
-		connection->setWhenToCloseConnection(http::Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
-		connection->initWriter((fileName_.append(std::to_string(i))).c_str());
-		ret[i] = connector;
-	}
-	return ret;
-}
-
-int Downloader::chunkDownload()
-{
-    auto callback = std::bind(&Downloader::requestSetupCallback, this, std::placeholders::_1, http::HttpHeaderCode::HTTP_HEADER_NONE, "");
+  std::vector<Connector_t*> ret{};
+  if(n != ranges.size()) return ret;
+  ret.resize(n);
+  for(uint8_t i = 0; i < n; i++)
+  {
+    auto callback = std::bind(&Downloader::requestSetupCallback, this, std::placeholders::_1, http::HttpHeaderCode::HTTP_HEADER_RANGE, ranges[i]);
     auto* connector = clientPtr_->addConnection<Connector_t>(std::move(callback), isSSL_);
     auto* connection = connector->connect(targetAddr_, 2s);
     if(connection == nullptr)
     {
-        LOG(ERROR)	 << "connect failed...";
-        return -1;
+      LOG(ERROR) << "connect failed...";
+      return ret;
     }
+    //connection->setDownloadRange(ranges
     connection->setWhenToCloseConnection(http::Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
-    connection->initWriter(fileName_.c_str());
-    clientPtr_->start();
-    return 0;
+    connection->initWriter((fileName_.append(std::to_string(i))).c_str());
+    ret[i] = connector;
+  }
+  return ret;
+}
+
+int Downloader::chunkDownload()
+{
+  auto callback = std::bind(&Downloader::requestSetupCallback, this, std::placeholders::_1, http::HttpHeaderCode::HTTP_HEADER_NONE, "");
+  auto* connector = clientPtr_->addConnection<Connector_t>(std::move(callback), isSSL_);
+  auto* connection = connector->connect(targetAddr_, 2s);
+  if(connection == nullptr)
+  {
+    LOG(ERROR)	 << "connect failed...";
+    return -1;
+  }
+  connection->setWhenToCloseConnection(http::Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
+  connection->initWriter(fileName_.c_str());
+  clientPtr_->start();
+  return 0;
 }
 
 int Downloader::download()

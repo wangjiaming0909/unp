@@ -62,4 +62,7 @@ int handle_timed_accept_using_poll(int listen_handle, const milliseconds* timeou
 #define TEST_PROTECTED protected
 #endif //TESTING
 
+#define NOT_USED(arg) (void)(arg)
+#define THROW_NOT_IMPLETED_EXCEPTION throw new std::logic_error("Not Implemented")
+
 #endif // _UNP_H_

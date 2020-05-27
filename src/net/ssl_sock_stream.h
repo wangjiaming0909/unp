@@ -28,7 +28,8 @@ enum class SSLSockStreamState
 class SSLSockStream : public SockStream
 {
 public:
-  SSLSockStream() : SockStream{} { }
+  SSLSockStream() : SockStream() {}
+  SSLSockStream(int family, int protocol) : SockStream(family, protocol) { }
   ~SSLSockStream();
   //read version use system call read which has no flags
   ssize_t read(void *buffer, size_t len) override;
@@ -49,8 +50,8 @@ public:
 
   int connect() override;
   int accept() override;
-  int openSockFD(int family, sock_type type, int protocol, int reuse_addr) override;
-  int setSockFD(int handle) override;
+  virtual int open() override;
+  int set_handle(int handle) override;
 
 protected:
   int initSSL();

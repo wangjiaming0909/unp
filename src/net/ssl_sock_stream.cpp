@@ -1,5 +1,6 @@
 #include "ssl_sock_stream.h"
 #include <openssl/err.h>
+#include "reactor/buffer.h"
 
 namespace net 
 {
@@ -30,7 +31,7 @@ ssize_t SSLSockStream::read(void *buffer, size_t len)
 ssize_t SSLSockStream::read(reactor::buffer& buf, size_t len)
 {
     char* const data_p = static_cast<char*>(::calloc(len + 1, 1));
-    if(!sock_fd_.canRead()) return -1;
+    if(!can_read()) return -1;
     int read_len = 0;
     while( (read_len = SSL_read(ssl_, data_p, len)) > 0)
     {
@@ -55,45 +56,43 @@ ssize_t SSLSockStream::readv(iovec iov[], int n)
 ssize_t SSLSockStream::send(const void *buffer, size_t len, int)
 {
     // return send_imp(buffer, len, flags);
-    if(!sock_fd_.canWrite()) return 0;
+    if(!can_write()) return 0;
     return SSL_write(ssl_, buffer, len);
 }
 
 ssize_t SSLSockStream::write(const void* buffer, size_t len)
 {
-	if(sock_fd_.get_handle() == INVALID_HANDLE || !sock_fd_.canWrite()) return 0;
+	if(fd_->get_fd() == INVALID_HANDLE || !can_write()) return 0;
 	int write_len = 0;
-	write_len = ::write(sock_fd_.get_handle(), buffer, len);
+	write_len = ::write(fd_->get_fd(), buffer, len);
 	// LOG(INFO) << "Send to: " << sock_fd_->get_handle() << " send: " << len << "bytes";
 	return write_len;
 }
 
-int SSLSockStream::openSockFD(int family, sock_type type, int protocol, int reuse_addr)
+int SSLSockStream::open()
 {
 	//open sockfd will create a socket fd
-	return (SockStream::openSockFD(family, type, protocol, reuse_addr) == 0) && initSSL();
+	return (SockStream::open() == 0) && initSSL();
 }
 
 int SSLSockStream::initSSL()
 {
-    try
-    {
+    try {
         method_ = sslInitializer_.method;
         sslctx_ = SSL_CTX_new(method_);
         ssl_ = SSL_new(sslctx_);
 
-        SSL_set_fd(ssl_, sock_fd_.get_handle());
-    }catch(...)
-    {
+        SSL_set_fd(ssl_, fd_->get_fd());
+    } catch(...) {
         freeSSL();
         return -1;
     }
     return 0;
 }
 
-int SSLSockStream::setSockFD(int handle)
+int SSLSockStream::set_handle(int handle)
 {
-    return (SockStream::setSockFD(handle) >= 0) && initSSL();
+    return (SockStream::set_handle(handle) >= 0) && initSSL();
 }
 
 int SSLSockStream::doHandShake()

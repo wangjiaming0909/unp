@@ -1,0 +1,21 @@
+set ic
+set asr
+set winsplit=src_big
+set wso=vertical
+set sld=longarrow
+set hls
+set nodis
+
+unmap <F8>
+map <F10> <ESC>in<CR><ESC>
+map <F11> <ESC>is<CR><ESC>
+map <F9> <ESC>ifinish<CR><ESC>
+map c <ESC>ic<CR><ESC>
+map p <ESC>ip<Space>
+map u <ESC>iup<CR><ESC>
+map d <ESC>idown<CR><ESC>
+map f <ESC>if<CR><ESC>
+map L <ESC>iinfo<Space>locals<CR><ESC>
+map t <ESC>ithread<Space>
+map T <ESC>iinfo<Space>threads<CR><ESC>
+map a i

@@ -1,4 +1,5 @@
 #include "reactor/acceptor.h"
+#include "net/sock_stream.h"
 
 using namespace reactor;
 
@@ -77,7 +78,7 @@ int acceptor::handle_close(int handle)
 
 int acceptor::open()
 {
-    if (sock_acceptor_.open(local_addr_) != 0)
+    if (sock_acceptor_.open() != 0)
     {
         LOG(ERROR) << "Opening a socket error..." << strerror(errno);
         return -1;
@@ -109,9 +110,7 @@ int acceptor::close()
 void acceptor::close_read_handler(int handle)
 {
     if (handle < 0 || static_cast<size_t>(handle) > read_handlers_.size())
-    {
         LOG(ERROR) << "Close read Handler error, handle: " << handle;
-    }
     //一般也不会有别人会获得这些 sock_connection_handler 的指针,因此 reset 之后就会析构此 sock_connection_handler
     // read_handlers_[handle]->close();
     read_handlers_[handle].reset();
@@ -126,8 +125,7 @@ int acceptor::close_all_handlers()
 
 int acceptor::make_read_handler(Reactor &reactor_to_register)
 {
-    if (read_handlers_.size() >= INT32_MAX)
-    {
+    if (read_handlers_.size() >= INT32_MAX) {
         LOG(WARNING) << "Too many connections... ";
         return -1;
     }
@@ -136,18 +134,20 @@ int acceptor::make_read_handler(Reactor &reactor_to_register)
     handler->set_closed_callback(std::bind(&acceptor::close_read_handler, this, std::placeholders::_1));
 
     net::inet_addr peer_addr{};
+    auto* sock_stream = dynamic_cast<net::SockStream*>(handler->get_stream());
+    if (sock_stream == nullptr) {
+      return -1;
+    }
 
-    int ret = sock_acceptor_.accept(handler->get_sock_stream(), &peer_addr);
-    if (ret != 0)
-    {
+    int ret = sock_acceptor_.accept(*sock_stream, &peer_addr);
+    if (ret != 0) {
         LOG(ERROR) << "Acceptor error..." << strerror(errno);
         return -1;
     }
 
     int handle = handler->get_handle();
     LOG(INFO) << "connection from: " << peer_addr.get_address_string() << " handle: " << handle;
-    if (handle < 0)
-    {
+    if (handle < 0) {
         LOG(ERROR) << "Handler errror" << strerror(errno);
         return handle;
     }
@@ -166,7 +166,7 @@ int acceptor::activate_read_handler(int handle)
 
     return handler->open();
 
-    // if(handler->get_sock_stream().get_sock_fd().set_non_blocking() != 0)
+    // if(handler->get_stream().get_sock_fd().set_non_blocking() != 0)
     // {
     //     LOG(ERROR) << "Set nonblock error, handle : " << handle << " error: " << strerror(errno);
     //     return -1;

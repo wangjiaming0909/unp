@@ -1,5 +1,6 @@
 #ifndef _UNP_REACTOR_ACCEPTOR_H_
 #define _UNP_REACTOR_ACCEPTOR_H_
+#include "net/sock_stream.h"
 #include "reactor/EventHandler.h"
 #include "net/sock_acceptor.h"
 #include "net/inet_addr.h"
@@ -151,7 +152,7 @@ public:
     //open a socket, bind to local_addr, listen, acceptor, and register to reactor
     int open()
     {
-        if (sock_acceptor_.open(local_addr_) != 0)
+        if (sock_acceptor_.open() != 0)
         {
             LOG(ERROR) << "Opening a socket error..." << strerror(errno);
             return -1;
@@ -211,8 +212,7 @@ TEST_PRIVATE:
     //reactor_to_register specify the reactor that the new sock_connection_handler will register on
     int make_read_handler(Reactor &reactor_to_register)
     {
-        if (read_handlers_.size() >= INT32_MAX)
-        {
+        if (read_handlers_.size() >= INT32_MAX) {
             LOG(WARNING) << "Too many connections... ";
             return -1;
         }
@@ -222,7 +222,11 @@ TEST_PRIVATE:
 
         net::inet_addr peer_addr{};
 
-        int ret = sock_acceptor_.accept(handler->get_sock_stream(), &peer_addr);
+        auto* sock_stream = dynamic_cast<net::SockStream*>(handler->get_stream());
+        if (!sock_stream) {
+          return -1;
+        }
+        int ret = sock_acceptor_.accept(*sock_stream, &peer_addr);
         if (ret != 0)
         {
             LOG(ERROR) << "Acceptor error..." << strerror(errno);

@@ -24,3 +24,6 @@ compile_commands.json
 examples/**/*.o
 sync_client
 sync_server
+*.swp
+**/core
+
