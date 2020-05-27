@@ -8,6 +8,7 @@ FileConnectionHandler::FileConnectionHandler(Reactor &react)
   : connection_handler(react)
 {
   init_stream();
+  //TODO
 }
 
 FileConnectionHandler::~FileConnectionHandler()

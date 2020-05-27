@@ -22,7 +22,7 @@ int sock_connection_handler::handle_input(int handle)
 {
   if(!stream_) 
     return -1;
-  if (input_buffer_.total_len() >= sock_connection_handler::BUFFER_HIGH_WATER_MARK)
+  if (input_buffer_.total_len() >= connection_handler::BUFFER_HIGH_WATER_MARK)
     return 0;
 
   if (handle != stream_->get_handle() || handle == INVALID_HANDLE) {
@@ -49,9 +49,6 @@ int sock_connection_handler::handle_input(int handle)
       // LOG(INFO) << "Read got EAGAIN...";
       errno = 0;
       return 0;
-    } else if(errno == ECONNRESET) {
-      disable_reading();
-      disable_writing();
     }
     LOG(ERROR) << "Read error: " << strerror(errno) << "handle: " << handle;
     return -1;
