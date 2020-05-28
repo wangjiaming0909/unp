@@ -10,8 +10,6 @@ public:
   FileStream(const char* path, int flags);
   ~FileStream();
 public:
-  virtual int open() override;
-  virtual int close() override;
   virtual ssize_t read(void *buffer, size_t len) override;
   virtual ssize_t read(reactor::buffer &buf, size_t len) override;
   virtual ssize_t write(const void *buffer, size_t len) override;
@@ -28,8 +26,7 @@ public:
   virtual int setNonBolcking() override;
   virtual int restoreBlocking() override;
 
-  void set_path(const char* path);
-  void set_open_flags(int flags);
+  void set_file_stream_info(const char* file_path, int flags);
 private:
   int handle_;
 };

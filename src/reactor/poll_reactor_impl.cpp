@@ -90,44 +90,38 @@ int poll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
 
 int poll_reactor_impl::poll(std::chrono::microseconds* timeout)
 {
-    LOG(INFO) << "Preparing to poll...";
+  LOG(INFO) << "Preparing to poll...";
 
-    if(wait_pfds_.size() == 0)
-    {
-        LOG(WARNING) << "no wait pollfds...";
-        return -1;
-    } 
+  if(wait_pfds_.size() == 0) {
+    LOG(WARNING) << "no wait pollfds...";
+    return -1;
+  }
 
-    isWaiting_ = true;
+  isWaiting_ = true;
 
-    std::vector<struct pollfd> waits{};
-    for(auto& fd : wait_pfds_)
-    {
-        waits.push_back(fd);
-    }
+  std::vector<struct pollfd> waits{};
+  for(auto& fd : wait_pfds_) {
+    waits.push_back(fd);
+  }
 
-    int ret = ::poll(&waits[0], waits.size(), timeout == 0 ? -1 : timeout->count());
+  int ret = ::poll(&waits[0], waits.size(), timeout == 0 ? -1 : timeout->count());
 
-    for (size_t i = 0; i < waits.size(); i++)
-    {
-        wait_pfds_[i].revents = waits[i].revents;
-    }
+  for (size_t i = 0; i < waits.size(); i++)
+    wait_pfds_[i].revents = waits[i].revents;
 
-    isWaiting_ = false;
+  isWaiting_ = false;
 
-    if(ret < 0)
-    {
-        LOG(WARNING) << "Poll error " << strerror(errno);
-        return -1;
-    }
+  if(ret < 0) {
+    LOG(WARNING) << "Poll error " << strerror(errno);
+    return -1;
+  }
 
-    if(ret == 0 && timeout != 0 && timeout->count() != 0)
-    {
-        LOG(WARNING) << "Poll timed out...";
-        return 0;
-    }
+  if(ret == 0 && timeout != 0 && timeout->count() != 0){
+    LOG(WARNING) << "Poll timed out...";
+    return 0;
+  }
 
-    return ret;
+  return ret;
 }
 
 int poll_reactor_impl::dispatch(int active_handle_count)

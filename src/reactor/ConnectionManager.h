@@ -35,11 +35,11 @@ template <typename ServiceImpl, typename ...Args>
 ServiceImpl* ConnectionManager::makeConnection(Args&&... args)
 {
   using Handler_t = typename ServiceImpl::HandlerT;
-  static_assert(std::is_base_of<sock_connection_handler, Handler_t>::value, "Handler_t should derive from sock_connection_handler");
+  static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from sock_connection_handler");
   static_assert(std::is_base_of<ServiceT, ServiceImpl>::value, "ServiceImpl should drive from ServiceT");
   auto* handler = new Handler_t(reactor_, std::forward<Args>(args)...);
 
-  ServiceImpl* ret = new ServiceImpl{*handler};
+  ServiceImpl* ret = new ServiceImpl(*handler);
   ServiceT* conn = ret;
   connections_.push_front(*conn);
   connectionCount_++;
@@ -50,7 +50,7 @@ template <typename ServiceImpl>
 void ConnectionManager::closeConnection(ServiceImpl& e, std::chrono::microseconds)
 {
   using Handler_t = typename ServiceImpl::HandlerT;
-  static_assert(std::is_base_of<sock_connection_handler, Handler_t>::value, "Handler_t should derive from sock_connection_handler");
+  static_assert(std::is_base_of<connection_handler, Handler_t>::value, "Handler_t should derive from sock_connection_handler");
   static_assert(std::is_base_of<ServiceT, ServiceImpl>::value, "ServiceImpl should drive from ServiceT");
   e.close();
   delete &e;

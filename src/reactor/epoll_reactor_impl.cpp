@@ -138,7 +138,7 @@ int epoll_reactor_impl::register_handler(int handle, EventHandler *handler, Even
 
   if(ret < 0)
   {
-    // LOG(ERROR) << "Epoll_ctl add handle error... " << strerror(errno);
+    LOG(ERROR) << "Epoll_ctl add handle error... " << strerror(errno);
     return -1;
   }
 

@@ -9,8 +9,18 @@ class buffer;
 struct Stream : public boost::noncopyable
 {
   virtual ~Stream() = default;
-  virtual int open() = 0;
-  virtual int close() = 0;
+  virtual int open()
+  {
+    if (fd_)
+      return fd_->open();
+    return -1;
+  }
+  virtual int close()
+  {
+    if (fd_)
+      return fd_->close(-1);
+    return -1;
+  }
   virtual ssize_t read(void *buffer, size_t len) = 0;
   virtual ssize_t read(reactor::buffer &buf, size_t len) = 0;
   virtual ssize_t write(const void *buffer, size_t len) = 0;

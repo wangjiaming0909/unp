@@ -16,7 +16,8 @@ public:
   virtual int handle_signal(int) override;
   virtual int get_handle() const override;
   virtual void set_handle(int) override;
-
   virtual void init_stream() override;
+
+  int open_file(const char* file_path, int flags);
 };
 }

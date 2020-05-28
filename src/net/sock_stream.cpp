@@ -77,14 +77,10 @@ int SockStream::set_handle(int handle)
 
 void SockStream::set_sock_info(int family, int protocol, bool reuse_addr)
 {
-  if (!fd_ || fd_->get_fd() == INVALID_HANDLE) return;
-  fd_->open();
-  auto* sock_fd = dynamic_cast<inet_sock*>(fd_);
-  if (!sock_fd) {
-    LOG(ERROR) << "dynamic_cast error from fd to inet_sock";
-    return;
-  }
-  sock_fd->set_sock_info(family, sock_type::stream, protocol, reuse_addr);
+  inet_sock *fd = nullptr;
+  if (!fd_)
+    fd = new inet_sock(family, sock_type::stream, protocol, reuse_addr);
+  fd_ = fd;
 }
 
 }

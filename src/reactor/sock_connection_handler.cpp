@@ -20,7 +20,7 @@ sock_connection_handler::~sock_connection_handler()
 
 int sock_connection_handler::handle_input(int handle)
 {
-  if(!stream_) 
+  if(!stream_)
     return -1;
   if (input_buffer_.total_len() >= connection_handler::BUFFER_HIGH_WATER_MARK)
     return 0;

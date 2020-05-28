@@ -47,9 +47,13 @@ public:
   using ConnectionHandlerPtr_t = typename Base_t::ConnectionHandlerPtr_t;
 
   connector(Handler_t& handler) : Base_t(&handler) { }
-  virtual ~connector() override { delete this->handlerPtr_;}
-
+  virtual ~connector() override 
+  {
+    delete this->handlerPtr_;
+    this->handlerPtr_ = nullptr;
+  }
   virtual ConnectionHandlerPtr_t connect(const net::inet_addr &target_addr, micro_seconds timeout) override;
+private:
   virtual int disconnect(micro_seconds timeout) override;
 };
 
