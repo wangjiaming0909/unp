@@ -17,7 +17,7 @@ namespace net{
 //then use InetSockStream
 class InetSockStream : public SockStream{
 public:
-  InetSockStream() : SockStream() {} 
+  InetSockStream() : SockStream() {}
 	InetSockStream(int family, int protocol) : SockStream(family, protocol) {}
   ~InetSockStream() = default;
 

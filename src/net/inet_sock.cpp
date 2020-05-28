@@ -8,7 +8,6 @@ inet_sock::inet_sock(int family, sock_type type, int protocol, bool reuse_addr)
   , protocol_(protocol)
   , reuse_addr_(reuse_addr)
 {
-  open();
 }
 
 inet_sock::inet_sock()

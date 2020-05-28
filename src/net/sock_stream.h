@@ -15,8 +15,6 @@ public:
   virtual ~SockStream() {delete fd_; fd_ = nullptr;}
 
 public:
-  virtual int open() override { return fd_->open(); }
-  virtual int close() override { return fd_->close(-1); }
   //recv version use the system call recv which has a flags parameter
   virtual ssize_t recv(void *buffer, size_t len, int flags) = 0;
   virtual ssize_t readv(iovec iov[], int n) = 0;

@@ -10,7 +10,6 @@ namespace reactor
 FileStream::FileStream(const char* path, int flags)
 {
   fd_ = new unp::FileFD(path, flags);
-  fd_->open();
 }
 
 FileStream::~FileStream()
@@ -19,14 +18,6 @@ FileStream::~FileStream()
   fd_ = nullptr;
 }
 
-int FileStream::open()
-{
-  return fd_->open();
-}
-int FileStream::close()
-{
-  return fd_->close(-1);
-}
 ssize_t FileStream::read(void *buffer, size_t len)
 {
   if (!fd_ || fd_->get_fd() == INVALID_HANDLE)
@@ -143,23 +134,16 @@ int FileStream::restoreBlocking()
   return -1;
 }
 
-void FileStream::set_path(const char* path)
+void FileStream::set_file_stream_info(const char* file_path, int flags)
 {
-  if (!fd_)
+  if (!file_path){
+    LOG(ERROR) << "File path empty";
     return;
-  auto file_fd = dynamic_cast<unp::FileFD*>(fd_);
-  if (!file_fd)
-    return
-  file_fd->set_file_path(path);
-}
-
-void FileStream::set_open_flags(int flags)
-{
-  if (!fd_) return;
-  auto file_fd = dynamic_cast<unp::FileFD*>(fd_);
-  if (!file_fd)
-    return
-  file_fd->set_open_flags(flags);
+  }
+  unp::FileFD* fd = nullptr;
+  if (!fd_)
+    fd = new unp::FileFD(file_path, flags);
+  fd_ = fd;
 }
 
 }

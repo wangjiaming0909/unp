@@ -6,6 +6,12 @@ namespace reactor
 {
 const unsigned int connection_handler::BUFFER_HIGH_WATER_MARK = 100 * buffer_chain::MAXIMUM_CHAIN_SIZE;
 
+connection_handler::~connection_handler()
+{
+  delete stream_;
+  stream_ = nullptr;
+}
+
 uint32_t connection_handler::read(char *data_out, uint32_t data_len)
 {
   if (data_out == 0 || data_len == 0)
@@ -56,23 +62,25 @@ int connection_handler::open()
   return enable_reading();
 }
 
-void connection_handler::close()
+int connection_handler::close()
 {
   if (read_enabled_)
     disable_reading();
   if (write_enabled_)
     disable_writing();
-  close_stream();
+  return close_stream();
 }
 
-void connection_handler::close_stream()
+int connection_handler::close_stream()
 {
-  //stream_->close();
+  if (stream_)
+    return stream_->close();
+  return -1;
 }
 
 int connection_handler::close_read(int)
 {
-  if(!stream_) 
+  if(!stream_)
     return -1;
   if (read_enabled_) disable_reading();
   stream_->close_read();

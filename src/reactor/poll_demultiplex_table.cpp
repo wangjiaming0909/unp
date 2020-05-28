@@ -220,7 +220,7 @@ std::vector<poll_event_repo::event_tuple>::const_iterator poll_event_repo::find(
         });
 }
 
-poll_demultiplex_table::poll_demultiplex_table() 
+poll_demultiplex_table::poll_demultiplex_table()
     : table_()
     , size_()
     , mutex_()

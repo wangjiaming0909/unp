@@ -13,7 +13,7 @@ class connection_handler : public EventHandler
 {
 public:
   connection_handler(Reactor& react) : EventHandler(react){}
-  virtual ~connection_handler() = default;
+  virtual ~connection_handler();
 
   Stream* get_stream() { return stream_; }
 
@@ -24,9 +24,9 @@ public:
   int write(const T &data, bool is_flush = false);
 
   virtual int open();
-  virtual void close();
+  virtual int close();
   virtual void init_stream() = 0;
-  virtual void close_stream();
+  virtual int close_stream();
   virtual int close_read(int) override;
   virtual int close_write(int) override;
 
