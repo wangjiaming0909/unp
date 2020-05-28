@@ -160,3 +160,13 @@ int unp::handle_timed_accept_using_poll(
         }
     }
 }
+
+thread::thread_pool* unp::get_thread_pool(int num)
+{
+  using namespace thread;
+  static thread_pool* pool = new thread_pool(num);
+  if (!pool->is_running()) {
+    pool->start();
+  }
+  return pool;
+}

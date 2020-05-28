@@ -1,6 +1,7 @@
 #ifndef _UNP_H_
 #define _UNP_H_
 #include <chrono>
+#include <thread/thread_pool.h>
 
 #define INVALID_HANDLE -1
 using namespace std::chrono;
@@ -25,7 +26,8 @@ int handle_ready_using_poll(
     int read_ready,
     int write_ready);
 
-inline int handle_read_ready_using_select(int handle, microseconds& timeout){
+inline int handle_read_ready_using_select(int handle, microseconds& timeout)
+{
     return handle_ready_using_select(handle, timeout, 1, 0, 0);
 }
 
@@ -48,6 +50,8 @@ inline int handle_write_ready_using_poll(int handle, const milliseconds& timeout
 int handle_timed_connect_using_poll(int handle, milliseconds* timeout);
 int handle_timed_connect_using_select(int handle, milliseconds* timeout);
 int handle_timed_accept_using_poll(int listen_handle, const milliseconds* timeout, bool restart);
+
+thread::thread_pool* get_thread_pool(int num);
 }
 
 #ifdef TESTING

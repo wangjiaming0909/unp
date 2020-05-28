@@ -8,7 +8,9 @@
 #include <condition_variable>
 #include <assert.h>
 #include <iostream>
+#include "boost/core/noncopyable.hpp"
 #include "util/easylogging++.h"
+#include <boost/noncopyable.hpp>
 
 /*
     unique_lock,
@@ -20,7 +22,8 @@
 */
 
 namespace thread {
-class thread_pool{
+class thread_pool : public boost::noncopyable
+{
 public:
     using task = std::function<void ()>;
     using lock_gd = std::unique_lock<std::mutex>;
@@ -35,6 +38,7 @@ public:
     //cancel all the threads immediately
     int cancel();
     void set_num_of_threads(size_t n){_n_of_threads = n;}
+    bool is_running() const {return _running;}
 private:
     //对当前线程调用
     int disable_cancellability();
