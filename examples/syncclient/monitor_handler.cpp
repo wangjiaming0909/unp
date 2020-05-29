@@ -41,6 +41,18 @@ int FileMonitorHandler::handle_close(int)
   return unsubscribe();
 }
 
+void FileMonitorHandler::add_to_need_sync(const Entry& e)
+{
+}
+
+void FileMonitorHandler::add_to_pause(const Entry& e)
+{
+}
+
+void FileMonitorHandler::add_to_error(const Entry& e)
+{
+}
+
 ServerMonitorHandler::ServerMonitorHandler(reactor::Reactor& react) 
   : reactor::sock_connection_handler(react)
   , decoder_{}

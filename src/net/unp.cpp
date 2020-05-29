@@ -27,7 +27,7 @@ int unp::handle_ready_using_select(
                           exception_ready ? set.get_fd_set() : 0,
                           &time_remain);
     timeout = util::timeval_to_duration<std::chrono::microseconds>(time_remain);
-    
+
     switch (result) {
         case 0:  // Timer expired.
             errno = ETIME;

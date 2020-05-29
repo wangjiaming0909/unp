@@ -31,11 +31,19 @@ class FileMonitorHandler : public reactor::sock_connection_handler, public IDirO
 {
 public:
   FileMonitorHandler(reactor::Reactor& react, IDirObservable& observable);
-	virtual void onUpdate(const EntryMap& es) override;
+  virtual void onUpdate(const EntryMap& es) override;
   virtual int handle_close(int handle) override;
 
 private:
+  void add_to_need_sync(const Entry& e);
+  void add_to_pause(const Entry& e);
+  void add_to_error(const Entry& e);
+
+private:
   EntryMap entries_;
+  std::set<Entry> syncing_map_;
+  std::set<Entry> paused_map_;
+  std::set<Entry> error_map_;
 };
 
 class ServerMonitorHandler : public reactor::sock_connection_handler

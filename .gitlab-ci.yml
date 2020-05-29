@@ -25,6 +25,7 @@ build:
     - cd /
     - git clone https://github.com/protocolbuffers/protobuf.git
     - cd protobuf
+    - git checkout 3.11.x
     - git submodule update --init --recursive
     - ./autogen.sh
     - ./configure
