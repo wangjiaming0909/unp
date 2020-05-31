@@ -37,7 +37,7 @@ int net::inet_sock::open(){
   if (fd_ != INVALID_HANDLE && (canWrite_ || canRead_))
     close(-1);
   fd_ = ::socket(family_, (int)type_, protocol_);
-  // LOG(INFO) << "opening a socket..." << handle_; 
+  // LOG(INFO) << "opening a socket..." << handle_;
   int one = 1;
   if(fd_ == INVALID_HANDLE) {
     return -1;

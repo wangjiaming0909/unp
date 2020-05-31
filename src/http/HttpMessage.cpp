@@ -3,7 +3,7 @@
 namespace http
 {
 
-HttpMessage::HttpMessage() 
+HttpMessage::HttpMessage()
     : startTime_(util::Time::now())
 {
     // if(isRequest) message_ = HttpRequest();

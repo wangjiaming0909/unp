@@ -47,7 +47,7 @@ private:
     void stop(const micro_seconds& timeout);
     //allocate threads
     void initialize();
-    //only invoked in the add_task 
+    //only invoked in the add_task
     //so it will always be locked
     bool has_task(){ return !_tasks.empty(); }
     bool deque_full();
@@ -58,7 +58,7 @@ private:
     bool                                            _running;
     //此mutex可用于多个线程，主要为了配合cv使用
     //  1，为了保护添加task时可能队列已满以及取task时可能的队列已空
-    //  2, 
+    //  2,
     std::mutex                                      _mutex;
     std::condition_variable                         _has_task_cv;
     std::condition_variable                         _deque_full_cv;

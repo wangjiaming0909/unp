@@ -12,7 +12,7 @@ TEST(ServerClientIntergratonTest, normal)
 
     server.set_thread_num(4);
     ASSERT_EQ(server.thread_num_, 4);
-    
+
     // server.open(unp::reactor_imp_t_enum::USING_SELECT);
 
     // tcp_client client{};

@@ -6,7 +6,7 @@
 namespace reactor
 {
 
-TimeoutHandler::TimeoutHandler(Reactor& reactor, bool needDestroy) 
+TimeoutHandler::TimeoutHandler(Reactor& reactor, bool needDestroy)
   : EventHandler(reactor)
   , needDestroy_(needDestroy)
 { }

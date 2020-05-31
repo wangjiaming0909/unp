@@ -3,7 +3,7 @@
 
 #include "net/inet_addr.h"
 #include "http/HttpMethod.h"
-#include <boost/variant/variant.hpp> 
+#include <boost/variant/variant.hpp>
 #include <boost/variant/get.hpp>
 #include <string>
 
@@ -27,7 +27,7 @@ struct HttpRequest
         return methodToString(method_);
     }
 
-    addr_t                                  clientAddr_; 
+    addr_t                                  clientAddr_;
     string_t                                clientIP_;
     string_t                                clientPort_;
     string_t                                path_;

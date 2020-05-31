@@ -11,7 +11,7 @@ class echo_client_handler : public echo_connection_handler
 private:
     int index{-1};
 public:
-    echo_client_handler(Reactor& reactor, int index) 
+    echo_client_handler(Reactor& reactor, int index)
     : echo_connection_handler(reactor)
     , index{index}{}
     ~echo_client_handler(){}

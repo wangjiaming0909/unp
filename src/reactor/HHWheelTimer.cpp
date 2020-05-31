@@ -35,7 +35,7 @@ void HHWheelTimer::cancelAll()
     }
   }
 
-  if(timerCount_ <= 0) 
+  if(timerCount_ <= 0)
     reactor_->unregister_handler(nullptr, EventHandler::TIMEOUT_EVENT);
 }
 
@@ -195,7 +195,7 @@ size_t HHWheelTimer::cancelTimeoutsFromList_(intrusive_list_t& handlers)
   if(handlers.empty()) return 0;
   size_t ret = 0;
   auto slot = handlers.front().slotInBucket_;
-  if(slot != -1) 
+  if(slot != -1)
     firstBucketBitSet_.reset(slot);
 
   intrusive_list_t tmp;

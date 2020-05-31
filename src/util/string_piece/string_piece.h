@@ -70,7 +70,7 @@ public:
     }
 
     //equal return 0, "abc".comapre("abcd") return -1
-    int compare(const Range& range) const 
+    int compare(const Range& range) const
     {
         if(*this == range) return 0;
         auto minSize = std::min(size(), range.size());
@@ -137,7 +137,7 @@ public:
         return std::equal(cbegin(), cend(), str_range.cbegin(), AsciiCaseInsensitiveEqual());
     }
 
-    constexpr size_type size() const 
+    constexpr size_type size() const
     {
         return size_type(end_ - begin_);
     }

@@ -19,7 +19,7 @@ using namespace downloader;
 struct ProtoTestHandler : public reactor::sock_connection_handler
 {
 public:
-    ProtoTestHandler(reactor::Reactor& react, const std::string& url) 
+    ProtoTestHandler(reactor::Reactor& react, const std::string& url)
         : sock_connection_handler(react)
         ,url_(url) {}
 

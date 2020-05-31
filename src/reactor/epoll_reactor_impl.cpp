@@ -1,10 +1,11 @@
 #include "reactor/epoll_reactor_impl.h"
+#include "util//easylogging++.h"
 #include <chrono>
 
 namespace reactor
 {
 
-epoll_reactor_impl::epoll_reactor_impl() 
+epoll_reactor_impl::epoll_reactor_impl()
   : fd_count_(0)
   , epoll_fd_(-1)
   , cur_event_()
@@ -108,7 +109,7 @@ int epoll_reactor_impl::register_handler(int handle, EventHandler *handler, Even
   //already existed in the table
   if(demux_table_.getHandler(handle, type) != 0)
   {
-    LOG(WARNING) << "Already existed in the demultiplex table, handle: " 
+    LOG(WARNING) << "Already existed in the demultiplex table, handle: "
       << handle << " event: " << event_type_to_string(type);
     return -1;
   }
@@ -161,7 +162,7 @@ int epoll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Ev
   //didn't find the handle and handler
   if(demux_table_.getHandler(handle, type) == 0)
   {
-    LOG(WARNING) << "Can't unregister, didn't find the handle: " 
+    LOG(WARNING) << "Can't unregister, didn't find the handle: "
       << handle << " event: " << event_type_to_string(type);
     return -1;
   }
@@ -175,7 +176,7 @@ int epoll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Ev
   }
 
   ret = this->demux_table_.unbind(handle, type, handler);
-  if(ret == 0) 
+  if(ret == 0)
     fd_count_--;
   return ret;
 }
@@ -279,31 +280,25 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
 
     // LOG(INFO) << "Dispatching handle: " << current_fd << " event: " << event_type_to_string(type);
 
-
     EventHandler* handler = demux_table_.getHandler(current_fd, type);
-    if(handler != nullptr) ret = (handler->*callback)(current_fd);
+    if(handler != nullptr)
+      ret = (handler->*callback)(current_fd);
 
     // mutex_.unlock();
 
-    if(ret < 0 && (handler != nullptr))
-    {
+    if(ret < 0 && (handler != nullptr)) {
       // LOG(INFO) << "Unbinding handle: " << current_fd << " event: " << event_type_to_string(type);
 
       if(type == EventHandler::READ_EVENT)
-      {
         handler->close_read(current_fd);
-      }else if(type == EventHandler::WRITE_EVENT)
-      {
+      else if(type == EventHandler::WRITE_EVENT)
         handler->close_write(current_fd);
-      }
-    } 
-    else
-    {
+    }
+    else {
       //LOG(INFO) <<"Keep listening on handle: " << current_fd << " event: " << event_type_to_string(type);
     }
     bool isHasHandle = demux_table_.hasHandle(current_fd);
-    if(!isHasHandle && (handler != nullptr))
-    {
+    if(!isHasHandle && (handler != nullptr)) {
       LOG(INFO) << "closing handle: " << current_fd;
       handler->handle_close(current_fd);
     }

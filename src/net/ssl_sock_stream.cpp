@@ -2,7 +2,7 @@
 #include <openssl/err.h>
 #include "reactor/buffer.h"
 
-namespace net 
+namespace net
 {
 
 OpenSSLInitializer SSLSockStream::sslInitializer_ = OpenSSLInitializer{};

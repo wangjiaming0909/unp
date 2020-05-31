@@ -42,7 +42,7 @@ int unp::handle_ready_using_select(
 }
 
 int unp::handle_ready_using_poll(
-    int handle, 
+    int handle,
     const std::chrono::milliseconds& timeout,
     int read_ready,
     int write_ready){
@@ -63,7 +63,7 @@ int unp::handle_ready_using_poll(
             if(fds.revents & POLLHUP){
                 LOG(WARNING) << "Handle_ready_using_poll returned event POLLHUP...";
                 return -1;
-            } 
+            }
         /* FALLTHRU */
         default: // default is case result > 0; return a
             return result;
@@ -84,7 +84,7 @@ int unp::handle_timed_connect_using_poll(int handle, milliseconds* timeout){
         return INVALID_HANDLE;
     }
     //success n > 0
-    //but n > 0 does not means that connect succeed, 
+    //but n > 0 does not means that connect succeed,
     //connect failed will return n > 0
     //need to use getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &error, &len);
     //when connect failed, the revent could be POLLIN or POLLERR
@@ -129,8 +129,8 @@ int unp::handle_timed_connect_using_select(int handle, milliseconds* timeout){
 }
 
 int unp::handle_timed_accept_using_poll(
-        int listen_handle, 
-        const milliseconds* timeout, 
+        int listen_handle,
+        const milliseconds* timeout,
         bool restart){
     struct pollfd fds;
     fds.fd = listen_handle;
@@ -138,7 +138,7 @@ int unp::handle_timed_accept_using_poll(
     fds.revents = 0;
 
     for(;;){//we need a for if restart is enabled
-        //timeout == nullptr means that wait infinitely, 
+        //timeout == nullptr means that wait infinitely,
         //timeout.count() == 0 means do not wait
         int n = ::poll(&fds, 1, timeout ? timeout->count() : -1);
         switch(n){

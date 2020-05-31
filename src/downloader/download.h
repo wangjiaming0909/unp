@@ -30,7 +30,7 @@ public:
     virtual ~Download();
     int download();
     void downloadUpdateCallback(uint64_t begin, uint64_t end, uint64_t bytesDone);
-    
+
 TEST_PRIVATE:
     int downloadEX();
     void initTcpClient();

@@ -50,7 +50,7 @@ void thread_pool::start(){
 void thread_pool::wait(const micro_seconds* timeout) {
     if(timeout == nullptr) {
         for(auto &t : _threads) {
-            if(t->joinable()) 
+            if(t->joinable())
                 t->join();
         }
     } else {
@@ -66,7 +66,7 @@ void thread_pool::stop(const micro_seconds& timeout){
     _has_task_cv.notify_all();
     _deque_full_cv.notify_all();
     for(auto& t : _threads){
-        if(t->joinable()) 
+        if(t->joinable())
             t->detach();
     }
 }
@@ -157,8 +157,8 @@ void thread_pool::enable_cancellability_and_test(){
 }
 
 bool thread_pool::deque_full()
-{ 
-    return _tasks.size() > 1000; 
+{
+    return _tasks.size() > 1000;
 }
 
 void cancel_cleanup(void* guard) {

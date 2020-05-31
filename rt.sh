@@ -20,21 +20,21 @@
 # ./test.out --gtest_filter=Http1xCodec.*
 
 
-if [ $# = 0 ] 
+if [ $# = 0 ]
 then
   cd gtests
   ./test.out
-elif [ $1 = 1 ] 
+elif [ $1 = 1 ]
 then
   ./build/examples/sync_client/sync_client
-elif [ $1 = 2 ] 
+elif [ $1 = 2 ]
 then
   ./build/examples/sync_server/sync_server
-elif [ $# = 1 ] 
+elif [ $# = 1 ]
 then
   cd gtests
   ./test.out --gtest_filter=$1.*
-elif [ $# = 2 ] 
+elif [ $# = 2 ]
 then
   cd gtests
   ./test.out --gtest_filter=$1.$2

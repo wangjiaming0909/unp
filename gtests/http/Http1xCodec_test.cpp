@@ -155,5 +155,5 @@ Cache-Control: no-cache\n\n";
     codec.onIngress(requestData);
 
     ASSERT_EQ(codec.state_, Http1xCodec::CodecState::ON_MESSAGE_COMPLETE);
-    
+
 }

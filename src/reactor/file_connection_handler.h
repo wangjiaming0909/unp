@@ -19,5 +19,8 @@ public:
   virtual void init_stream() override;
 
   int open_file(const char* file_path, int flags);
+
+private:
+  virtual int post_handle_input(int);
 };
 }

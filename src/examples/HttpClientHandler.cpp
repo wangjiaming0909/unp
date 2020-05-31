@@ -13,7 +13,7 @@ namespace examples
 {
 
 
-HttpClientHandler::HttpClientHandler(reactor::Reactor &react, const char* url, const char* userAgent, const std::string& displayName) 
+HttpClientHandler::HttpClientHandler(reactor::Reactor &react, const char* url, const char* userAgent, const std::string& displayName)
     : sock_connection_handler(react)
     , url_{url}
     , userAgent_(userAgent)
@@ -23,7 +23,7 @@ HttpClientHandler::HttpClientHandler(reactor::Reactor &react, const char* url, c
     req_.set(beast::http::field::user_agent, userAgent_.begin());
     req_.set(beast::http::field::accept, "text/html");
     http::URLParser parser{url_};
-    if(!parser.valid()) 
+    if(!parser.valid())
     {
         LOG(WARNING) << "url err: " << url;
         return;
@@ -102,7 +102,7 @@ int HttpClientHandler::handle_input(int handle)
         beast::error_code err;
         parser.eager(true);
         parser.put(buf, err);
-        parser.put_eof(err); 
+        parser.put_eof(err);
         LOG(WARNING) << err.message();
     }
     if(chunk.length() != 0)
@@ -117,7 +117,7 @@ int HttpClientHandler::handle_input(int handle)
         }
         map = map["data"].object_items();
         std::string key = "1A0001";
-        if(map.count(key) == 0) 
+        if(map.count(key) == 0)
         {
             LOG(WARNING) << "json error no " << key;
             return -1;
@@ -169,7 +169,7 @@ void HttpDownloader::init()
     request_.set(beast::http::field::user_agent, userAgent_.c_str());
     request_.set(beast::http::field::accept, "text/html");
     http::URLParser parser{url_};
-    if(!parser.valid()) 
+    if(!parser.valid())
     {
         LOG(WARNING) << "url err: " << url_;
         return;
@@ -244,7 +244,7 @@ int HttpDownloader::handle_input(int handle)
         LOG(WARNING) << "error when sock_connection_handler::handle_input";
         return -1;
     }
-    if(input_buffer_.buffer_length() == 0) 
+    if(input_buffer_.buffer_length() == 0)
     {
         LOG(INFO) << "didn't get any data...";
         return 0;
@@ -279,7 +279,7 @@ int handle_input(int handle)
         return -1;
     }
 
-    if(input_buffer_.buffer_length() == 0) 
+    if(input_buffer_.buffer_length() == 0)
     {
         LOG(INFO) << "didn't get any data...";
         return 0;
@@ -317,14 +317,14 @@ int handle_input(int handle)
             auto& mesg = responseParser_->get();
             auto remain = responseParser_->content_length_remaining().get();
             auto length = responseParser_->content_length().get();
-            if(remain != length && remain > 0) 
+            if(remain != length && remain > 0)
             {
                 writer_.write(bodyData_, DEFAULTBODYSIZE - mesg.body().size);
                 mesg.body().data = bodyData_;
                 mesg.body().size = DEFAULTBODYSIZE;
             }
         }
-        if(responseParser_->is_done()) 
+        if(responseParser_->is_done())
         {
             auto& mesg = responseParser_->get();
             writer_.write(bodyData_, DEFAULTBODYSIZE - mesg.body().size);

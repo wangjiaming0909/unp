@@ -30,12 +30,12 @@ class buffer_iter{
     friend class buffer_chain;
 protected:
     buffer_iter(
-        const buffer* buffer_ptr, 
-        const buffer_chain* chain, 
+        const buffer* buffer_ptr,
+        const buffer_chain* chain,
         uint32_t offset_of_buffer,
-        uint32_t chain_number, 
+        uint32_t chain_number,
         uint32_t offset_of_chain);
-    
+
 public:
     buffer_iter(const buffer_iter& other) = default;
     buffer_iter& operator=(const buffer_iter& other) = default;
@@ -82,8 +82,8 @@ public:
     buffer_chain(const buffer_chain& other);
     buffer_chain(const buffer_chain& other, uint32_t data_len, Iter start);
     buffer_chain(buffer_chain&& other);
-    //* note that if(this->capacity_ > other.capacity_), 
-    //* this function only would expand the capacity_ won't shrink 
+    //* note that if(this->capacity_ > other.capacity_),
+    //* this function only would expand the capacity_ won't shrink
     buffer_chain& operator= (const buffer_chain& other);
     int set_offset(uint32_t offset);
     uint32_t get_offset() const {return off_;}
@@ -247,7 +247,7 @@ private:
     const buffer_chain& first() const { return chains_.front();}
     buffer_chain& last() { return chains_.back(); }
     const buffer_chain& last() const { return chains_.back(); }
-    //alters the last chunk of the memory in the buffer, 
+    //alters the last chunk of the memory in the buffer,
     //or add a chunk so that the buffer is large enough to add data_len bytes without any allocation
     //if {last_chain_with_data} has enough space for data_len, return directly
     //if not enough, expand it:
@@ -267,7 +267,7 @@ private:
 #ifdef TESTING
 public:
   const std::list<buffer_chain> &get_chains() const { return this->chains_; }
-#endif 
+#endif
 };
 
 template <typename T>

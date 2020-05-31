@@ -106,8 +106,8 @@ int net::sock_acceptor::shared_open(
   auto addr_str = local_sap.get_address_string();
   auto port = local_sap.get_port_number();
   LOG(INFO) << "trying to bind to: " << addr_str << ":" << port << "..." ;
-  int ret = ::bind(sock_fd_->get_fd(), 
-      local_sap.get_sockaddr_ptr().get(), 
+  int ret = ::bind(sock_fd_->get_fd(),
+      local_sap.get_sockaddr_ptr().get(),
       local_sap.get_size());
   if(ret != 0) {
     LOG(ERROR) << "bind error: " << strerror(errno);

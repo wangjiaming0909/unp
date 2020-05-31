@@ -1,3 +1,4 @@
+#pragma once
 #include "reactor/reactor.h"
 #include "reactor/connector.h"
 #include "boost/noncopyable.hpp"

@@ -130,12 +130,12 @@ TEST(http_parser, test_URLParser)
 
 #define PRINT(i) cout << (i) << endl; return 0
 
-int onMessageBeginCB(http_parser* parser) 
-{ 
+int onMessageBeginCB(http_parser* parser)
+{
     PRINT(http_method_str(http_method(parser->method)));
     PRINT(http_status_str(http_status(parser->state)));
     PRINT(http_errno_name(http_errno(parser->http_errno)));
-    PRINT(1); 
+    PRINT(1);
 }
 int onUrlCB(http_parser* parser, const char* buf, size_t len) {PRINT(2);  }
 int onHeaderFieldCB(http_parser* parser, const char* buf, size_t len) { PRINT(3); }

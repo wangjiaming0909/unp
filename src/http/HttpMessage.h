@@ -30,13 +30,13 @@ public:
     template <typename T>
     T& get() {return boost::get<T>(message_);}
 
-    void addHeader(string_t& field, CStringPiece_t value) 
-    { 
+    void addHeader(string_t& field, CStringPiece_t value)
+    {
         if(field == HttpCommomHeaders::getPointerWithHeaderCode(HttpHeaderCode::HTTP_HEADER_COOKIE))
         {
             parseCookie(value);
         }
-        headers_.add(field, value); 
+        headers_.add(field, value);
     }
 
     void addHeader(HttpHeaderCode field, CStringPiece_t value)
@@ -48,15 +48,15 @@ public:
         headers_.add(field, value);
     }
 
-    void addHeader(string_t& field, string_t&& value) 
-    { 
+    void addHeader(string_t& field, string_t&& value)
+    {
         if(field == HttpCommomHeaders::getPointerWithHeaderCode(HttpHeaderCode::HTTP_HEADER_COOKIE))
         {
             parseCookie(value);
         }
-        headers_.add(field, std::move(value)); 
+        headers_.add(field, std::move(value));
     }
-    void setHttpVersion(uint8_t maj, uint8_t min) 
+    void setHttpVersion(uint8_t maj, uint8_t min)
     {
         version_.first = maj, version_.second = min;
         versionStr_ = std::to_string(maj).append(".").append(std::to_string(min));
@@ -159,7 +159,7 @@ private:
     util::Time      startTime_;
 
     addr_t          dstAddress_;
-    string_t        dstIP_; 
+    string_t        dstIP_;
     string_t        dstPort_;
     string_t        localIP_;
     string_t        versionStr_;

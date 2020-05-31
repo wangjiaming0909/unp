@@ -5,14 +5,14 @@ package filesync;
 
 
 enum PackageType {
-  Client = 0; 
+  Client = 0;
   Server = 1;
 }
 
 enum Command
 {
   ClientHello = 0;
-  ServerHello = 1; 
+  ServerHello = 1;
   DepositeFile = 2;
   ReportState = 3;
 }
@@ -49,7 +49,7 @@ message DepositeFileHeader
   required int64 curSeqEnd = 4;
 }
 
-message SyncPackage 
+message SyncPackage
 {
   required int64 len = 1;
   required Header header = 2;

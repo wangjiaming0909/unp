@@ -33,8 +33,8 @@ public:
         memset(m_ptr, 0, m_capacity);
         memcpy(m_ptr, ptr, m_length);
     }
-    explicit string(const char *ptr, size_t size) 
-        : m_length(size), 
+    explicit string(const char *ptr, size_t size)
+        : m_length(size),
         m_capacity(size == 0 ? 64+64/2 : (size+size/2)){
         m_ptr = new char[m_capacity];
         memset(m_ptr, 0, m_capacity);
@@ -48,14 +48,14 @@ public:
         memset(m_ptr, 0, m_capacity);
         memcpy(m_ptr, s.m_ptr, s.m_length);
     }
-    string(string&& s) 
+    string(string&& s)
         : m_length(s.m_length),
         m_capacity(s.m_capacity),
         m_ptr(s.m_ptr){
         s.m_capacity = s.m_length = 0;
         s.m_ptr = nullptr;
     }
-    string(const std::string& s) 
+    string(const std::string& s)
         : m_length(s.length()),
         m_capacity(m_length+m_length/2){
         const char* ptr = s.c_str();
@@ -124,7 +124,7 @@ public:
     }
     //the old memory is not my concern, it will managed by outside
     //TODO rvalue reference version of append
-    //*let user to decide how to mamage the memory of this param str 
+    //*let user to decide how to mamage the memory of this param str
     string& append(const string& str){
         size_t size = this->size() + str.size();
         //after append size is big than capacity

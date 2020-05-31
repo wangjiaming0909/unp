@@ -33,7 +33,7 @@ TEST(proto, all)
   char* d = (char*)::calloc(1024, 1);
 
   m1.SerializeToArray(d, sizeLong);
-  
+
   Mess_WL m2{};
   auto ret = m2.ParseFromArray(d, sizeLong);
   ASSERT_TRUE(ret);

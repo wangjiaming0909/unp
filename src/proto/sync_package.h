@@ -31,8 +31,8 @@ enum class PackageType : uint8_t
 
 enum class Command : uint8_t
 {
-  ClientHello = 1, 
-  ServerHello = 2, 
+  ClientHello = 1,
+  ServerHello = 2,
   DepositeFile = 3,
   ResportState = 4,
 };
@@ -60,8 +60,8 @@ struct HeaderRestriction_<T, true>
 };
 
 template <typename T>
-struct HeaderRestriction 
-{ 
+struct HeaderRestriction
+{
   using restriction = typename HeaderRestriction_<T, std::is_trivial<T>::value>::value;
 };
 
@@ -92,7 +92,7 @@ enum class DepositeState : uint8_t
   Succeed, Failed, Paused
 };
 
-struct SyncPackage 
+struct SyncPackage
 {
   ~SyncPackage() { if (data_need_free) free(content); }
   Header header;

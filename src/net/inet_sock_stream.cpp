@@ -58,7 +58,7 @@ ssize_t InetSockStream::recv_n(void* buffer, size_t len, int flags,
 //TODO ACE.cpp line 577 recv_n_i
 }
 
-ssize_t InetSockStream::send_n(const void* buffer, size_t len, int flags, 
+ssize_t InetSockStream::send_n(const void* buffer, size_t len, int flags,
 		const micro_seconds* timeout, size_t* bytes_transfered) const{
 
 }

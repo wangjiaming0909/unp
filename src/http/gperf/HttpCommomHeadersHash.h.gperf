@@ -104,4 +104,4 @@ X-UA-Compatible, HttpHeaderCode::HTTP_HEADER_X_UA_COMPATIBLE
 X-Wap-Profile, HttpHeaderCode::HTTP_HEADER_X_WAP_PROFILE
 X-XSS-Protection, HttpHeaderCode::HTTP_HEADER_X_XSS_PROTECTION
 %%
-} //namespace 
+} //namespace

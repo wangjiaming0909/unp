@@ -12,7 +12,7 @@ public:
     T getValue(const util::string& name);
 private:
     util::string    m_name;
-    T               m_value;   
+    T               m_value;
 };
 }
 #endif // CONFIGOPTION_H

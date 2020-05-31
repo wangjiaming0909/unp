@@ -3,7 +3,7 @@
 namespace examples
 {
 
-HttpsClientHandler::HttpsClientHandler(reactor::Reactor& react, const char* url, MessageSetupCallback_t&& callback) 
+HttpsClientHandler::HttpsClientHandler(reactor::Reactor& react, const char* url, MessageSetupCallback_t&& callback)
     : sock_connection_handler{react, true}
     , request_{}
     , urlParser_{}
@@ -52,7 +52,7 @@ int HttpsClientHandler::handle_input(int handle)
         return -1;
     }
 
-    if(input_buffer_.buffer_length() == 0) 
+    if(input_buffer_.buffer_length() == 0)
     {
         LOG(INFO) << "didn't get any data...";
         return 0;

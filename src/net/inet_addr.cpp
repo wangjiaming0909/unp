@@ -13,7 +13,7 @@ net::inet_addr::inet_addr() : addr(AF_INET, sizeof(in4_)){ reset_addr(); }
 
 //host_name: 127.0.0.1 not ubuntu, www
 net::inet_addr::inet_addr(host_byte_order_port port,
-		 const char* host_name, int address_family) 
+		 const char* host_name, int address_family)
 		 : addr(AF_INET, sizeof(in4_)){
 	if(address_family != AF_INET)
 		throw std::invalid_argument("address_family must be AF_INET...");
@@ -30,8 +30,8 @@ net::inet_addr::inet_addr(host_byte_order_port port,
 
 net::inet_addr::inet_addr(const inet_addr& rl) : addr(AF_INET, sizeof(in4_)), in4_(rl.in4_){ }
 net::inet_addr::inet_addr(const sockaddr_in& sockAddr)
-	: in4_{sockAddr} 
-{ 
+	: in4_{sockAddr}
+{
 
 }
 

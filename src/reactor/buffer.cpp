@@ -80,14 +80,14 @@ bool buffer_iter::operator==(const buffer_iter& other)
     return offset_of_buffer_ == other.offset_of_buffer_;
 }
 
-buffer_chain::buffer_chain(buffer* parent, uint32_t capacity) 
+buffer_chain::buffer_chain(buffer* parent, uint32_t capacity)
     : buffer_(nullptr)
     , off_(0)
     , next_(nullptr)
     , parent_(parent)
     , misalign_(0)
 {
-    if(capacity == 0) 
+    if(capacity == 0)
     {
         LOG(WARNING) << "capacity_ is 0";
         capacity_ = DEFAULT_CHAIN_SIZE;
@@ -146,7 +146,7 @@ buffer_chain::buffer_chain(const buffer_chain& other)
 buffer_chain::buffer_chain(const buffer_chain& other, uint32_t data_len, Iter start)
 {
     //check if start is in the chain {other}, and within the range of other
-    if( !other.validate_iter(start) || //TODO < or <=  
+    if( !other.validate_iter(start) || //TODO < or <=
         data_len > (other.off_ - start.offset_of_chain_)) //data_len太长, 超过other中已有的长度
     {
         throw std::exception();
@@ -219,9 +219,9 @@ int64_t buffer_chain::append(const void* data, uint32_t data_len)
 
 bool buffer_chain::validate_iter(Iter it) const
 {
-    if( it.chain_ != this || 
-        it.offset_of_chain_ >= this->off_ || 
-        it.offset_of_chain_ < this->misalign_)  //TODO < or <= 
+    if( it.chain_ != this ||
+        it.offset_of_chain_ >= this->off_ ||
+        it.offset_of_chain_ < this->misalign_)  //TODO < or <=
         return false;
     return true;
 }
@@ -262,7 +262,7 @@ uint32_t buffer_chain::calculate_actual_capacity(uint32_t given_capacity)
     return to_alloc;
 }
 
-buffer::buffer() 
+buffer::buffer()
     : chains_()
     , last_chain_with_data_(nullptr)
     , total_len_(0)
@@ -280,7 +280,7 @@ buffer::buffer(const buffer& other) : chains_(), last_chain_with_data_(nullptr),
 
 buffer::buffer(const buffer& other, uint32_t data_len) : chains_(), last_chain_with_data_(nullptr), total_len_(0)
 {
-    if(other.total_len_ == 0 || data_len == 0) 
+    if(other.total_len_ == 0 || data_len == 0)
     {
         ::new(this)buffer{}; return;
     }
@@ -317,7 +317,7 @@ buffer::buffer(const buffer& other, uint32_t data_len) : chains_(), last_chain_w
 
 buffer::buffer(const buffer& other, uint32_t data_len, Iter start) : chains_(), last_chain_with_data_(nullptr), total_len_(0)
 {
-    if(!other.validate_iter(start) || data_len == 0 || other.total_len_ == 0) 
+    if(!other.validate_iter(start) || data_len == 0 || other.total_len_ == 0)
     {
         ::new(this)buffer{}; return;
     }
@@ -334,7 +334,7 @@ buffer::buffer(const buffer& other, uint32_t data_len, Iter start) : chains_(), 
     uint32_t remain_to_copy = data_len > maximum_bytes_can_copy_out ? maximum_bytes_can_copy_out : data_len;
     bool start_from_begin = false;// if the start_iter has been used, so next time we need to read from front of next chain
 
-    while(  !other.is_last_chain_with_data(current_chain) && 
+    while(  !other.is_last_chain_with_data(current_chain) &&
             bytes_can_copy_in_current_chain < remain_to_copy)
     {
         buffer_chain _chain{*current_chain, bytes_can_copy_in_current_chain, start_iter_in_current_chain};
@@ -382,11 +382,11 @@ buffer_chain* buffer::push_back(buffer_chain&& chain)
 //push_back与data没有关系, 仅仅是向chains_中添加节点
 buffer_chain* buffer::push_back(const buffer_chain& chain)
 {
-    if(chains_.size() == 0) 
+    if(chains_.size() == 0)
     {
         chains_.push_back(chain);
-    } 
-    else 
+    }
+    else
     {
         auto& last_chain = chains_.back();
         chains_.push_back(chain);
@@ -449,7 +449,7 @@ buffer::Iter buffer::iter_of_chain(const buffer_chain& chain)
 buffer& buffer::operator=(const buffer& other)
 {
     if(this == &other) return *this;
-    if(other.buffer_length() == 0) 
+    if(other.buffer_length() == 0)
         return *this;
     chains_ = other.chains_;
     total_len_ = other.total_len_;
@@ -485,7 +485,7 @@ int64_t buffer::append(const buffer& other, uint32_t data_len, Iter start)
     uint32_t total_bytes_going_to_copy = remain_to_copy;
     bool start_from_begin = false; // if the start_iter has been used, so next time we need to read from front of next chain
 
-    while(  !other.is_last_chain_with_data(current_chain) && 
+    while(  !other.is_last_chain_with_data(current_chain) &&
             bytes_can_copy_in_current_chain < remain_to_copy)
     {
         buffer_chain _chain{*current_chain, bytes_can_copy_in_current_chain, start_iter_in_current_chain};
@@ -915,7 +915,7 @@ inline bool buffer::is_last_chain_with_data(const buffer_chain* current_chain) c
     return true;
 }
 
-bool buffer::validate_iter(const Iter& iter) const 
+bool buffer::validate_iter(const Iter& iter) const
 {
     //validate buffer
     if(iter.buffer_ != this)
@@ -933,7 +933,7 @@ bool buffer::validate_iter(const Iter& iter) const
     //validate the chain
     if(current_chain == iter.chain_)
     {
-        if( iter.chain_->off_ == current_chain->off_ && 
+        if( iter.chain_->off_ == current_chain->off_ &&
             iter.chain_->buffer_ == current_chain->buffer_ &&
             iter.chain_->misalign_ == current_chain->misalign_)
             return true;
@@ -981,7 +981,7 @@ buffer_chain* buffer::expand_if_needed(uint32_t data_len)
             push_back(std::move(_chain));
         }
     } else {
-        //now we can resize lc 
+        //now we can resize lc
         uint32_t length_needed = lc->get_offset() + data_len;
         buffer_chain chain_newed{this, length_needed};
         //! lc 一定是最后一个chain么?? 为什么pop_back()
@@ -1003,9 +1003,9 @@ buffer_chain* buffer::free_trailing_empty_chains()
         chains_.clear(); return nullptr;
     }
     assert(chain->get_offset() > 0);
-    
+
     auto start_iter = chains_.begin();
-    while(&*start_iter != chain) 
+    while(&*start_iter != chain)
     {
         ++start_iter;
     }
@@ -1026,10 +1026,10 @@ buffer_chain* buffer::update_last_chain_with_data(const buffer& other)
     auto end = chains_.end();
     auto other_start = other.chains_.begin();
     auto other_end = other.chains_.end();
-    for (; 
-        start != end && 
-        other_start != other_end && 
-        (&*other_start != other.last_chain_with_data_); 
+    for (;
+        start != end &&
+        other_start != other_end &&
+        (&*other_start != other.last_chain_with_data_);
         start++, other_start++);
     last_chain_with_data_ = &*start;
     return last_chain_with_data_;

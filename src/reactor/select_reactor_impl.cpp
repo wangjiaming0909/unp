@@ -352,7 +352,7 @@ int select_reactor_impl::dispatch_io_set(
     //go throuth the handle_set, dispatch all the handles
     while(
             dispatch_set.handles_count() > 0 &&
-            (current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE && 
+            (current_handle = dispatch_set.next_handle(current_handle)) != INVALID_HANDLE &&
             (number_of_handles_dispatched < number_of_active_handles)
         )
     {
@@ -362,7 +362,7 @@ int select_reactor_impl::dispatch_io_set(
         {
             LOG(WARNING) << "Handler of handle: " << current_handle << " is null";
             continue;
-        } 
+        }
         ++number_of_handles_dispatched;
         int ret = (handler->*callback) (current_handle);
 

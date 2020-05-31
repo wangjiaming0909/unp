@@ -1,59 +1,120 @@
 #include "syncclient/monitor_handler.h"
 #include "boost/filesystem/operations.hpp"
+#include "examples/dirmonitor/DirMonitor.h"
+#include "net/unp.h"
 #include "proto/decoder.h"
+#include "proto/sync_mess.pb.h"
+#include "reactor/file_reactor_impl.h"
+#include "util/easylogging++.h"
+#include <mutex>
+#include <sys/wait.h>
 
 
 namespace filesync
 {
 
-FileMonitorHandler::FileMonitorHandler(reactor::Reactor& react, IDirObservable& observable) 
+FileMonitorHandler::FileMonitorHandler(reactor::Reactor& react, IDirObservable& observable)
   : reactor::sock_connection_handler(react)
   , IDirObserver(observable)
-  , entries_{}
-{}
+  , entries_()
+  , pending_sync_set_()
+  , syncing_set_()
+  , paused_set_()
+  , error_set_()
+  , pending_set_cv_()
+  , reactor_(nullptr)
+  , manager_(nullptr)
+  , readers_()
+{
+  reactor_ = new reactor::Reactor(new reactor::FileReactorImpl());
+  manager_.reset(new reactor::ConnectionManager(*reactor_));
+  unp::get_thread_pool(4)->add_task(
+      [=](){
+        this->sync();
+      }
+    );
+}
 
 void FileMonitorHandler::onUpdate(const EntryMap& es)
 {
   for(auto& pair : es) {
     if (pair.second.needSync()) {
-      if (!pair.second.isExisted()) {
-        break;
-      }
-      auto& d_e = pair.first;
-      auto fileSize = boost::filesystem::file_size(d_e.path());
-      void* d = (void*)"a";
-      auto package = getDepositeFilePackage(d_e.path().c_str(), fileSize, 0, 1, d);
-
-      //mutex
-      int64_t size = package->ByteSizeLong();
-      char* data = static_cast<char*>(::calloc(size, 1));
-      package->SerializeToArray(data, size);
-      auto bytesWritten = write(size, false);
-      bytesWritten += write(data, size, true);
-      free(data);
+      if (!pair.second.isExisted())
+        continue;
+      add_to_need_sync(pair.first);
     }
   }
 }
 
 int FileMonitorHandler::handle_close(int)
 {
-  LOG(INFO) << "File Monitor Handler handle close...";
+  LOG(DEBUG) << "File Monitor Handler handle close...";
   return unsubscribe();
 }
 
+//add to need_sync_map and add to backend thread
 void FileMonitorHandler::add_to_need_sync(const Entry& e)
 {
+  std::lock_guard<std::mutex> guard(pending_set_mutex_);
+  if (error_set_.count(e)) {
+    LOG(WARNING) << "Entry has been in the error set: " << e.path();
+    return;
+  }
+  if (syncing_set_.count(e)) {
+    LOG(WARNING) << "Entry has been in the syncing set: " << e.path();
+    return;
+  }
+  if (paused_set_.count(e)) {
+    LOG(DEBUG) << "Entry deleted from paused_set_: " << e.path();
+    paused_set_.erase(e);
+  }
+  LOG(DEBUG) << "Entry add to syncing: " << e.path();
+  if (!boost::filesystem::exists(e.path())) {
+    LOG(WARNING) << "Adding a non existed entry: " << e.path();
+    return;
+  }
+  pending_sync_set_.insert(e);
+  auto file_size = boost::filesystem::file_size(e.path());
+  auto *reader = manager_->makeConnection<ReaderType>(*this, e.path().string(), static_cast<uint64_t>(file_size));
+  reader->open_file(e.path().string().c_str(), O_RDONLY);
+  readers_.push_back(reader);
+  pending_set_cv_.notify_one();
+}
+
+void FileMonitorHandler::sync()
+{
+  while(!cancel_reactor_token_) {
+    std::unique_lock<std::mutex> lock(pending_set_mutex_, std::defer_lock);
+    lock.lock();
+    while (pending_sync_set_.empty())
+      pending_set_cv_.wait(lock);
+    lock.unlock();
+    auto ret = reactor_->handle_events();
+    LOG(DEBUG) << "FileMonitorHandler handle_events returned: " << ret;
+  }
 }
 
 void FileMonitorHandler::add_to_pause(const Entry& e)
 {
+  if (syncing_set_.count(e) == 0) {
+    LOG(WARNING) << "Pausing entry: " << e.path() << ", but it's not in the syncing set";
+    return;
+  }
+  LOG(DEBUG) << "Entry add to paused: " << e.path();
+  paused_set_.insert(e);
 }
 
 void FileMonitorHandler::add_to_error(const Entry& e)
 {
+  if (syncing_set_.count(e) == 0 && paused_set_.count(e) == 0) {
+    LOG(WARNING) << "Pausing entry: " << e.path() << ", but it's not in the syncing and paused set";
+    return;
+  }
+  LOG(DEBUG) << "Entry add to error: " << e.path();
+  error_set_.insert(e);
 }
 
-ServerMonitorHandler::ServerMonitorHandler(reactor::Reactor& react) 
+ServerMonitorHandler::ServerMonitorHandler(reactor::Reactor& react)
   : reactor::sock_connection_handler(react)
   , decoder_{}
 { }

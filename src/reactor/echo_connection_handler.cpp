@@ -82,7 +82,7 @@ int echo_connection_handler::handle_input(int handle)
         if(method == boost::beast::http::verb::get)
         {
             resp.body() = "Hello World!";
-        }else 
+        }else
         {
             resp.body() = "No this Method";
         }

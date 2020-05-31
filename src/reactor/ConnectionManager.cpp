@@ -3,7 +3,7 @@
 namespace reactor
 {
 
-ConnectionManager::ConnectionManager(Reactor& react) 
+ConnectionManager::ConnectionManager(Reactor& react)
   : reactor_(react)
   , connections_{}
 {

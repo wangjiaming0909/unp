@@ -9,7 +9,7 @@ namespace http
 
 const std::vector<std::string> getHttpMethodString()
 {
-    static const std::vector<std::string>* httpMethodStrings = 
+    static const std::vector<std::string>* httpMethodStrings =
     new std::vector<std::string>
     {
         HTTP_METHOD_GEN(HTTP_METHOD_STRING)

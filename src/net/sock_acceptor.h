@@ -16,7 +16,7 @@ class sock_acceptor{
 public:
   using microseconds = std::chrono::microseconds;
   // sock_acceptor();
-  sock_acceptor(const inet_addr& local_addr, int reuse_addr = 0, 
+  sock_acceptor(const inet_addr& local_addr, int reuse_addr = 0,
       int protocol_family = AF_INET, int backlog = DEFAULT_BACKLOG,
       int protocol = 0, sock_type type = sock_type::stream);
   ~sock_acceptor();

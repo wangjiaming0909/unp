@@ -5,7 +5,7 @@
 #include "reactor/reactor_implementation.h"
 
 #include <cassert>
-#include <string> 
+#include <string>
 #include <iostream>
 #include <cstdlib>
 #include <ctime>
@@ -135,7 +135,7 @@ TEST(buffer, test_buffer_chain_constructor)
         buffer_chain chain4{chain2, 16, chain2.end() + 1};
     }catch(std::exception&){}
     //TODO 没有测到iter在misalign_之前时的情况, 因为好像不能获得这个iter
-    
+
 }
 
 TEST(buffer, test_construct_and_append_buffer)

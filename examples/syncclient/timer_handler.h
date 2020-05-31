@@ -10,7 +10,7 @@ using namespace reactor;
 class TimerHandler : public reactor::TimeoutHandler
 {
 public:
-  TimerHandler(Reactor& react, TimeoutHandler::Duration interval) 
+  TimerHandler(Reactor& react, TimeoutHandler::Duration interval)
     : TimeoutHandler(react)
     , interval_(interval)
   {}

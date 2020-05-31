@@ -75,14 +75,14 @@ int epoller::del(int handle, uint32_t event)
     int operation = -1;
 
     // 不存在 fd或者不存event
-    if(count == 0 || 
+    if(count == 0 ||
         (count == 1 && !(handle_event_map_[handle]->events & event)))
     {
         // LOG(ERROR) << "no this handle or event in  epoll events";
         return -1;
     }
 
-    //exist 
+    //exist
     uint32_t* current_event = &handle_event_map_[handle]->events;
     operation = EPOLL_CTL_MOD;
     epoll_event ev = *(handle_event_map_[handle]);

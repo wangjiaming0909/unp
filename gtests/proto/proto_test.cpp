@@ -181,7 +181,7 @@ TEST(proto2, normal)
 	if(m3.has_len())
 	{
 		lenParsed = m3.len();
-	}else 
+	}else
 	{
 		FAIL();
 	}
@@ -225,7 +225,7 @@ TEST(proto, size)
   auto ret = m2.ParsePartialFromArray(d, sizeof(int32_t));
   size_t bytesParsed = 0;
 
-  if (ret == 0) 
+  if (ret == 0)
   {
     bytesParsed += sizeof(int32_t);
   }
@@ -233,7 +233,7 @@ TEST(proto, size)
   Mess_WL tmp{};
   ret = tmp.ParsePartialFromArray(d+sizeof(int32_t), 1024 - sizeof(int32_t));
 
-  if (ret == 0) 
+  if (ret == 0)
   {
     LOG(INFO) << "Parsed...";
   }

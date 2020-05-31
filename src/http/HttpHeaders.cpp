@@ -138,7 +138,7 @@ bool HttpHeaders::remove(const_string_piece headerName)
                 std::vector<HttpHeaderCode>& codes,
                 std::vector<const char*>&,
                 std::vector<std::string>&,
-                size_t& codes_deleted, 
+                size_t& codes_deleted,
                 size_t pos)
             {
                 codes[pos] = HttpHeaderCode::HTTP_HEADER_NONE;
@@ -153,12 +153,12 @@ bool HttpHeaders::remove(const_string_piece headerName)
 bool HttpHeaders::remove(HttpHeaderCode code)
 {
     bool remvoed = false;
-    iterateOverCodes(code, 
+    iterateOverCodes(code,
         [&](
             std::vector<HttpHeaderCode>& codes,
             std::vector<const char*>&,
             std::vector<std::string>&,
-            size_t& codes_deleted, 
+            size_t& codes_deleted,
             size_t pos)
         {
             codes[pos] = HttpHeaderCode::HTTP_HEADER_NONE;

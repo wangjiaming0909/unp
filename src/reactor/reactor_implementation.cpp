@@ -9,19 +9,19 @@ short reactor_event_to_poll_event(EventHandler::Event_Type type, int poll_or_epo
 {
     short events = 0;
 
-    if(type == EventHandler::READ_EVENT || 
-        type == EventHandler::ACCEPT_EVENT || 
+    if(type == EventHandler::READ_EVENT ||
+        type == EventHandler::ACCEPT_EVENT ||
         type == EventHandler::CONNECT_EVENT){
-        if(poll_or_epoll == USING_POLL) 
+        if(poll_or_epoll == USING_POLL)
             events |= POLLIN;
-        else 
+        else
             events |= EPOLLIN;
     }
-    if(type == EventHandler::WRITE_EVENT || 
+    if(type == EventHandler::WRITE_EVENT ||
         type == EventHandler::CONNECT_EVENT){
-        if(poll_or_epoll == USING_POLL) 
+        if(poll_or_epoll == USING_POLL)
             events |= POLLOUT;
-        else 
+        else
             events |= EPOLLOUT;
     }
     return events;

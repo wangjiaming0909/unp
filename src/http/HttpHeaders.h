@@ -8,9 +8,9 @@
 #include "util/string_piece/string_piece.h"
 
 /*
-    HttpHeaders store http headers inside, 
-    it have 
-        1, header codes vector, 
+    HttpHeaders store http headers inside,
+    it have
+        1, header codes vector,
         2, header names pointers
             if it's commom header, it points to the entry of commom header table
             if it's not the commom headers, dynamic memory is used
@@ -80,12 +80,12 @@ private:
     template <typename Func>
     void iterateOverOtherHeaderNames(const_string_piece headerName, Func&& func)
     {
-        iterateOverCodes(HttpHeaderCode::HTTP_HEADER_OTHER, 
+        iterateOverCodes(HttpHeaderCode::HTTP_HEADER_OTHER,
             [&](
                 std::vector<HttpHeaderCode>& codes,
                 std::vector<const char*>& headerNames,
                 std::vector<std::string>& headerValues,
-                size_t& codes_deleted, 
+                size_t& codes_deleted,
                 size_t pos)
             {
                 if(headerName.caseInsensitiveEqual(headerNames[pos]))
@@ -97,7 +97,7 @@ private:
 
     }
 private:
-    static const size_t INIT_VECTOR_RESERVE_SIZE; 
+    static const size_t INIT_VECTOR_RESERVE_SIZE;
 
 private:
     vector_t<HttpHeaderCode>            codes_;

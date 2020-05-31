@@ -12,7 +12,7 @@
 namespace net{
 
 //InetSockStream does not contain the memory of the sock_fd
-//when need to use non-blocking read and write 
+//when need to use non-blocking read and write
 //need to change the status of the fd first
 //then use InetSockStream
 class InetSockStream : public SockStream{

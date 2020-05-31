@@ -60,7 +60,7 @@ void scan_(std::string str, thread::thread_pool* pool)
       std::chrono::microseconds timeout = 50ms;
       int ret = connector.connect(stream, targetAddr, &timeout, 1, 0);
       stream.close();
-      if (ret != 0) 
+      if (ret != 0)
       {
         continue;
       }

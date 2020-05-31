@@ -86,7 +86,7 @@ TEST(addr_to_string, give_right_sockaddr_in_struct){
 }
 
 //it seems that every sockaddr_in struct can be converted to a string
-TEST(addr_to_string, give_wrong_sockaddr_in_struct){ 
+TEST(addr_to_string, give_wrong_sockaddr_in_struct){
     ASSERT_EQ(1,1);
 }
 

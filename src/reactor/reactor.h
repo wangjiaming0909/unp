@@ -78,7 +78,7 @@ public:
 
     int handle_events(std::chrono::microseconds *timeout = nullptr){
         auto status = status_.load();
-        if(status == static_cast<uint>(ReactorStatus::SUSPENDING)) 
+        if(status == static_cast<uint>(ReactorStatus::SUSPENDING))
         {
             status = static_cast<uint>(ReactorStatus::SUSPENDED);
             status_.store(status);

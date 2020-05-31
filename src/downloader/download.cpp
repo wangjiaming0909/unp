@@ -10,7 +10,7 @@
 namespace downloader
 {
 
-Download::Download(int id, const std::string& url, std::shared_ptr<DownloadStateCallback> callback) 
+Download::Download(int id, const std::string& url, std::shared_ptr<DownloadStateCallback> callback)
     : id_(id)
     , url_{url}
     , callback_(callback)
@@ -97,7 +97,7 @@ out:
 int Download::download()
 {
 	auto succeed = downloadEX();
-    if (succeed >= 0 && callback_ && bytesRemained_ == 1001)  
+    if (succeed >= 0 && callback_ && bytesRemained_ == 1001)
 	{
 		callback_->taskCompleted(id_);
 	}

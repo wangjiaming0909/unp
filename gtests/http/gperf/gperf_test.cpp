@@ -48,9 +48,9 @@ TEST(gperf, test_some_cases)
 {
     const char* a1 = ":Authority";
     auto ret = http::HttpCommomHeaderInternal::isValidHttpHeader(a1, strlen(a1));
-    // cout << "header name: " 
-    //     << ret->headerName 
-    //     << " header code: " 
+    // cout << "header name: "
+    //     << ret->headerName
+    //     << " header code: "
     //     << static_cast<uint8_t>(ret->headerCode) << endl;
     ASSERT_TRUE(ret != 0);
     ASSERT_TRUE(strcmp(ret->headerName, a1) == 0);

@@ -47,14 +47,14 @@ public:
         }
     }
     int handles_count() const {return size_;}
-    fd_set* get_fd_set(){ 
+    fd_set* get_fd_set(){
         if(size_ > 0) return &set_;
         else return nullptr;
     }
     //not const, and not return const
     //select will change the fd_set when get the fd_set*
     fd_set* get_select_fd_set_ptr(){
-        if(size_ > 0) 
+        if(size_ > 0)
             return &set_;
         return static_cast<fd_set*>(nullptr);
     }
@@ -72,7 +72,7 @@ public:
             LOG(WARNING) << "the handle is not in the set, handle: " << current_handle;
             LOG(WARNING) << "trying to find the next handle...";
         }
-        if(is_last_handle(current_handle)) 
+        if(is_last_handle(current_handle))
             return INVALID_HANDLE;
         // current_handle -= 1;//minus 1
         while(!is_set(++current_handle) && current_handle < max_handle_);//must use ++current_handle, not current_handle++

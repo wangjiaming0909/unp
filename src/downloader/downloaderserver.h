@@ -14,7 +14,7 @@ namespace downloader
  * 1, start tcp_server with handler: DownloaderServerHandler
  * 2, dsHandler receive data, build Mess, give it to DownloaderServer
  * 3, DownloaderServer got the Mess, parse it, start downloading
- * 
+ *
  **/
 
 class DownloaderServer : boost::noncopyable

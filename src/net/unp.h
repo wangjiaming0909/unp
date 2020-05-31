@@ -21,7 +21,7 @@ int handle_ready_using_select(
     int exception_ready);
 
 int handle_ready_using_poll(
-    int handle, 
+    int handle,
     const milliseconds& timeout,
     int read_ready,
     int write_ready);

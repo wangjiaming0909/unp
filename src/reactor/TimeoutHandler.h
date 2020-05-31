@@ -44,7 +44,7 @@ public:
     TimePoint_T expiration_{};
     bool needDestroy_{false};
 
-//override hiding functions 
+//override hiding functions
 private:
     int handle_input(int) override { return 0; }
     int handle_output(int) override { return 0; }

@@ -19,7 +19,7 @@ public:
 
 class select_demultiplex_table_test : public ::testing::Test{
 protected:
-    select_demultiplex_table_test() : table_(){ 
+    select_demultiplex_table_test() : table_(){
         reactor_ = new MockReactor();
         handler1_ = new MockEventHandler(*reactor_);
         handler2_ = new MockEventHandler(*reactor_);

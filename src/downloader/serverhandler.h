@@ -12,8 +12,8 @@
 namespace downloader
 {
 
-class DownloaderServerHandler : 
-    public reactor::sock_connection_handler, 
+class DownloaderServerHandler :
+    public reactor::sock_connection_handler,
     public downloader::Download::DownloadStateCallback,
     public std::enable_shared_from_this<DownloaderServerHandler>
 {
@@ -48,7 +48,7 @@ private:
     bool isWritable() const;
 
 private:
-	int bytesParsed_ = 0; 
+	int bytesParsed_ = 0;
     downloadmessage::Mess_WL currentMess_;
     std::queue<downloadmessage::Mess_WL*> downloadQueue_;
     std::vector<Downloader_ptr_t> dPtrs_;

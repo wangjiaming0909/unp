@@ -12,7 +12,7 @@
 namespace filesync
 {
 
-SyncClient::SyncClient(const net::inet_addr& serverAddr) 
+SyncClient::SyncClient(const net::inet_addr& serverAddr)
   : serverAddr_(serverAddr)
   , syncPath_{}
   , reactor_{nullptr}

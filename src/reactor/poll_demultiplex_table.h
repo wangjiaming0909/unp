@@ -62,26 +62,35 @@ public:
         return timeoutHandlers_.begin()->first;
     }
 
-    bool hasHandle(int handle) const 
+    bool hasHandle(int handle) const
     {
         Guard guard{mutex_};
-        return handleSet_.count(handle) > 0; 
+        return handleSet_.count(handle) > 0;
     }
-    bool hasTimeoutHandler() const 
+    bool hasTimeoutHandler() const
     {
         return timeoutHandlers_.size() != 0;
     }
-    uint32_t handleCount() const 
+    uint32_t handleCount() const
     {
         Guard guard{mutex_};
-        return handleSet_.size(); 
+        return handleSet_.size();
     }
-    void clear() 
-    { 
+    void clear()
+    {
         Guard guard{mutex_};
-        eventsTable_.clear(); 
-        handleSet_.clear(); 
+        eventsTable_.clear();
+        handleSet_.clear();
     }
+    std::map<EventType, EventHandler*> getHandlers(int handle)
+    {
+      std::map<EventType, EventHandler*> ret{};
+      if (handleSet_.count(handle)) {
+        ret = eventsTable_[handle];
+      }
+      return ret;
+    }
+    const std::set<int>& getHandleSet() const {return handleSet_;}
 private:
     std::set<int>                                           handleSet_;
     std::vector<std::map<EventType, EventHandler*>>         eventsTable_;
@@ -98,14 +107,14 @@ public:
     poll_demultiplex_table();
     EventHandler *getHandler(int handle, Event_Type type) const;
 
-    bool hasHandle(int handle) const 
+    bool hasHandle(int handle) const
     {
         lock_guard_t guard{mutex_};
         return table_.size() > static_cast<size_t>(handle) && table_[handle].handle_count() > 0;
     }
 
-    const std::vector<poll_event_repo>& get_event_vector() const 
-    { 
+    const std::vector<poll_event_repo>& get_event_vector() const
+    {
         lock_guard_t guard{mutex_};
         return table_;
     }

@@ -15,7 +15,7 @@ protected:
 
 class server : public testing::Test{
 protected:
-   server() : server_addr_(), acceptor_(server_addr_, 1){} 
+   server() : server_addr_(), acceptor_(server_addr_, 1){}
    ~server() override{}
     void SetUp() override{
         server_addr_ = inet_addr{};

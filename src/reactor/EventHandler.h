@@ -42,7 +42,7 @@ public:
     //** why give default implementation?
     //** cause some subclasses will not implement some of them(and do not need them)
     //** if do not give them default implementation,
-    //** subclasses have to implement some functions that they do not need 
+    //** subclasses have to implement some functions that they do not need
     virtual int handle_input(int ){ return 0; }
     virtual int handle_output(int ){ return 0; }
     virtual int handle_timeout(int ) noexcept { return 0; }

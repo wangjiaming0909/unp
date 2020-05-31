@@ -34,7 +34,7 @@ struct Stream : public boost::noncopyable
   virtual int restoreBlocking() = 0;
   virtual void close_read() = 0;
   virtual void close_write() = 0;
-  bool can_write() const 
+  bool can_write() const
   {
     if(!fd_)
       return false;

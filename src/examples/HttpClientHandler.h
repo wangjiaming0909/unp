@@ -51,7 +51,7 @@ public:
             beast::error_code& ec);         // We can set this to indicate an error
 
     int onBody(const char* buf, size_t size) override;
-    
+
 private:
     void init();
 private:

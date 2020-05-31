@@ -8,14 +8,14 @@
 namespace reactor
 {
 
-tcp_client::tcp_client(unp::reactor_imp_t_enum type) 
-{ 
+tcp_client::tcp_client(unp::reactor_imp_t_enum type)
+{
     make_reactor(type);
     manager_ = new ConnectionManager(*reactor_);
 }
 
-tcp_client::~tcp_client() 
-{ 
+tcp_client::~tcp_client()
+{
     delete manager_;
     delete reactor_;
 }
@@ -47,7 +47,7 @@ int tcp_client::suspend()
 int tcp_client::stop()
 {
     suspend();
-    //TODO wait until the loop is over, then close all connections 
+    //TODO wait until the loop is over, then close all connections
     return manager_->closeAllConnection();
 }
 

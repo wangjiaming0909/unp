@@ -13,10 +13,10 @@ int DownloaderHandler::handle_input(int handle)
         return -1;
     }
 
-    if(input_buffer_.buffer_length() == 0) 
+    if(input_buffer_.buffer_length() == 0)
     {
         LOG(INFO) << "didn't get any data...";
-        if(isShouldClose_) 
+        if(isShouldClose_)
             return -1;
         return 0;
     }
@@ -44,7 +44,7 @@ int DownloaderHandler::handle_input(int handle)
         input_buffer_.drain(chainLen);
         // LOG(INFO) << "Consumed " << chainLen << " bytes...";
     }
-    if(isShouldClose_) 
+    if(isShouldClose_)
         return -1;
     return 0;
 }
@@ -72,12 +72,12 @@ int DownloaderHandler::onStatus(const char* /*buf*/, size_t /*len*/)
     // {
     //     LOG(WARNING) << "status is: " << codec_.status();
     //     auto* location = codec_.message().getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_LOCATION);
-    //     if(location == nullptr) 
+    //     if(location == nullptr)
     //     {
     //         LOG(WARNING) << "server returned 302, but no location header...";
     //         return -1;
     //     }
-        
+
     //     return -1;
     // }else if(codec_.status() == 200)
     // {

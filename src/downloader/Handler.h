@@ -55,7 +55,7 @@ public:
        rangeBegin_ = begin;
        rangeEnd_ = end;
     }
-    uint64_t bytesRemainToDownload() const 
+    uint64_t bytesRemainToDownload() const
     {
         if(!usingRangeDownload_) return 0;
         return rangeEnd_ - rangeBegin_ - bytesDownloaded_ + 1;

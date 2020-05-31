@@ -103,7 +103,7 @@ int connection_handler::enable_reading()
 }
 int connection_handler::enable_writing()
 {
-  if (write_enabled_ == true) 
+  if (write_enabled_ == true)
     return 0;
   write_enabled_ = true;
   return reactor_->register_handler(stream_->get_handle(), this, EventHandler::WRITE_EVENT);
@@ -111,7 +111,7 @@ int connection_handler::enable_writing()
 
 int connection_handler::disable_reading()
 {
-  if (read_enabled_ == false) 
+  if (read_enabled_ == false)
     return 0;
   read_enabled_ = false;
   int ret = reactor_->unregister_handler(stream_->get_handle(), this, EventHandler::READ_EVENT);

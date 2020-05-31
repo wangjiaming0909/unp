@@ -11,7 +11,7 @@ static int state = 0;
 struct FakeConnectionHandler : public reactor::sock_connection_handler
 {
 public:
-    FakeConnectionHandler(reactor::Reactor& react, const std::string& name) 
+    FakeConnectionHandler(reactor::Reactor& react, const std::string& name)
         : sock_connection_handler(react)
         , name(name)
         {

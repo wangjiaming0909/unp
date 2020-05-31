@@ -11,7 +11,7 @@ TEST(tcp_client, normal)
 {
     GTEST_SKIP();
     using namespace reactor;
-    using namespace std::chrono_literals; 
+    using namespace std::chrono_literals;
 
     tcp_client client{unp::reactor_imp_t_enum::USING_SELECT};
     // using Connector_t = connector<echo_client_handler>;
@@ -22,7 +22,7 @@ TEST(tcp_client, normal)
     // net::inet_addr target_addr{9090, "192.168.0.2"};
     net::inet_addr target_addr{80, "61.135.169.121"};
     // net::inet_addr target_addr{80, "104.193.88.77"};
-// 
+//
 
     std::vector<Connector_t*> conns{};
 
@@ -57,7 +57,7 @@ TEST(tcp_client, Get_SHANGZHENGZHISHU)
 {
     GTEST_SKIP();
     using namespace reactor;
-    using namespace std::chrono_literals; 
+    using namespace std::chrono_literals;
 
     tcp_client client{unp::reactor_imp_t_enum::USING_EPOLL};
     using Connector_t = connector<examples::HttpClientHandler>;
@@ -112,7 +112,7 @@ TEST(httpDownloader, normal)
 {
     GTEST_SKIP();
     using namespace reactor;
-    using namespace std::chrono_literals; 
+    using namespace std::chrono_literals;
 
     tcp_client client{unp::reactor_imp_t_enum::USING_EPOLL};
     using Connector_t = connector<examples::HttpDownloader>;
@@ -179,7 +179,7 @@ TEST(HttpsClientHandler, normal)
 {
     GTEST_SKIP();
     using namespace reactor;
-    using namespace std::chrono_literals; 
+    using namespace std::chrono_literals;
 
     tcp_client client{unp::reactor_imp_t_enum::USING_EPOLL};
     using Connector_t = connector<examples::HttpsClientHandler>;
@@ -200,7 +200,7 @@ TEST(HttpsClientHandler, normal)
         ASSERT_TRUE(conn != nullptr);
         conns.push_back(conn);
         auto* handler = conn->connect(addr, 2s);
-        if(handler == nullptr) 
+        if(handler == nullptr)
         {
             LOG(WARNING) << "connection error..." ;
         }
@@ -226,7 +226,7 @@ TEST(zufang, http)
 {
     GTEST_SKIP();
     using namespace reactor;
-    using namespace std::chrono_literals; 
+    using namespace std::chrono_literals;
 
     tcp_client client{unp::reactor_imp_t_enum::USING_EPOLL};
     using Connector_t = connector<examples::HttpDownloader>;

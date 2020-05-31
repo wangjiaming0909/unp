@@ -4,7 +4,6 @@
 #include <mutex>
 #include <sys/epoll.h>
 #include "reactor/reactor_implementation.h"
-#include "util/easylogging++.h"
 #include "reactor/epoller.h"
 #include "reactor/poll_demultiplex_table.h"
 
@@ -12,7 +11,7 @@
 namespace reactor
 {
 
-class epoll_reactor_impl : public reactor_implementation 
+class epoll_reactor_impl : public reactor_implementation
 {
 public:
     typedef int (EventHandler::*HANDLER)(int);

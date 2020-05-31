@@ -1,13 +1,13 @@
 /*************************************************************************
 	> File Name: Config.cpp
-	> Author: 
-	> Mail: 
+	> Author:
+	> Mail:
 	> Created Time: Fri 28 Sep 2018 02:20:23 PM CST
  ************************************************************************/
 #include "ServerConfig.h"
 using namespace config;
 
-ServerConfig::ServerConfig() 
+ServerConfig::ServerConfig()
 	: ServerConfig(DEFAULT_CONFIG_JSON_FILE_NAME){
 }
 

@@ -144,4 +144,4 @@ HttpCommomHeaderInternal::isValidHttpHeader (const char *str, size_t len)
 }
 #line 106 "HttpCommomHeadersHash.h.gperf"
 
-} //namespace 
+} //namespace

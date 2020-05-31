@@ -32,7 +32,7 @@ int SyncServerHandler::handle_input(int handle)
             sayHello();
             //LOG(INFO) << "Send server hello...";
           }
-          if (mes->header().command() == Command::DepositeFile) 
+          if (mes->header().command() == Command::DepositeFile)
           {
             LOG(INFO) << "Received deposite file mess...";
             LOG(INFO) << "File name: " << mes->header().depositefileheader().filename();

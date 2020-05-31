@@ -54,7 +54,7 @@ ssize_t FileStream::read(reactor::buffer &buf, size_t len)
 
 ssize_t FileStream::write(const void *buffer, size_t len)
 {
-  if(!fd_ || fd_->get_fd() == INVALID_HANDLE) 
+  if(!fd_ || fd_->get_fd() == INVALID_HANDLE)
     return 0;
   int write_len = 0;
   write_len = ::write(fd_->get_fd(), buffer, len);

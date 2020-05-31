@@ -16,8 +16,8 @@ EventFD::EventFD() {
 	}
 }
 
-EventFD::~EventFD() { 
-	if(event_fd_ > 0) 
+EventFD::~EventFD() {
+	if(event_fd_ > 0)
 	{
 		handler_->close();
 		// ::close(event_fd_);

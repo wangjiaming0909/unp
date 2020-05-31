@@ -43,7 +43,7 @@ TEST_PRIVATE:
     std::vector<Connector_t *> rangeDownload(uint8_t n, const std::vector<std::string> &ranges);
     void retriveFileNameFromContentDisposition(const std::string &cd);
 
-TEST_PRIVATE: 
+TEST_PRIVATE:
     static const char* DEFAULT_DOWNLOAD_PATH;
     static const std::string DEFAULT_FILE_NAME;
     bool isSSL_ = false;
@@ -55,7 +55,7 @@ TEST_PRIVATE:
     uint64_t fileSize_;
 #if __cplusplus > 20130101
     std::filesystem::path targetPath_;
-#else 
+#else
     std::string targetPath_;
 #endif
     http::URLParser urlParser_;

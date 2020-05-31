@@ -35,7 +35,7 @@ highlight PmenuSel ctermbg=green ctermfg=yellow
 hi CursorLine cterm=bold ctermbg=lightblue ctermfg=None guibg=#666666 guifg=lightblue
 hi cursorcolumn cterm=bold ctermbg=lightblue ctermfg=NONE guibg=lightblue guifg=lightblue
 hi CursorLineNr cterm=bold,underline ctermbg=blue ctermfg=yellow
-set cursorline 
+set cursorline
 set cursorcolumn
 set fdm=marker "marker for code fold
 set hlsearch
@@ -68,7 +68,7 @@ let g:ctrlp_custom_ignore={
 
 "taglist
 map <silent> <F9> :TlistToggle<CR>
-let tlist_cpp_settings = 'c++;n:namespace;v:variable;d:macro;t:typedef;' . 
+let tlist_cpp_settings = 'c++;n:namespace;v:variable;d:macro;t:typedef;' .
                        \ 'c:class;m:member;g:enum;s:struct;u:union;f:function;' .
                        \ 'p:prototype'
 let Tlist_Use_Right_Window=1

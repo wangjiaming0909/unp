@@ -31,7 +31,7 @@ void hide_pwd(std::string& conn_str)
     size_t next_semi_colon_pos = tmp.find(';', right_brace_pos);
     if(next_semi_colon_pos == std::string::npos)
       conn_str.erase(start_pos);
-    else 
+    else
       conn_str.erase(start_pos, next_semi_colon_pos - start_pos + 1);
     return;
   } else

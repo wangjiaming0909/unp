@@ -2446,14 +2446,14 @@ class VRegistry : base::NoCopy, public base::threading::ThreadSafe {
 class LogMessage {
  public:
   LogMessage(Level level, const std::string& file, base::type::LineNumber line, const std::string& func,
-             base::type::VerboseLevel verboseLevel, Logger* logger) 
+             base::type::VerboseLevel verboseLevel, Logger* logger)
      : m_level(level)
      , m_file(file)
      , m_line(line)
      , m_func(func)
      , m_verboseLevel(verboseLevel)
      , m_logger(logger)
-     , m_message(logger->stream().str()) 
+     , m_message(logger->stream().str())
     {
 
     }

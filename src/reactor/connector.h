@@ -47,7 +47,7 @@ public:
   using ConnectionHandlerPtr_t = typename Base_t::ConnectionHandlerPtr_t;
 
   connector(Handler_t& handler) : Base_t(&handler) { }
-  virtual ~connector() override 
+  virtual ~connector() override
   {
     delete this->handlerPtr_;
     this->handlerPtr_ = nullptr;

@@ -13,8 +13,8 @@ public:
 
     }
     ~timer() {
-        cout 
-            << std::left << std::setw(48) << s_ 
+        cout
+            << std::left << std::setw(48) << s_
             << std::left << std::setw(24) << std::fixed << timer_.format()
             << endl;
     }

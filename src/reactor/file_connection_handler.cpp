@@ -45,6 +45,14 @@ int FileConnectionHandler::handle_input(int handle)
     LOG(INFO) << "Read EOF";
     return -1;
   }
+  if (ret == 0)
+    ret = post_handle_input(handle);
+  return ret;
+}
+
+int FileConnectionHandler::post_handle_input(int handle)
+{
+  NOT_USED(handle);
   return 0;
 }
 

@@ -65,7 +65,7 @@ void Downloader::retriveAddrFromUrl()
 }
 
 void Downloader::initTcpClient()
-{    
+{
     if(urlParser_.scheme() == "https")
     {
         isSSL_ = true;
@@ -138,7 +138,7 @@ int Downloader::download()
 {
     if(!urlParser_.valid()) return -1;
     using namespace std::chrono_literals;
-    
+
     if(isChunked_) return chunkDownload();
 
     uint8_t n = 2;
@@ -146,7 +146,7 @@ int Downloader::download()
     if(ranges.size() == 0)
     {
         return -1;
-    } 
+    }
 	auto connectors = rangeDownload(n, ranges);
 	clientPtr_->start();
 
@@ -232,7 +232,7 @@ int Downloader::getFileInfo()
     auto status = connection->codec_.status();
     auto& message = connection->codec_.message();
 
-    if(status != 200) 
+    if(status != 200)
     {
         LOG(ERROR) << "Connect returned: " << connection->codec_.status();
     }
@@ -272,7 +272,7 @@ int Downloader::getFileInfo()
             }
         }
         auto* cd = message.getHeaderValue(http::HttpHeaderCode::HTTP_HEADER_CONTENT_DISPOSITION);
-        if(cd == nullptr) 
+        if(cd == nullptr)
         {
             LOG(WARNING) << "get fileName error...";
             fileName_ = DEFAULT_FILE_NAME;

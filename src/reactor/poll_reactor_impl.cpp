@@ -18,7 +18,7 @@ int  poll_reactor_impl::register_handler(int handle, EventHandler *handler, Even
     //already existed in the table
     if(demux_table_.getHandler(handle, type) != 0)
     {
-        LOG(WARNING) << "Already existed in the demultiplex table, handle: " 
+        LOG(WARNING) << "Already existed in the demultiplex table, handle: "
         << handle << " event: " << event_type_to_string(type);
         return -1;
     }
@@ -47,7 +47,7 @@ int poll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Eve
     //didn't find the handle and handler
     if(demux_table_.getHandler(handle, type) == 0)
     {
-        LOG(WARNING) << "Can't unregister, didn't find the handle: " 
+        LOG(WARNING) << "Can't unregister, didn't find the handle: "
             << handle << " event: " << event_type_to_string(type);
         return -1;
     }
@@ -55,7 +55,7 @@ int poll_reactor_impl::unregister_handler(int handle, EventHandler *handler, Eve
     for(size_t i = 0; i < wait_pfds_.size(); i++)
     {
         struct pollfd& pfd_r = wait_pfds_[i];
-        if(pfd_r.fd == handle && 
+        if(pfd_r.fd == handle &&
             (pfd_r.events & reactor_event_to_poll_event(type, USING_POLL)))
         {
             wait_pfds_.erase(wait_pfds_.begin() + i);
@@ -70,7 +70,7 @@ int poll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
 {
     int n = this->poll(timeout);
 
-    if(n == 0) 
+    if(n == 0)
     {
         LOG(WARNING) << "No events ready...";
         ::sleep(2);
@@ -159,7 +159,7 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
         current_fd = pfd_dispatching->fd;
         if(!(pfd_dispatching->revents & type))
             continue;
-        
+
         handles_dispatched++;
 
         LOG(INFO) << "Dispatching handle: " << current_fd << " event: " << event_type_to_string(type);
@@ -180,12 +180,12 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
             {
                 handler->close_write(current_fd);
             }
-        } 
+        }
         else
         {
             LOG(INFO) << "Keep listening on handle: " << current_fd << " event: " << event_type_to_string(type);
         }
-        auto iter = std::find_if(wait_pfds_.begin(), wait_pfds_.end(), 
+        auto iter = std::find_if(wait_pfds_.begin(), wait_pfds_.end(),
             [current_fd](struct pollfd& pfd)
             {
                 return (pfd.fd == current_fd);
@@ -200,15 +200,15 @@ int poll_reactor_impl::dispatch_io_sets(int active_handles, int& handles_dispatc
 }
 
 
-int poll_reactor_impl::register_handler(EventHandler* handler, Event_Type type) 
-{ 
+int poll_reactor_impl::register_handler(EventHandler* handler, Event_Type type)
+{
     (void)handler;
     (void)type;
 	return 0;
 }
 
-int poll_reactor_impl::unregister_handler(EventHandler *handler, Event_Type type) 
-{ 
+int poll_reactor_impl::unregister_handler(EventHandler *handler, Event_Type type)
+{
     (void)handler;
     (void)type;
 	return 0;

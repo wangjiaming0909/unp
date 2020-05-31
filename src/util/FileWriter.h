@@ -8,7 +8,7 @@ class FileWriter : boost::noncopyable
 {
 public:
     using Size_t =  std::streamsize;
-    FileWriter(const char* fileName) 
+    FileWriter(const char* fileName)
         : fileName_(fileName)
         , fstream_()
     {
@@ -29,7 +29,7 @@ public:
         return 0;
     }
 
-    bool isValid() const 
+    bool isValid() const
     {
         return valid_;
     }
