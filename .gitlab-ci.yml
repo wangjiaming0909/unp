@@ -36,6 +36,7 @@ build:
   script:
     - pwd
     - cd /builds/wangjiaming0909/unp
+    - ./scripts/protoc.sh
     - ./scripts/setup_ld.sh
     - make -j $(nproc)
     - make examples -j $(nproc)
