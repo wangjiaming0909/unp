@@ -1,11 +1,13 @@
 #include "syncclient/sync_file_connection_handler.h"
+#include "boost/filesystem/directory.hpp"
 #include "proto/sync_package.h"
+#include "syncclient/monitor_handler.h"
 
 namespace filesync
 {
 SyncFileConnectionHandler::SyncFileConnectionHandler(
     Reactor& react
-    , connection_handler& output_connection
+    , FileMonitorHandler& output_connection
     , const std::string& file_name
     , uint64_t file_size)
   : FileConnectionHandler(react)
@@ -41,5 +43,12 @@ int SyncFileConnectionHandler::post_handle_input(int handle)
   }
   bytes_sent_ += bytesWritten;
   return 0;
+}
+
+int SyncFileConnectionHandler::handle_close(int handle)
+{
+  close();
+  boost::filesystem::path p(file_name_);
+  return output_connection_->add_to_finished(boost::filesystem::directory_entry(p));
 }
 }

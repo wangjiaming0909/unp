@@ -43,9 +43,8 @@ int FileConnectionHandler::handle_input(int handle)
   }
   if (ret == 0) {
     LOG(INFO) << "Read EOF";
-    return -1;
   }
-  if (ret == 0)
+  if (ret <= 0)
     ret = post_handle_input(handle);
   return ret;
 }
