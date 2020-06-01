@@ -28,5 +28,18 @@ int SyncFileConnectionHandler::post_handle_input(int handle)
   auto from = bytes_sent_ + 1;
   auto to  = from + buffer_len;
   auto package = getDepositeFilePackage(file_name_.c_str(), file_len_, from, to, data);
+
+  int64_t size = package->ByteSizeLong();
+  char* d = static_cast<char*>(::calloc(size, 1));
+  package->SerializeToArray(d, size);
+  auto bytesWritten = write(size, false);
+  bytesWritten += write(d, size, true);
+  free(d);
+  if (bytesWritten <= 0) {
+    LOG(WARNING) << "SyncFileConnectionHandler::post_handle_input write returned: " << bytesWritten;
+    return -1;
+  }
+  bytes_sent_ += bytesWritten;
+  return 0;
 }
 }

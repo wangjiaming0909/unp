@@ -71,7 +71,7 @@ int DownloaderServerHandler::decode()
   }
 
   assert(input_buffer_.buffer_length() > 0);
-  int32_t bytesGoingToParse = std::min(bytesRemainToParse, input_buffer_.buffer_length());
+  int32_t bytesGoingToParse = std::min(static_cast<uint64_t>(bytesRemainToParse), input_buffer_.buffer_length());
   auto d = input_buffer_.pullup(bytesGoingToParse);
   Mess_WL tm{};
   tm.ParsePartialFromArray(d, bytesGoingToParse);
@@ -180,7 +180,7 @@ void DownloaderServerHandler::sendResponseMess(int id, float percent, Download_R
   resp.set_percent(percent);
   char arr[128] = {};
   resp.SerializeToArray(arr, 128);
-  auto ret = write(arr, sizeof(int) + sizeof(float) + sizeof(Download_Response_State));
+  auto ret = write(arr, sizeof(int) + sizeof(float) + sizeof(Download_Response_State), true);
   if(ret == 0)
     LOG(ERROR) << "Write update mes error";
 }

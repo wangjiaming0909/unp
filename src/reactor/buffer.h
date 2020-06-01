@@ -26,50 +26,50 @@ class buffer;
 class buffer_chain;
 
 class buffer_iter{
-    friend class buffer;
-    friend class buffer_chain;
+  friend class buffer;
+  friend class buffer_chain;
 protected:
-    buffer_iter(
-        const buffer* buffer_ptr,
-        const buffer_chain* chain,
-        uint32_t offset_of_buffer,
-        uint32_t chain_number,
-        uint32_t offset_of_chain);
+  buffer_iter(
+      const buffer* buffer_ptr,
+      const buffer_chain* chain,
+      uint64_t offset_of_buffer,
+      uint32_t chain_number,
+      uint32_t offset_of_chain);
 
 public:
-    buffer_iter(const buffer_iter& other) = default;
-    buffer_iter& operator=(const buffer_iter& other) = default;
-    //the position from the start of buffer
-    uint32_t offset() const {return offset_of_chain_;}
-    const buffer* get_buffer() const {return buffer_;}
+  buffer_iter(const buffer_iter& other) = default;
+  buffer_iter& operator=(const buffer_iter& other) = default;
+  //the position from the start of buffer
+  uint32_t offset() const {return offset_of_chain_;}
+  const buffer* get_buffer() const {return buffer_;}
 
-    //manipulates the {pos_}, success returns 0, error returns -1
-    //! any rearranging of the buffer could invalidate all iter
-    //TODO add operators for iter
-    //{forward_step} can't be negative
-    //如果向前forward 这么多之后，已经超出了整个buffer 现存的所有数据的iter, 返回最后的iter, 即back()
-    buffer_iter& operator+(uint32_t forward_steps);
-    const buffer_chain& chain() {return *chain_;}
-    //不是同一个buffer返回 false
-    //是同一个buffer，> 返回 true
-    bool operator>(const buffer_iter& other);
-    bool operator<(const buffer_iter& other);
-    bool operator==(const buffer_iter& other);
-    bool is_valid() const{return buffer_ != nullptr && chain_ != nullptr;}
+  //manipulates the {pos_}, success returns 0, error returns -1
+  //! any rearranging of the buffer could invalidate all iter
+  //TODO add operators for iter
+  //{forward_step} can't be negative
+  //如果向前forward 这么多之后，已经超出了整个buffer 现存的所有数据的iter, 返回最后的iter, 即back()
+  buffer_iter& operator+(uint32_t forward_steps);
+  const buffer_chain& chain() {return *chain_;}
+  //不是同一个buffer返回 false
+  //是同一个buffer，> 返回 true
+  bool operator>(const buffer_iter& other);
+  bool operator<(const buffer_iter& other);
+  bool operator==(const buffer_iter& other);
+  bool is_valid() const{return buffer_ != nullptr && chain_ != nullptr;}
 
-public:
-    static const            	buffer_iter NULL_ITER;
-private:
-    const buffer*               buffer_;
-    const buffer_chain*        	chain_;
-    uint32_t                    offset_of_buffer_;
-    uint32_t                    chain_number_;
-    uint32_t                    offset_of_chain_;
+  public:
+  static const buffer_iter NULL_ITER;
+  private:
+  const buffer*               buffer_;
+  const buffer_chain*         chain_;
+  uint64_t                    offset_of_buffer_;
+  uint32_t                    chain_number_;
+  uint32_t                    offset_of_chain_;
 };
 
 struct buffer_iovec{
-    void*         iov_base;
-    uint32_t      iob_len;
+  void*         iov_base;
+  uint32_t      iob_len;
 };
 
 class buffer_chain{
@@ -91,10 +91,10 @@ public:
     uint32_t chain_free_space() const {return capacity_ - off_;}
     template <typename T>
     int64_t append(const T& data);
-    int64_t append(const void* data, uint32_t data_len);
+    int64_t append(const void* data, uint64_t data_len);
     //chain.size 必须要小于this 的free space
     uint32_t append(const buffer_chain& chain);
-    uint32_t append(const buffer_chain& chain, uint32_t len, Iter start);
+    uint32_t append(const buffer_chain& chain, uint64_t len, Iter start);
 
 #ifdef TESTING
 public:
@@ -168,7 +168,7 @@ public:
 
 public:
     //* return number of bytes stored in the buffer
-    uint32_t buffer_length() const {return total_len_;}
+    uint64_t buffer_length() const {return total_len_;}
     //* return number of bytes stored in the first chunk
     uint32_t first_chain_length();
 
@@ -184,13 +184,13 @@ public:
     int64_t append(const T& data);
     // int append(const buffer& other, uint32_t data_len);
     //append {data_len} bytes from other, start from {start}
-    int64_t append(const buffer& other, uint32_t data_len, Iter start);
+    int64_t append(const buffer& other, uint64_t data_len, Iter start);
     //append a whole chain into the buffer
     //it could resize the last_chain_with_data due to the memory allocation strategy
     //will change the total_len_
     int64_t append(const buffer_chain &chain);
     int64_t append(buffer_chain &&chain);
-    int64_t append(const void* data, uint32_t data_len);
+    int64_t append(const void* data, uint64_t data_len);
     int64_t append_printf(const char *fmt, ...);
     int64_t append_vprintf(const char* fmt, va_list ap);
 
@@ -233,7 +233,7 @@ public:
 
     const buffer_chain* last_chain_with_data() const { return last_chain_with_data_; }
     bool is_last_chain_with_data(const buffer_chain* current_chain) const;
-    uint32_t total_len() const { return total_len_; }
+    uint64_t total_len() const { return total_len_; }
     uint32_t chain_number() const {return this->chains_.size();}
     bool validate_iter(const Iter& iter) const ;
 
@@ -262,7 +262,7 @@ private:
     // bi-direactional linked list
     std::list<buffer_chain>           chains_;
     buffer_chain*                     last_chain_with_data_;//最后一个有数据的chain
-    uint32_t                          total_len_;
+    uint64_t                          total_len_;
 
 #ifdef TESTING
 public:

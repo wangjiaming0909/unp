@@ -29,14 +29,14 @@ struct Stream1{
     std::size_t write_some(const boost::asio::mutable_buffer& buffer, boost::beast::error_code&)
     {
         auto data = static_cast<char*>(buffer.data());
-        auto ret = handler_.write(data, buffer.size());
+        auto ret = handler_.write(data, buffer.size(), true);
         return ret;
     }
 
     std::size_t write_some(const boost::asio::mutable_buffer& buffer)
     {
         auto data = static_cast<char*>(buffer.data());
-        auto ret = handler_.write(data, buffer.size());
+        auto ret = handler_.write(data, buffer.size(), true);
         return ret;
     }
 };

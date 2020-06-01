@@ -6,7 +6,7 @@ using namespace reactor;
 
 buffer_iter::buffer_iter( const buffer* buffer_ptr
     , const buffer_chain* chain
-    , uint32_t offset_of_buffer
+    , uint64_t offset_of_buffer
     , uint32_t chain_number
     , uint32_t offset_of_chain)
     : buffer_(buffer_ptr)
@@ -195,7 +195,7 @@ uint32_t buffer_chain::append(const buffer_chain& chain)
     return size;
 }
 
-uint32_t buffer_chain::append(const buffer_chain& chain, uint32_t len, Iter start)
+uint32_t buffer_chain::append(const buffer_chain& chain, uint64_t len, Iter start)
 {
     if(len > chain.size() || !chain.validate_iter(start) || len > chain.off_ - start.offset_of_chain_)
     {
@@ -206,7 +206,7 @@ uint32_t buffer_chain::append(const buffer_chain& chain, uint32_t len, Iter star
     return len;
 }
 
-int64_t buffer_chain::append(const void* data, uint32_t data_len)
+int64_t buffer_chain::append(const void* data, uint64_t data_len)
 {
     if(data == 0 || data_len == 0) return -1;
 
@@ -463,7 +463,7 @@ uint32_t buffer::first_chain_length()
     return chains_.front().size();
 }
 
-int64_t buffer::append(const buffer& other, uint32_t data_len, Iter start)
+int64_t buffer::append(const buffer& other, uint64_t data_len, Iter start)
 {
     if(!other.validate_iter(start) || other.total_len_ == 0 || data_len == 0)
     {
@@ -559,7 +559,7 @@ int64_t buffer::append(buffer_chain &&chain)
     return chains_.back().size();//!!
 }
 
-int64_t buffer::append(const void* data, uint32_t data_len)
+int64_t buffer::append(const void* data, uint64_t data_len)
 {
     if(data == 0 || data_len == 0) return -1;
 
@@ -679,7 +679,7 @@ unsigned char* buffer::pullup(int64_t size)
     //current_chain == 0 或者 只需要 current_chain 中的一部分
     if(remain_to_pullup != 0)//还有一部分需要拷贝
     {
-        first_chain->append(*current_chain, static_cast<uint32_t>(remain_to_pullup), current_chain->begin());
+        first_chain->append(*current_chain, static_cast<uint64_t>(remain_to_pullup), current_chain->begin());
         current_chain->misalign_ += remain_to_pullup;
     }
 
