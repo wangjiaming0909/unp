@@ -34,14 +34,15 @@ int SyncFileConnectionHandler::post_handle_input(int handle)
   int64_t size = package->ByteSizeLong();
   char* d = static_cast<char*>(::calloc(size, 1));
   package->SerializeToArray(d, size);
-  auto bytesWritten = write(size, false);
-  bytesWritten += write(d, size, true);
+  auto bytes_written = output_connection_->write(size, false);
+  bytes_written += output_connection_->write(d, size, true);
   free(d);
-  if (bytesWritten <= 0) {
-    LOG(WARNING) << "SyncFileConnectionHandler::post_handle_input write returned: " << bytesWritten;
+  if (bytes_written <= 0) {
+    LOG(WARNING) << "SyncFileConnectionHandler::post_handle_input write returned: " << bytes_written;
     return -1;
   }
-  bytes_sent_ += bytesWritten;
+  input_buffer_.drain(buffer_len);
+  bytes_sent_ += bytes_written;
   return 0;
 }
 

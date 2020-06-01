@@ -63,7 +63,8 @@ int FileReactorImpl::unregister_handler(int handle, EventHandler *handler, Event
 int FileReactorImpl::dispatch(int active_handle_count)
 {
   int handles_dispatched = 0;
-  for(auto handle : demux_table_.getHandleSet()) {
+  std::set<int> handle_set = demux_table_.getHandleSet();
+  for(auto handle : handle_set) {
     auto handlers = demux_table_.getHandlers(handle);
     for(auto& pair : handlers) {
       int r = dispatch(handle, pair.first, pair.second);
