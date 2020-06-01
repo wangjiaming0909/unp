@@ -23,10 +23,10 @@ OBJECTS = $(patsubst $(SOURCEDIR)/%.cpp, $(OBJDIR)/%.o, $(SOURCES) )
 TARGET = $(BUILDDIR)/a.out
 LIBS = /usr/local/lib
 INCLUDES = $(SOURCEDIR) -I /usr/local/include -I /boost_1_72_0/ -I /usr/include
-# /boost_1_70_0  
+# /boost_1_70_0
 # LDFLAGS = -pthread -lboost_thread -lboost_system
 
-# /boost_1_70_0/stage/lib/libboost_thread.a 
+# /boost_1_70_0/stage/lib/libboost_thread.a
 
 #/usr/local/lib/libboost_system.so.1.72.0 \
 #/usr/local/lib/libboost_timer.so.1.72.0 \
@@ -44,7 +44,7 @@ TESTLDFLAG = -pthread \
 		/usr/local/lib/libprotobuf.so.22
 	
 
-# /boost_1_70_0/stage/lib/libboost_thread.a 
+# /boost_1_70_0/stage/lib/libboost_thread.a
 #/usr/local/lib/libboost_timer.so.1.72.0 \
 #/usr/local/lib/libboost_chrono.so.1.72.0 \
 #/usr/local/lib/libboost_system.so.1.72.0 \
@@ -59,7 +59,7 @@ LDFLAGS = -pthread \
 		/usr/local/lib/libprotobuf.so.22
 		
 
-all: $(BUILDDIR) $(TARGET) $(SYNC_CLIENT_TARGET)
+all: $(BUILDDIR) $(TARGET) sync_client test sync_server
 
 TEST_DIR = ./gtests
 TEST_OBJ_DIR = $(TEST_DIR)
@@ -72,9 +72,9 @@ TEST_USED_OBJECTS = $(filter-out ./build/obj/main.o, $(OBJECTS))
 test: $(TEST_TARGET)
 
 $(TEST_TARGET): $(TEST_USED_OBJECTS) $(TEST_OBJS)
-	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -L $(LIBS) $(TESTLDFLAG) -o $@ 
+	$(CC) $(TEST_OBJS) $(TEST_USED_OBJECTS) -L $(LIBS) $(TESTLDFLAG) -o $@
 
-$(TEST_OBJS):$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp 
+$(TEST_OBJS):$(TEST_OBJ_DIR)/%.o: $(TEST_DIR)/%.cpp
 	$(CC) $(TESTDEFINES) $(FLAGS) $< -I $(INCLUDES) -o $@
 
 $(BUILDDIR):

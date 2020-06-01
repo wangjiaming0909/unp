@@ -19,6 +19,7 @@ FileMonitorHandler::FileMonitorHandler(reactor::Reactor& react, IDirObservable& 
   , entries_()
   , pending_sync_set_()
   , syncing_set_()
+  , finished_set_()
   , paused_set_()
   , error_set_()
   , pending_set_cv_()
@@ -92,6 +93,18 @@ void FileMonitorHandler::sync()
     auto ret = reactor_->handle_events();
     LOG(DEBUG) << "FileMonitorHandler handle_events returned: " << ret;
   }
+}
+
+int FileMonitorHandler::add_to_finished(const Entry& e)
+{
+  std::lock_guard<std::mutex> guard(pending_set_mutex_);
+  if (pending_sync_set_.count(e) == 0) {
+    LOG(WARNING) << "Adding a not syncing entry to finished_set_: " << e.path().string();
+    return -1;
+  }
+  pending_sync_set_.erase(e);
+  finished_set_.insert(e);
+  return 0;
 }
 
 void FileMonitorHandler::add_to_pause(const Entry& e)

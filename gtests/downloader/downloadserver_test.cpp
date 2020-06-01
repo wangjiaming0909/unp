@@ -61,7 +61,7 @@ public:
 
         char* d = (char*)::calloc(1024, 1);
         mes.SerializeToArray(d, 1024);
-        auto bytesWritten = write(d, len);
+        auto bytesWritten = write(d, len, true);
         free(d);
         LOG(INFO) << "mes len: " << len;
         LOG(INFO) << "bytes writen: " << bytesWritten;

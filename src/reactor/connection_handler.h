@@ -20,9 +20,9 @@ public:
 
   virtual uint32_t read(char *data_out, uint32_t data_len);
   virtual uint32_t read_line(char *data_out, uint32_t data_len, buffer_eol_style eol);
-  virtual uint32_t write(const char *data, uint64_t len, bool is_flush = true);
+  virtual uint32_t write(const char *data, uint64_t len, bool is_flush);
   template <typename T>
-  int write(const T &data, bool is_flush = false);
+  int write(const T &data, bool is_flush);
 
   virtual int open();
   virtual int close();
@@ -42,7 +42,7 @@ public:
   }
 
 #ifdef TESTING
-  void drain_output_buffer(uint32_t size)
+  void drain_output_buffer(uint64_t size)
   {
     std::lock_guard<std::mutex> gurad{output_mutex_};
     size = std::min(size, output_buffer_.buffer_length());

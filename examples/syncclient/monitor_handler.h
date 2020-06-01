@@ -42,6 +42,8 @@ public:
   virtual void onUpdate(const EntryMap& es) override;
   virtual int handle_close(int handle) override;
 
+  int add_to_finished(const Entry& e);
+
 private:
   void add_to_need_sync(const Entry& e);
   void add_to_pause(const Entry& e);
@@ -52,6 +54,7 @@ private:
   EntryMap entries_;
   std::set<Entry> pending_sync_set_;
   std::set<Entry> syncing_set_;
+  std::set<Entry> finished_set_;
   std::set<Entry> paused_set_;
   std::set<Entry> error_set_;
   std::mutex pending_set_mutex_;
