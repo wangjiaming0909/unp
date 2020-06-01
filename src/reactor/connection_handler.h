@@ -20,7 +20,7 @@ public:
 
   virtual uint32_t read(char *data_out, uint32_t data_len);
   virtual uint32_t read_line(char *data_out, uint32_t data_len, buffer_eol_style eol);
-  virtual uint32_t write(const char *data, uint32_t len, bool is_flush = true);
+  virtual uint32_t write(const char *data, uint64_t len, bool is_flush = true);
   template <typename T>
   int write(const T &data, bool is_flush = false);
 

@@ -39,12 +39,12 @@ uint32_t connection_handler::read_line(char *data_out, uint32_t data_len, buffer
   return input_buffer_.read_line(data_out, data_len, eol);
 }
 
-uint32_t connection_handler::write(const char *data, uint32_t len, bool is_flush)
+uint32_t connection_handler::write(const char *data, uint64_t len, bool is_flush)
 {
-  std::lock_guard<std::mutex> gurad{output_mutex_};
   if (data == 0 || len == 0)
     return -1;
 
+  std::lock_guard<std::mutex> gurad{output_mutex_};
   if (output_buffer_.buffer_length() >= BUFFER_HIGH_WATER_MARK) {
     LOG(WARNING) << "Output buffer length got to HIGH_WATER_MARK";
     return 0;
