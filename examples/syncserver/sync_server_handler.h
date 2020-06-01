@@ -1,5 +1,6 @@
 #pragma once
 #include "proto/decoder.h"
+#include "reactor/ConnectionManager.h"
 #include "reactor/sock_connection_handler.h"
 #include "proto/sync_package.h"
 
@@ -41,5 +42,7 @@ private:
     DirE_t localStoreDirectory_;
     std::list<DirE_t*> receivedEntries_;
     reactor::Decoder<SyncPackage, int64_t> decoder_;
+    reactor::Reactor *file_reactor_ = nullptr;
+    std::unique_ptr<reactor::ConnectionManager> manager_;
 };
 }

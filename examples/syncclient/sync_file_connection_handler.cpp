@@ -31,6 +31,8 @@ int SyncFileConnectionHandler::post_handle_input(int handle)
   auto to  = from + buffer_len;
   auto package = getDepositeFilePackage(file_name_.c_str(), file_len_, from, to, data);
 
+  LOG(DEBUG) << "sending file: " << file_name_ << " content: " << data;
+
   int64_t size = package->ByteSizeLong();
   char* d = static_cast<char*>(::calloc(size, 1));
   package->SerializeToArray(d, size);

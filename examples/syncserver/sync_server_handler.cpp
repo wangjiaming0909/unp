@@ -1,5 +1,8 @@
 #include "../examples/syncserver/sync_server_handler.h"
 #include "proto/decoder.h"
+#include "reactor/ConnectionManager.h"
+#include "reactor/file_reactor_impl.h"
+#include "reactor/reactor.h"
 
 namespace filesync
 {
@@ -9,6 +12,8 @@ SyncServerHandler::SyncServerHandler(reactor::Reactor& react)
   , localStoreDirectory_{boost::filesystem::current_path()}
   , receivedEntries_{}
 {
+  //file_reactor_ = new reactor::Reactor(new reactor::FileReactorImpl());
+  //manager_.reset(new reactor::ConnectionManager(*file_reactor_));
 }
 
 int SyncServerHandler::handle_input(int handle)
@@ -31,6 +36,7 @@ int SyncServerHandler::handle_input(int handle)
         LOG(INFO) << "Received deposite file mess...";
         LOG(INFO) << "File name: " << mes->header().depositefileheader().filename();
         LOG(INFO) << "File size: " << mes->header().depositefileheader().filelen();
+        LOG(INFO) << "File content: " << mes->content();
       }
     }
     decoder_.reset();
