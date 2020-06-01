@@ -38,7 +38,7 @@ build:
     - cd /builds/wangjiaming0909/unp
     - ./scripts/protoc.sh
     - ./scripts/setup_ld.sh
-    - make -j $(nproc)
+      #- make -j $(nproc)
     - make examples -j $(nproc)
     - make test -j $(nproc)
     - ./rt.sh
