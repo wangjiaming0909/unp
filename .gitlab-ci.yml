@@ -39,6 +39,5 @@ build:
     - ./scripts/protoc.sh
     - ./scripts/setup_ld.sh
       #- make -j $(nproc)
-    - make examples -j $(nproc)
-    - make test -j $(nproc)
+    - make all -j $(nproc)
     - ./rt.sh

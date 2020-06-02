@@ -22,21 +22,18 @@
 
 if [ $# = 0 ]
 then
-  cd gtests
-  ./test.out
+  ./build/test.out
 elif [ $1 = 1 ]
 then
-  ./build/examples/sync_client/sync_client
+  ./build/sync_client
 elif [ $1 = 2 ]
 then
-  ./build/examples/sync_server/sync_server
+  ./build/sync_server
 elif [ $# = 1 ]
 then
-  cd gtests
-  ./test.out --gtest_filter=$1.*
+  ./build/test.out --gtest_filter=$1.*
 elif [ $# = 2 ]
 then
-  cd gtests
-  ./test.out --gtest_filter=$1.$2
+  ./build/test.out --gtest_filter=$1.$2
 fi
 

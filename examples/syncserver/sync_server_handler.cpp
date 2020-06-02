@@ -1,4 +1,4 @@
-#include "../examples/syncserver/sync_server_handler.h"
+#include "syncserver/sync_server_handler.h"
 #include "proto/decoder.h"
 #include "reactor/ConnectionManager.h"
 #include "reactor/file_reactor_impl.h"
