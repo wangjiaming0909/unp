@@ -37,7 +37,9 @@ int SyncFileConnectionHandler::post_handle_input(int handle)
   char* d = static_cast<char*>(::calloc(size, 1));
   package->SerializeToArray(d, size);
   auto bytes_written = output_connection_->write(size, false);
+  LOG(DEBUG) << "SyncFileConnectionHandler write size: " << sizeof(size);
   bytes_written += output_connection_->write(d, size, true);
+  LOG(DEBUG) << "SyncFileConnectionHandler write size: " << size;
   free(d);
   if (bytes_written <= 0) {
     LOG(WARNING) << "SyncFileConnectionHandler::post_handle_input write returned: " << bytes_written;

@@ -25,6 +25,8 @@ public:
   ~Decoder() { }
   Len_T decode(buffer& buf)
   {
+    if (state_ == COMPLETED)
+      reset();
     Len_T bytesParsed = 0;
     auto buf_len = buf.total_len();
     while(buf_len - bytesParsed > 0 && state_ != COMPLETED)
@@ -96,6 +98,8 @@ public:
 
   bool isCompleted() const { return state_ == COMPLETED; }
 
+  bool isError() const {return state_ == ERROR;}
+
   MessPtr getMess() { return mesPtr_; }
 
   void reset()
@@ -110,6 +114,7 @@ public:
 private:
   Len_T decodeLen(buffer& buf)
   {
+    LOG(DEBUG) << "Decoding len: " << messLen_;
     auto buf_len = buf.total_len();
     if (buf_len < sizeof(Len_T)) return 0;
 
@@ -119,6 +124,7 @@ private:
       messLen_ = 0;
       return 0;
     }
+    LOG(DEBUG) << "Decoding len: " << messLen_;
     buf.drain(sizeof(Len_T));
     bytesParsed_ += sizeof(Len_T);
     bytesRemainToParse_ = messLen_;

@@ -14,6 +14,7 @@ ssize_t InetSockStream::read(reactor::buffer& buf, size_t len)
 {
   char* const data_p = static_cast<char*>(::calloc(len + 1, 1));
   int read_len = read_imp(data_p, len);
+  LOG(DEBUG) << "InetSockStream read to buf size: " << read_len;
   if(read_len > 0 )
   {
     auto data_appended = buf.append(data_p, read_len);

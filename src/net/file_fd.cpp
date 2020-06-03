@@ -14,13 +14,19 @@ FileFD::FileFD(const char* file_path, int flags)
   , open_flags_(flags)
 { }
 
-FileFD::~FileFD() { }
+FileFD::~FileFD()
+{
+  if (fd_ != INVALID_HANDLE) {
+    close(-1);
+  }
+}
 
 int FileFD::open()
 {
   if (file_path_.empty())
     return -1;
   fd_ = ::open(file_path_.c_str(), open_flags_);
+  LOG(DEBUG) << "opening a file: " << file_path_ << " fd: " << fd_;
   if (open_flags_ & O_RDONLY) {
     canRead_ = true;
   }
@@ -36,6 +42,7 @@ int FileFD::open()
 
 int FileFD::close(int /*how*/)
 {
+  LOG(DEBUG) << "closing a fd: " << fd_;
   auto ret = ::close(fd_);
   fd_ = INVALID_HANDLE;
   canWrite_ = false;

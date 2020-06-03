@@ -11,10 +11,10 @@ public:
   SyncFileConnectionHandler(Reactor& react, FileMonitorHandler& output_connection, const std::string& file_name, uint64_t file_len);
   ~SyncFileConnectionHandler() = default;
 
-  virtual int post_handle_input(int handle) override;
   virtual int handle_close(int handle) override;
 
 private:
+  virtual int post_handle_input(int handle) override;
   uint64_t send_to_server();
 
 private:

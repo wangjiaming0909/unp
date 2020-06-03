@@ -24,7 +24,13 @@ int SyncServerHandler::handle_input(int handle)
 
   while (input_buffer_.buffer_length() > sizeof(int64_t)) {
     auto lenParsed = decoder_.decode(input_buffer_);
-    if (lenParsed <= 0) return -1;
+    LOG(DEBUG) << "SyncServerHandler::handle_input decode returned: " << lenParsed;
+    if (lenParsed <= 0) {
+      if (decoder_.isError())
+        return -1;
+    }
+    if (lenParsed == 0 && !decoder_.isCompleted())
+      break;
     auto mes = decoder_.getMess();
     if (mes) {
       if (mes->header().command() == Command::ClientHello) {
@@ -39,7 +45,6 @@ int SyncServerHandler::handle_input(int handle)
         LOG(INFO) << "File content: " << mes->content();
       }
     }
-    decoder_.reset();
   }
   return 0;
 }

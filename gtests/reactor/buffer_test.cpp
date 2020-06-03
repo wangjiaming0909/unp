@@ -769,3 +769,72 @@ TEST(buffer, test_buffer_append_data)
     buf.append_printf("%s", "123");
     ASSERT_TRUE(buf.total_len() == 128 + 3);
 }
+
+TEST(buffer, large_data)
+{
+  buffer buf;
+  SizableClass_WithChar<10000> s1;
+  const char*p = s1.buffer_;
+  buf.append(p, 10000);
+  ASSERT_EQ(buf.chain_number(), 1);
+
+  buffer output_buf;
+  auto *p2 = buf.pullup(5000);
+  ASSERT_EQ(0, memcmp(p2, p, 5000));
+  ASSERT_TRUE(p2 != nullptr);
+  auto ret = output_buf.append(p2, 5000);
+  p2 = output_buf.pullup(5000);
+  ASSERT_EQ(0, memcmp(p2, p, 5000));
+  uint64_t i = 531;
+  output_buf.append(i);
+  ASSERT_EQ(ret, 5000);
+
+  ret = buf.drain(5000);
+  p2 = buf.pullup(5000);
+  ASSERT_EQ(0, memcmp(p2, p+5000, 5000));
+  ASSERT_EQ(ret, 5000);
+}
+
+TEST(buffer, large_data_2)
+{
+  buffer buf;
+  SizableClass_WithChar<5000> s1;
+  SizableClass_WithChar<5000> s2;
+  SizableClass_WithChar<5000> s3;
+  SizableClass_WithChar<5000> s4;
+
+  const char* p1 = s1.buffer_;
+  const char* p2 = s2.buffer_;
+  const char* p3 = s3.buffer_;
+  const char* p4 = s4.buffer_;
+
+  buf.append(p1, 5000);
+  buf.append(p2, 5000);
+  buf.append(p3, 5000);
+
+  ASSERT_EQ(buf.buffer_length(), 15000);
+
+  buf.drain(4000);
+  ASSERT_EQ(buf.buffer_length(), 11000);
+
+  buf.append(p4, 5000);
+  ASSERT_EQ(buf.buffer_length(), 16000);
+  buf.drain(4000);
+  ASSERT_EQ(buf.buffer_length(), 12000);
+  buf.drain(9999);
+  ASSERT_EQ(buf.buffer_length(), 2001);
+  buf.append(p1, 5000);
+  ASSERT_EQ(buf.buffer_length(), 7001);
+  buf.drain(7001);
+  ASSERT_EQ(buf.buffer_length(), 0);
+  buf.append(p1, 5000);
+  buf.append(p2, 2500);
+  buf.append(p3, 5000);
+  buf.append(p1, 5000);
+  buf.append(p2, 2500);
+  buf.append(p3, 5000);
+  buf.append(p1, 5000);
+  buf.append(p2, 5000);
+  buf.append(p3, 5000);
+  ASSERT_EQ(buf.buffer_length(), 40000);
+}
