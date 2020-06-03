@@ -19,7 +19,10 @@ unp.log
 myeasylog.log
 unp.cxxflags
 unp.cflags
+boost_1_72_0.tar
+filelock
 compile_commands.json
+test.out
 **/.clangd/**
 examples/**/*.o
 sync_client
