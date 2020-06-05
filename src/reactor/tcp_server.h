@@ -132,7 +132,7 @@ int tcp_server<Handler_t>::start(unp::reactor_imp_t_enum impl)
     while(1)
     {
         auto ret = first_reactor_->handle_events();
-        if(ret != 0)
+        if(ret < 0)
         {
             LOG(ERROR) << "handle events error";
             break;

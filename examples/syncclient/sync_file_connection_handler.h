@@ -21,6 +21,6 @@ private:
   FileMonitorHandler* output_connection_;
   std::string file_name_;
   uint64_t file_len_;
-  uint64_t bytes_sent_;
+  uint64_t bytes_sent_ = -1;
 };
 }

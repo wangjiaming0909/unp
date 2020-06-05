@@ -4,6 +4,7 @@
 #include "proto/decoder.h"
 #include "proto/mess_wl.pb.h"
 #include "util/easylogging++.h"
+#include "proto/sync_package.h"
 
 void printMess(const downloadmessage::Mess_WL& m1)
 {
@@ -108,4 +109,28 @@ TEST(decoder, bufer)
   mes = decoder.getMess();
   printMess(*mes);
   free(d);
+}
+
+TEST(decoder, large_buffer)
+{
+  using namespace filesync;
+  using namespace reactor;
+  char d[9999];
+  auto p = getDepositeFilePackage("filename", 10000, 0, 9999, d);
+
+  auto* data = (char*)::calloc(p->ByteSizeLong(), 1);
+  p->SerializeToArray(data, p->ByteSizeLong());
+
+  reactor::buffer buf;
+  int64_t size = p->ByteSizeLong();
+  buf.append(size);
+
+  Decoder<SyncPackage, int64_t> decoder;
+  auto len = decoder.decode(buf);
+  ASSERT_EQ(len, sizeof(int64_t));
+  ASSERT_EQ(buf.buffer_length(), 0);
+  buf.append(data, p->ByteSizeLong());
+  len = decoder.decode(buf);
+  ASSERT_EQ(len, p->ByteSizeLong());
+  ASSERT_TRUE(decoder.isCompleted());
 }

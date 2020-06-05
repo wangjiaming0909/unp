@@ -38,16 +38,16 @@ public:
             break;
           bytesParsed = decodeLen(buf);
           if (bytesParsed == sizeof(Len_T))
-          {
             state_ = LEN_DECODED;
-          }
           break;
         case LEN_DECODED:
         case PARTIALY_PARSED:
           {
-            if (buf_len < bytesRemainToParse_) return bytesParsed;
+            if (buf_len - bytesParsed < bytesRemainToParse_)
+              return bytesParsed;
             bytesParsed += decodeRemain(buf);
-            if(bytesRemainToParse_ == 0) state_ = COMPLETED;
+            if(bytesRemainToParse_ == 0)
+              state_ = COMPLETED;
             break;
           }
         case COMPLETED:
@@ -104,6 +104,7 @@ public:
 
   void reset()
   {
+    LOG(DEBUG) << "Reset decoder...";
     mesPtr_.reset();
     bytesParsed_ = 0;
     bytesRemainToParse_ = 0;
@@ -114,7 +115,6 @@ public:
 private:
   Len_T decodeLen(buffer& buf)
   {
-    LOG(DEBUG) << "Decoding len: " << messLen_;
     auto buf_len = buf.total_len();
     if (buf_len < sizeof(Len_T)) return 0;
 
@@ -147,8 +147,11 @@ private:
       reset();
       return 0;
     }
+    LOG(DEBUG) << "Decode remain mess: " << messLen_;
     bytesParsed_ += messLen_;
+    LOG(DEBUG) << "bytes parsed: " << bytesParsed_;
     bytesRemainToParse_ -= messLen_;
+    LOG(DEBUG) << "bytes remain to parse: " << bytesRemainToParse_;
     buf.drain(messLen_);
     return messLen_;
   }

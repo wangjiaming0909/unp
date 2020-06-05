@@ -29,22 +29,25 @@ int SyncServerHandler::handle_input(int handle)
       if (decoder_.isError())
         return -1;
     }
-    if (lenParsed == 0 && !decoder_.isCompleted())
-      break;
-    auto mes = decoder_.getMess();
-    if (mes) {
-      if (mes->header().command() == Command::ClientHello) {
-        //LOG(INFO) << "Received client hello...";
-        sayHello();
-        //LOG(INFO) << "Send server hello...";
-      }
-      if (mes->header().command() == Command::DepositeFile) {
-        LOG(INFO) << "Received deposite file mess...";
-        LOG(INFO) << "File name: " << mes->header().depositefileheader().filename();
-        LOG(INFO) << "File size: " << mes->header().depositefileheader().filelen();
-        LOG(INFO) << "File content: " << mes->content();
+    if (decoder_.isCompleted()) {
+      auto mes = decoder_.getMess();
+      if (mes) {
+        if (mes->header().command() == Command::ClientHello) {
+          LOG(DEBUG) << "Client hello message: " << mes->content();
+          //LOG(INFO) << "Received client hello...";
+          sayHello();
+          //LOG(INFO) << "Send server hello...";
+        } else if (mes->header().command() == Command::DepositeFile) {
+          LOG(INFO) << "Received deposite file mess...";
+          LOG(INFO) << "File name: " << mes->header().depositefileheader().filename();
+          LOG(INFO) << "File size: " << mes->header().depositefileheader().filelen();
+          LOG(INFO) << "File from: " << mes->header().depositefileheader().curseqstart();
+          LOG(INFO) << "File to: " << mes->header().depositefileheader().curseqend();
+        }
       }
     }
+    if (lenParsed == 0)// && !decoder_.isCompleted())
+      break;
   }
   return 0;
 }
