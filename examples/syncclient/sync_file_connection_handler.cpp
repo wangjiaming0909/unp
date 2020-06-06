@@ -27,10 +27,8 @@ int SyncFileConnectionHandler::post_handle_input(int handle)
   }
 
   auto* data = input_buffer_.pullup(buffer_len);
-  std::string str(data, static_cast<size_t>(buffer_len));
-  LOG(DEBUG) << "received: " << str;
-  auto from = bytes_sent_ + 1;
-  auto to  = from + buffer_len;
+  auto from = bytes_sent_;
+  auto to  = from + buffer_len - 1;
   auto package = getDepositeFilePackage(file_name_.c_str(), file_len_, from, to, data);
 
   LOG(DEBUG) << "sending file: " << file_name_;//<< " content: " << data;

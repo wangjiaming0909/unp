@@ -838,3 +838,26 @@ TEST(buffer, large_data_2)
   buf.append(p3, 5000);
   ASSERT_EQ(buf.buffer_length(), 40000);
 }
+
+TEST(buffer, miss_align)
+{
+  buffer buf{};
+  SizableClass_WithChar<4000> c{};
+  auto* d = c.buffer_;
+
+  buf.append(d, 4000);
+  buf.append(d, 4000);
+
+  auto* d1 = buf.pullup(100);
+  LOG(DEBUG) << d1;
+  ASSERT_EQ(0, memcmp(d1, d, 100));
+
+  buf.drain(10);
+  d1 = buf.pullup(100);
+  LOG(DEBUG) << d1;
+  ASSERT_EQ(0, memcmp(d1, d+10, 100));
+
+  d1 = buf.pullup(5000);
+  LOG(DEBUG) << d1;
+  ASSERT_EQ(0, memcmp(d1, d+10, 100));
+}
