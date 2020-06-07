@@ -91,6 +91,10 @@ void FileMonitorHandler::sync()
       pending_set_cv_.wait(lock);
     lock.unlock();
     auto ret = reactor_->handle_events();
+    if (ret < 0) {
+      LOG(WARNING) << "FileMonitorHandler handle events returned -1";
+      break;
+    }
     LOG(DEBUG) << "FileMonitorHandler handle_events returned: " << ret;
   }
 }
@@ -102,6 +106,7 @@ int FileMonitorHandler::add_to_finished(const Entry& e)
     LOG(WARNING) << "Adding a not syncing entry to finished_set_: " << e.path().string();
     return -1;
   }
+  LOG(DEBUG) << "Entry added to finished: " << e.path().string();
   pending_sync_set_.erase(e);
   finished_set_.insert(e);
   return 0;

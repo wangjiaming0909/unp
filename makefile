@@ -156,5 +156,27 @@ clean: FORCE
 	$(RM) $(SYNC_SERVER_CORE)
 	$(RM) $(SYNC_SERVER_TARGET)
 
+examples_clean: FORCE
+	@$(RM) $(SYNC_CLIENT_OBJS)
+	@echo "clean sync_client objects"
+	$(RM) $(SYNC_CLIENT_TARGET)
+	$(RM) $(SYNC_CLIENT_CORE)
+	@$(RM) $(SYNC_SERVER_OBJS)
+	@echo "clean sync_server objects"
+	$(RM) $(SYNC_SERVER_CORE)
+	$(RM) $(SYNC_SERVER_TARGET)
+
+unp_clean: FORCE
+	@$(RM) $(UNP_CORE_OBJECTS)
+	@echo "clean unp objects"
+	$(RM) $(UNP_CORE)
+	$(RM) $(MAIN)
+
+test_clean: FORCE
+	$(RM) $(TEST_TARGET)
+	@$(RM) $(TEST_OBJS)
+	@echo "clean test objects"
+
+
 
 FORCE:

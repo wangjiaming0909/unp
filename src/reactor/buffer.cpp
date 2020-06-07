@@ -178,7 +178,7 @@ buffer_chain& buffer_chain::operator= (const buffer_chain& other)
         buffer_ = static_cast<char*>(::calloc(capacity_, 1));
     }
 
-    ::memcpy(buffer_, other.buffer_ + misalign_, other.size());
+    ::memcpy(buffer_, other.buffer_ + other.misalign_, other.size());
     next_ = other.next_;
     off_ = other.size();
     parent_ = other.parent_;

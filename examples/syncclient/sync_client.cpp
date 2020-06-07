@@ -96,7 +96,7 @@ void SyncClient::timeoutCallback(reactor::TimeoutHandler*)
   if (!serverMonitorHandler_) return;
   auto hello = "hello\n";
   auto helloPacakgePtr = filesync::getHelloPackage(hello, PackageType::Client);
-  auto bytesWritten = sendPackage(helloPacakgePtr);
+  auto bytesWritten = 1;//sendPackage(helloPacakgePtr);
   if (bytesWritten <= 0) {
     LOG(ERROR) << "client say hello failed...";
     if (sayHelloFailedWaitInterval_ > 100) return;

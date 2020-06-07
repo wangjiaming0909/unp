@@ -1,4 +1,5 @@
 #include "proto/sync_package.h"
+#include "util/easylogging++.h"
 
 namespace filesync
 {
@@ -22,6 +23,7 @@ SyncPackagePtr getHelloPackage(const char* hello, PackageType clientOrServer)
 
 SyncPackagePtr getDepositeFilePackage(const char* fileName, uint64_t fileLen, uint64_t from, uint64_t to, void* data)
 {
+  LOG(DEBUG) << "Build deposite file package filename: " << fileName << " fileLen: " << fileLen << " from: " << from << " to: " << to;
   SyncPackagePtr p = std::make_shared<SyncPackage>();
   auto* header = p->mutable_header();
   header->set_type(PackageType::Client);
