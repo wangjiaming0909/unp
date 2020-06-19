@@ -9,7 +9,7 @@ set smartindent
 set langmenu=en
 "set ic
 set encoding=utf-8
-"set noswapfile
+set noswapfile
 set nocompatible
 set backspace=indent,eol,start
 set history=1000
@@ -21,19 +21,18 @@ set tags+=~/.vim/tags/ace_tags
 set tags+=~/.vim/tags/event_tags
 set laststatus=2
 set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&fileencoding}\ %c:%l/%L%)\ [%p%%]\
-set mouse=a
-set expandtab
-set lcs=tab:>* "show tabs
+"set mouse=a
+set lcs=tab:** "show tabs
 set lcs+=trail:~ "show trailing spaces
 set list
-highlight TabLine term=underline cterm=bold ctermbg=darkgrey
-highlight TabLineSel term=bold cterm=bold ctermbg=green ctermfg=None
+highlight TabLine term=underline cterm=bold ctermbg=blue ctermfg=darkgrey
+highlight TabLineSel term=bold cterm=bold ctermbg=darkgrey ctermfg=white
 highlight Pmenu ctermbg=lightgrey
 highlight PmenuSel ctermbg=green ctermfg=yellow
-"hi CursorLine cterm=bold ctermbg=grey ctermfg=None guibg=#666666 guifg=lightblue
-"hi cursorcolumn cterm=bold ctermbg=grey ctermfg=None guibg=lightblue guifg=lightblue
-hi CursorLine cterm=bold ctermbg=lightblue ctermfg=None guibg=#666666 guifg=lightblue
-hi cursorcolumn cterm=bold ctermbg=lightblue ctermfg=NONE guibg=lightblue guifg=lightblue
+"hi CursorLine cterm=bold ctermbg=darkgrey ctermfg=None guibg=#666666 guifg=lightblue
+"hi cursorcolumn cterm=bold ctermbg=darkgrey ctermfg=None guibg=lightblue guifg=lightblue
+hi CursorLine cterm=bold ctermbg=lightblue ctermfg=None guibg=darkgrey guifg=lightblue
+hi cursorcolumn cterm=bold ctermbg=lightblue ctermfg=NONE guibg=darkgrey guifg=lightblue
 hi CursorLineNr cterm=bold,underline ctermbg=blue ctermfg=yellow
 set cursorline
 set cursorcolumn
@@ -52,6 +51,7 @@ Plugin 'taglist.vim'
 Plugin 'mhinz/vim-grepper'
 Plugin 'valloric/youcompleteme'
 Plugin 'octol/vim-cpp-enhanced-highlight'
+Plugin 'Yggdroot/indentLine'
 call vundle#end()
 
 filetype plugin indent on
@@ -68,7 +68,7 @@ let g:ctrlp_custom_ignore={
 
 "taglist
 map <silent> <F9> :TlistToggle<CR>
-let tlist_cpp_settings = 'c++;n:namespace;v:variable;d:macro;t:typedef;' .
+let tlist_cpp_settings = 'c++;n:namespace;v:variable;d:macro;t:typedef;' . 
                        \ 'c:class;m:member;g:enum;s:struct;u:union;f:function;' .
                        \ 'p:prototype'
 let Tlist_Use_Right_Window=1
@@ -121,7 +121,7 @@ noremap <leader><Down> :resize -6<CR>
 nnoremap <C-h> <C-o>
 nnoremap <C-l> <C-i>
 nnoremap <F12> <C-]>
-nnoremap <C-j> <C-]>
+nnoremap <C-j> <C-]>:ts<CR>
 nnoremap <C-k> <C-]>
 nnoremap <F5> :bufdo e<CR>
 nnoremap f *
@@ -130,6 +130,11 @@ nnoremap <leader>w <C-w><C-w>
 nnoremap <Down> <C-e>
 nnoremap <Up> <C-y>
 nnoremap <leader>d <plug>(YCMHover)
+nnoremap <leader>F :YcmCompleter FixIt<CR>
+nnoremap D 11<C-e>
+nnoremap U 11<C-y>
+nnoremap <leader>m :set mouse=a<CR>
+nnoremap <leader>M :set mouse=<CR>
 let g:ycm_disable_for_files_larger_than_kb = 0
 let g:ycm_max_num_identifier_candidates = 30
 let g:ycm_max_num_candidates = 30
@@ -138,6 +143,11 @@ let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_complete_in_comments = 1
+
+let g:indentLine_color_term = 20
+let g:indentLine_color_tty_light = 7 " (default: 4)
+let g:indentLine_color_dark = 1 " (default: 2)
+let g:indentLine_char_list = ['¦']
 
 
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif

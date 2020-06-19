@@ -19,3 +19,14 @@ map L <ESC>iinfo<Space>locals<CR><ESC>
 map t <ESC>ithread<Space>
 map T <ESC>iinfo<Space>threads<CR><ESC>
 map a i
+
+map S <ESC>isave<Space>breakpoints<Space>breaks<CR><ESC>
+map l <ESC>isource<Space>breaks<CR><ESC>
+map B <ESC>iinfo<Space>breakpoints<CR><ESC>
+map b <ESC>itb<CR><ESC>
+
+map w <ESC>iwatch<Space>
+map W <ESC>iinfo<Space>watchpoints<CR><ESC>
+map x <ESC>ix/s<Space>
+map v <ESC>iset<Space>var<Space>
+map J <ESC>ij<Space>
