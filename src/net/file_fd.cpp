@@ -43,6 +43,9 @@ int FileFD::open()
 int FileFD::close(int /*how*/)
 {
   LOG(DEBUG) << "closing a fd: " << fd_;
+  if (fd_ == INVALID_HANDLE) {
+    return -1;
+  }
   auto ret = ::close(fd_);
   fd_ = INVALID_HANDLE;
   canWrite_ = false;

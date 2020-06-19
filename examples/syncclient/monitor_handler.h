@@ -49,6 +49,7 @@ private:
   void add_to_pause(const Entry& e);
   void add_to_error(const Entry& e);
   void sync();
+  void close_reader(const std::string& file_name);
 
 private:
   EntryMap entries_;
@@ -63,6 +64,7 @@ private:
   bool cancel_reactor_token_ = false;
   std::unique_ptr<reactor::ConnectionManager> manager_;
   std::vector<ReaderType*> readers_;
+  std::map<std::string, ReaderType*> readers_map_;
 };
 
 class ServerMonitorHandler : public reactor::sock_connection_handler

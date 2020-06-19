@@ -26,6 +26,7 @@ FileMonitorHandler::FileMonitorHandler(reactor::Reactor& react, IDirObservable& 
   , reactor_(nullptr)
   , manager_(nullptr)
   , readers_()
+  , readers_map_()
 {
   reactor_ = new reactor::Reactor(new reactor::FileReactorImpl());
   manager_.reset(new reactor::ConnectionManager(*reactor_));
@@ -76,9 +77,12 @@ void FileMonitorHandler::add_to_need_sync(const Entry& e)
   }
   pending_sync_set_.insert(e);
   auto file_size = boost::filesystem::file_size(e.path());
-  auto *reader = manager_->makeConnection<ReaderType>(*this, e.path().string(), static_cast<uint64_t>(file_size));
+  auto file_name = e.path().string();
+  auto *reader = manager_->makeConnection<ReaderType>(*this, file_name, static_cast<uint64_t>(file_size));
   reader->open_file(e.path().string().c_str(), O_RDONLY);
   readers_.push_back(reader);
+  close_reader(file_name);
+  readers_map_[file_name] = reader;
   pending_set_cv_.notify_one();
 }
 
@@ -109,7 +113,19 @@ int FileMonitorHandler::add_to_finished(const Entry& e)
   LOG(DEBUG) << "Entry added to finished: " << e.path().string();
   pending_sync_set_.erase(e);
   finished_set_.insert(e);
+  close_reader(e.path().string());
   return 0;
+}
+
+
+void FileMonitorHandler::close_reader(const std::string& file_name)
+{
+  if (readers_map_.count(file_name) == 1) {
+    using namespace std::chrono_literals;
+    manager_->closeConnection<ReaderType>(*readers_map_[file_name], 1s);
+  } else {
+    LOG(WARNING) << "Trying to close a non exist reader: " << file_name;
+  }
 }
 
 void FileMonitorHandler::add_to_pause(const Entry& e)
@@ -129,6 +145,7 @@ void FileMonitorHandler::add_to_error(const Entry& e)
     return;
   }
   LOG(DEBUG) << "Entry add to error: " << e.path();
+  close_reader(e.path().string());
   error_set_.insert(e);
 }
 
