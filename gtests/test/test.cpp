@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include "util/easylogging++.h"
+#include "util/timer.h"
+#include "util/min_heap.h"
 
 
 void hide_pwd(std::string& conn_str)
@@ -87,4 +89,109 @@ TEST(fcntl, file_lock)
   print_filelock_of_file("filelock");
   print_filelock_of_file("test.out");
   print_filelock_of_file("boost_1_72_0.tar");
+}
+
+std::vector<double> put_together_and_sort(const std::vector<std::vector<double>>& v)
+{
+  vector<double> tv;
+  for(auto & vv : v) {
+    for(auto i : vv) {
+      tv.push_back(i);
+    }
+  }
+  std::sort(tv.begin(), tv.end());
+  return tv;
+}
+
+void binary_insert_sort(const std::vector<std::vector<double>>& v)
+{
+
+}
+
+void minheap_merg_sort(const std::vector<std::vector<double>>& v)
+{
+}
+
+struct MergeNode
+{
+  MergeNode(double value, int index) : value(value), indexInArray(index){}
+  double value;
+  int indexInArray;
+  bool operator>(const MergeNode& node) const {return value > node.value;}//have to be const for std::greater
+  bool operator>=(const MergeNode& node) const {return value >= node.value;}
+  bool operator<(const MergeNode& node) const {return value < node.value;}
+  bool operator<=(const MergeNode& node) const {return value <= node.value;}
+  bool operator==(const MergeNode& node) const {return value == node.value;}
+};
+
+//no matter of CPU usage and memory usage minheap sorting is slower than put together and sort
+std::vector<double> mergeMultiSortedArrayWithMinHeap(std::vector<std::vector<double>> &arrays)
+{
+  std::vector<double> ret{};
+  if(arrays.size() == 0) return ret;
+  util::min_heap<MergeNode> minHeap{};
+
+  std::vector<std::decay<decltype(arrays[0])>::type::const_iterator> its;
+  for(size_t i = 0; i < arrays.size(); i++ ) //O(k)
+  {
+    its.push_back(arrays[i].cbegin());
+  }
+
+  for(size_t i = 0; i < arrays.size(); i++)//O(k)
+  {
+    minHeap.emplace(*its[i], i);
+  }
+
+  while(true)// 在 MinHeap中, 一共有K个元素, 一共进行了pop或者emplace N次 (N为所有的元素个数), 因此复杂度为: O(2Nlog(K))
+  {
+    MergeNode minNode = minHeap.top();
+    ret.push_back(minNode.value);
+    minHeap.pop();
+    if(arrays[minNode.indexInArray].cend() != (its[minNode.indexInArray] + 1)) {
+      minHeap.emplace(*(its[minNode.indexInArray] + 1), minNode.indexInArray);
+      ++its[minNode.indexInArray];
+    }
+    if(minHeap.size() == 0) break;
+  }
+  return ret;
+}
+
+TEST(al, mul_merge_sort)
+{
+  LOG(DEBUG) << "al.mul_merge_sort";
+
+  using namespace std;
+  vector<vector<double>> v;
+  v.resize(100);
+
+  for(int i = 0; i < 100; ++i) {
+    for(int j = 0; j < 80000; ++j) {
+      v[i].push_back((j + i) * (i + 0.1));
+    }
+  }
+
+  vector<double> result;
+
+  {
+    utils::timer _{"using put together and sort: "};
+    result = put_together_and_sort(v);
+  }
+
+  for(int i = 0; i < 200; ++i)
+  {
+    //LOG(DEBUG) << result[i];
+  }
+
+  {
+    utils::timer _{"using binary insert sort: "};
+  }
+
+  {
+    utils::timer _{"using minheap sort: "};
+    result = mergeMultiSortedArrayWithMinHeap(v);
+  }
+  for(int i = 0; i < 200; ++i)
+  {
+    //LOG(DEBUG) << result[i];
+  }
 }
