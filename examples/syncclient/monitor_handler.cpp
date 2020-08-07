@@ -123,6 +123,7 @@ void FileMonitorHandler::close_reader(const std::string& file_name)
   if (readers_map_.count(file_name) == 1) {
     using namespace std::chrono_literals;
     manager_->closeConnection<ReaderType>(*readers_map_[file_name], 1s);
+    readers_map_.erase(file_name);
   } else {
     LOG(WARNING) << "Trying to close a non exist reader: " << file_name;
   }
