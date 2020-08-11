@@ -7,7 +7,6 @@
 #include "reactor/file_reactor_impl.h"
 #include "util/easylogging++.h"
 #include <mutex>
-#include <sys/wait.h>
 
 
 namespace filesync

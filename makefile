@@ -16,7 +16,8 @@ LDFLAGS = -pthread \
 		/boost_1_72_0/stage/lib/libboost_filesystem.so.1.72.0 \
 		-lssl \
 		-lcrypto\
-		/usr/local/lib/libprotobuf.so.22
+		/usr/local/lib/libprotobuf.so.22\
+		-luv
 		
 
 TESTLDFLAG = -pthread \
@@ -28,7 +29,8 @@ TESTLDFLAG = -pthread \
 		-lgmock\
 		-lssl \
 		-lcrypto\
-		/usr/local/lib/libprotobuf.so.22
+		/usr/local/lib/libprotobuf.so.22\
+		-luv
 	
 
 UNP_SOURCEDIR = src

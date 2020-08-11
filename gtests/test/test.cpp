@@ -7,6 +7,7 @@
 #include "util/easylogging++.h"
 #include "util/timer.h"
 #include "util/min_heap.h"
+#include <uv.h>
 
 
 void hide_pwd(std::string& conn_str)
@@ -194,4 +195,11 @@ TEST(al, mul_merge_sort)
   {
     //LOG(DEBUG) << result[i];
   }
+}
+
+TEST(uv, t1)
+{
+  uv_loop_t *loop = new uv_loop_t();
+  uv_loop_init(loop);
+  uv_run(loop, uv_run_mode::UV_RUN_ONCE);
 }
