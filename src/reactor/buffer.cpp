@@ -208,13 +208,13 @@ uint32_t buffer_chain::append(const buffer_chain& chain, uint64_t len, Iter star
 
 int64_t buffer_chain::append(const void* data, uint64_t data_len)
 {
-    if(data == 0 || data_len == 0) return -1;
+  if(data == 0 || data_len == 0) return -1;
 
-    if(chain_free_space() < data_len) return -1;
+  if(chain_free_space() < data_len) return -1;
 
-    ::memcpy(buffer_ + off_, data, data_len);
-    off_ += data_len;
-	return data_len;
+  ::memcpy(buffer_ + off_, data, data_len);
+  off_ += data_len;
+  return data_len;
 }
 
 bool buffer_chain::validate_iter(Iter it) const
@@ -244,22 +244,19 @@ buffer_chain::Iter buffer_chain::end() const
 
 uint32_t buffer_chain::calculate_actual_capacity(uint32_t given_capacity)
 {
-    uint32_t to_alloc = 0;
-    if(given_capacity < MAXIMUM_CHAIN_SIZE / 2)
-    {
-        to_alloc = DEFAULT_CHAIN_SIZE;
-        while(to_alloc < given_capacity){
-            to_alloc <<= 1;
-        }
+  uint32_t to_alloc = 0;
+  if(given_capacity < MAXIMUM_CHAIN_SIZE / 2) {
+    to_alloc = DEFAULT_CHAIN_SIZE;
+    while(to_alloc < given_capacity){
+      to_alloc <<= 1;
     }
-    else
-    {
+  } else {
 #ifdef MINIMUM_CHAIN_SIZE
-        given_capacity = given_capacity < MINIMUM_CHAIN_SIZE ? MINIMUM_CHAIN_SIZE : given_capacity;
+    given_capacity = given_capacity < MINIMUM_CHAIN_SIZE ? MINIMUM_CHAIN_SIZE : given_capacity;
 #endif
-        to_alloc = given_capacity;
-    }
-    return to_alloc;
+    to_alloc = given_capacity;
+  }
+  return to_alloc;
 }
 
 buffer::buffer()
@@ -638,6 +635,8 @@ unsigned char* buffer::pullup(int64_t size)
     if(size < 0) //传递负值,表示全部align到第一个节点
         size = total_len_;
 
+    LOG(DEBUG) << "pullup size: " << size << " total_len: " << total_len_;
+    LOG(DEBUG) << "chain size: " << chains_.size();
     buffer_chain* first_chain = &chains_.front();
     //如果第一个chain的大小已经满足size了,那么直接返回
     if(first_chain->size() >= size)
@@ -645,6 +644,7 @@ unsigned char* buffer::pullup(int64_t size)
 
     //第一个chain不够
     int64_t remain_to_pullup = size - first_chain->size();
+    LOG(DEBUG) << "remain to pullup: " << remain_to_pullup;
 
     //如果first_chain的free size可以塞下多出来的部分, 那么就可以不移动任何元素，直接拷贝多出来的部分
     if(first_chain->chain_free_space() >= remain_to_pullup)
@@ -664,16 +664,19 @@ unsigned char* buffer::pullup(int64_t size)
 
     first_chain = &chains_.front();
     buffer_chain *current_chain = first_chain->next();
+    LOG(DEBUG) << "first_chain size: " << first_chain->size();
 
     //current_chian可能是就是last_chain_with_data_, 但是current_chain不可能是空chain
     while( current_chain != nullptr && remain_to_pullup >= current_chain->size())
     {
-        assert(current_chain->size() > 0);
-        remain_to_pullup -= current_chain->size();
-        first_chain->append(*current_chain);
-        first_chain->next_ = current_chain->next_;
-        chains_.erase(++chains_.begin());
-        current_chain = first_chain->next_;
+      assert(current_chain->size() > 0);
+      LOG(DEBUG) << "pullup from current chain size: " << current_chain->size();
+      remain_to_pullup -= current_chain->size();
+      LOG(DEBUG) << "after pull once remain_to_pullup: " << remain_to_pullup;
+      first_chain->append(*current_chain);
+      first_chain->next_ = current_chain->next_;
+      chains_.erase(++chains_.begin());
+      current_chain = first_chain->next_;
     }
 
     //current_chain == 0 或者 只需要 current_chain 中的一部分
@@ -683,7 +686,8 @@ unsigned char* buffer::pullup(int64_t size)
         current_chain->misalign_ += remain_to_pullup;
     }
 
-    last_chain_with_data_ = current_chain ? current_chain : first_chain;
+    if (last_chain_with_data_ == current_chain)
+      last_chain_with_data_ = current_chain ? current_chain : first_chain;
     return static_cast<unsigned char*>(first_chain->get_start_buffer());
 }
 
@@ -944,54 +948,52 @@ bool buffer::validate_iter(const Iter& iter) const
 
 buffer_chain* buffer::expand_if_needed(uint32_t data_len)
 {
+  LOG(DEBUG) << "expand if needed data_len: " << data_len;
     //no data in buffer at all
     //TODO ERROR last_chain_with_data_ == 0并不代表没有chain，如果有几个空的chain，就可以直接使用，不需要新分配内存
-    if(/*last_chain_with_data_ == 0*/ total_len_ == 0)
-    {
-//        free_trailing_empty_chains();//有可能出现buffer中只有空的chain, 此处是将其free 掉之后重新插入
-        //!! TODO 可以更加高效一点, 检查是否有空的chain，有就检查大小，如果可以塞得下，就直接使用，否则插入新的
-        //! //也可以直接在前面插入新的，不free掉之后的内存，当之后往其中插入的时候，可以重复使用这部分内存
-//        assert(chains_.empty() && "chains_ should be empty");
-        push_front(buffer_chain{this, data_len});
-        return &chains_.back();
-    }
-
-    //if {last_chain_with_data_} has enough space for {data_len} then do nothing
-    if (last_chain_with_data_->chain_free_space() >= data_len)
-    {
-        return last_chain_with_data_;
-    }
-
-    //检查是否值得扩展
-    buffer_chain* lc = last_chain_with_data_;
-    if (lc->chain_free_space() < (lc->chain_capacity() / 8) || //(比例上)当前chain 的剩余空间 只有 capacity 的 1/8, resize 需要拷贝较多内存
-        lc->get_offset() > buffer_chain::MAXIMUM_SIZE_WHEN_EXPAND ||  // (绝对值上)chain 中已经存了 4096 个字节了
-        data_len >= (buffer_chain::MAXIMUM_CHAIN_SIZE - lc->get_offset())) //即便进行扩展，可能扩展之后的空闲内存还是塞不下 data_len
-    {
-        //因此不进行扩展，so 看lc->next 的吧
-        if(lc->next() && lc->next()->chain_free_space() > data_len)
-        {
-            //存在, 并且有足够的空间塞下 data_len
-            assert(lc->next()->get_offset() == 0 && "lc->next() should be empty");
-            return lc->next();
-        } else {
-            //要么是根本不存在next, 要么是next 不够(虽然是空的)
-            free_trailing_empty_chains();
-            buffer_chain _chain{this, data_len};
-            push_back(std::move(_chain));
-        }
-    } else {
-        //now we can resize lc
-        uint32_t length_needed = lc->get_offset() + data_len;
-        buffer_chain chain_newed{this, length_needed};
-        //! lc 一定是最后一个chain么?? 为什么pop_back()
-        chain_newed = *lc;//copy from lc into chain_newed
-        chains_.pop_back();
-        //pop_back 之后，取得最后一个chain, 再将现在的最后一个chain 的next 设置为之后加入的新chain
-        last_chain_with_data_ = push_back(chain_newed);
-        // last_chain_with_data_ = &chains_.back();
-    }
+  if(/*last_chain_with_data_ == 0*/ total_len_ == 0) {
+    //        free_trailing_empty_chains();//有可能出现buffer中只有空的chain, 此处是将其free 掉之后重新插入
+    //!! TODO 可以更加高效一点, 检查是否有空的chain，有就检查大小，如果可以塞得下，就直接使用，否则插入新的
+    //! //也可以直接在前面插入新的，不free掉之后的内存，当之后往其中插入的时候，可以重复使用这部分内存
+    //        assert(chains_.empty() && "chains_ should be empty");
+    push_front(buffer_chain{this, data_len});
     return &chains_.back();
+  }
+
+  //if {last_chain_with_data_} has enough space for {data_len} then do nothing
+  if (last_chain_with_data_->chain_free_space() >= data_len) {
+    return last_chain_with_data_;
+  }
+
+  //检查是否值得扩展
+  buffer_chain* lc = last_chain_with_data_;
+  if (lc->chain_free_space() < (lc->chain_capacity() / 8) || //(比例上)当前chain 的剩余空间 只有 capacity 的 1/8, resize 需要拷贝较多内存
+      lc->get_offset() > buffer_chain::MAXIMUM_SIZE_WHEN_EXPAND ||  // (绝对值上)chain 中已经存了 4096 个字节了
+      data_len >= (buffer_chain::MAXIMUM_CHAIN_SIZE - lc->get_offset())) //即便进行扩展，可能扩展之后的空闲内存还是塞不下 data_len
+  {
+    //因此不进行扩展，so 看lc->next 的吧
+    if(lc->next() && lc->next()->chain_free_space() > data_len) {
+      //存在, 并且有足够的空间塞下 data_len
+      assert(lc->next()->get_offset() == 0 && "lc->next() should be empty");
+      return lc->next();
+    } else {
+      //要么是根本不存在next, 要么是next 不够(虽然是空的)
+      free_trailing_empty_chains();
+      buffer_chain _chain{this, data_len};
+      push_back(std::move(_chain));
+    }
+  } else {
+    //now we can resize lc
+    uint32_t length_needed = lc->get_offset() + data_len;
+    buffer_chain chain_newed{this, length_needed};
+    //! lc 一定是最后一个chain么?? 为什么pop_back()
+    chain_newed = *lc;//copy from lc into chain_newed
+    chains_.pop_back();
+    //pop_back 之后，取得最后一个chain, 再将现在的最后一个chain 的next 设置为之后加入的新chain
+    last_chain_with_data_ = push_back(chain_newed);
+    // last_chain_with_data_ = &chains_.back();
+  }
+  return &chains_.back();
 }
 
 buffer_chain* buffer::free_trailing_empty_chains()

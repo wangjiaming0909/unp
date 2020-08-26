@@ -861,3 +861,75 @@ TEST(buffer, miss_align)
   LOG(DEBUG) << d1;
   ASSERT_EQ(0, memcmp(d1, d+10, 100));
 }
+
+TEST(buffer, append)
+{
+  buffer buf{};
+  SizableClass_WithChar<4096> c{};
+  auto* d = c.buffer_;
+  buf.append(d, 4096);
+  buf.drain(4096 - 7);
+
+  SizableClass_WithChar<4096> c2{};
+  buf.append(c2.buffer_, 4096);
+
+  auto * p = buf.pullup(8);
+  ASSERT_EQ(0, memcmp(d+4096-7, p, 7));
+  ASSERT_EQ(0, memcmp(p+7, c2.buffer_, 1));
+}
+
+TEST(buffer, append2)
+{
+  buffer buf{};
+  SizableClass_WithChar<21> c{};
+  SizableClass_WithChar<4096> c2{};
+  int64_t len = 21;
+  while(buf.total_len() != 4096 - 7) {
+    buf.append(len);
+    buf.append(c.buffer_, 21);
+  }
+  buf.append(&len, 7);
+  while(buf.total_len() >= 8) {
+    buf.drain(29);
+  }
+  buf.append(c2.buffer_, 4096);
+  auto* p = buf.pullup(8);
+  int64_t len2 = 0;
+  buf.read_T(len2, sizeof(int64_t));
+  ASSERT_EQ(len2, 8);
+}
+
+TEST(buffer, pullup_core)
+{
+  buffer buf{};
+  SizableClass_WithChar<10258> c{};
+  int64_t size = 1;
+  for(int i = 0; i < 50; i++) {
+    buf.append(size);
+    buf.append(c.buffer_, 10258);
+    LOG(DEBUG) << "chain size: " << buf.get_chains().size();
+    ASSERT_EQ(buf.last_chain_with_data()->next(), nullptr);
+  }
+
+  while(buf.total_len() > 320000) {
+    buf.pullup(4096);
+    buf.drain(4096);
+    LOG(DEBUG) << "chain size: " << buf.get_chains().size();
+    ASSERT_EQ(buf.last_chain_with_data()->next(), nullptr);
+  }
+  for(int i = 0; i < 20; i++) {
+    buf.append(size);
+    buf.append(c.buffer_, 10258);
+    LOG(DEBUG) << "chain size: " << buf.get_chains().size();
+    ASSERT_EQ(buf.last_chain_with_data()->next(), nullptr);
+  }
+
+  while(buf.total_len() > 4096)
+  {
+    buf.pullup(4096);
+    buf.drain(4096);
+    LOG(DEBUG) << "chain size: " << buf.get_chains().size();
+    ASSERT_EQ(buf.last_chain_with_data()->next(), nullptr);
+  }
+
+}

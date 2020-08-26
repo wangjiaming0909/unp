@@ -134,6 +134,7 @@ private:
   Len_T decodeRemain(buffer& buf)
   {
     auto buf_len = buf.total_len();
+    LOG(DEBUG) << "decode remain buf_len: " << buf_len;
     if (buf_len < bytesRemainToParse_) return 0;
 
     assert(messLen_ == bytesRemainToParse_);
@@ -144,8 +145,9 @@ private:
     if (!ret)
     {
       state_ = ERROR;
+      LOG(ERROR) << "decode error: messLen_: " << messLen_;
       reset();
-      return 0;
+      return -1;
     }
     LOG(DEBUG) << "Decode remain mess: " << messLen_;
     bytesParsed_ += messLen_;

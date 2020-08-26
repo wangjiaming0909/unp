@@ -1,9 +1,9 @@
 CC = g++
 BUILD_FLAGS = -Wall -Wextra -std=c++17 -c -ggdb -Wfatal-errors -O0 -fPIC
-DEFS = ELPP_THREAD_SAFE ELPP_NO_DEFAULT_LOG_FILE USING_PTHREAD
-TESTDEFS = ELPP_THREAD_SAFE ELPP_NO_DEFAULT_LOG_FILE USING_PTHREAD TESTING
-#DEFS = ELPP_DISABLE_LOGS USING_PTHREAD TESTING
-#TESTDEFS = ELPP_DISABLE_LOGS USING_PTHREAD TESTING
+#DEFS = ELPP_THREAD_SAFE ELPP_NO_DEFAULT_LOG_FILE USING_PTHREAD TESTING
+#TESTDEFS = ELPP_THREAD_SAFE ELPP_NO_DEFAULT_LOG_FILE USING_PTHREAD TESTING
+DEFS = ELPP_DISABLE_LOGS USING_PTHREAD TESTING
+TESTDEFS = ELPP_DISABLE_LOGS USING_PTHREAD TESTING
 
 DEFINES = $(patsubst %, -D%, $(DEFS))
 TESTDEFINES = $(patsubst %, -D%, $(TESTDEFS))
@@ -16,7 +16,7 @@ LDFLAGS = -pthread \
 		/boost_1_72_0/stage/lib/libboost_filesystem.so.1.72.0 \
 		-lssl \
 		-lcrypto\
-		/usr/local/lib/libprotobuf.so.22\
+		-lprotobuf\
 		-luv
 		
 
@@ -29,7 +29,7 @@ TESTLDFLAG = -pthread \
 		-lgmock\
 		-lssl \
 		-lcrypto\
-		/usr/local/lib/libprotobuf.so.22\
+		-lprotobuf\
 		-luv
 	
 

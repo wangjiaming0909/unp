@@ -294,6 +294,7 @@ int64_t buffer::append(const T& data)
 template <typename T>
 int32_t buffer::read_T(T& t_out, uint32_t size)
 {
+  LOG(DEBUG) << "read T size: " << size;
   auto* d = pullup(size);
   if (d == nullptr) return -1;
   memcpy(&t_out, d, size);

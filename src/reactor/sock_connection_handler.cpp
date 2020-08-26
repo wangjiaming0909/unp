@@ -62,6 +62,7 @@ int sock_connection_handler::handle_input(int handle)
 
 int sock_connection_handler::handle_output(int handle)
 {
+  LOG(DEBUG) << "handle output handle: " << handle;
   std::lock_guard<std::mutex> gurad{output_mutex_};
   if (output_buffer_.buffer_length() == 0)
     return 0;
@@ -76,12 +77,14 @@ int sock_connection_handler::handle_output(int handle)
 #ifndef DEFAULT_SEND_SIZE
 #define DEFAULT_SEND_SIZE 4096
 #endif
-  int bytes_send = 01;
+  int bytes_send = 0;
   for (; try_times > 0; try_times--) {
     //行为： 最多pullup 4096 bytes
     size_t pullupSize = DEFAULT_SEND_SIZE > output_buffer_.buffer_length() ? output_buffer_.buffer_length() : DEFAULT_SEND_SIZE;
+    LOG(DEBUG) << "output buf size: " << output_buffer_.buffer_length();
+    LOG(DEBUG) << "output buf chain size: " << output_buffer_.chain_number();
     auto data_p = output_buffer_.pullup(pullupSize);
-    //LOG(INFO) << "sending " << output_buffer_.buffer_length();
+    LOG(DEBUG) << "sending " << output_buffer_.buffer_length();
     bytes_send = stream_->send(static_cast<const void *>(data_p), pullupSize, 0);
     if (bytes_send <= 0) {
       LOG(ERROR) << "Send error: " << strerror(errno) << " handle: " << handle;

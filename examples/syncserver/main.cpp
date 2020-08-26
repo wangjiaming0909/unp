@@ -12,7 +12,7 @@ INITIALIZE_EASYLOGGINGPP
 int main()
 {
     setupLogger();
-    net::inet_addr listenAddr{9090, "127.0.0.1"};
+    net::inet_addr listenAddr{9090, "0.0.0.0"};
     SyncServer server{listenAddr};
     server.start(unp::reactor_imp_t_enum::USING_EPOLL);
     cout << 123 << endl;

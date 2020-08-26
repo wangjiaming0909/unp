@@ -34,6 +34,11 @@ private:
       package->SerializeToArray(data, size);
       auto bytesWritten = write(size, false);
       bytesWritten += write(data, size, true);
+      LOG(DEBUG) << "write into output buffer size: " << bytesWritten;
+      LOG(DEBUG) << "after write output buffer size: " << output_buffer_.total_len();
+#ifdef TESTING
+      LOG(DEBUG) << "chain size: " << output_buffer_.get_chains().size();
+#endif
       free(data);
       return bytesWritten;
     }

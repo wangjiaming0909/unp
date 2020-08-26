@@ -1,7 +1,10 @@
+#include <cstdlib>
 #include <gtest/gtest.h>
+#include <ratio>
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <thread>
 #include <unistd.h>
 #include <fcntl.h>
 #include "util/easylogging++.h"
@@ -199,7 +202,27 @@ TEST(al, mul_merge_sort)
 
 TEST(uv, t1)
 {
-  uv_loop_t *loop = new uv_loop_t();
-  uv_loop_init(loop);
-  uv_run(loop, uv_run_mode::UV_RUN_ONCE);
+  uv_loop_t *loop = uv_default_loop();
+  if (!loop)
+    LOG(ERROR) << "uv_defualt_loop returned null";
+  uv_fs_event_t *e = new uv_fs_event_t();
+  uv_fs_event_init(loop, e);
+  auto ret = uv_run(loop, uv_run_mode::UV_RUN_ONCE);
+  LOG(DEBUG) << "uv_run returned: " << ret;
+  uv_loop_close(loop);
+}
+
+TEST(rand, 1)
+{
+  std::srand(std::time(nullptr));
+  int64_t cache = 10000;
+  int random_offset = 100;
+  int64_t random_cache_generated = cache;
+  for(int i = 0; i < 1000; i++) {
+    auto r = std::rand() / ((RAND_MAX + 1u) / (2 * random_offset));
+    random_cache_generated = cache - random_offset + r;
+    LOG(DEBUG) << random_cache_generated;
+    using namespace std::chrono_literals;
+    std::this_thread::sleep_for(200ms);
+  }
 }

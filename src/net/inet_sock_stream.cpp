@@ -18,6 +18,7 @@ ssize_t InetSockStream::read(reactor::buffer& buf, size_t len)
   if(read_len > 0 )
   {
     auto data_appended = buf.append(data_p, read_len);
+    //LOG(DEBUG) << "InetSockStream read: " << int(*data_p);
     if(data_appended != read_len)
     {
       // LOG(WARNING) << "Read data from socket len: " << read_len << " appended into buffer len: " << data_appended;
