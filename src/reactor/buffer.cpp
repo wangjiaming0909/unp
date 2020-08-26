@@ -628,67 +628,64 @@ int buffer::prepend(const buffer& other, uint32_t data_len, Iter start)
 
 unsigned char* buffer::pullup(int64_t size)
 {
-    //如果size 比 total_len_ 大, 那么将不能保证第一个node可以达到size的大小,因此返回nullptr
-    if(size == 0 || size > total_len_)
-        return nullptr;
+  //如果size 比 total_len_ 大, 那么将不能保证第一个node可以达到size的大小,因此返回nullptr
+  if(size == 0 || size > total_len_)
+    return nullptr;
 
-    if(size < 0) //传递负值,表示全部align到第一个节点
-        size = total_len_;
+  if(size < 0) //传递负值,表示全部align到第一个节点
+    size = total_len_;
 
-    LOG(DEBUG) << "pullup size: " << size << " total_len: " << total_len_;
-    LOG(DEBUG) << "chain size: " << chains_.size();
-    buffer_chain* first_chain = &chains_.front();
-    //如果第一个chain的大小已经满足size了,那么直接返回
-    if(first_chain->size() >= size)
-        return static_cast<unsigned char*>(first_chain->get_start_buffer());
-
-    //第一个chain不够
-    int64_t remain_to_pullup = size - first_chain->size();
-    LOG(DEBUG) << "remain to pullup: " << remain_to_pullup;
-
-    //如果first_chain的free size可以塞下多出来的部分, 那么就可以不移动任何元素，直接拷贝多出来的部分
-    if(first_chain->chain_free_space() >= remain_to_pullup)
-    {
-//        buffer_chain& next_chain = *first_chain.next();
-//        ::memcpy(first_chain.off_, next_chain.buffer_ + next_chain.misalign_, remain_to_pullup);
-//        first_chain.off_ += remain_to_pullup;
-//        next_chain.misalign_ += remain_to_pullup;
-    }
-    else//并不能塞下多出来的部分,重新分配一个chain, 保证第一个chain size >= size
-    {
-        buffer_chain chain{this, static_cast<uint32_t>(size)};
-        chain = *first_chain;//此处做了align, 设置了chain的next
-        chains_.pop_front();
-        chains_.push_front(std::move(chain));
-    }
-
-    first_chain = &chains_.front();
-    buffer_chain *current_chain = first_chain->next();
-    LOG(DEBUG) << "first_chain size: " << first_chain->size();
-
-    //current_chian可能是就是last_chain_with_data_, 但是current_chain不可能是空chain
-    while( current_chain != nullptr && remain_to_pullup >= current_chain->size())
-    {
-      assert(current_chain->size() > 0);
-      LOG(DEBUG) << "pullup from current chain size: " << current_chain->size();
-      remain_to_pullup -= current_chain->size();
-      LOG(DEBUG) << "after pull once remain_to_pullup: " << remain_to_pullup;
-      first_chain->append(*current_chain);
-      first_chain->next_ = current_chain->next_;
-      chains_.erase(++chains_.begin());
-      current_chain = first_chain->next_;
-    }
-
-    //current_chain == 0 或者 只需要 current_chain 中的一部分
-    if(remain_to_pullup != 0)//还有一部分需要拷贝
-    {
-        first_chain->append(*current_chain, static_cast<uint64_t>(remain_to_pullup), current_chain->begin());
-        current_chain->misalign_ += remain_to_pullup;
-    }
-
-    if (last_chain_with_data_ == current_chain)
-      last_chain_with_data_ = current_chain ? current_chain : first_chain;
+  LOG(DEBUG) << "pullup size: " << size << " total_len: " << total_len_;
+  LOG(DEBUG) << "chain size: " << chains_.size();
+  buffer_chain* first_chain = &chains_.front();
+  //如果第一个chain的大小已经满足size了,那么直接返回
+  if(first_chain->size() >= size)
     return static_cast<unsigned char*>(first_chain->get_start_buffer());
+
+  //第一个chain不够
+  int64_t remain_to_pullup = size - first_chain->size();
+  LOG(DEBUG) << "remain to pullup: " << remain_to_pullup;
+
+  //如果first_chain的free size可以塞下多出来的部分, 那么就可以不移动任何元素，直接拷贝多出来的部分
+  if(first_chain->chain_free_space() >= remain_to_pullup) {
+    //        buffer_chain& next_chain = *first_chain.next();
+    //        ::memcpy(first_chain.off_, next_chain.buffer_ + next_chain.misalign_, remain_to_pullup);
+    //        first_chain.off_ += remain_to_pullup;
+    //        next_chain.misalign_ += remain_to_pullup;
+  } else//并不能塞下多出来的部分,重新分配一个chain, 保证第一个chain size >= size
+  {
+    buffer_chain chain{this, static_cast<uint32_t>(size)};
+    chain = *first_chain;//此处做了align, 设置了chain的next
+    chains_.pop_front();
+    chains_.push_front(std::move(chain));
+  }
+
+  first_chain = &chains_.front();
+  buffer_chain *current_chain = first_chain->next();
+  LOG(DEBUG) << "first_chain size: " << first_chain->size();
+
+  //current_chian可能是就是last_chain_with_data_, 但是current_chain不可能是空chain
+  while( current_chain != nullptr && remain_to_pullup >= current_chain->size()) {
+    assert(current_chain->size() > 0);
+    LOG(DEBUG) << "pullup from current chain size: " << current_chain->size();
+    remain_to_pullup -= current_chain->size();
+    LOG(DEBUG) << "after pull once remain_to_pullup: " << remain_to_pullup;
+    first_chain->append(*current_chain);
+    first_chain->next_ = current_chain->next_;
+    chains_.erase(++chains_.begin());
+    current_chain = first_chain->next_;
+  }
+
+  //current_chain == 0 或者 只需要 current_chain 中的一部分
+  if(remain_to_pullup != 0)//还有一部分需要拷贝
+  {
+    first_chain->append(*current_chain, static_cast<uint64_t>(remain_to_pullup), current_chain->begin());
+    current_chain->misalign_ += remain_to_pullup;
+  }
+
+  last_chain_with_data_ = current_chain ? last_chain_with_data_ : first_chain;
+  LOG(DEBUG) << "after pull up first buffer_chain size: " << first_chain->size();
+  return static_cast<unsigned char*>(first_chain->get_start_buffer());
 }
 
 int64_t buffer::remove(/*out*/void* data, uint32_t data_len)

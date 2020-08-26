@@ -931,5 +931,34 @@ TEST(buffer, pullup_core)
     LOG(DEBUG) << "chain size: " << buf.get_chains().size();
     ASSERT_EQ(buf.last_chain_with_data()->next(), nullptr);
   }
+}
 
+TEST(buffer, last_chain_with_data)
+{
+  buffer buf{};
+  SizableClass_WithChar<4094> c{};
+  buf.append(c.buffer_, 4094);
+  buf.append(c.buffer_, 4094);
+  buf.append(c.buffer_, 4094);
+  buf.append(c.buffer_, 4094);
+  ASSERT_EQ(buf.chain_number(), 4);
+  ASSERT_EQ(buf.last_chain_with_data(), &buf.get_chains().back());
+  buf.pullup(4094*4);
+  ASSERT_EQ(buf.last_chain_with_data(), &buf.get_chains().back());
+  ASSERT_EQ(buf.chain_number(), 1);
+  buf.drain(4094*4);
+  ASSERT_EQ(buf.total_len(), 0);
+}
+
+TEST(buffer, append_large_data)
+{
+  buffer buf;
+  SizableClass_WithChar<3932> c{};
+  buf.append(c.buffer_, 3932);
+  ASSERT_EQ(buf.chain_number(), 1);
+  ASSERT_EQ(buf.total_len(), 3932);
+  SizableClass_WithChar<65536> c2{};
+  buf.append(c2.buffer_, 65536);
+  ASSERT_EQ(buf.total_len(), 3932 + 65536);
+  ASSERT_EQ(buf.chain_number(), 2);
 }
