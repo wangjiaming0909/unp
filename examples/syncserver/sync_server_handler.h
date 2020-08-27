@@ -7,47 +7,37 @@
 #include <map>
 #include <list>
 #include <boost/filesystem.hpp>
+#include <chrono>
 
 namespace filesync
 {
 
 enum DirEntryStatus
 {
-    idle, syncing, syncInterrupted, syncFailed, syncSucceed
+  idle, syncing, syncInterrupted, syncFailed, syncSucceed
 };
 
 class SyncServerHandler : public reactor::sock_connection_handler
 {
 public:
-    using DirE_t = boost::filesystem::directory_entry;
-    SyncServerHandler(reactor::Reactor& react);
+  using DirE_t = boost::filesystem::directory_entry;
+  SyncServerHandler(reactor::Reactor& react);
 
 public:
-    virtual int handle_input(int handle) override;
+  virtual int handle_input(int handle) override;
 
 private:
-    void sayHello();
-    uint64_t sendPackage(SyncPackagePtr package)
-    {
-      int64_t size = package->ByteSizeLong();
-      char* data = static_cast<char*>(::calloc(size, 1));
-      package->SerializeToArray(data, size);
-      auto bytesWritten = write(size, false);
-      bytesWritten += write(data, size, true);
-      LOG(DEBUG) << "write into output buffer size: " << bytesWritten;
-      LOG(DEBUG) << "after write output buffer size: " << output_buffer_.total_len();
-#ifdef TESTING
-      LOG(DEBUG) << "chain size: " << output_buffer_.get_chains().size();
-#endif
-      free(data);
-      return bytesWritten;
-    }
+  void sayHello();
+  uint64_t sendPackage(SyncPackagePtr package);
+  bool check_send_response();
 
 private:
-    DirE_t localStoreDirectory_;
-    std::list<DirE_t*> receivedEntries_;
-    reactor::Decoder<SyncPackage, int64_t> decoder_;
-    reactor::Reactor *file_reactor_ = nullptr;
-    std::unique_ptr<reactor::ConnectionManager> manager_;
+  DirE_t localStoreDirectory_;
+  std::list<DirE_t*> receivedEntries_;
+  reactor::Decoder<SyncPackage, int64_t> decoder_;
+  reactor::Reactor *file_reactor_ = nullptr;
+  std::unique_ptr<reactor::ConnectionManager> manager_;
+  std::chrono::system_clock::time_point cached_time_;
+  static const int check_response_time_interval_;
 };
 }

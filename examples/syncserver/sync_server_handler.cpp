@@ -3,9 +3,12 @@
 #include "reactor/ConnectionManager.h"
 #include "reactor/file_reactor_impl.h"
 #include "reactor/reactor.h"
+#include <chrono>
 
 namespace filesync
 {
+
+const int SyncServerHandler::check_response_time_interval_ = 3;
 
 SyncServerHandler::SyncServerHandler(reactor::Reactor& react)
   : sock_connection_handler(react)
@@ -14,12 +17,15 @@ SyncServerHandler::SyncServerHandler(reactor::Reactor& react)
 {
   //file_reactor_ = new reactor::Reactor(new reactor::FileReactorImpl());
   //manager_.reset(new reactor::ConnectionManager(*file_reactor_));
+  cached_time_ = std::chrono::system_clock::now();
 }
 
 int SyncServerHandler::handle_input(int handle)
 {
   int ret = sock_connection_handler::handle_input(handle);
   LOG(DEBUG) << "handle_input returned: " << handle;
+  static char c = 0;
+  bool should_check_send_response = false;
   if (ret < 0)
     return ret;
 
@@ -32,12 +38,15 @@ int SyncServerHandler::handle_input(int handle)
         return -1;
     }
     if (decoder_.isCompleted()) {
+      if (++c == 0) {
+        should_check_send_response = true;
+      }
       auto mes = decoder_.getMess();
       if (mes) {
         if (mes->header().command() == Command::ClientHello) {
-          LOG(DEBUG) << "Client hello message: " << "aaaaaaaaaaaaaaaaaaaaaa";//mes->content();
+          //LOG(DEBUG) << "Client hello message: " << "aaaaaaaaaaaaaaaaaaaaaa";//mes->content();
           LOG(INFO) << "Received client hello...";
-          sayHello();
+          if (should_check_send_response && check_send_response()) sayHello();
           //LOG(INFO) << "Send server hello...";
         } else if (mes->header().command() == Command::DepositeFile) {
           LOG(INFO) << "Received deposite file mess...";
@@ -58,10 +67,38 @@ int SyncServerHandler::handle_input(int handle)
 
 void SyncServerHandler::sayHello()
 {
-  static char* d = (char*)::calloc(1, 10240);
-  memset(d, 98, 10239);
+  static char* d = (char*)::calloc(1, 1024);
+  memset(d, 98, 1023);
   const char* hello = d;
   auto helloPackage = getHelloPackage(hello, PackageType::Server);
   sendPackage(helloPackage);
+}
+
+uint64_t SyncServerHandler::sendPackage(SyncPackagePtr package)
+{
+  int64_t size = package->ByteSizeLong();
+  char* data = static_cast<char*>(::calloc(size, 1));
+  package->SerializeToArray(data, size);
+  auto bytesWritten = write(size, false);
+  bytesWritten += write(data, size, true);
+  LOG(DEBUG) << "write into output buffer size: " << bytesWritten;
+  LOG(DEBUG) << "after write output buffer size: " << output_buffer_.total_len();
+#ifdef TESTING
+  LOG(DEBUG) << "chain size: " << output_buffer_.get_chains().size();
+#endif
+  free(data);
+  return bytesWritten;
+}
+
+bool SyncServerHandler::check_send_response()
+{
+  using namespace std::chrono_literals;
+  auto now = std::chrono::system_clock::now();
+  bool ret = false;
+  if (now - cached_time_ > std::chrono::seconds(check_response_time_interval_)) {
+    ret = true;
+    cached_time_ = now;
+  }
+  return ret;
 }
 }
