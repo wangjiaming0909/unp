@@ -38,7 +38,7 @@ int SyncServerHandler::handle_input(int handle)
         return -1;
     }
     if (decoder_.isCompleted()) {
-      if (++c == 0) {
+      if ((++c % 4) == 0) {
         should_check_send_response = true;
       }
       auto mes = decoder_.getMess();

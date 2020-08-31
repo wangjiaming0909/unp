@@ -15,16 +15,19 @@ set backspace=indent,eol,start
 set history=1000
 filetype off
 set tags+=~/.vim/tags/cpp_tags
-set tags+=~/.vim/tags/protobuf_tags
-set tags+=/boost_1_72_0/boost/boost_tags
-set tags+=~/.vim/tags/ace_tags
+"set tags+=~/.vim/tags/protobuf_tags
+"set tags+=/boost_1_72_0/boost/boost_tags
+"set tags+=~/.vim/tags/ace_tags
+set tags+=~/.vim/tags/sys_tags
 set tags+=~/.vim/tags/event_tags
+set tags+=~/.vim/tags/uv_tags
 set laststatus=2
 set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&fileencoding}\ %c:%l/%L%)\ [%p%%]\
 "set mouse=a
 set lcs=tab:** "show tabs
 set lcs+=trail:~ "show trailing spaces
 set list
+set term=screen
 highlight TabLine term=underline cterm=bold ctermbg=blue ctermfg=darkgrey
 highlight TabLineSel term=bold cterm=bold ctermbg=darkgrey ctermfg=white
 highlight Pmenu ctermbg=lightgrey
@@ -40,7 +43,6 @@ set fdm=marker "marker for code fold
 set hlsearch
 set is "incremental search
 
-set background=light
 "au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe normal! g'\"" | endif
 
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -52,6 +54,8 @@ Plugin 'mhinz/vim-grepper'
 Plugin 'valloric/youcompleteme'
 Plugin 'octol/vim-cpp-enhanced-highlight'
 Plugin 'Yggdroot/indentLine'
+"Plugin 'makerj/vim-pdf'
+"Plugin 'clktmr/vim-gdscript3'
 call vundle#end()
 
 filetype plugin indent on
@@ -135,6 +139,10 @@ nnoremap D 11<C-e>
 nnoremap U 11<C-y>
 nnoremap <leader>m :set mouse=a<CR>
 nnoremap <leader>M :set mouse=<CR>
+nnoremap ;; zz
+nnoremap t *N
+nnoremap <leader>r :e<CR>
+vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
 let g:ycm_disable_for_files_larger_than_kb = 0
 let g:ycm_max_num_identifier_candidates = 30
 let g:ycm_max_num_candidates = 30
@@ -174,5 +182,7 @@ call NERDTreeHighlightFile('css', 'cyan', 'none', 'cyan', '#151515')
 call NERDTreeHighlightFile('coffee', 'Red', 'none', 'red', '#151515')
 call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', '#151515')
 call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
+
+set background=dark
 
 
