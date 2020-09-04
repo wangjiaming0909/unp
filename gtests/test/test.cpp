@@ -11,6 +11,11 @@
 #include "util/timer.h"
 #include "util/min_heap.h"
 #include <uv.h>
+#include <istream>
+#include <ostream>
+#include <sstream>
+
+using namespace std;
 
 
 void hide_pwd(std::string& conn_str)
@@ -225,4 +230,106 @@ TEST(rand, 1)
     using namespace std::chrono_literals;
     std::this_thread::sleep_for(200ms);
   }
+}
+
+template <unsigned int N>
+struct SizableClass2{
+  SizableClass2()
+  {
+    data = (char*)::calloc(N, 1);
+  }
+  ~SizableClass2()
+  {
+    free(data);
+  }
+  template <typename T>
+  T* get(unsigned int offset)
+  {
+    if (offset > N) return nullptr;
+    if (offset + sizeof (T) > N) return nullptr;
+    return reinterpret_cast<T*>(data + offset);
+  }
+  char* data = nullptr;
+};
+
+template <unsigned int N>
+istream& operator>>(istream& is, SizableClass2<N>& c)
+{
+  is.readsome(c.data, N);
+  return is;
+}
+
+struct SizableClass3
+{
+  SizableClass3(size_t size) : size(size)
+  {
+    data = (char*)::calloc(size, 1);
+  }
+  ~SizableClass3()
+  {
+    free(data);
+  }
+  char* data = nullptr;
+  size_t size = 0;
+};
+
+istream& operator>>(istream& is, SizableClass3& c)
+{
+  is.readsome(c.data, c.size);
+  return is;
+}
+
+ostream& operator<<(ostream& os, SizableClass3& c)
+{
+  os.write(c.data, c.size);
+  return os;
+}
+
+TEST(stream, 1)
+{
+  string s{"asda"};
+  int32_t i = 100;
+  bool b = true;
+  ostringstream oss;
+  int total_len = sizeof(int) + s.length() + 1 + sizeof(i) + sizeof(b) + sizeof(i) * 3 + sizeof(b);
+  oss.write(reinterpret_cast<char*>(&total_len), sizeof(total_len));
+  oss.write(s.c_str(), s.length());
+  oss.put('\0');
+  oss.write(reinterpret_cast<char*>(&i), sizeof(i));
+  oss.write(reinterpret_cast<char*>(&b), sizeof(b));
+
+  //extra that appended
+  oss.write(reinterpret_cast<char*>(&i), sizeof(i));
+  oss.write(reinterpret_cast<char*>(&i), sizeof(i));
+  oss.write(reinterpret_cast<char*>(&i), sizeof(i));
+  oss.write(reinterpret_cast<char*>(&b), sizeof(b));
+
+  istringstream iss;
+  iss.str(oss.str());
+  auto begin = iss.tellg();
+  SizableClass2<sizeof(int)> sc_len;
+  SizableClass2<5> sc_str;
+  SizableClass2<4> sc_int;
+  SizableClass2<sizeof(bool)> sc_bool;
+  iss >> sc_len >> sc_str >> sc_int >> sc_bool;
+  auto end = iss.tellg();
+  auto len = *reinterpret_cast<int*>(sc_len.data);
+  ASSERT_EQ(len, total_len);
+  ASSERT_EQ(0, memcmp(s.c_str(), sc_str.data, 4));
+  LOG(DEBUG) << len;
+  LOG(DEBUG) << sc_str.data;
+  LOG(DEBUG) << *reinterpret_cast<int*>(sc_int.data);
+  ASSERT_EQ(*reinterpret_cast<int*>(sc_int.data), i);
+  LOG(DEBUG) << *reinterpret_cast<bool*>(sc_bool.data);
+  ASSERT_EQ(*reinterpret_cast<bool*>(sc_bool.data), b);
+
+  auto gap = len - (end - begin);
+  SizableClass3 sc3(gap);
+  if (gap > 0) {
+    iss >> sc3;
+  }
+  ASSERT_EQ(0, memcmp(sc3.data, &i, 4));
+  ASSERT_EQ(0, memcmp(sc3.data+4, &i, 4));
+  ASSERT_EQ(0, memcmp(sc3.data+8, &i, 4));
+  ASSERT_EQ(0, memcmp(sc3.data+12, &b, sizeof(bool)));
 }

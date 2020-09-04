@@ -3,6 +3,7 @@
 #include "proto/mess_wl.pb.h"
 #include "reactor/poll_demultiplex_table.h"
 #include "reactor/reactor_implementation.h"
+#include "util/timer.h"
 
 #include <cassert>
 #include <string>
@@ -91,6 +92,7 @@ struct SizableClass_WithData{
     char buffer_[N];
 };
 
+static SizableClass_WithData<1024> random_data_1024;
 
 static std::random_device rd;
 static std::mt19937 gen(rd());
@@ -961,4 +963,28 @@ TEST(buffer, append_large_data)
   buf.append(c2.buffer_, 65536);
   ASSERT_EQ(buf.total_len(), 3932 + 65536);
   ASSERT_EQ(buf.chain_number(), 2);
+}
+
+TEST(stream, perf)
+{
+  const size_t size = 1024000;
+  SizableClass_WithData<size> c{};
+  istringstream iss{};
+  iss.str(c.buffer_);
+
+  char buf[size];
+  {
+    utils::timer _{"read once"};
+    iss.read(buf, size);
+  }
+
+  iss.str(c.buffer_);
+  {
+    utils::timer _{"read more times"};
+    char c;
+    for(int i = 0; i < size && iss.good(); i++) {
+      iss.get(c);
+      *(buf+i) = c;
+    }
+  }
 }

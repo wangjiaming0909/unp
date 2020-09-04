@@ -30,19 +30,22 @@ int main()
 }
 
 void setupLogger(){
-    using namespace el;
-    Configurations defaultConf;
-    defaultConf.setToDefault();
-    defaultConf.set(Level::Global, ConfigurationType::Enabled, "true");
-    defaultConf.set(Level::Global, ConfigurationType::Format, "%datetime, %thread, %thread_name, %level, %file, %line, %func, %msg");
-    defaultConf.set(Level::Global, ConfigurationType::PerformanceTracking, "false");
-    defaultConf.set(Level::Global, ConfigurationType::ToStandardOutput, "false");
-    defaultConf.set(Level::Global, ConfigurationType::ToFile, "true");
-    defaultConf.set(Level::Global, ConfigurationType::Filename, "/tmp/unp_test.log");
-    defaultConf.set(Level::Global, ConfigurationType::LogFlushThreshold, "100");
-    defaultConf.set(Level::Global, ConfigurationType::MaxLogFileSize, "2097152");
+  using namespace el;
+  Configurations defaultConf;
+  defaultConf.setToDefault();
+  defaultConf.set(Level::Global, ConfigurationType::Enabled, "true");
+  defaultConf.set(Level::Global, ConfigurationType::Format, "%datetime, %thread, %thread_name, %level, %file, %line, %func, %msg");
+  defaultConf.set(Level::Global, ConfigurationType::PerformanceTracking, "false");
+  defaultConf.set(Level::Global, ConfigurationType::ToStandardOutput, "false");
+  defaultConf.set(Level::Global, ConfigurationType::ToFile, "true");
+  defaultConf.set(Level::Global, ConfigurationType::Filename, "/tmp/unp_test.log");
+  defaultConf.set(Level::Global, ConfigurationType::LogFlushThreshold, "100");
+  defaultConf.set(Level::Global, ConfigurationType::MaxLogFileSize, "2097152");
 
-    Loggers::reconfigureAllLoggers(defaultConf);
+  Loggers::reconfigureAllLoggers(defaultConf);
+  Loggers::reconfigureAllLoggers(defaultConf);
+  el::Loggers::addFlag(LoggingFlag::LogDetailedCrashReason);
+  el::Loggers::addFlag(LoggingFlag::ColoredTerminalOutput);
 }
 
 // BOOST_AUTO_TEST_CASE(test_read_config_file){

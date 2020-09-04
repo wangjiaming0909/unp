@@ -1,8 +1,10 @@
 #include "syncserver/sync_server_handler.h"
+#include "boost/filesystem/file_status.hpp"
 #include "proto/decoder.h"
 #include "reactor/ConnectionManager.h"
 #include "reactor/file_reactor_impl.h"
 #include "reactor/reactor.h"
+#include "util/FileWriter.h"
 #include <chrono>
 
 namespace filesync
@@ -13,7 +15,7 @@ const int SyncServerHandler::check_response_time_interval_ = 3;
 SyncServerHandler::SyncServerHandler(reactor::Reactor& react)
   : sock_connection_handler(react)
   , localStoreDirectory_{boost::filesystem::current_path()}
-  , receivedEntries_{}
+  //, receivedEntries_{}
 {
   //file_reactor_ = new reactor::Reactor(new reactor::FileReactorImpl());
   //manager_.reset(new reactor::ConnectionManager(*file_reactor_));
@@ -49,11 +51,7 @@ int SyncServerHandler::handle_input(int handle)
           if (should_check_send_response && check_send_response()) sayHello();
           //LOG(INFO) << "Send server hello...";
         } else if (mes->header().command() == Command::DepositeFile) {
-          LOG(INFO) << "Received deposite file mess...";
-          LOG(INFO) << "File name: " << mes->header().depositefileheader().filename();
-          LOG(INFO) << "File size: " << mes->header().depositefileheader().filelen();
-          LOG(INFO) << "File from: " << mes->header().depositefileheader().curseqstart();
-          LOG(INFO) << "File to: " << mes->header().depositefileheader().curseqend();
+          handle_deposite_file(mes);
         }
       }
       LOG(DEBUG) << "after decode buffer len: " << input_buffer_.buffer_length();
@@ -62,6 +60,40 @@ int SyncServerHandler::handle_input(int handle)
       break;
   }
   LOG(DEBUG) << "SyncServerHandler returned, input_buffer_ size: " << input_buffer_.total_len();
+  return 0;
+}
+
+void SyncServerHandler::handle_deposite_file(SyncPackagePtr mes)
+{
+  LOG(DEBUG) << "Received deposite file mess...";
+  auto& header = mes->header();
+  auto& file_name = header.depositefileheader().filename();
+  auto file_len = header.depositefileheader().filelen();
+  auto from = header.depositefileheader().curseqstart();
+  auto to =  header.depositefileheader().curseqend();
+  const auto* content = mes->content().c_str();
+  auto percent = (0.1 + to) / (from + 0.1);
+  LOG(INFO) << "File name: " << file_name << " size: " << file_len << " from: " << from << " to: " << to << " percent: " << percent;
+  if (to < file_len - 1) {
+    write_file(file_name.c_str(), content, to - from + 1);
+  } else {
+    LOG(INFO) << "File: " << file_name << " deposite finished";
+    auto it = file_writers_.find(file_name);
+    assert(it != file_writers_.end());
+    it->second->close();
+    delete it->second;
+    file_writers_.erase(it);
+  }
+}
+
+int SyncServerHandler::write_file(const char* file_name, const char *data, size_t size)
+{
+  auto it = file_writers_.find(file_name);
+  if (it == file_writers_.end()) {
+    auto* writer = new utils::FileWriter(file_name);
+    it = file_writers_.insert({file_name, writer}).first;
+  }
+  it->second->write(data, size);
   return 0;
 }
 

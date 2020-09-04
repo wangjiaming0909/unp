@@ -3,6 +3,7 @@
 #include "reactor/ConnectionManager.h"
 #include "reactor/sock_connection_handler.h"
 #include "proto/sync_package.h"
+#include "util/FileWriter.h"
 
 #include <map>
 #include <list>
@@ -30,14 +31,17 @@ private:
   void sayHello();
   uint64_t sendPackage(SyncPackagePtr package);
   bool check_send_response();
+  int write_file(const char* file_name, const char *data, size_t size);
+  void handle_deposite_file(SyncPackagePtr mess);
 
 private:
   DirE_t localStoreDirectory_;
-  std::list<DirE_t*> receivedEntries_;
+  //std::list<DirE_t*> receivedEntries_;
   reactor::Decoder<SyncPackage, int64_t> decoder_;
-  reactor::Reactor *file_reactor_ = nullptr;
-  std::unique_ptr<reactor::ConnectionManager> manager_;
+  //reactor::Reactor *file_reactor_ = nullptr;
+  //std::unique_ptr<reactor::ConnectionManager> manager_;
   std::chrono::system_clock::time_point cached_time_;
   static const int check_response_time_interval_;
+  std::map<std::string, utils::FileWriter*> file_writers_;
 };
 }

@@ -124,6 +124,9 @@ private:
       messLen_ = 0;
       return 0;
     }
+    if (messLen_ > 10000) {
+      LOG(WARNING) << "decode len could be a errro";
+    }
     LOG(DEBUG) << "Decoding len: " << messLen_;
     buf.drain(sizeof(Len_T));
     bytesParsed_ += sizeof(Len_T);
