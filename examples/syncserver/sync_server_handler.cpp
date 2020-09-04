@@ -6,6 +6,7 @@
 #include "reactor/reactor.h"
 #include "util/FileWriter.h"
 #include <chrono>
+#include <ios>
 
 namespace filesync
 {
@@ -72,14 +73,21 @@ void SyncServerHandler::handle_deposite_file(SyncPackagePtr mes)
   auto from = header.depositefileheader().curseqstart();
   auto to =  header.depositefileheader().curseqend();
   const auto* content = mes->content().c_str();
-  auto percent = (0.1 + to) / (from + 0.1);
-  LOG(INFO) << "File name: " << file_name << " size: " << file_len << " from: " << from << " to: " << to << " percent: " << percent;
-  if (to < file_len - 1) {
+  auto percent = (0.0001 + to) / (file_len);
+  LOG(INFO) << "File name: " << file_name
+    << " size: " << file_len
+    << " from: " << from
+    << " to: " << to
+    << " percent: " << percent;
+  if (to <= file_len - 1) {
     write_file(file_name.c_str(), content, to - from + 1);
   } else {
-    LOG(INFO) << "File: " << file_name << " deposite finished";
     auto it = file_writers_.find(file_name);
     assert(it != file_writers_.end());
+    LOG(INFO) << "File: " << file_name << " deposite finished";
+    if (it->second->bytesWritten() != file_len) {
+      LOG(ERROR) << "file: " << file_name << " bytes written: [" << it->second->bytesWritten() << "]is different with the file_len: [" << file_len << "] in mes";
+    }
     it->second->close();
     delete it->second;
     file_writers_.erase(it);
@@ -94,6 +102,7 @@ int SyncServerHandler::write_file(const char* file_name, const char *data, size_
     it = file_writers_.insert({file_name, writer}).first;
   }
   it->second->write(data, size);
+  LOG(INFO) << file_name << " written bytes: " << it->second->bytesWritten();
   return 0;
 }
 

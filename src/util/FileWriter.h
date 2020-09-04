@@ -49,9 +49,8 @@ public:
   {
     if(!isUsingConstomizedBuf_ && !isUsingDefautBuf) setDefaultBuffer();
     if(!valid_) return *this;
-    auto streamBuf = fstream_.rdbuf();
-    auto s = streamBuf->sputn(data, size);
-    bytesWritten_ += s;
+    fstream_.write(data, size);
+    bytesWritten_ += size;
     return *this;
   }
 
