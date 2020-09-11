@@ -16,10 +16,10 @@ namespace reactor
 
 
 enum class buffer_eol_style{
-    BUFFER_EOL_LF, //'\n'
-    BUFFER_EOL_CRLF_STRICT, //"\r\n"
-    BUFFER_EOL_CRLF, //'\n' or "\r\n"
-    BUFFER_EOL_NUL // ASCII NUL
+  BUFFER_EOL_LF, //'\n'
+  BUFFER_EOL_CRLF_STRICT, //"\r\n"
+  BUFFER_EOL_CRLF, //'\n' or "\r\n"
+  BUFFER_EOL_NUL // ASCII NUL
 };
 
 class buffer;
@@ -28,7 +28,7 @@ class buffer_chain;
 class buffer_iter{
   friend class buffer;
   friend class buffer_chain;
-protected:
+  protected:
   buffer_iter(
       const buffer* buffer_ptr,
       const buffer_chain* chain,
@@ -36,7 +36,7 @@ protected:
       uint32_t chain_number,
       uint32_t offset_of_chain);
 
-public:
+  public:
   buffer_iter(const buffer_iter& other) = default;
   buffer_iter& operator=(const buffer_iter& other) = default;
   //the position from the start of buffer
@@ -73,7 +73,7 @@ struct buffer_iovec{
 };
 
 class buffer_chain{
-public:
+  public:
     friend class buffer;
     using Iter = buffer_iter;
     buffer_chain(buffer* parent = nullptr, uint32_t capacity = DEFAULT_CHAIN_SIZE);
@@ -85,6 +85,7 @@ public:
     //* note that if(this->capacity_ > other.capacity_),
     //* this function only would expand the capacity_ won't shrink
     buffer_chain& operator= (const buffer_chain& other);
+    buffer_chain& operator= (buffer_chain&& other);
     int set_offset(uint32_t offset);
     uint32_t get_offset() const {return off_;}
     uint32_t size() const { return off_ - misalign_; }
@@ -95,18 +96,19 @@ public:
     //chain.size 必须要小于this 的free space
     uint32_t append(const buffer_chain& chain);
     uint32_t append(const buffer_chain& chain, uint64_t len, Iter start);
+    uint32_t append(buffer_chain&& chain);
 
 #ifdef TESTING
-public:
+  public:
     uint32_t get_misalign()const {return misalign_;}
     int64_t set_misalign(uint32_t misalign)
     {
-        if(misalign < misalign_ || misalign > off_) return -1;
-        misalign_ = misalign;
-        return misalign_;
+      if(misalign < misalign_ || misalign > off_) return -1;
+      misalign_ = misalign;
+      return misalign_;
     }
 #endif
-public:
+  public:
     uint32_t chain_capacity() const { return capacity_; }
     void* get_buffer() { return buffer_; }
     const void* get_buffer() const  { return buffer_; }
@@ -121,13 +123,13 @@ public:
     bool validate_iter(Iter it) const ;
     bool operator==(const buffer_chain& other) const
     {
-        return buffer_ == other.buffer_ &&
-                    capacity_ == other.capacity_ &&
-                    ::strncmp(static_cast<const char*>(buffer_), static_cast<const char*>(other.buffer_), capacity_) == 0 &&
-                    off_ == other.off_ &&
-                    next_ == other.next_ &&
-                    parent_ == other.parent_ &&
-                    misalign_ == other.misalign_;
+      return buffer_ == other.buffer_ &&
+        capacity_ == other.capacity_ &&
+        ::strncmp(static_cast<const char*>(buffer_), static_cast<const char*>(other.buffer_), capacity_) == 0 &&
+        off_ == other.off_ &&
+        next_ == other.next_ &&
+        parent_ == other.parent_ &&
+        misalign_ == other.misalign_;
     }
 
   private:
@@ -135,11 +137,11 @@ public:
     //    如果capacity > MAXIMUM_CHAIN_SIZE / 2, 直接分配内存
     //    如果capacity < MAXIMUM_CHAIN_SIZE / 2, 那么以 1024 的2 的幂次倍递增
     uint32_t calculate_actual_capacity(uint32_t given_capacity);
-public:
+  public:
     static const uint32_t DEFAULT_CHAIN_SIZE = 1024;
     static const uint32_t MAXIMUM_CHAIN_SIZE = UINT32_MAX;
     static const uint32_t MAXIMUM_SIZE_WHEN_EXPAND = 4096;//指示，当expand一个chain的时候，如果这个chain已经有这么多字节了，那么就不再expand此chain
-private:
+  private:
     char*               buffer_;
     uint32_t            capacity_;
     uint32_t            off_;//offset into chain, the total number of bytes stored in the chain
@@ -153,9 +155,9 @@ private:
 //! linked list of chains, every chain 的内部, (前)后可能存在空白部分
 class buffer
 {
-public:
+  public:
     using Iter = buffer_iter;
-public:
+  public:
     buffer();
     ~buffer() = default;
     buffer(const buffer& other);
@@ -166,7 +168,7 @@ public:
     buffer(const buffer& other, uint32_t data_len, Iter start);
     buffer& operator=(const buffer& other);
 
-public:
+  public:
     //* return number of bytes stored in the buffer
     uint64_t buffer_length() const {return total_len_;}
     //* return number of bytes stored in the first chunk
@@ -206,7 +208,7 @@ public:
     //if size is greater than the number of bytes in the buffer, the function returns null
     //otherwise pullup returns the first byte in the buffer
     //* note that if the size is the same as first_chunk_length will do nothing
-    unsigned char* pullup(int64_t size);
+    char* pullup(int64_t size);
 
     //remove the first datalen bytes to the {data}
     //if total length is small than data_len, all data will be copied
@@ -237,7 +239,7 @@ public:
     uint32_t chain_number() const {return this->chains_.size();}
     bool validate_iter(const Iter& iter) const ;
 
-private:
+  private:
     buffer_chain* push_back(buffer_chain&& chain);
     buffer_chain* push_back(const buffer_chain& chain);
     buffer_chain* push_front(buffer_chain&& chain);
@@ -251,44 +253,44 @@ private:
     //or add a chunk so that the buffer is large enough to add data_len bytes without any allocation
     //if {last_chain_with_data} has enough space for data_len, return directly
     //if not enough, expand it:
-	//? 1, 把当前的最后一个chunk resize 一下, 使其后面没有空余空间, 然后直接 往最后 添加(插入, 因此可能之后还有空的chunk)一个 chunk就行
-	//? 2, 直接 add一个新的chunk (之前的chunk之后的可用空间就浪费了)
-	//? 3, 将当前最后一个chunk中数据考出来, new 一个chunk(大小是之前的off + datalen),把考出来的数据, 考进去
+    //? 1, 把当前的最后一个chunk resize 一下, 使其后面没有空余空间, 然后直接 往最后 添加(插入, 因此可能之后还有空的chunk)一个 chunk就行
+    //? 2, 直接 add一个新的chunk (之前的chunk之后的可用空间就浪费了)
+    //? 3, 将当前最后一个chunk中数据考出来, new 一个chunk(大小是之前的off + datalen),把考出来的数据, 考进去
     buffer_chain* expand_if_needed(uint32_t data_len);
     buffer_chain* free_trailing_empty_chains();
     buffer_chain* update_last_chain_with_data(const buffer& other);
     void update_next_field_after_copy();
-private:
+  private:
     // bi-direactional linked list
     std::list<buffer_chain>           chains_;
     buffer_chain*                     last_chain_with_data_;//最后一个有数据的chain
     uint64_t                          total_len_;
 
 #ifdef TESTING
-public:
-  const std::list<buffer_chain> &get_chains() const { return this->chains_; }
+  public:
+    const std::list<buffer_chain> &get_chains() const { return this->chains_; }
 #endif
 };
 
 template <typename T>
 int64_t buffer_chain::append(const T& data)
 {
-    if(this->chain_free_space() < sizeof(data)) return -1;
-    ::memcpy(static_cast<char*>(buffer_) + this->off_, &data, sizeof(T));
-    this->off_ += sizeof(T);
-    return sizeof(T);
+  if(this->chain_free_space() < sizeof(data)) return -1;
+  ::memcpy(static_cast<char*>(buffer_) + this->off_, &data, sizeof(T));
+  this->off_ += sizeof(T);
+  return sizeof(T);
 }
 
 template <typename T>
 int64_t buffer::append(const T& data)
 {
-    uint32_t size_needed = sizeof(T);
-    auto chain = expand_if_needed(size_needed);
-    if(chain == nullptr) return -1;
-    chain->append(data);
-    this->total_len_ += size_needed;
-    last_chain_with_data_ = chain;
-    return size_needed;
+  uint32_t size_needed = sizeof(T);
+  auto chain = expand_if_needed(size_needed);
+  if(chain == nullptr) return -1;
+  chain->append(data);
+  this->total_len_ += size_needed;
+  last_chain_with_data_ = chain;
+  return size_needed;
 }
 
 template <typename T>
@@ -304,7 +306,7 @@ int32_t buffer::read_T(T& t_out, uint32_t size)
 template <typename T>
 int buffer::prepend(const T& data)
 {
-    return 0;
+  return 0;
 }
 
 }//namespace reactor

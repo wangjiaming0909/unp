@@ -219,6 +219,7 @@ TEST(uv, t1)
 
 TEST(rand, 1)
 {
+  GTEST_SKIP();
   std::srand(std::time(nullptr));
   int64_t cache = 10000;
   int random_offset = 100;

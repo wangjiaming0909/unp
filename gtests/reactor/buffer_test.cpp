@@ -368,7 +368,7 @@ TEST(buffer, test_pullup_with_more_chains)
 
     //the existed data in first chain is enough
     buffer buf2 = buf1;
-    const unsigned char* p = buf2.pullup(1019);
+    const char* p = buf2.pullup(1019);
     ASSERT_TRUE(buf1.chain_number() == 4);
     auto* first_chain = &buf2.get_chains().front();
     ASSERT_TRUE(first_chain->size() == size1);
@@ -894,11 +894,12 @@ TEST(buffer, append2)
   while(buf.total_len() >= 8) {
     buf.drain(29);
   }
+  buf.append((void*)(&len) + 1, 1);
   buf.append(c2.buffer_, 4096);
   auto* p = buf.pullup(8);
   int64_t len2 = 0;
   buf.read_T(len2, sizeof(int64_t));
-  ASSERT_EQ(len2, 8);
+  ASSERT_EQ(len2, 21);
 }
 
 TEST(buffer, pullup_core)
