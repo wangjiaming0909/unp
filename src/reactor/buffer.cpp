@@ -14,9 +14,7 @@ buffer_iter::buffer_iter( const buffer* buffer_ptr
   , offset_of_buffer_(offset_of_buffer)
   , chain_number_(chain_number)
   , offset_of_chain_(offset_of_chain)
-{
-
-}
+{ }
 
 const buffer_iter buffer_iter::NULL_ITER = buffer_iter{nullptr, nullptr, 0, 0, 0};
 
@@ -40,8 +38,7 @@ buffer_iter& buffer_iter::operator+(uint32_t forward_steps)
   uint32_t remain_steps = forward_steps;
 
   //current is not the last chain_with_data
-  while(!buffer_->is_last_chain_with_data(chain_) && remain_steps > steps_can_forward_in_current_chain)
-  {
+  while(!buffer_->is_last_chain_with_data(chain_) && remain_steps > steps_can_forward_in_current_chain) {
     remain_steps -= steps_can_forward_in_current_chain;
     chain_ = chain_->next();
     steps_can_forward_in_current_chain = chain_->get_offset();
@@ -96,10 +93,6 @@ buffer_chain::buffer_chain(buffer* parent, uint32_t capacity)
 
   // buffer_ = static_cast<void*>(new char[capacity_]);
   buffer_ = static_cast<char*>(::calloc(capacity_, 1));
-  if(capacity_ > 4096)
-  {
-    LOG(INFO) << "allocating memory in buffer chain size: " << capacity_ << " ------------------------------";
-  }
   assert(buffer_ != nullptr && ("new operator error size"));
 }
 
@@ -185,28 +178,53 @@ buffer_chain& buffer_chain::operator= (const buffer_chain& other)
 
 buffer_chain& buffer_chain::operator=(buffer_chain&& other)
 {
+  if (this == &other) return *this;
+  free(buffer_);
 
+  buffer_ = other.buffer_;
+  next_ = other.next_;
+  off_ = other.size();
+  parent_ = other.parent_;
+  misalign_ = other.misalign_;
+
+  other.buffer_ = nullptr;
+  other.next_ = nullptr;
+  other.off_ = 0;
+  other.parent_ = nullptr;
+  other.misalign_ = 0;
+  other.capacity_ = 0;
+  return *this;
+}
+
+void buffer_chain::realloc(uint32_t size)
+{
+  if (size > this->chain_capacity()) {
+    auto len = off_ - misalign_ + 1;
+    auto* new_buffer = (char*)::calloc(size, 1);
+    memcpy(new_buffer, buffer_ + misalign_, len);
+    free (buffer_);
+    buffer_ = new_buffer;
+    misalign_ = 0;
+    off_ = len;
+    capacity_ = size;
+  }
 }
 
 uint32_t buffer_chain::append(const buffer_chain& chain)
 {
   uint32_t size = chain.size();//防止自己append给自己，先记下size
-  if(size > chain_free_space()) return 0;
+  if(size > chain_free_space()) {
+    realloc(calculate_actual_capacity(size));
+  }
   ::memcpy(buffer_ + off_, chain.buffer_ + chain.misalign_, size);
   off_ += size;
   return size;
 }
 
-uint32_t buffer_chain::append(buffer_chain&& chain)
-{
-}
-
 uint32_t buffer_chain::append(const buffer_chain& chain, uint64_t len, Iter start)
 {
   if(len > chain.size() || !chain.validate_iter(start) || len > chain.off_ - start.offset_of_chain_)
-  {
     return 0;
-  }
   ::memcpy(buffer_ + off_, chain.buffer_ + start.offset_of_chain_, len);
   off_ += len;
   return len;
@@ -265,13 +283,7 @@ uint32_t buffer_chain::calculate_actual_capacity(uint32_t given_capacity)
   return to_alloc;
 }
 
-buffer::buffer()
-  : chains_()
-  , last_chain_with_data_(nullptr)
-    , total_len_(0)
-{
-
-}
+buffer::buffer() : chains_() , last_chain_with_data_(nullptr) , total_len_(0) { }
 
 buffer::buffer(const buffer& other) : chains_(), last_chain_with_data_(nullptr), total_len_(0)
 {
@@ -283,23 +295,22 @@ buffer::buffer(const buffer& other) : chains_(), last_chain_with_data_(nullptr),
 
 buffer::buffer(const buffer& other, uint32_t data_len) : chains_(), last_chain_with_data_(nullptr), total_len_(0)
 {
-  if(other.total_len_ == 0 || data_len == 0)
-  {
-    ::new(this)buffer{}; return;
+  if(other.total_len_ == 0 || data_len == 0) {
+    ::new(this)buffer{};
+    return;
   }
 
   //copy all
-  if(data_len >= other.total_len())
-  {
-    ::new(this)buffer{other}; return;
+  if(data_len >= other.total_len()) {
+    ::new(this)buffer{other};
+    return;
   }
 
   //partially copy
   uint32_t remain_to_copy = data_len;
   const buffer_chain* current_chain = &other.first();
 
-  while(!other.is_last_chain_with_data(current_chain) && current_chain->size() < remain_to_copy)
-  {
+  while(!other.is_last_chain_with_data(current_chain) && current_chain->size() < remain_to_copy) {
     // ASSERT_CHAIN_FULL(current_chain)// 并不一定是full了
     append(*current_chain);
     this->last_chain_with_data_ = &chains_.back();

@@ -72,7 +72,8 @@ struct buffer_iovec{
   uint32_t      iob_len;
 };
 
-class buffer_chain{
+class buffer_chain
+{
   public:
     friend class buffer;
     using Iter = buffer_iter;
@@ -96,7 +97,6 @@ class buffer_chain{
     //chain.size 必须要小于this 的free space
     uint32_t append(const buffer_chain& chain);
     uint32_t append(const buffer_chain& chain, uint64_t len, Iter start);
-    uint32_t append(buffer_chain&& chain);
 
 #ifdef TESTING
   public:
@@ -137,6 +137,7 @@ class buffer_chain{
     //    如果capacity > MAXIMUM_CHAIN_SIZE / 2, 直接分配内存
     //    如果capacity < MAXIMUM_CHAIN_SIZE / 2, 那么以 1024 的2 的幂次倍递增
     uint32_t calculate_actual_capacity(uint32_t given_capacity);
+    void realloc(uint32_t size);
   public:
     static const uint32_t DEFAULT_CHAIN_SIZE = 1024;
     static const uint32_t MAXIMUM_CHAIN_SIZE = UINT32_MAX;

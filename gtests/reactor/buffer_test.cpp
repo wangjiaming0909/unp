@@ -989,3 +989,15 @@ TEST(stream, perf)
     }
   }
 }
+
+TEST(buffer, realloc)
+{
+  buffer b1, b2, b3;
+  SizableClass_WithChar<4096> c1;
+  SizableClass_WithChar<4096> c2;
+  SizableClass_WithChar<4096> c3;
+
+  b1.append(c.buffer_, 123);
+  b1.append(c.buffer_, 123);
+
+}
