@@ -186,6 +186,7 @@ buffer_chain& buffer_chain::operator=(buffer_chain&& other)
   off_ = other.size();
   parent_ = other.parent_;
   misalign_ = other.misalign_;
+  capacity_ = other.capacity_;
 
   other.buffer_ = nullptr;
   other.next_ = nullptr;
@@ -199,9 +200,11 @@ buffer_chain& buffer_chain::operator=(buffer_chain&& other)
 void buffer_chain::realloc(uint32_t size)
 {
   if (size > this->chain_capacity()) {
-    auto len = off_ - misalign_ + 1;
+    auto len = off_ - misalign_;
     auto* new_buffer = (char*)::calloc(size, 1);
-    memcpy(new_buffer, buffer_ + misalign_, len);
+    if (len > 0) {
+      memcpy(new_buffer, buffer_ + misalign_, len);
+    }
     free (buffer_);
     buffer_ = new_buffer;
     misalign_ = 0;
@@ -214,28 +217,30 @@ uint32_t buffer_chain::append(const buffer_chain& chain)
 {
   uint32_t size = chain.size();//防止自己append给自己，先记下size
   if(size > chain_free_space()) {
-    realloc(calculate_actual_capacity(size));
+    realloc(calculate_actual_capacity(size + this->size()));
   }
   ::memcpy(buffer_ + off_, chain.buffer_ + chain.misalign_, size);
   off_ += size;
   return size;
 }
 
-uint32_t buffer_chain::append(const buffer_chain& chain, uint64_t len, Iter start)
+uint32_t buffer_chain::append(const buffer_chain& chain, uint32_t len, Iter start)
 {
   if(len > chain.size() || !chain.validate_iter(start) || len > chain.off_ - start.offset_of_chain_)
     return 0;
+
+  if (len > chain_free_space()) {
+    realloc(calculate_actual_capacity(len + this->size()));
+  }
   ::memcpy(buffer_ + off_, chain.buffer_ + start.offset_of_chain_, len);
   off_ += len;
   return len;
 }
 
-int64_t buffer_chain::append(const void* data, uint64_t data_len)
+int64_t buffer_chain::append(const void* data, uint32_t data_len)
 {
   if(data == 0 || data_len == 0) return -1;
-
-  if(chain_free_space() < data_len) return -1;
-
+  realloc(calculate_actual_capacity(size() + data_len));
   ::memcpy(buffer_ + off_, data, data_len);
   off_ += data_len;
   return data_len;
@@ -536,6 +541,7 @@ int64_t buffer::append(const buffer& other, uint64_t data_len, Iter start)
 int64_t buffer::append(const buffer_chain &chain)//TODO copy too much
 {
   uint32_t size = chain.size();
+  if (size == 0) {return 0;}
   auto* current_chain = expand_if_needed(size);
   assert(current_chain->chain_free_space() >= size);
   //TODO check if that current_chain is the same as last_chain_with_data
@@ -558,18 +564,18 @@ int64_t buffer::append(const buffer_chain &chain)//TODO copy too much
 
 int64_t buffer::append(buffer_chain &&chain)
 {
-  if(last_chain_with_data_ != nullptr)
-  {
+  if (chain.size() == 0) return 0;
+  if(last_chain_with_data_ != nullptr) {
     auto * last_chain = free_trailing_empty_chains();
     chains_.push_back(std::move(chain));
     last_chain->next_ = &chains_.back();
-  }
-  else
-  {
+  } else {
     chains_.push_back(std::move(chain));
   }
   chains_.back().next_ = nullptr;
   chains_.back().parent_ = this;
+  last_chain_with_data_ = &chains_.back();
+  total_len_ += last_chain_with_data_->size();
   return chains_.back().size();//!!
 }
 
@@ -606,7 +612,7 @@ int64_t buffer::append_printf(const char* fmt, ...)
 
     if(vs < 0) return vs;//vsnprintf return error
 
-    if(buffer_chain::MAXIMUM_CHAIN_SIZE < static_cast<u_int32_t>(vs))//fmt 字串太长
+    if(buffer_chain::MAXIMUM_CHAIN_SIZE < static_cast<uint32_t>(vs))//fmt 字串太长
     {
       LOG(WARNING) << "Too long for a chain, size: " << vs;
       return -1;
@@ -614,14 +620,14 @@ int64_t buffer::append_printf(const char* fmt, ...)
 
     if((uint32_t)vs < data_size)//data_size可以塞下fmt字串
     {
-      data_chain->off_ += static_cast<u_int32_t>(vs);
-      total_len_ += static_cast<u_int32_t>(vs);
+      data_chain->off_ += static_cast<uint32_t>(vs);
+      total_len_ += static_cast<uint32_t>(vs);
       ret = vs;
       last_chain_with_data_ = data_chain;
       break;
     }
 
-    data_chain = expand_if_needed(static_cast<u_int32_t>(vs) + 1);
+    data_chain = expand_if_needed(static_cast<uint32_t>(vs) + 1);
     data_p = data_chain->buffer_ + data_chain->off_;
     data_size = data_chain->chain_free_space();
   }
@@ -734,6 +740,7 @@ int64_t buffer::remove(/*out*/void* data, uint32_t data_len)
       if(/*next_chain == 0*/ current_chain == last_chain_with_data_)  //当当前chain已经是最后一个的时候,next就是空的,此时不需要再循环了,已经结束了
       {
         assert(remain_to_remove == 0);
+        last_chain_with_data_ = nullptr;
         break;
       }
       continue;
@@ -1018,7 +1025,7 @@ buffer_chain* buffer::free_trailing_empty_chains()
   {
     chains_.clear(); return nullptr;
   }
-  assert(chain->get_offset() > 0);
+  //assert(chain->get_offset() > 0);
 
   auto start_iter = chains_.begin();
   while(&*start_iter != chain)

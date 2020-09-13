@@ -81,7 +81,8 @@ void SyncServerHandler::handle_deposite_file(SyncPackagePtr mes)
     << " percent: " << percent;
   if (to <= file_len - 1) {
     write_file(file_name.c_str(), content, to - from + 1);
-  } else {
+  }
+  if (to == file_len - 1){
     auto it = file_writers_.find(file_name);
     assert(it != file_writers_.end());
     LOG(INFO) << "File: " << file_name << " deposite finished";
