@@ -15,7 +15,7 @@ void setupLogger(){
   defaultConf.set(Level::Global, ConfigurationType::ToStandardOutput, "true");
   defaultConf.set(Level::Global, ConfigurationType::Filename, "./unp.log");
   defaultConf.set(Level::Global, ConfigurationType::LogFlushThreshold, "10");
-  defaultConf.set(Level::Global, ConfigurationType::MaxLogFileSize, "MAX_LOG_FILE_SIZE");
+  defaultConf.set(Level::Global, ConfigurationType::MaxLogFileSize, "102400000");
 
   Loggers::reconfigureAllLoggers(defaultConf);
   el::Loggers::addFlag(LoggingFlag::LogDetailedCrashReason);
