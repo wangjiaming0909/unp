@@ -1,4 +1,5 @@
 #pragma once
+#include "boost/filesystem/path.hpp"
 #include "proto/decoder.h"
 #include "reactor/ConnectionManager.h"
 #include "reactor/sock_connection_handler.h"
@@ -27,6 +28,8 @@ public:
 public:
   virtual int handle_input(int handle) override;
 
+  bool set_base_path(const char* path);
+
 private:
   void sayHello();
   uint64_t sendPackage(SyncPackagePtr package);
@@ -43,5 +46,6 @@ private:
   std::chrono::system_clock::time_point cached_time_;
   static const int check_response_time_interval_;
   std::map<std::string, utils::FileWriter*> file_writers_;
+  boost::filesystem::path sync_base_path_;
 };
 }

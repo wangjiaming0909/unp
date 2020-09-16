@@ -1,5 +1,7 @@
 #include "syncserver/sync_server_handler.h"
 #include "boost/filesystem/file_status.hpp"
+#include "boost/filesystem/operations.hpp"
+#include "boost/filesystem/path.hpp"
 #include "proto/decoder.h"
 #include "reactor/ConnectionManager.h"
 #include "reactor/file_reactor_impl.h"
@@ -21,6 +23,7 @@ SyncServerHandler::SyncServerHandler(reactor::Reactor& react)
   //file_reactor_ = new reactor::Reactor(new reactor::FileReactorImpl());
   //manager_.reset(new reactor::ConnectionManager(*file_reactor_));
   cached_time_ = std::chrono::system_clock::now();
+  sync_base_path_ = boost::filesystem::current_path();
 }
 
 int SyncServerHandler::handle_input(int handle)
@@ -73,12 +76,14 @@ void SyncServerHandler::handle_deposite_file(SyncPackagePtr mes)
   auto from = header.depositefileheader().curseqstart();
   auto to =  header.depositefileheader().curseqend();
   const auto* content = mes->content().c_str();
+  /*
   auto percent = (0.0001 + to) / (file_len);
   LOG(INFO) << "File name: " << file_name
     << " size: " << file_len
     << " from: " << from
     << " to: " << to
     << " percent: " << percent;
+    */
   if (to <= file_len - 1) {
     write_file(file_name.c_str(), content, to - from + 1);
   }
@@ -99,11 +104,12 @@ int SyncServerHandler::write_file(const char* file_name, const char *data, size_
 {
   auto it = file_writers_.find(file_name);
   if (it == file_writers_.end()) {
-    auto* writer = new utils::FileWriter(file_name);
+    auto full_path = sync_base_path_.append(file_name);
+    auto* writer = new utils::FileWriter(full_path.string().c_str());
     it = file_writers_.insert({file_name, writer}).first;
   }
   it->second->write(data, size);
-  LOG(INFO) << file_name << " written bytes: " << it->second->bytesWritten();
+  //LOG(INFO) << file_name << " written bytes: " << it->second->bytesWritten();
   return 0;
 }
 
@@ -142,5 +148,16 @@ bool SyncServerHandler::check_send_response()
     cached_time_ = now;
   }
   return ret;
+}
+
+bool SyncServerHandler::set_base_path(const char* path)
+{
+  boost::filesystem::path p(path);
+  if (boost::filesystem::exists(p)) {
+    sync_base_path_ = p;
+    return true;
+  } else {
+    return false;
+  }
 }
 }
