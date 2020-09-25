@@ -1,0 +1,4 @@
+#!/bin/bash
+
+$XTRA_BACKUP --prepare --target-dir=$1
+

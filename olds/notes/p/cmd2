@@ -1,0 +1,3 @@
+#!/bin/bash
+
+/percona/bin/mysql -uroot -P$1 -h127.0.0.1 test < ~/p/$2 

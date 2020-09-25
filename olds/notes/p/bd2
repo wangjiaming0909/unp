@@ -1,0 +1,5 @@
+#! /bin/bash
+
+cd ~/dev/codes/dbscale-chelianwang/build &&\
+cmake -DCMAKE_BUILD_TYPE=DEBUG -DDOWNLOAD_DEPS=NO -Wno-dev .. &&
+make dbscale -j10

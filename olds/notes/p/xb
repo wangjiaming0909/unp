@@ -1,0 +1,4 @@
+#!/bin/bash
+
+ $XTRA_BACKUP --user=root --port=$1 --host=127.0.0.1 --backup --history --target-dir=$2
+

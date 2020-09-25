@@ -1,0 +1,698 @@
+#create table tbl_user_base_info_other(id int(11) unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY, `openId` varchar(50) COLLATE utf8mb4_general_ci  DEFAULT NULL ) engine=innodb;
+#insert into tbl_user_base_info_other VALUES (1,"opu7EuA-HzXxRl58Z8yGdOeTNi0E");
+#insert into tbl_user_base_info_other VALUES (2,"opu7EuA-HzXxRl58Z8yGdOeTNi0E");
+#insert into tbl_user_base_info_other VALUES (3,"opu7EuA-HzXxRl58Z8yGdOeTNi0E");
+#insert into tbl_user_base_info_other VALUES (4,"opu7EuA-HzXxRl58Z8yGdOeTNi0E");
+#insert into tbl_user_base_info_other VALUES (5,"opu7EuA-HzXxRl58Z8yGdOeTNi0E");
+#insert into tbl_user_base_info_other VALUES (6,"opu7EuA-HzXxRl58Z8yGdOeTNi0E");
+#insert into tbl_user_base_info_other VALUES (7,"opu7EuA-RW1nVvcGFjKPHH04N-1c");
+#insert into tbl_user_base_info_other VALUES (8,"opu7EuA-RW1nVvcGFjKPHH04N-1c");
+#insert into tbl_user_base_info_other VALUES (9,"opu7EuA-RW1nVvcGFjKPHH04N-1c");
+#insert into tbl_user_base_info_other VALUES (10,"opu7EuA-RW1nVvcGFjKPHH04N-1c");
+#insert into tbl_user_base_info_other VALUES (11,"opu7EuA-RW1nVvcGFjKPHH04N-1c");
+#insert into tbl_user_base_info_other VALUES (12,"opu7EuA-fC8-ZW3mfo9hHUz43Agg");
+#insert into tbl_user_base_info_other VALUES (13,"opu7EuA-fC8-ZW3mfo9hHUz43Agg");
+#insert into tbl_user_base_info_other VALUES (14,"opu7EuA-fC8-ZW3mfo9hHUz43Agg");
+#insert into tbl_user_base_info_other VALUES (15,"opu7EuA-fC8-ZW3mfo9hHUz43Agg");
+#insert into tbl_user_base_info_other VALUES (16,"opu7EuA-fC8-ZW3mfo9hHUz43Agg");
+#insert into tbl_user_base_info_other VALUES (17, "opu7EuA-_9Xs6df2tbwIBxC26sBM");
+#insert into tbl_user_base_info_other VALUES (18,"opu7EuA-_9Xs6df2tbwIBxC26sBM");
+#insert into tbl_user_base_info_other VALUES (19,"opu7EuA-_9Xs6df2tbwIBxC26sBM");
+#insert into tbl_user_base_info_other VALUES (20,"opu7EuA0OfNdEKfXqNkthrTgRgO8");
+#insert into tbl_user_base_info_other VALUES (21, "opu7EuA0OfNdEKfXqNkthrTgRgO8");
+#insert into tbl_user_base_info_other VALUES (22,"opu7EuA0OfNdEKfXqNkthrTgRgO8");
+#insert into tbl_user_base_info_other VALUES (23, "opu7EuA0OfNdEKfXqNkthrTgRgO8");
+#
+#CREATE TABLE t11 (c1 INT PRIMARY KEY AUTO_INCREMENT, c2 VARCHAR(20));
+#
+#INSERT INTO t11 VALUES(0,'a');
+#INSERT INTO t11 VALUES(0,'b');
+#INSERT INTO t11 VALUES(0,'c');
+#INSERT INTO t11 VALUES(0,'d');
+#INSERT INTO t11 VALUES(0,'e');
+#INSERT INTO t11 VALUES(0,'f');
+#INSERT INTO t11 VALUES(0,'g');
+#INSERT INTO t11 VALUES(0,'h');
+#
+#create table t2 (c1 int, c2 varchar(20));
+#insert into t2 values(1,'a');
+#insert into t2 values(2,'b');
+#insert into t2 values(3,'c');
+#insert into t2 values(4,'d');
+#insert into t2 values(5,'e');
+#insert into t2 values(2,'f');
+#insert into t2 values(1,'g');
+#insert into t2 values(8,'h');
+
+# CREATE TABLE tas_net_ll_utp_ms
+#(`DATA_DATE` decimal(10,0) DEFAULT NULL,
+#`CITY_ID` varchar(5) DEFAULT NULL,
+#`COUNTY_ID` varchar(5) DEFAULT NULL,
+#`SECTION_ID` varchar(5) DEFAULT NULL,
+#`CALL_POSITION_ID` decimal(10,0) DEFAULT NULL,
+#`LLCC_TYPE_ID` decimal(10,0) DEFAULT NULL,
+#`USER_COUNT` decimal(10,0) DEFAULT NULL,
+#`FLOW` decimal(10,0) DEFAULT NULL,
+#`UP_FLOW` decimal(10,0) DEFAULT NULL,
+#`DOWN_FLOW` decimal(10,0) DEFAULT NULL);
+#
+#dbscale set global support_show_warning=1;
+#
+#LOAD DATA LOCAL INFILE 'data/tas_net_ll_utp_ms_yyyymm.txt' INTO TABLE tas_net_ll_utp_ms
+#  FIELDS TERMINATED BY '^A'
+#  IGNORE 0 LINES (`DATA_DATE`, `CITY_ID`, `COUNTY_ID`, `SECTION_ID`, `CALL_POSITION_ID`, `LLCC_TYPE_ID`, `USER_COUNT`, `FLOW`, `UP_FLOW`, `DOWN_FLOW`);
+#
+#
+
+#show variables like 'coll%';
+#select * from information_schema.schemata;
+#dbscale dbscale_test "stop" "monitor";
+#show variables like 'coll%';
+#drop database if exists dbscale;
+#create database dbscale;
+#drop database if exists d1;
+#create database d1;
+#show variables like 'coll%';
+#select * from information_schema.schemata;
+
+#DBSCALE DYNAMIC ADD MOD_TYPE PARTITION_SCHEME part_scheme_mod PARTITION=ds_par1  PARTITION=ds_par2 IS_SHARD SHARD_NUMS 6;
+#create database testdb;
+#dbscale dynamic add partition_table dataspace 'testdb'.'t1' partition_key=id partition_scheme=part_scheme_mod;
+#create table testdb.t1(id int primary key, xb varchar(2),bj varchar(10));
+#insert into testdb.t1 values(1, 'M','class 1');
+#insert into testdb.t1 values(2 ,'F','class 2');
+#insert into testdb.t1 values(3 ,'M','class 3');
+#insert into testdb.t1 values(4 ,'F','class 3');
+#insert into testdb.t1 values(5 ,'M','class 2');
+#insert into testdb.t1 values(6 ,'F','class 1');
+#insert into testdb.t1 values(7 ,'M','class 1');
+#insert into testdb.t1 values(8 ,'F','class 2');
+#insert into testdb.t1 values(9 ,'M','class 3');
+#insert into testdb.t1 values(10,'F','class 3');
+#insert into testdb.t1 values(11,'M','class 2');
+#insert into testdb.t1 values(12,'F','class 1');
+#
+
+
+#create sequence s1 increment by 1 cache 100 random 20;
+#create sequence s2 increment by 2 cache 100 random 20;
+
+#CREATE TABLE normal_table3(c1 int, c2 varchar(25)); 
+#CREATE TABLE normal_table4(c1 int, c2 varchar(25)); 
+#CREATE TABLE normal_table5(c1 int, c2 varchar(25)); 
+#CREATE TABLE normal_table2(c1 INT, c2 varchar(25), c3 INT); 
+#CREATE TABLE normal_table1(c1 INT, c3 INT);
+#CREATE TABLE part_table(c1 INT PRIMARY KEY, c2 INT);
+#CREATE TABLE part_table2(c1 INT, c2 INT);
+#
+#INSERT INTO normal_table1 VALUES(2,3);
+#INSERT INTO normal_table1 VALUES(8,3);
+#INSERT INTO normal_table1 VALUES(9,2);
+#INSERT INTO normal_table2 VALUES(8,'1',1);
+#INSERT INTO normal_table2 VALUES(9,'5',1);
+#INSERT INTO normal_table2 VALUES(10,'8',1);
+#INSERT INTO normal_table3 VALUES(8,'1');
+#INSERT INTO normal_table3 VALUES(10,'2');
+#INSERT INTO normal_table3 VALUES(11,'5');
+#INSERT INTO part_table VALUES(8,1);
+#INSERT INTO part_table VALUES(9,2);
+#INSERT INTO part_table2 VALUES(9,1);
+#INSERT INTO part_table2 VALUES(10,1);
+#INSERT INTO part_table2 VALUES(11,1);
+#INSERT INTO normal_table4 VALUES(12,'"');
+#INSERT INTO normal_table4 VALUES(13,'\\');
+#INSERT INTO normal_table5 VALUES(14,'"');
+#INSERT INTO normal_table5 VALUES(15,'\\');
+#
+
+
+#CREATE TABLE partition1(c1 INT, c2 INT);
+#CREATE TABLE partition2(c3 INT, c4 INT);
+#CREATE TABLE t1(c5 INT, c6 INT);
+#
+#INSERT INTO partition1 VALUES(1,1);
+#INSERT INTO partition1 VALUES(2,2);
+#INSERT INTO partition1 VALUES(3,3);
+#INSERT INTO partition1 values(6,1);
+#
+#INSERT INTO partition2 VALUES(4,4);
+#INSERT INTO partition2 VALUES(5,5);
+#INSERT INTO partition2 VALUES(6,1);
+#
+#INSERT INTO t1 VALUES(6,6);
+#INSERT INTO t1 VALUES(7,7);
+#INSERT INTO t1 VALUES(8,8);
+#INSERT INTO t1 VALUES(9,9);
+#
+#
+#
+
+#CREATE TABLE part_table(c1 INT, c2 INT);
+#CREATE TABLE norm_table(c1 INT, c2 INT);
+#CREATE TABLE norm_table1(c1 INT, c2 INT);
+#CREATE TABLE norm_table2(c1 INT, c2 INT);
+#CREATE TABLE part_table2(c1 INT, c2 INT);
+#CREATE TABLE global_tb1(c1 INT);
+#CREATE TABLE global_tb2(c1 INT);
+#CREATE TABLE global_tb3(c1 INT);
+#CREATE TABLE global_tb4(c1 INT, c2 INT);
+#
+#INSERT INTO part_table VALUES(9,3);
+#INSERT INTO part_table VALUES(8,2);
+#INSERT INTO part_table VALUES(7,1);
+#INSERT INTO norm_table VALUES(6,6);
+#INSERT INTO norm_table VALUES(5,5);
+#INSERT INTO norm_table VALUES(4,4);
+#INSERT INTO norm_table1 VALUES(16,16);
+#INSERT INTO norm_table1 VALUES(15,15);
+#INSERT INTO norm_table1 VALUES(14,14);
+#INSERT INTO norm_table2 VALUES(3,3);
+#INSERT INTO norm_table2 VALUES(2,2);
+#INSERT INTO norm_table2 VALUES(1,1);
+#INSERT INTO part_table2 VALUES(10,10);
+#INSERT INTO part_table2 VALUES(11,11);
+#INSERT INTO part_table2 VALUES(12,12);
+#
+#INSERT INTO global_tb1 values (1),(2);
+#INSERT INTO global_tb2 values (3),(2);
+#INSERT INTO global_tb3 values (1),(4);
+#INSERT INTO global_tb4 VALUES (12,12);
+
+#CREATE TABLE part_table(c1 INT, c2 INT);
+#CREATE TABLE norm_table(c1 INT, c2 INT);
+#CREATE TABLE norm_table1(c1 INT, c2 INT);
+#CREATE TABLE norm_table2(c1 INT, c2 INT);
+#CREATE TABLE part_table2(c1 INT, c2 INT);
+#CREATE TABLE global_tb1(c1 INT);
+#CREATE TABLE global_tb2(c1 INT);
+#CREATE TABLE global_tb3(c1 INT);
+#CREATE TABLE global_tb4(c1 INT, c2 INT);
+#
+#INSERT INTO part_table VALUES(9,3);
+#INSERT INTO part_table VALUES(8,2);
+#INSERT INTO part_table VALUES(7,1);
+#INSERT INTO norm_table VALUES(6,6);
+#INSERT INTO norm_table VALUES(5,5);
+#INSERT INTO norm_table VALUES(4,4);
+#INSERT INTO norm_table1 VALUES(16,16);
+#INSERT INTO norm_table1 VALUES(15,15);
+#INSERT INTO norm_table1 VALUES(14,14);
+#INSERT INTO norm_table2 VALUES(3,3);
+#INSERT INTO norm_table2 VALUES(2,2);
+#INSERT INTO norm_table2 VALUES(1,1);
+#INSERT INTO part_table2 VALUES(10,10);
+#INSERT INTO part_table2 VALUES(11,11);
+#INSERT INTO part_table2 VALUES(12,12);
+#
+#INSERT INTO global_tb1 values (1),(2);
+#INSERT INTO global_tb2 values (3),(2);
+#INSERT INTO global_tb3 values (1),(4);
+#INSERT INTO global_tb4 VALUES (12,12);
+
+
+
+#CREATE TABLE part_table(c1 INT, c2 INT);
+#CREATE TABLE part_table1(c3 INT, c4 INT);
+#CREATE TABLE part_table2(c5 INT, c6 INT);
+#CREATE TABLE part_table3(c1 INT, c2 INT);
+#CREATE TABLE norm_table(c1 INT, c2 INT);
+#CREATE TABLE norm_table1(c1 INT, c2 INT);
+#CREATE TABLE norm_table2(c1 INT, c2 INT);
+#CREATE TABLE norm_table3(c1 INT, c2 INT);
+#CREATE TABLE norm_table4(c1 CHAR(30), c2 FLOAT);
+#CREATE TABLE norm_table5(c1 VARCHAR(30) PRIMARY KEY, c2 DATE);
+#CREATE TABLE part_table4(c1 int, c2 int, c3 int, c4 int);
+#CREATE TABLE part_table5(c5 int, c6 int, c7 int, c8 int);
+#
+#
+#CREATE TABLE NORM_UPPER_TABLE(C1 int, C2 int);
+#
+#INSERT INTO part_table VALUES(1,1);
+#INSERT INTO part_table1 VALUES(1,1);
+#INSERT INTO part_table1 VALUES(2,2);
+#INSERT INTO part_table2 VALUES(1,1);
+#INSERT INTO part_table2 VALUES(2,2);
+#INSERT INTO part_table2 VALUES(3,3);
+#INSERT INTO part_table3 VALUES(1,1);
+#INSERT INTO part_table3 VALUES(2,2);
+#INSERT INTO part_table3 VALUES(3,3);
+#
+#INSERT INTO norm_table VALUES(1,1);
+#INSERT INTO norm_table1 VALUES(1,1);
+#INSERT INTO norm_table1 VALUES(2,2);
+#INSERT INTO norm_table2 VALUES(1,1);
+#INSERT INTO norm_table2 VALUES(2,2);
+#INSERT INTO norm_table2 VALUES(3,3);
+#INSERT INTO norm_table3 VALUES(1,1);
+#INSERT INTO norm_table3 VALUES(2,2);
+#INSERT INTO norm_table3 VALUES(3,3);
+#INSERT INTO norm_table4 VALUES('LongYu',1.0);
+#INSERT INTO norm_table4 VALUES('ZhangWenFeng',2.0);
+#INSERT INTO norm_table4 VALUES('QiaoHongYu',3.0);
+#INSERT INTO norm_table5 VALUES('LongYu','1980-06-07');
+#INSERT INTO norm_table5 VALUES('ZhangWenFeng','1989-06-07');
+#INSERT INTO norm_table5 VALUES('QiaoHongYu','1992-06-07');
+
+
+#CREATE TABLE `lkg_staff_job` (   `STAFF_ID` varchar(60) NOT NULL,   `JOB_ID` varchar(32) NOT NULL,   `ADMIN_ID` varchar(30) DEFAULT NULL,   `ADMIN_NAME` varchar(50) DEFAULT NULL,   `ADMIN_TIME` varchar(40) DEFAULT NULL,   KEY `STAFF_ID` (`STAFF_ID`),   KEY `JOB_INDEX` (`JOB_ID`) USING BTREE ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+#CREATE TABLE `lkg_staff` (
+#  `STAFF_ID` varchar(30) NOT NULL,
+#  `STAFF_NAME` varchar(100) DEFAULT NULL,
+#  `STAFF_PWD` varchar(100) DEFAULT NULL,
+#  `PROV_ID` varchar(20) DEFAULT NULL,
+#  `CITY_ID` varchar(20) DEFAULT NULL,
+#  `COUNTRY_ID` varchar(20) DEFAULT NULL,
+#  `DEP_ID` varchar(20) DEFAULT NULL,
+#  `POST_ID` varchar(30) DEFAULT NULL,
+#  `PHONE` varchar(100) DEFAULT NULL,
+#  `EMAIL` varchar(100) DEFAULT NULL,
+#  `POST_TYPE` varchar(2) DEFAULT NULL,
+#  `REMARK` varchar(400) DEFAULT NULL,
+#  `ADMIN_ID` varchar(30) DEFAULT NULL,
+#  `ADMIN_NAME` varchar(50) DEFAULT NULL,
+#  `ADMIN_TIME` varchar(20) DEFAULT NULL,
+#  `PWD_TIME` varchar(20) DEFAULT NULL,
+#  `LEADER_ID` varchar(20) DEFAULT NULL,
+#  `STAFF_NUM` varchar(20) DEFAULT NULL,
+#  `SEX` varchar(3) DEFAULT NULL,
+#  `AGE` int(11) DEFAULT NULL,
+#  `NATION` varchar(20) DEFAULT NULL,
+#  `CERTIFICATE_ID` varchar(100) DEFAULT NULL,
+#  `AREA_ID` varchar(20) DEFAULT NULL,
+#  `SUB1_AREA_ID` varchar(20) DEFAULT NULL,
+#  `SUB2_AREA_ID` varchar(20) DEFAULT NULL,
+#  `DATA_LEVEL` varchar(2) DEFAULT NULL,
+#  `COMM_ADDRESS` varchar(1000) DEFAULT NULL,
+#  `POST_CODE` varchar(20) DEFAULT NULL,
+#  `GROUP_ID` varchar(100) DEFAULT NULL,
+#  `TELPHONE` varchar(100) DEFAULT NULL,
+#  `STAFF_TACT_LEVEL` varchar(1) DEFAULT NULL,
+#  `STATUS` varchar(1) DEFAULT NULL,
+#  `STAFF_ID_BAK` varchar(30) DEFAULT NULL,
+#  `CREATE_TIME` varchar(20) DEFAULT NULL,
+#  `SECOND_NAME` varchar(100) DEFAULT NULL,
+#  `PARAM0` varchar(64) DEFAULT NULL,
+#  `PARAM1` varchar(64) DEFAULT NULL,
+#  `PARAM2` varchar(64) DEFAULT NULL,
+#  `PARAM3` varchar(64) DEFAULT NULL,
+#  `PARAM4` varchar(64) DEFAULT NULL,
+#  `INDEXSKIN` varchar(100) DEFAULT NULL,
+#  PRIMARY KEY (`STAFF_ID`)
+#) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+#
+#CREATE TABLE `lkg_param_post` (
+#  `DEP_ID` varchar(100) NOT NULL,
+#  `DEP_NAME` varchar(200) DEFAULT NULL,
+#  `POST_ID` varchar(100) NOT NULL,
+#  `POST_NAME` varchar(100) DEFAULT NULL,
+#  `PARENT_DEP_ID` varchar(100) DEFAULT NULL,
+#  `SERVICE_CODE` varchar(30) DEFAULT NULL,
+#  `PROV_ID` varchar(20) DEFAULT NULL,
+#  `CITY_ID` varchar(20) DEFAULT NULL,
+#  `COUNTRY_ID` varchar(20) DEFAULT NULL,
+#  `DEP_ORDER` varchar(4) DEFAULT NULL
+#) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+#
+#CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`%` SQL SECURITY DEFINER VIEW `test`.`lkg_staff_job_local` AS select `test`.`lkg_staff_job`.`STAFF_ID` AS `STAFF_ID`,`test`.`lkg_staff_job`.`JOB_ID` AS `JOB_ID`,`test`.`lkg_staff_job`.`ADMIN_ID` AS `ADMIN_ID`,`test`.`lkg_staff_job`.`ADMIN_NAME` AS `ADMIN_NAME`,`test`.`lkg_staff_job`.`ADMIN_TIME` AS `ADMIN_TIME` from `test`.`lkg_staff_job` union all select distinct `a`.`STAFF_ID` AS `staff_id`,'201702221002' AS `JOB_ID`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `ADMIN_NAME`,'20170413090000' AS `ADMIN_TIME` from (`test`.`lkg_staff` `a` left join `test`.`lkg_param_post` `b` on((`a`.`POST_ID` = `b`.`POST_ID`))) where (`b`.`POST_NAME` like '%二级经理%') union all select distinct `a`.`STAFF_ID` AS `staff_id`,'201702221001' AS `JOB_ID`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳>飞' AS `ADMIN_NAME`,'20170413090000' AS `ADMIN_TIME` from (`test`.`lkg_staff` `a` left join `test`.`lkg_param_post` `b` on((`a`.`POST_ID` = `b`.`POST_ID`))) where (`b`.`POST_NAME` like '%三级经理%') union all select distinct 'SUNLIMIN' AS `SUNLIMIN`,'201707211554' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'MAXIAOXING' AS `MAXIAOXING`,'201707211554' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'YANGZHIXIONG' AS `YANGZHIXIONG`,'201707211554' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'GUANJUNHUI' AS `GUANJUNHUI`,'201707211554' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'QQD_ZHANGCHENG' AS `QQD_ZHANGCHENG`,'201707211627' AS `job_id`,'BI_LIYANFEI' AS `admin_id`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'JIANGYUE' AS `JIANGYUE`,'201707211627' AS `job_id`,'BI_LIYANFEI' AS `admin_id`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'LIBOWEI' AS `LIBOWEI`,'201707211627' AS `job_id`,'BI_LIYANFEI' AS `admin_id`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'ZHANGXIAOXUE' AS `ZHANGXIAOXUE`,'201707211727' AS `JOB_ID`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `ADMIN_NAME`,'20170724090000' AS `ADMIN_TIME` from `test`.`lkg_staff` union all select distinct 'LIBOWEI' AS `LIBOWEI`,'201707211727' AS `JOB_ID`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `ADMIN_NAME`,'20170724090000' AS `ADMIN_TIME` from `test`.`lkg_staff` union all select distinct 'SR' AS `SR`,'201707251128' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'ZHAOL' AS `ZHAOL`,'201707251128' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'TANYUNFENG' AS `TANYUNFENG`,'201707251128' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'BIANWEN' AS `BIANWEN`,'201707251128' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'WYZ_WANGHUA' AS `WYZ_WANGHUA`,'201707211554' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'CUIXIAOHUI' AS `CUIXIAOHUI`,'201707211554' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'XQ_LISHAN' AS `XQ_LISHAN`,'201707211554' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'BI_WANGDAN' AS `BI_WANGDAN`,'201803271013' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'SUNLIMIN' AS `SUNLIMIN`,'201803271013' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'SLL' AS `SLL`,'201803271013' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'BI_WANGDAN' AS `BI_WANGDAN`,'201805041013' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'SUNLIMIN' AS `SUNLIMIN`,'201805041013' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'SLL' AS `SLL`,'201805041013' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'WANGXUANYI' AS `WANGXUANYI`,'201707211554' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'BI_WANGDAN' AS `BI_WANGDAN`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'TANXI' AS `TANXI`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'SUNLIMIN' AS `SUNLIMIN`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'SLL' AS `SLL`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'YY_WANGYANHONG' AS `YY_WANGYANHONG`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'WULIWEN' AS `WULIWEN`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'ZHANGPENGWEI' AS `ZHANGPENGWEI`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'YANGMENGTONG' AS `YANGMENGTONG`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'KW_CHENJING' AS `KW_CHENJING`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'JIANGXIAOYUAN' AS `JIANGXIAOYUAN`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'WUYUJIA' AS `WUYUJIA`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'YUZHESHU' AS `YUZHESHU`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'ZHOUXUEJIAO' AS `ZHOUXUEJIAO`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'sj_zhangjing' AS `sj_zhangjing`,'201707211554' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'KONGYAJIE' AS `KONGYAJIE`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'WANGNAN' AS `WANGNAN`,'201808231023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'TANXI' AS `TANXI`,'201904251023' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'SLL' AS `SLL`,'201904280923' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'SUNLIMIN' AS `SUNLIMIN`,'201904280923' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'BI_WANGDAN' AS `BI_WANGDAN`,'201904280923' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'TANXI' AS `TANXI`,'201904280923' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'WULIWEN' AS `WULIWEN`,'201904280923' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'TANJING1' AS `TANJING1`,'201907091515' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'OUYANG' AS `OUYANG`,'201907091515' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'TANXI' AS `TANXI`,'201908131515' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'JIANGXIAOYUAN' AS `JIANGXIAOYUAN`,'201908131515' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'WANGNAN' AS `WANGNAN`,'201908131515' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'KW_CHENJING' AS `KW_CHENJING`,'201908131515' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'XQ_LISHAN' AS `XQ_LISHAN`,'201908131515' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'TANXI' AS `TANXI`,'201810251539' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'YY_WANGYANHONG' AS `TANXI`,'201810251539' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'CE_PENGCHEN' AS `TANXI`,'201810251539' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'SHITIANXU' AS `SHITIANXU`,'201907091515' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'WANGWEI5' AS `WANGWEI5`,'201707211554' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff` union all select distinct 'WANGKUN2' AS `WANGKUN2`,'201707211554' AS `job_id`,'BI_LIYANFEI' AS `ADMIN_ID`,'李艳飞' AS `admin_name`,'20170724090000' AS `admin_time` from `test`.`lkg_staff`;
+
+
+
+
+
+#set names 'utf8';
+#SET SESSION AUTO_INCREMENT_INCREMENT = 1, SESSION AUTO_INCREMENT_OFFSET = 1, SESSION CHARACTER_SET_CLIENT = 'utf8', SESSION CHARACTER_SET_CONNECTION = 'utf8', SESSION CHARACTER_SET_DATABASE = 'utf8', SESSION CHARACTER_SET_RESULTS = 'utf8', SESSION CHARACTER_SET_SERVER = 'utf8', SESSION COLLATION_SERVER = 'utf8_general_ci', SESSION FOREIGN_KEY_CHECKS = OFF, SESSION INNODB_LOCK_WAIT_TIMEOUT = 50, SESSION LOCK_WAIT_TIMEOUT = 31536000, SESSION MAX_SORT_LENGTH = 1024, SESSION NET_READ_TIMEOUT = 30, SESSION NET_WRITE_TIMEOUT = 60, SESSION SQL_LOG_BIN = 1, SESSION SQL_SAFE_UPDATES = 0, SESSION SQL_SELECT_LIMIT = 18446744073709551615, SESSION TIME_ZONE = 'SYSTEM', SESSION TRANSACTION_ISOLATION = 'REPEATABLE-READ';
+#show databases;
+#show tables;
+#select 1;
+#show 1;
+#select @@version_comment limit 1;
+#show create view test.lkg_staff_job_local;
+#SELECT VIEW_DEFINITION, CHARACTER_SET_CLIENT FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = 'test' AND TABLE_NAME = 'lkg_staff_job_local';
+#SELECT table_name, VIEW_DEFINITION, CHARACTER_SET_CLIENT FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = 'test' AND TABLE_NAME = 'v1';
+#SELECT table_name, VIEW_DEFINITION, CHARACTER_SET_CLIENT FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = 'test' AND TABLE_NAME = 'v2';
+#SELECT table_name, VIEW_DEFINITION, CHARACTER_SET_CLIENT FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_SCHEMA = 'test' AND TABLE_NAME = 'v3';
+#show create view test.lkg_staff_job_local;
+#dbscale show connection pool;
+
+
+#begin;
+#insert into t3 values('123\', 'asd', 'asd');
+
+
+
+#CREATE SEQUENCE  "d2"."s1"  MINVALUE 1 MAXVALUE 999999 INCREMENT BY 1 START WITH 100 CACHE 20 NOORDER  CYCLE;
+#CREATE SEQUENCE  "d2"."s2"  MINVALUE 1 MAXVALUE 99999999 INCREMENT BY 1 START WITH 689917 CACHE 20 NOORDER  NOCYCLE;
+#create database d2;
+#create table test.t11 (c1 int, c2 int, c3 int);
+#use d2;
+#create table t1 (c1 int, c2 int, c3 int);
+#delimiter //
+#create procedure p15 (in a int, in b int) begin insert into test.t11 values (a,b,b); end//
+#create procedure p14 (in c int) begin declare a int default 2; declare b int default 2; select s1.currval, s2.nextval into b, a from dual; select b; insert into t1 values (a,c,a); call p15(a,c); end//
+#create procedure p16 (in a int, in b int) begin insert into test.t11 values (a,b,s2.nextval); end//
+#delimiter ;
+#select s1.nextval;
+
+
+#delimiter //
+#create procedure p1() begin select 1; end//
+#delimiter ;
+
+#dbscale show options like 'connection-pool-admin%';
+#dbscale show connection pool;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;
+commit;

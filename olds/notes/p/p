@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#ps ajx | grep dbscale
+pidof dbscale
+echo '--------------------------------'
+pidof mysqld

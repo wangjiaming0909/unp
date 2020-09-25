@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+vi /home/wjm/dev/dbscale-chelianwang/dbscale-test/var/log/dbscale.log

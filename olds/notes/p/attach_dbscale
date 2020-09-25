@@ -1,0 +1,3 @@
+#!/bin/bash
+
+sudo cgdb /home/wjm/dev/dbscale-chelianwang/build/src/dbscale -p `pidof dbscale`

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+$XTRA_BACKUP --prepare --apply-log-only --target-dir=$1 --incremental-dir=$2

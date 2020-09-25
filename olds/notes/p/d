@@ -1,0 +1,10 @@
+#!/bin/bash
+
+if [ $# -eq 0 ];
+then
+  git diff --ws-error-highlight=context,old,new .
+elif [ $# -eq 1 ];
+then
+  git diff --ws-error-highlight=context,old,new $1
+fi
+

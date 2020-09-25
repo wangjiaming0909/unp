@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#echo $*
+dtr8 --skip-test-list=$1 --testcase-timeout=9999 --force-restart
+
+#> ~/tmp/1 
+#tail ~/tmp/1

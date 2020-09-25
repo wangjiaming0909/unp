@@ -1,0 +1,24 @@
+#!/bin/bash
+#dtr57 --suite=main --suite-timeout=1000 --force --force-restart --max-test-fail=100 --retry-failure=0 --skip-test=.*spark.* --valgrind
+
+
+#grep -E "connect\([^,],[^,].*\).*" ~/dev/dbscale-chelianwang/dbscale-test8/t/*.test > ~/tmp/1
+#sed -i 's/\(connect([^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*\)\(,[^,]*\)\(,[^,]*\)\();\)/\1\2\3, mysql_native_password\4/g' ~/dev/dbscale-chelianwang/dbscale-test8/t/*.test
+#sed -i 's/\(connect([^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*\)\(,[^,]*\)\();\)/\1\2,, mysql_native_password\3/g' ~/dev/dbscale-chelianwang/dbscale-test8/t/*.test
+#sed -i 's/\(connect([^,]*,[^,]*,[^,]*,[^,]*,[^,]*,[^,]*\)\();\)/\1,,, mysql_native_password\2/g' ~/dev/dbscale-chelianwang/dbscale-test8/t/*.test
+
+./configure --with-features=huge \
+--enable-multibyte \
+--enable-pythoninterp=dynamic \
+--enable-python3interp=dynamic \
+--with-python3-config-dir=/usr/lib/python3.5/config-3.5m-x86_64-linux-gnu \
+--with-python3-command=python3 \
+--enable-cscope \
+--enable-gui=auto \
+--enable-gtk2-check \
+--enable-fontset \
+--enable-largefile \
+--disable-netbeans \
+--with-compiledby="jiaming" \
+--enable-fail-if-missing \
+--prefix=/usr/local

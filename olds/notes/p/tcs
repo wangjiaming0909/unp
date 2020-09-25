@@ -1,0 +1,10 @@
+#!/bin/bash
+
+while((1))
+do
+  #date
+  #echo `cat ~/p/cmd`
+  #eval `cat ~/p/cmd`
+  ${@:2}
+  sleep $1
+done

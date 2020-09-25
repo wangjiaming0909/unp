@@ -1,0 +1,15 @@
+#! /bin/bash
+
+#cmd=/percona/bin/mysql
+cmd=mysql
+option='--sigint-ignore=TRUE'
+
+if [ $# -eq 1 ];
+then
+  $cmd $option -uroot -h127.0.0.1 -P$1 test
+elif [ $# -eq 2 ];
+then
+  $cmd $option --sigint-ignore=FALSE -uroot -h127.0.0.1 -P$1 $2
+else
+  $cmd $option --sigint-ignore -uroot -h127.0.0.1 mysql
+fi
