@@ -1,9 +1,10 @@
 #ifndef _UNP_FILEUTIL_H_
 #define _UNP_FILEUTIL_H_
-#include "XString.h"
+#include <string>
 #include <errno.h>
 
 namespace util{
+  using std::string;
 
 class FileUtil{
 public:
@@ -21,7 +22,7 @@ public:
     static const int kBufferSize = 64*1024;
 
 private:
-    bool fd_is_valid(util::string* str_ptr) const;
+    bool fd_is_valid(std::string* str_ptr) const;
 private:
     int     		m_fd;
     int     		m_err;

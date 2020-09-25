@@ -17,40 +17,39 @@
 #include <unistd.h>
 #include <utility>
 
-#include "ServerConfig.h"
 #include "json11.hpp"
 #include "optionValidator.h"
-#include "util/XString.h"
 #include "util/FileUtil.h"
 #include "configoption.h"
 #include "util/easylogging++.h"
 
 namespace config{
-using namespace util;
+using std::string;
 
-const string DEFAULT_CONFIG_JSON_FILE_NAME =  "server_conf.json";
+#define DEFAULT_CONFIG_JSON_FILE_NAME "server_conf.json"
 
 class ServerConfig{
 public:
-	ServerConfig();
-	ServerConfig(const string& configFileName);
-    ~ServerConfig();
-public:
-    string operator[](const string& key);
+  ~ServerConfig();
+  static ServerConfig* instance(const char*file = DEFAULT_CONFIG_JSON_FILE_NAME);
 private:
-	bool parseConfigFile();
-    int readConfigFile();
-    void setConfigFullPath(const string& configFileName);
+  ServerConfig(const string& configFileName);
+public:
+  const char* operator[](const string& key);
+private:
+  bool parseConfigFile();
+  int readConfigFile();
+  void setConfigFullPath(const string& configFileName);
 
 private:
-    std::map<string, string>		 	m_options_map;
-    string* 							m_configFilePath = nullptr;
-    string*								m_options_str = nullptr;
+  std::map<string, string>		 	m_options_map;
+  string* 							m_configFilePath = nullptr;
+  string*								m_options_str = nullptr;
 
 private:
-	bool 								m_read_config_file_ok;
+  bool 								m_read_config_file_ok;
 public:
-	bool getReadConfigFileStatus(){return m_read_config_file_ok;}
+  bool getReadConfigFileStatus(){return m_read_config_file_ok;}
 };
 }
 #endif

@@ -1,17 +1,17 @@
 #ifndef CONFIGOPTION_H
 #define CONFIGOPTION_H
 
-#include "util/XString.h"
+#include <string>
 namespace config{
 
 template <typename T>
 class ConfigOption
 {
 public:
-    ConfigOption(const util::string& name, const T& value);
-    T getValue(const util::string& name);
+    ConfigOption(const std::string& name, const T& value);
+    T getValue(const std::string& name);
 private:
-    util::string    m_name;
+    std::string    m_name;
     T               m_value;
 };
 }

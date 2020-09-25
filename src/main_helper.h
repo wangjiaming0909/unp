@@ -3,6 +3,7 @@
 
 #include "util/easylogging++.h"
 #include "boost/assert.hpp"
+#include <ostream>
 
 void setupLogger(){
   using namespace el;
@@ -25,23 +26,21 @@ void setupLogger(){
 int print_Argc_Argv(int argc, char** argv){
   using namespace std;
   if(argc == 0){
-    cout << "no parameters" << endl;
+    LOG(INFO) << "no parameters";
     return 0;
   }
 
-  cout << "argc: " << argc << endl;
+  LOG(INFO) << "argc: " << argc;
   for(int i = 0; i < argc; i++){
     try{
       BOOST_ASSERT(argv + i != nullptr && "argc is matching the number of argv");
-      cout << *(argv + i) << " ";
+      LOG(INFO) << *(argv + i) << " ";
     }
     catch(std::exception& e){
-      std::cout << "exception catched" << std::endl;
-      std::cout << e.what() << std::endl;
+      LOG(INFO) << "exception catched" << e.what();
       return -1;
     }
   }
-  cout << endl;
   return 0;
 }
 

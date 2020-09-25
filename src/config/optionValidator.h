@@ -2,15 +2,15 @@
 #define _H_OPTIONVALIDATOR_
 
 #include <utility>
-#include "util/XString.h"
-using namespace util;
+#include <string>
+using std::string;
 
 namespace config{
 
 class OptionValidator{
 public:
-    typedef std::pair<string, string> option;
-    static option validateAndReturn(const option& inputOption);
+  using option = std::pair<string, string>;
+  static option validateAndReturn(const option& inputOption);
 };
 
 }

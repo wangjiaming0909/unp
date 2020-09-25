@@ -1,5 +1,6 @@
 {
-    "port": 9999,
-    "clients": 1024,
-    "backlog": 5
+  "port": 9999,
+  "clients": 1024,
+  "backlog": 5,
+  "func": "jj"
 }

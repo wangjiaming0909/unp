@@ -8,14 +8,14 @@
 #include <cstdlib>
 #include "easylogging++.h"
 
-util::FileUtil::FileUtil(const util::string& fileName)
-    : m_fd(::open(fileName.ptr(), O_RDONLY | O_CLOEXEC)),
+util::FileUtil::FileUtil(const std::string& fileName)
+    : m_fd(::open(fileName.c_str(), O_RDONLY | O_CLOEXEC)),
     m_err(0){
     memset(m_buf, 0, kBufferSize);
     if(m_fd < 0){
         m_err = errno;
         std::string error_message = strerror(errno);
-        error_message = error_message + " " + fileName.as_std_string();
+        error_message = error_message + " " + fileName;
         LOG(ERROR) << error_message;
     }
 }
@@ -25,7 +25,7 @@ util::FileUtil::~FileUtil(){
         ::close(m_fd);
 }
 
-bool util::FileUtil::fd_is_valid(util::string* str_ptr)const {
+bool util::FileUtil::fd_is_valid(std::string* str_ptr)const {
     int err = m_err;
     int fileSize = 0;
     if(m_fd >= 0){
@@ -48,7 +48,7 @@ bool util::FileUtil::fd_is_valid(util::string* str_ptr)const {
     return err == 0;
 }
 
-int util::FileUtil::readToString(int maxSize, util::string* str_ptr){
+int util::FileUtil::readToString(int maxSize, std::string* str_ptr){
     assert(str_ptr != nullptr);
     int err = m_err;
     if(!fd_is_valid(str_ptr)){

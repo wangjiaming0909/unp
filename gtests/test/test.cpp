@@ -86,7 +86,7 @@ void print_filelock(const flock& lock)
 
 void print_filelock_of_file(const char* filename)
 {
-  auto fd = ::open(filename, O_CREAT | O_APPEND);
+  auto fd = ::open(filename, O_CREAT | O_APPEND, 0666);
   flock lock{};
   ::fcntl(fd, F_GETLK, &lock);
   print_filelock(lock);

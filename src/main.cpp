@@ -15,6 +15,8 @@
 #include "downloader/downloaderserver.h"
 #include "util/timer.h"
 #include <set>
+#include "config/ServerConfig.h"
+#include "examples/jj/JJHandler.h"
 //#include "examples/Downloader.h"
 
 // INITIALIZE_NULL_EASYLOGGINGPP
@@ -118,18 +120,28 @@ void test_plus()
     }
   }
 }
+int jj()
+{
+  using namespace examples;
+  JJHandler *handler;
+  LOG(INFO) << "JJ";
+  return 0;
+}
+
+static std::map<string, std::function<int ()>> funcs
+{
+  {"jj", jj}
+};
 
 int main(int argc, char** argv)
 {
-    //server_scoped_helper s_h{argc, argv};
-    //return download(argc, argv);
-    // return serve(argc, argv);
-    //downloaderServer();
-    //
-    //scan();
-    //test_plus();
-    //
-  LOG(DEBUG) << "debug log";
+  server_scoped_helper s_h{argc, argv};
+  auto* cf = config::ServerConfig::instance();
+  const auto* func = (*cf)["func"];
+  auto it = funcs.find(func);
+  if (it != funcs.end())
+    return it->second();
+  return 0;
 }
 
 
