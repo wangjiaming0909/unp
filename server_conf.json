@@ -2,5 +2,11 @@
   "port": 9999,
   "clients": 1024,
   "backlog": 5,
-  "func": "jj"
+  "func": "min_heap_boost",
+  "all_fund_url": "http://fund.eastmoney.com/js/fundcode_search.js",
+  "all_fund_company_url": "http://fund.eastmoney.com/js/jjjz_gs.js?dt=1463791574015",
+  "fund_info_url_prefix": "http://fund.eastmoney.com/pingzhongdata/",
+  "fund_info_url_postfix": ".js?v=20160518155842",
+  "fund_realtime_data_url_prefix": "http://fundgz.1234567.com.cn/js/",
+  "fund_realtime_data_url_postfix": ".js?rt=1463558676006"
 }

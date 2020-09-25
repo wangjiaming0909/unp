@@ -30,19 +30,23 @@ using std::string;
 
 class ServerConfig{
 public:
+  using OptionValue = json11::Json;
+  using OptionType = json11::Json::Type;
   ~ServerConfig();
   static ServerConfig* instance(const char*file = DEFAULT_CONFIG_JSON_FILE_NAME);
 private:
   ServerConfig(const string& configFileName);
 public:
-  const char* operator[](const string& key);
+  bool get_string_option(const string& key, string*);
+  bool get_number_option(const string& key, int*);
+  bool get_bool_option(const string& key, bool*);
 private:
   bool parseConfigFile();
   int readConfigFile();
   void setConfigFullPath(const string& configFileName);
 
 private:
-  std::map<string, string>		 	m_options_map;
+  std::map<string, OptionValue>		 	m_options_map;
   string* 							m_configFilePath = nullptr;
   string*								m_options_str = nullptr;
 
@@ -51,5 +55,6 @@ private:
 public:
   bool getReadConfigFileStatus(){return m_read_config_file_ok;}
 };
+
 }
 #endif

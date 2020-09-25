@@ -35,12 +35,9 @@ ServerConfig::~ServerConfig(){
 bool ServerConfig::parseConfigFile(){
   LOG(INFO) << "class ServerConfig: parsing the config file";
   std::string err;
+  using namespace json11;
   json11::Json cfgJson = json11::Json::parse(*m_options_str, err);
-  auto maps = cfgJson.object_items();
-  for(auto aPair : maps){
-    auto& second = aPair.second.string_value();
-    m_options_map.insert(OptionValidator::validateAndReturn({aPair.first, second}));
-  }
+  m_options_map = cfgJson.object_items();
   return err.empty();
 }
 
@@ -68,20 +65,32 @@ void ServerConfig::setConfigFullPath(const string& configFileName){
   m_configFilePath->append(configFileName);
 }
 
-const char* ServerConfig::operator[](const string& key){
-  if(m_options_map.count(key) == 0){
-    std::string message = "No this option.. filename:  " + key;
-    LOG(WARNING) << message;
-    return "";
+bool ServerConfig::get_string_option(const string& key, string* ret){
+  auto it = m_options_map.find(key);
+  if(it == m_options_map.end() || it->second.type() != OptionType::STRING){
+    LOG(WARNING) << "No this option or type error filename:  " << key;
+    return false;
   }
-    return m_options_map[key].c_str();
+  *ret = it->second.string_value();
+  return true;
 }
-
-//string ServerConfig::operator[](const string& key)const{
-//    return m_options_map[;
-//    return (*this)[key];
-//}
-
-//string ServerConfig::operator[](const char* key) const{
-//	return this->operator[](key);
-//}
+bool ServerConfig::get_number_option(const string& key, int* ret)
+{
+  auto it = m_options_map.find(key);
+  if(it == m_options_map.end() || it->second.type() != OptionType::NUMBER){
+    LOG(WARNING) << "No this option or type error filename:  " << key;
+    return false;
+  }
+  *ret = it->second.int_value();
+  return true;
+}
+bool ServerConfig::get_bool_option(const string& key, bool* ret)
+{
+  auto it = m_options_map.find(key);
+  if(it == m_options_map.end() || it->second.type() != OptionType::BOOL){
+    LOG(WARNING) << "No this option or type error filename:  " << key;
+    return false;
+  }
+  *ret = it->second.bool_value();
+  return true;
+}

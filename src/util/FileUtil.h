@@ -4,7 +4,7 @@
 #include <errno.h>
 
 namespace util{
-  using std::string;
+  using namespace std;
 
 class FileUtil{
 public:

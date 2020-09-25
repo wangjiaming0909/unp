@@ -10,6 +10,7 @@
 #include "reactor/tcp_server.h"
 #include "reactor/echo_connection_handler.h"
 #include <cstdio>
+#include <functional>
 #include <netdb.h>
 #include <string>
 #include "downloader/downloaderserver.h"
@@ -17,6 +18,7 @@
 #include <set>
 #include "config/ServerConfig.h"
 #include "examples/jj/JJHandler.h"
+#include <boost/heap/priority_queue.hpp>
 //#include "examples/Downloader.h"
 
 // INITIALIZE_NULL_EASYLOGGINGPP
@@ -128,19 +130,45 @@ int jj()
   return 0;
 }
 
+int min_heap_boost()
+{
+  boost::heap::priority_queue<int, boost::heap::compare<std::greater<int>>> q;
+  q.push(1);
+  q.push(2);
+  auto v = q.top();
+  LOG(DEBUG) << v;
+  q.pop();
+  v = q.top();
+  LOG(DEBUG) << v;
+  q.pop();
+
+  int port;
+  config::ServerConfig::instance()->get_number_option("port", &port);
+  LOG(DEBUG) << "configued port is " << port;
+}
+
 static std::map<string, std::function<int ()>> funcs
 {
-  {"jj", jj}
+  {"jj", jj},
+  {"min_heap_boost", min_heap_boost}
 };
 
 int main(int argc, char** argv)
 {
   server_scoped_helper s_h{argc, argv};
   auto* cf = config::ServerConfig::instance();
-  const auto* func = (*cf)["func"];
+  string func;
+  auto ret = cf->get_string_option("func", &func);
+  if (!ret) {
+    LOG(DEBUG) << "no func configured";
+    return -1;
+  }
   auto it = funcs.find(func);
-  if (it != funcs.end())
+  if (it != funcs.end()) {
+    LOG(DEBUG) << "Running " << func;
     return it->second();
+  } else
+    LOG(DEBUG) << "no funcs to run";
   return 0;
 }
 
