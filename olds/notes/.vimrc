@@ -16,7 +16,7 @@ set history=1000
 filetype off
 set tags+=~/.vim/tags/cpp_tags
 "set tags+=~/.vim/tags/protobuf_tags
-"set tags+=/boost_1_72_0/boost/boost_tags
+set tags+=/boost_1_72_0/boost/boost_tags
 "set tags+=~/.vim/tags/ace_tags
 set tags+=~/.vim/tags/sys_tags
 set tags+=~/.vim/tags/event_tags
@@ -26,19 +26,33 @@ set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&fileencoding}\
 "set mouse=a
 set lcs=tab:** "show tabs
 set lcs+=trail:~ "show trailing spaces
-set list
-set term=screen
+set list "show tabs
+set term=xterm
+set signcolumn=no
 highlight TabLine term=underline cterm=bold ctermbg=blue ctermfg=darkgrey
-highlight TabLineSel term=bold cterm=bold ctermbg=darkgrey ctermfg=white
-highlight Pmenu ctermbg=lightgrey
-highlight PmenuSel ctermbg=green ctermfg=yellow
+highlight TabLineSel term=bold cterm=bold ctermbg=darkgrey ctermfg=yellow
+highlight TabLineFill cterm=bold ctermbg=darkgrey ctermfg=darkgrey
+highlight Pmenu ctermbg=lightgrey ctermfg=black
+highlight PmenuSel ctermbg=blue ctermfg=black
 "hi CursorLine cterm=bold ctermbg=darkgrey ctermfg=None guibg=#666666 guifg=lightblue
 "hi cursorcolumn cterm=bold ctermbg=darkgrey ctermfg=None guibg=lightblue guifg=lightblue
-hi CursorLine cterm=bold ctermbg=lightblue ctermfg=None guibg=darkgrey guifg=lightblue
-hi cursorcolumn cterm=bold ctermbg=lightblue ctermfg=NONE guibg=darkgrey guifg=lightblue
-hi CursorLineNr cterm=bold,underline ctermbg=blue ctermfg=yellow
 set cursorline
+set cursorlineopt=line,number
+"set nocursorcolumn
 set cursorcolumn
+hi CursorLine cterm=bold ctermbg=darkblue ctermfg=none term=none
+hi CursorColumn cterm=bold ctermbg=darkblue term=bold ctermfg=none guibg=darkgrey guifg=black
+"hi Cursor cterm=bold ctermbg=blue term=bold ctermfg=blue guibg=blue guifg=blue
+"hi CursorIM cterm=bold ctermbg=darkblue term=bold ctermfg=none guibg=blue guifg=black
+"hi ErrorMsg		guifg=#ffffff guibg=#287eff						ctermfg=black ctermbg=lightblue
+hi SignColumn		guifg=#ffffff guibg=#287eff						ctermfg=white ctermbg=white
+
+hi CursorLineNr cterm=bold gui=bold  term=bold ctermbg=darkblue ctermfg=yellow guifg=yellow
+hi LineNr cterm=bold guifg=green guibg=darkgrey gui=none ctermfg=darkgrey ctermbg=black term=none
+"hi LineNrAbove cterm=bold ctermbg=black ctermfg=none guibg=black guifg=lightblue
+"hi LineNrBelow cterm=bold ctermbg=green ctermfg=none guibg=black guifg=lightblue
+hi StatusLine	guifg=blue guibg=darkgrey gui=none		ctermfg=darkgrey ctermbg=yellow term=none
+hi StatusLineNC	guifg=black guibg=yellow gui=none		ctermfg=darkgrey ctermbg=darkgrey term=none
 set fdm=marker "marker for code fold
 set hlsearch
 set is "incremental search
@@ -79,7 +93,7 @@ let Tlist_Use_Right_Window=1
 let Tlist_Exit_OnlyWindow=1
 let Tlist_Process_file_Always=1
 let Tlist_Show_One_File=1
-set ut=500 "refresh rate
+set ut=1000 "refresh rate
 let Tlist_Use_SingleClick=1
 let Tlist_WinWidth=50
 "taglist
@@ -125,7 +139,8 @@ noremap <leader><Down> :resize -6<CR>
 nnoremap <C-h> <C-o>
 nnoremap <C-l> <C-i>
 nnoremap <F12> <C-]>
-nnoremap <C-j> <C-]>:ts<CR>
+nnoremap <leader>a :pop<CR>
+nnoremap <C-j> :ts <C-R><C-w><CR>
 nnoremap <C-k> <C-]>
 nnoremap <F5> :bufdo e<CR>
 nnoremap f *
@@ -133,28 +148,35 @@ nnoremap F #
 nnoremap <leader>w <C-w><C-w>
 nnoremap <Down> <C-e>
 nnoremap <Up> <C-y>
-nnoremap <leader>d <plug>(YCMHover)
+"nnoremap <leader>d <plug>(YCMHover)
 nnoremap <leader>F :YcmCompleter FixIt<CR>
 nnoremap D 11<C-e>
 nnoremap U 11<C-y>
-nnoremap <leader>m :set mouse=a<CR>
+"nnoremap <leader>m :set mouse=a<CR>
+nnoremap <leader>m :mark 
 nnoremap <leader>M :set mouse=<CR>
-nnoremap ;; zz
+nnoremap ;; zz11<C-y>
 nnoremap t *N
 nnoremap <leader>r :e<CR>
 vnoremap // y/\V<C-R>=escape(@",'/\')<CR><CR>
+nnoremap <leader>b :!make -j8<CR>
+nnoremap <leader>c :!make clean<CR>
+nnoremap <leader>l :<UP><CR>
+nnoremap qw <C-w><C-W>:q<CR>
 let g:ycm_disable_for_files_larger_than_kb = 0
 let g:ycm_max_num_identifier_candidates = 30
 let g:ycm_max_num_candidates = 30
-let g:ycm_collect_identifiers_from_tags_files = 1
+"let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_complete_in_comments = 1
+let g:ycm_clangd_args = ["-limit-results=100", "--pch-storage=disk"]
+highlight YcmErrorLine guibg=#3f0000
 
-let g:indentLine_color_term = 20
-let g:indentLine_color_tty_light = 7 " (default: 4)
-let g:indentLine_color_dark = 1 " (default: 2)
+let g:indentLine_color_term = 2
+let g:indentLine_color_tty_light = 4 " (default: 4)
+let g:indentLine_color_dark = 2 " (default: 2)
 let g:indentLine_char_list = ['¦']
 
 
@@ -183,6 +205,42 @@ call NERDTreeHighlightFile('coffee', 'Red', 'none', 'red', '#151515')
 call NERDTreeHighlightFile('js', 'Red', 'none', '#ffa500', '#151515')
 call NERDTreeHighlightFile('php', 'Magenta', 'none', '#ff00ff', '#151515')
 
-set background=dark
 
+function MyTabLine()
+  let s = ''
+  for i in range(tabpagenr('$'))
+    " select the highlighting
+    if i + 1 == tabpagenr()
+      let s .= '%#TabLineSel#'
+    else
+      let s .= '%#TabLine#'
+    endif
 
+    " set the tab page number (for mouse clicks)
+    let s .= '%' . (i + 1) . 'T'
+
+    " the label is made by MyTabLabel()
+    let s .= ' %{MyTabLabel(' . (i + 1) . ')} '
+  endfor
+
+  " after the last tab fill with TabLineFill and reset tab page nr
+  let s .= '%#TabLineFill#%T'
+
+  " right-align the label to close the current tab page
+  if tabpagenr('$') > 1
+    let s .= '%=%#TabLine#%999Xclose'
+  endif
+
+  return s
+endfunction
+
+function MyTabLabel(n)
+  let buflist = tabpagebuflist(a:n)
+  let winnr = tabpagewinnr(a:n)
+  return bufname(buflist[winnr - 1])->fnamemodify(':t')
+endfunction
+
+set tabline=%!MyTabLine()
+
+set background=light
+autocmd BufNewFile,BufRead *.test set filetype=sh
