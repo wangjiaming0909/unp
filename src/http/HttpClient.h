@@ -1,6 +1,7 @@
 #pragma once
 #include "reactor/connector.h"
 #include "reactor/tcp_client.h"
+#include "http/HttpMessage.h"
 
 namespace http
 {
@@ -11,9 +12,9 @@ public:
   HttpClient();
   ~HttpClient();
   template <typename Handler>
-  reactor::connector<Handler>* get();
+  reactor::connector<Handler>* get(const HttpMessage& mes);
   template <typename Handler>
-  reactor::connector<Handler>* post();
+  reactor::connector<Handler>* post(const HttpMessage& mes);
 
 private:
   reactor::tcp_client *client_ = nullptr;
@@ -21,11 +22,11 @@ private:
 
 
 template <typename Handler>
-reactor::connector<Handler>* HttpClient::get()
+reactor::connector<Handler>* HttpClient::get(const HttpMessage& mes)
 {
 }
 template <typename Handler>
-reactor::connector<Handler>* HttpClient::post()
+reactor::connector<Handler>* HttpClient::post(const HttpMessage& mes)
 {
 
 }
