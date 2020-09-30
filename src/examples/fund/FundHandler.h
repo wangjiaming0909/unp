@@ -7,11 +7,11 @@
 namespace examples
 {
 using namespace http;
-class JJHandler : public reactor::sock_connection_handler, HttpCodec::Callback
+class FundHandler : public reactor::sock_connection_handler, HttpCodec::Callback
 {
 public:
-  JJHandler(reactor::Reactor& react, bool isSSL = false);
-  ~JJHandler();
+  FundHandler(reactor::Reactor& react, bool isSSL = false);
+  ~FundHandler();
   void fetch_all_fund_companies();
   void fetch_all_funds_info();
   void fetch_fund_data(int code);

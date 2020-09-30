@@ -53,8 +53,10 @@ public:
     this->handlerPtr_ = nullptr;
   }
   virtual ConnectionHandlerPtr_t connect(const net::inet_addr &target_addr, micro_seconds timeout) override;
-private:
   virtual int disconnect(micro_seconds timeout) override;
+  bool get_is_connected() const { return is_connected_; }
+private:
+  bool is_connected_ = false;
 };
 
 template <typename Handler_t>
@@ -68,9 +70,11 @@ typename connector<Handler_t>::ConnectionHandlerPtr_t connector<Handler_t>::conn
     LOG(WARNING) << "connect to " << target_addr.get_address_string() << " error...";
     return nullptr;
   }
+  is_connected_ = true;
 
   if(this->handlerPtr_->open() < 0) {
     LOG(WARNING) << "activate connection handler error";
+    is_connected_ = false;
     return nullptr;
   }
   return this->handlerPtr_;
@@ -80,6 +84,7 @@ template <typename Handler_t>
 int connector<Handler_t>::disconnect(micro_seconds)
 {
   this->handlerPtr_->close();
+  is_connected_ = true;
   return 0;
 }
 } // namespace reactor

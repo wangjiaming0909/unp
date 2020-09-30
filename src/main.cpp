@@ -17,7 +17,6 @@
 #include "util/timer.h"
 #include <set>
 #include "config/ServerConfig.h"
-#include "examples/jj/JJHandler.h"
 #include <boost/heap/priority_queue.hpp>
 //#include "examples/Downloader.h"
 
@@ -122,11 +121,9 @@ void test_plus()
     }
   }
 }
-int jj()
+int fund()
 {
-  using namespace examples;
-  JJHandler *handler;
-  LOG(INFO) << "JJ";
+  LOG(INFO) << "Fund";
   return 0;
 }
 
@@ -149,7 +146,7 @@ int min_heap_boost()
 
 static std::map<string, std::function<int ()>> funcs
 {
-  {"jj", jj},
+  {"fund", fund},
   {"min_heap_boost", min_heap_boost}
 };
 

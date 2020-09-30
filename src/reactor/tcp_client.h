@@ -19,21 +19,21 @@ class tcp_client : boost::noncopyable
 public:
   using reactor_ptr_t = Reactor*;
   using microseconds_t = std::chrono::microseconds;
-  tcp_client(unp::reactor_imp_t_enum type);
+  tcp_client(unp::reactor_imp_t_enum type = unp::reactor_imp_t_enum::USING_EPOLL);
   ~tcp_client();
-  int open(unp::reactor_imp_t_enum type);
   template <typename Connector_t, typename ...Args>
   Connector_t* addConnection(Args&&... args);
   template <typename Connector_t>
   void closeConnection(Connector_t& connector, microseconds_t timeout);
+  int close_all_connection(microseconds_t timeout);
   int start();
   int suspend();
   int stop();
 
-private:
+protected:
   reactor_ptr_t make_reactor(unp::reactor_imp_t_enum type);
 
-private:
+protected:
   // std::vector<IConnector*> connectors_;
   ConnectionManager*  manager_{nullptr};
   reactor_ptr_t       reactor_{nullptr};
