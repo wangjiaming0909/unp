@@ -1,0 +1,11 @@
+mode: command line
+key: <C+d>
+effect: show completions
+
+mode: normal
+key: [# ]#
+effect: back/forward to #if #else
+
+mode: command line
+key: startr
+effect: start replace mode
