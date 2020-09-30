@@ -14,7 +14,7 @@ set nocompatible
 set backspace=indent,eol,start
 set history=1000
 filetype off
-set tags+=~/.vim/tags/cpp_tags
+"set tags+=~/.vim/tags/cpp_tags
 "set tags+=~/.vim/tags/protobuf_tags
 set tags+=/boost_1_72_0/boost/boost_tags
 "set tags+=~/.vim/tags/ace_tags
@@ -65,9 +65,11 @@ Plugin 'kien/ctrlp.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'taglist.vim'
 Plugin 'mhinz/vim-grepper'
-Plugin 'valloric/youcompleteme'
+"Plugin 'valloric/youcompleteme'
 Plugin 'octol/vim-cpp-enhanced-highlight'
 Plugin 'Yggdroot/indentLine'
+Plugin 'ericcurtin/CurtineIncSw.vim'
+
 "Plugin 'makerj/vim-pdf'
 "Plugin 'clktmr/vim-gdscript3'
 call vundle#end()
@@ -163,6 +165,7 @@ nnoremap <leader>b :!make -j8<CR>
 nnoremap <leader>c :!make clean<CR>
 nnoremap <leader>l :<UP><CR>
 nnoremap qw <C-w><C-W>:q<CR>
+nnoremap <c-o> :call CurtineIncSw()<CR>
 let g:ycm_disable_for_files_larger_than_kb = 0
 let g:ycm_max_num_identifier_candidates = 30
 let g:ycm_max_num_candidates = 30
@@ -240,7 +243,26 @@ function MyTabLabel(n)
   return bufname(buflist[winnr - 1])->fnamemodify(':t')
 endfunction
 
+function SourceOrHeader()
+  let ext = expand("%:e")
+  let filename = expand("%:t:r")
+  if ext == 'cc' || ext == 'cpp'
+    let findh = 1
+  elseif ext == 'h'
+    let findcpp = 1
+  else
+    return "go away"
+  endif
+  if findh == 1
+    return (filename . '.h')
+  endif
+  if findcpp == 1
+    return (filename . '.c')
+  endif
+endfunction
+
 set tabline=%!MyTabLine()
 
 set background=light
 autocmd BufNewFile,BufRead *.test set filetype=sh
+

@@ -1,7 +1,7 @@
 #!/bin/bash
 #ls ~/dev/dbscale-chelianwang/dbscale-test/var/mysqld.1/data/dbscale/
 #ls /usr/share/dbscale57-test/dbscale_include/*.log
-/percona/bin/mysql -uroot -P$1 -h127.0.0.1 test < ~/p/$2
+/percona/bin/mysql -uroot -P$1 -h127.0.0.1 test < $2
 #cat ~/dev/dbscale-chelianwang/dbscale-test8/var/run/mysqld.2.pid
 #mysql --plugin-dir=$MYSQL57_BASEDIR/lib/plugin --default-auth=qa_auth_client -uroot -P3307 -h127.0.0.1 -e "SELECT DATABASE()"
 #mysql --plugin-dir=$MYSQL57_BASEDIR/lib/plugin --default-auth=auth_test_plugin -uroot -P3307 -h127.0.0.1 -e "SELECT DATABASE()"

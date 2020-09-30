@@ -1,0 +1,4 @@
+#!/bin/bash
+
+/mysql/mysql-5.7.29-linux-glibc2.12-x86_64/bin/mysqlbinlog $*
+
