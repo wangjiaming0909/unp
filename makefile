@@ -17,7 +17,7 @@ LDFLAGS = -pthread \
 		-lssl \
 		-lcrypto\
 		-lprotobuf\
-		-luv
+		#-luv
 		
 
 TESTLDFLAG = -pthread \

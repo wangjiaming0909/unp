@@ -27,6 +27,7 @@ public:
 
     const const_string_piece_t& url() const { return url_; }
     const const_string_piece_t& scheme() const { return scheme_; }
+    bool is_https() const { return scheme_ == "https";}
     const const_string_piece_t& host() const {return host_;}
     uint16_t port() const {return port_;}
     const const_string_piece_t& path() const {return path_;}
