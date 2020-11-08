@@ -54,7 +54,7 @@ int sock_connection_handler::handle_input(int handle)
     return -1;
   }
   if (ret == 0) {
-    //LOG(INFO) << "Read EOF";
+    LOG(INFO) << "Read EOF";
     return -1;
   }
   return 0;

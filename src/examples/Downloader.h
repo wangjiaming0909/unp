@@ -1,4 +1,5 @@
 #pragma once
+#include "util/string_piece/string_piece.h"
 #include <string>
 #if __cplusplus > 20130101
 #include <filesystem>
@@ -69,5 +70,9 @@ static string_piece::const_string_piece ACCEPT = "*/*";
 static string_piece::const_string_piece ACCEPTENCODING = "identity";
 static string_piece::const_string_piece ACCEPTLANGUAGE = "en-US,en;q=0.5";
 static string_piece::const_string_piece CONNECTION = "keep-alive";
+static string_piece::const_string_piece PRAGMA = "no-cache";
+static string_piece::const_string_piece CACHE_CONTROL = "no-cache";
+static string_piece::const_string_piece UPGRADE_INSECURE_REQUESTS = "1";
+
 
 }

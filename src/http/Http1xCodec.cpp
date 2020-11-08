@@ -39,6 +39,7 @@ size_t Http1xCodec::onIngress(CStringPiece_t buf)
     auto bytesParsed = parser_->parse(buf.cbegin(), buf.size());
     if(parser_->error() != 0)
     {
+        LOG(ERROR) << "Parser error: " << http_errno(parser_->error());
         LOG(ERROR) << "Parser error: " << http_errno_name(http_errno(parser_->error()));
         return 0;
     }

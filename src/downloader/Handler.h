@@ -90,12 +90,16 @@ private:
 	//MessageSetupCallback_t setupCallback_;
     std::shared_ptr<Download> downloader_;
 };
-static string_piece::const_string_piece USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:71.0) Gecko/20100101 Firefox/71.0";
-static string_piece::const_string_piece ACCEPT = "*/*";
-// static string_piece::const_string_piece ACCEPTENCODING = "gzip, deflate, br";
-static string_piece::const_string_piece ACCEPTENCODING = "identity";
-static string_piece::const_string_piece ACCEPTLANGUAGE = "en-US,en;q=0.5";
+static string_piece::const_string_piece USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko/20100101 Firefox/83.0";
+//static string_piece::const_string_piece ACCEPT = "*/*";
+static string_piece::const_string_piece ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8";
+static string_piece::const_string_piece ACCEPTENCODING = "gzip, deflate";
+//static string_piece::const_string_piece ACCEPTENCODING = "identity";
+static string_piece::const_string_piece ACCEPTLANGUAGE = "en-US,zh-CN;q=0.8,zh;q=0.7,zh-TW;q=0.5,zh-HK;q=0.3,en;q=0.2";
 static const std::string DEFAULT_FILE_NAME = "unp.unp";
-// static string_piece::const_string_piece CONNECTION = "keep-alive";
+static string_piece::const_string_piece CONNECTION = "keep-alive";
+static string_piece::const_string_piece PRAGMA = "no-cache";
+static string_piece::const_string_piece CACHE_CONTROL = "no-cache";
+static string_piece::const_string_piece UPGRADE_INSECURE_REQUESTS = "1";
 
 }

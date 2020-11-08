@@ -75,31 +75,30 @@ public:
 
 TEST(downloadserver, normal)
 {
-    GTEST_SKIP();
-    using namespace std::chrono_literals;
-    net::inet_addr listenArrd{8000, "0.0.0.0"};
-    std::string url = "https://github.com/wangjiaming0909/unp/archive/master.zip";
-    DownloaderServer server{listenArrd};;
+  GTEST_SKIP();
+  using namespace std::chrono_literals;
+  net::inet_addr listenArrd{8000, "0.0.0.0"};
+  //std::string url = "https://github.com/wangjiaming0909/unp/archive/master.zip";
+  std::string url = "https://softforspeed.51xiazai.cn/down/QQ_PCDownload1100109234.exe";
+  DownloaderServer server{listenArrd};;
 
-    std::thread st{&DownloaderServer::start, &server};
+  std::thread st{&DownloaderServer::start, &server};
 
-    //client
-	/*
-    std::this_thread::sleep_for(2s);
-    reactor::tcp_client client{unp::reactor_imp_t_enum::USING_EPOLL};
-    using Connector_t = reactor::connector<ProtoTestHandler>;
-    auto connector = client.addConnection<Connector_t>(url);
-    net::inet_addr targetAddr{8000, "163.184.56.140"};
+  //client
+  std::this_thread::sleep_for(1s);
+  reactor::tcp_client client{unp::reactor_imp_t_enum::USING_EPOLL};
+  using Connector_t = reactor::connector<ProtoTestHandler>;
+  auto connector = client.addConnection<Connector_t>(url);
+  net::inet_addr targetAddr{8000, "127.0.0.1"};
 
-    auto connection = connector->connect(targetAddr, 2s);
+  auto connection = connector->connect(targetAddr, 2s);
 
-    auto ret = client.start();
-    LOG(INFO) << "client ret: " << ret;
+  auto ret = client.start();
+  LOG(INFO) << "client ret: " << ret;
 
-    client.closeConnection<Connector_t>(*connector, 2s);
-	*/
+  client.closeConnection<Connector_t>(*connector, 2s);
 
-    //server.stop();
-    //std::this_thread::sleep_for(2s);
-    st.join();
+  //server.stop();
+  //std::this_thread::sleep_for(2s);
+  st.join();
 }

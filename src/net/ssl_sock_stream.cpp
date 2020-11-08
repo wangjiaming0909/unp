@@ -1,9 +1,17 @@
 #include "ssl_sock_stream.h"
 #include <openssl/err.h>
 #include "reactor/buffer.h"
-
 namespace net
 {
+
+  OpenSSLInitializer::OpenSSLInitializer()
+  {
+    SSL_library_init();
+    //method = DTLS_client_method();
+    method = SSLv23_client_method();
+    OpenSSL_add_all_ciphers();
+    OpenSSL_add_all_algorithms();
+  }
 
 OpenSSLInitializer SSLSockStream::sslInitializer_ = OpenSSLInitializer{};
 SSLSockStream::~SSLSockStream()
@@ -102,6 +110,7 @@ int SSLSockStream::doHandShake()
     {
         ERR_clear_error();
         auto r = SSL_do_handshake(ssl_);
+        LOG(DEBUG) << "ssl do handshake ret: " << r;
         if(r == 1) break;
 
         int err = SSL_get_error(ssl_, r);
@@ -119,8 +128,13 @@ int SSLSockStream::doHandShake()
             SSL_shutdown(ssl_);
             return -1;
         default:
-            LOG(ERROR) << "handshake error: " << err;
-            break;
+            {
+              while(err != 0) {
+                LOG(ERROR) << "handshake error: " << err << " errno: " << strerror(errno);
+                err = ERR_get_error();
+              }
+              break;
+            }
         }
         t--;
         LOG(WARNING) << "handshake retrying time: " << 4 - t;

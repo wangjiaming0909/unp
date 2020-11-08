@@ -7,13 +7,7 @@ namespace net
 
 struct OpenSSLInitializer
 {
-  OpenSSLInitializer()
-  {
-    SSL_library_init();
-    method = DTLS_client_method();
-    OpenSSL_add_all_ciphers();
-    OpenSSL_add_all_algorithms();
-  }
+  OpenSSLInitializer();
   const SSL_METHOD *method = nullptr;
 };
 

@@ -196,7 +196,7 @@ int epoll_reactor_impl::epoll_wait(int milliseconds)
 
   if(ret < 0)
   {
-    LOG(WARNING) << "Epoll error " << strerror(errno);
+    //LOG(WARNING) << "Epoll error " << strerror(errno);
     if(errno == ERESTART || errno == EINTR) return 0;
     return -1;
   }

@@ -57,8 +57,8 @@ int Handler::handle_input(int handle)
     auto data = firstChain.get_start_buffer();
     auto chainLen = firstChain.size();
     if(data != nullptr && chainLen != 0) {
-      // std::string s{static_cast<char*>(data), chainLen};
-      // LOG(INFO) << "----------------received:\n" << s;
+      //std::string s{static_cast<char*>(data), chainLen};
+      //LOG(INFO) << "----------------received:\n" << s;
     }
     string_piece::const_string_piece sp{static_cast<const char*>(data), chainLen};
     size_t bytesRead = codec_.onIngress(sp);
@@ -85,7 +85,12 @@ int Handler::open()
   request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_HOST, urlParser_.host());
   request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_USER_AGENT, USERAGENT);
   request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT, ACCEPT);
+  request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT_LANGUAGE, ACCEPTLANGUAGE);
   request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT_ENCODING, ACCEPTENCODING);
+  request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_CONNECTION, CONNECTION);
+  request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_CACHE_CONTROL, CACHE_CONTROL);
+  request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_PRAGMA, PRAGMA);
+  //request_.addHeader(http::HttpHeaderCode::HTTP_HEADER_X_CONTENT_SECURITY_POLICY_REPORT_ONLY, UPGRADE_INSECURE_REQUESTS);
   if(usingRangeDownload_) {
     request_.addHeader(
         http::HttpHeaderCode::HTTP_HEADER_RANGE,
@@ -96,7 +101,7 @@ int Handler::open()
   }
   auto messageStr = request_.buildRequestMessage();
   LOG(INFO) << *messageStr;
-  auto bytesWritten = write(messageStr->c_str(), messageStr->size());
+  auto bytesWritten = write(messageStr->c_str(), messageStr->size(), true);
   if (bytesWritten <= 0)
     return -1;
   status_ = HandlerStatus::REQUEST_SENT;
@@ -115,7 +120,8 @@ int Handler::onStatus(const char* /*buf*/, size_t/* len*/)
       status_ = HandlerStatus::RECEIVED200;
       return 0;
     default:
-      codec_.pause(1);
+      LOG(ERROR) << "got status: " << codec_.status();
+      //codec_.pause(1);
       return -1;
   }
 }

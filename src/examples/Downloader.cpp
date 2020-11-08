@@ -206,7 +206,7 @@ int Downloader::requestSetupCallback(http::HttpMessage &mes, http::HttpHeaderCod
     mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_USER_AGENT, USERAGENT);
     mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT, ACCEPT);
     mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT_ENCODING, ACCEPTENCODING);
-    // mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_CONNECTION, CONNECTION);
+    mes.addHeader(http::HttpHeaderCode::HTTP_HEADER_CONNECTION, CONNECTION);
     if(code != http::HttpHeaderCode::HTTP_HEADER_NONE) mes.addHeader(code, extraHeaderValue);
     return 0;
 }

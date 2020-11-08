@@ -1,4 +1,5 @@
 #include <cassert>
+#include <cctype>
 #include "HttpCommomHeaders.h"
 #include "http/gperf/HttpCommomHeadersHash.h"
 
@@ -6,8 +7,13 @@ namespace http{
 
 HttpHeaderCode HttpCommomHeaders::getHeaderCode(const char* headerName, size_t len)
 {
-    const HttpHeader* header = HttpCommomHeaderInternal::isValidHttpHeader(headerName, len);
-    return header == nullptr ? HttpHeaderCode::HTTP_HEADER_OTHER : header->headerCode;
+  const HttpHeader* header = HttpCommomHeaderInternal::isValidHttpHeader(headerName, len);
+  if (header == nullptr) {
+    std::string header_name = headerName;
+    header_name[0] = std::toupper(header_name[0]);
+    header = HttpCommomHeaderInternal::isValidHttpHeader(header_name.c_str(), len);
+  }
+  return header == nullptr ? HttpHeaderCode::HTTP_HEADER_OTHER : header->headerCode;
 }
 
 HttpHeaderCode HttpCommomHeaders::getHeaderCode(const std::string& headerName)
