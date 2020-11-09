@@ -17,6 +17,7 @@ TEST::FILEUTIL_TEST::FILEUTIL_TEST()
     fileFullName.append("/");
     fileFullName.append(configFileName);
     m_file_util_ptr = new config::FileUtil(fileFullName);
+    free(cwd);
 //    CONSOLE_LOG(fileFullName.as_std_string());
 }
 

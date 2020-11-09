@@ -63,6 +63,7 @@ void ServerConfig::setConfigFullPath(const string& configFileName){
   m_configFilePath = new util::string(cwd);
   m_configFilePath->append(dash);
   m_configFilePath->append(configFileName);
+  free(cwd);
 }
 
 bool ServerConfig::get_string_option(const string& key, string* ret){

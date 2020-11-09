@@ -77,6 +77,12 @@ public:
         request().path_ = path;
     }
 
+    void setRequestPath(string_piece::const_string_piece path)
+    {
+      if (message_.which() == 2) return;
+      request().path_.assign(path.cbegin(), path.size());
+    }
+
     std::shared_ptr<std::string> buildRequestLine();
 
     std::shared_ptr<std::string> buildRequestMessage()
