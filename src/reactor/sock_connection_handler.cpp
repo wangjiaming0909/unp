@@ -50,7 +50,7 @@ int sock_connection_handler::handle_input(int handle)
       errno = 0;
       return 0;
     }
-    LOG(ERROR) << "Read error: " << strerror(errno) << "handle: " << handle;
+    LOG(ERROR) << "Read error: " << strerror(errno) << " handle: " << handle;
     return -1;
   }
   if (ret == 0) {

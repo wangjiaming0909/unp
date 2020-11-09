@@ -32,7 +32,7 @@ std::shared_ptr<std::string> HttpMessage::buildRequestLine()
 	std::shared_ptr<std::string> reqLine = std::make_shared<std::string>();
 	reqLine->append(methodToString(request().method_)).append(" ");
 	reqLine->append(request().path_).append(" ");
-	reqLine->append(getVersionStr()).append("\n");
+	reqLine->append(getVersionStr()).append("\r\n");
 	return reqLine;
 }
 

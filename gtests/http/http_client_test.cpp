@@ -3,6 +3,7 @@
 #include "http/Http1xCodec.h"
 #include "reactor/reactor.h"
 #include "util/easylogging++.h"
+#include "config/ServerConfig.h"
 
 
 class FakeHttpHandler : public http::HttpHandler
@@ -30,11 +31,19 @@ public:
     return 0;
   }
 
+  virtual int onHeaderField(const char* header, size_t)
+  {
+    //LOG(DEBUG) << "header field: " << header;
+    return 0;
+  }
+  virtual int onHeaderValue(const char* value, size_t)
+  {
+    //LOG(DEBUG) << "header value: " << value;
+    return 0;
+  }
   virtual int onBody(const char* d, size_t s) override
   {
-    std::string str;
-    str.assign(d, s);
-    LOG(INFO) << "on body: " << str;
+    //LOG(INFO) << "on body: " << d;
     return 0;
   }
 
@@ -43,6 +52,11 @@ public:
 TEST(http_client, normal)
 {
   http::HttpClient client;
-  client.get<FakeHttpHandler>("http://www.baidu.com", 1);
-  client.get<FakeHttpHandler>("https://www.baidu.com", 1);
+  //client.get<FakeHttpHandler>("http://www.baidu.com", 1);
+  //client.get<FakeHttpHandler>("https://www.baidu.com", 1);
+  //client.get<FakeHttpHandler>("https://www.3dmgame.com/", 1);
+  std::string url;
+  config::ServerConfig::instance()->get_string_option("all_fund_url", &url);
+  LOG(DEBUG) << url;
+  client.get<FakeHttpHandler>(url.c_str(), 1);
 }

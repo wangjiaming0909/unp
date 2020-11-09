@@ -2,6 +2,7 @@
 #include "http/HttpMethod.h"
 #include "http/HttpMessage.h"
 #include "Http1xCodec.h"
+#include "http/gperf/HttpHeaderCode.h"
 #include "net/inet_addr.h"
 
 #include <memory>
@@ -41,8 +42,8 @@ int HttpHandler::handle_input(int handle)
     auto data = firstChain.get_start_buffer();
     auto chainLen = firstChain.size();
     if(data != nullptr && chainLen != 0) {
-      std::string s{static_cast<char*>(data), chainLen};
-      LOG(INFO) << "received len: " << s.size();
+      //std::string s{static_cast<char*>(data), chainLen};
+      //LOG(INFO) << "received len: " << s.size();
       //LOG(INFO) << "received: " << s;
     }
     string_piece::const_string_piece sp{static_cast<const char*>(data), chainLen};
@@ -92,7 +93,9 @@ int HttpHandler::send_request()
   mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_USER_AGENT, USERAGENT);
   mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT, ACCEPT);
   mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT_ENCODING, ACCEPTENCODING);
+  mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT_LANGUAGE, ACCEPTLANGUAGE);
   mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_CONNECTION, CONNECTION);
+  mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_DNT, "1");
 
   auto mess_str = mess_->buildRequestMessage();
   LOG(INFO) << *mess_str;

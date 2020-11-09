@@ -195,9 +195,9 @@ std::shared_ptr<std::string> HttpHeaders::dump() const
     if(headerNames_.size() != headerValues_.size()) return ret;
     for (size_t i = 0; i < headerNames_.size(); i++)
     {
-        ret->append(headerNames_[i]).append(": ").append(headerValues_[i]).append("\n");
+        ret->append(headerNames_[i]).append(": ").append(headerValues_[i]).append("\r\n");
     }
-    ret->append("\n\n");
+    ret->append("\r\n");
     return ret;
 }
 
