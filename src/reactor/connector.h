@@ -54,7 +54,7 @@ public:
   }
   virtual ConnectionHandlerPtr_t connect(const net::inet_addr &target_addr, micro_seconds timeout) override;
   virtual int disconnect(micro_seconds timeout) override;
-  bool get_is_connected() const { return is_connected_; }
+  bool is_connected() const { return is_connected_; }
 private:
   bool is_connected_ = false;
 };

@@ -2,7 +2,7 @@
   "port": 9999,
   "clients": 1024,
   "backlog": 5,
-  "func": "fund",
+  "func": "http_client",
   "all_fund_url": "http://fund.eastmoney.com/js/fundcode_search.js",
   "all_fund_company_url": "http://fund.eastmoney.com/js/jjjz_gs.js?dt=1463791574015",
   "fund_info_url_prefix": "http://fund.eastmoney.com/pingzhongdata/",

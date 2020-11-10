@@ -57,7 +57,7 @@ int HttpHandler::handle_input(int handle)
     input_buffer_.drain(chainLen);
     // LOG(INFO) << "Consumed " << chainLen << " bytes...";
   }
-  return 0;
+  return should_close_ ? -1 : 0;
 }
 void HttpHandler::set_request_path(string_piece::const_string_piece path)
 {
@@ -94,7 +94,7 @@ int HttpHandler::send_request()
   mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT, ACCEPT);
   mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT_ENCODING, ACCEPTENCODING);
   mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_ACCEPT_LANGUAGE, ACCEPTLANGUAGE);
-  mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_CONNECTION, CONNECTION);
+  //mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_CONNECTION, CONNECTION);
   mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_DNT, "1");
 
   auto mess_str = mess_->buildRequestMessage();

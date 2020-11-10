@@ -18,6 +18,7 @@
 #include <set>
 #include "config/ServerConfig.h"
 #include <boost/heap/priority_queue.hpp>
+#include "http/HttpClient.h"
 //#include "examples/Downloader.h"
 
 // INITIALIZE_NULL_EASYLOGGINGPP
@@ -36,6 +37,53 @@ int serve(int argc, char** argv)
     reactor::tcp_server<downloader::DownloaderServerHandler> server{lisAddr};
     return server.start(unp::reactor_imp_t_enum::USING_EPOLL);
 }
+
+class FakeHttpHandler : public http::HttpHandler
+{
+public:
+  FakeHttpHandler(reactor::Reactor& react, bool is_ssl, int a)
+    : http::HttpHandler(react, is_ssl)
+  {}
+
+  virtual int on_connected() override
+  {
+    return 0;
+  }
+  virtual int on_closed() override
+  {
+    return 0;
+  }
+
+  virtual int onStatus(const char*, size_t) override
+  {
+    LOG(INFO) << "on status: " << codec_->status();
+    if (codec_->status() == 302) {
+      return -1;
+    }
+    return 0;
+  }
+
+  virtual int onHeaderField(const char* header, size_t)
+  {
+    //LOG(DEBUG) << "header field: " << header;
+    return 0;
+  }
+  virtual int onHeaderValue(const char* value, size_t)
+  {
+    //LOG(DEBUG) << "header value: " << value;
+    return 0;
+  }
+  virtual int onBody(const char* d, size_t s) override
+  {
+    //LOG(INFO) << "on body: " << d;
+    return 0;
+  }
+  virtual int onMessageComplete()
+  {
+    should_close_ = true;
+  }
+
+};
 
 void downloaderServer()
 {
@@ -144,10 +192,23 @@ int min_heap_boost()
   LOG(DEBUG) << "configued port is " << port;
 }
 
+int http_client()
+{
+  http::HttpClient client;
+  //client.get<FakeHttpHandler>("http://www.baidu.com", 1);
+  //client.get<FakeHttpHandler>("https://www.baidu.com", 1);
+  //client.get<FakeHttpHandler>("https://www.3dmgame.com/", 1);
+  std::string url;
+  config::ServerConfig::instance()->get_string_option("all_fund_url", &url);
+  LOG(DEBUG) << url;
+  client.get<FakeHttpHandler>(url.c_str(), 1);
+}
+
 static std::map<string, std::function<int ()>> funcs
 {
   {"fund", fund},
-  {"min_heap_boost", min_heap_boost}
+  {"min_heap_boost", min_heap_boost},
+  {"http_client", http_client}
 };
 
 int main(int argc, char** argv)

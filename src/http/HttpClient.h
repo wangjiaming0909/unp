@@ -53,6 +53,7 @@ protected:
 protected:
   HttpMessage* mess_;
   Http1xCodec* codec_;
+  bool should_close_ = false;
 };
 
 
@@ -71,8 +72,7 @@ public:
       LOG(ERROR) << "url parse error";
       return -1;
     }
-    bool is_ssl = url_parser_->is_https();
-    auto* con = client_->addConnection<Connector<Handler>>(is_ssl, std::forward<Args>(args)...);
+    auto* con = client_->addConnection<Connector<Handler>>(url_parser_->is_https(), std::forward<Args>(args)...);
     auto addr = retrive_addr();
     using namespace std::chrono_literals;
     auto* connection = con->connect(addr, 1s);
@@ -93,14 +93,6 @@ public:
     client_->closeConnection(*con, 1s);
     return ret;
   }
-  template <typename Handler>
-  int get(const char* url, std::shared_ptr<Handler> handler)
-  {
-
-  }
-
-public:
-
 private:
   net::inet_addr retrive_addr();
 
