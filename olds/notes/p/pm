@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+top -p `pidof mysqld | sed -e "s/ /,/g"`

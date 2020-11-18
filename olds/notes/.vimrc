@@ -48,7 +48,7 @@ hi CursorColumn cterm=bold ctermbg=darkblue term=bold ctermfg=none guibg=darkgre
 hi SignColumn		guifg=#ffffff guibg=#287eff						ctermfg=white ctermbg=white
 
 hi CursorLineNr cterm=bold gui=bold  term=bold ctermbg=darkblue ctermfg=yellow guifg=yellow
-hi LineNr cterm=bold guifg=green guibg=darkgrey gui=none ctermfg=darkgrey ctermbg=black term=none
+hi LineNr cterm=bold guifg=green guibg=darkgrey gui=none ctermfg=white ctermbg=None term=none
 "hi LineNrAbove cterm=bold ctermbg=black ctermfg=none guibg=black guifg=lightblue
 "hi LineNrBelow cterm=bold ctermbg=green ctermfg=none guibg=black guifg=lightblue
 hi StatusLine	guifg=blue guibg=darkgrey gui=none		ctermfg=darkgrey ctermbg=yellow term=none
@@ -65,7 +65,7 @@ Plugin 'kien/ctrlp.vim'
 Plugin 'scrooloose/nerdtree'
 Plugin 'taglist.vim'
 Plugin 'mhinz/vim-grepper'
-"Plugin 'valloric/youcompleteme'
+Plugin 'valloric/youcompleteme'
 Plugin 'octol/vim-cpp-enhanced-highlight'
 Plugin 'Yggdroot/indentLine'
 Plugin 'ericcurtin/CurtineIncSw.vim'

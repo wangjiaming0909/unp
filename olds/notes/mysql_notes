@@ -1,0 +1,19 @@
+# MVCC
+## in transaction isolation level REPEATABLE READ (mysql default)
+> # MVCC in innodb:
+> ## when selecting:
+  > only the version of one row is less than or equal to the txn version can be selected,
+  > this ensures that either this row existed before this txn or this row is created or modified by this txn
+  > the deletion version must be undefined or great than the txn version,
+  > this ensures that the row wasn't deleted before this txn
+> ## when inserting:
+> innodb records the current system version number with the new one
+> ## when deleting:
+> innodb records the current system version number as the rows's deletion ID
+> ## when updating:
+> using the system version number for the new row's version,
+> and writes the system version number as the old row's deletion version
+
+# TO READS
+> # FEDERATED storage engine
+> CREATE SERVER statement, reload servers

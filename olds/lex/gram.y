@@ -1,15 +1,11 @@
-
 %{
 #include <stdio.h>
 %}
 %token INT DOUBLE CHAR STRING FLOAT IDENT DELIMITER
 %%
 //grams
-define:
-  type IDENT DELIMITER
-  {
-    printf("declare a variable: %s\n", $2);
-  }
+define: type IDENT DELIMITER { printf("declare a variable: %s\n", "sd"); }
+      ;
 type:
   INT |
   DOUBLE |
@@ -17,20 +13,19 @@ type:
   STRING |
   FLOAT
   {
-    return $1;
+    printf("declare a type\n");
   };
 %%
 extern FILE* yyin;
 
-main()
+int main()
 {
   do {
     yyparse();
   } while (!feof(yyin));
 }
-yyerror(s)
-char *s;
+int yyerror(char* s)
 {
-  fprintf(stderr, "%s\n", s);
+  fprintf(stderr, "ooo%s\n", s);
 }
 

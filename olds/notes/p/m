@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+
+mpg123 --control -vZ ~/Music/*
