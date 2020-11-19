@@ -30,5 +30,5 @@ map W <ESC>iinfo<Space>watchpoints<CR><ESC>
 map x <ESC>ix/s<Space>
 map v <ESC>iset<Space>var<Space>
 map J <ESC>ij<Space>
-map g iset<Space>args<Space>--gtest_filter=
 map 8 i<Up><Home><Right>*<CR><ESC>
+map 9 ---------------------------------------------

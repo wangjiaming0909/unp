@@ -48,7 +48,7 @@ hi CursorColumn cterm=bold ctermbg=darkblue term=bold ctermfg=none guibg=darkgre
 hi SignColumn		guifg=#ffffff guibg=#287eff						ctermfg=white ctermbg=white
 
 hi CursorLineNr cterm=bold gui=bold  term=bold ctermbg=darkblue ctermfg=yellow guifg=yellow
-hi LineNr cterm=bold guifg=green guibg=darkgrey gui=none ctermfg=white ctermbg=None term=none
+hi LineNr cterm=bold guifg=green guibg=darkgrey gui=none ctermfg=darkgrey ctermbg=None term=none
 "hi LineNrAbove cterm=bold ctermbg=black ctermfg=none guibg=black guifg=lightblue
 "hi LineNrBelow cterm=bold ctermbg=green ctermfg=none guibg=black guifg=lightblue
 hi StatusLine	guifg=blue guibg=darkgrey gui=none		ctermfg=darkgrey ctermbg=yellow term=none
@@ -166,6 +166,9 @@ nnoremap <leader>c :!make clean<CR>
 nnoremap <leader>l :<UP><CR>
 nnoremap qw <C-w><C-W>:q<CR>
 nnoremap <c-o> :call CurtineIncSw()<CR>
+nnoremap <leader>c :csc find s <C-R><C-W><CR>
+
+
 let g:ycm_disable_for_files_larger_than_kb = 0
 let g:ycm_max_num_identifier_candidates = 30
 let g:ycm_max_num_candidates = 30
