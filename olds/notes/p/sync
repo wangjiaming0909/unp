@@ -1,0 +1,4 @@
+#!/bin/bash
+
+
+cd ~/codes/unp/olds/notes && ./sync.sh

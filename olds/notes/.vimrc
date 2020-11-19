@@ -16,11 +16,11 @@ set history=1000
 filetype off
 "set tags+=~/.vim/tags/cpp_tags
 "set tags+=~/.vim/tags/protobuf_tags
-set tags+=/boost_1_72_0/boost/boost_tags
+"set tags+=/boost_1_72_0/boost/boost_tags
 "set tags+=~/.vim/tags/ace_tags
-set tags+=~/.vim/tags/sys_tags
-set tags+=~/.vim/tags/event_tags
-set tags+=~/.vim/tags/uv_tags
+"set tags+=~/.vim/tags/sys_tags
+"set tags+=~/.vim/tags/event_tags
+"set tags+=~/.vim/tags/uv_tags
 set laststatus=2
 set statusline=\ %<%F[%1*%M%*%n%R%H]%=\ %y\ %0(%{&fileformat}\ %{&fileencoding}\ %c:%l/%L%)\ [%p%%]\
 "set mouse=a
@@ -108,8 +108,7 @@ let g:grepper = {
     \    'grepformat': '%f:%l:%m,%f',
     \    'escape':     '\^$.*[]'
     \}}
-nnoremap <leader>g :Grepper -tool grep -cword <CR>
-nnoremap <leader>f :Grepper -tool grep <CR>
+nnoremap <leader>g :Grepper -tool grep <CR>
 "vimgrepper
 
 "highlight
@@ -167,7 +166,24 @@ nnoremap <leader>l :<UP><CR>
 nnoremap qw <C-w><C-W>:q<CR>
 nnoremap <c-o> :call CurtineIncSw()<CR>
 nnoremap <leader>c :csc find s <C-R><C-W><CR>
+nnoremap <leader>f :csc find t <C-R><C-W><CR>
+nnoremap <leader>d :csc find c <C-R><C-W><CR>
 
+
+
+nmap <C-\>s :cs find s <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>g :cs find g <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>c :cs find c <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>t :cs find t <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>e :cs find e <C-R>=expand("<cword>")<CR><CR>
+nmap <C-\>f :cs find f <C-R>=expand("<cfile>")<CR><CR>
+nmap <C-\>i :cs find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+nmap <C-\>d :cs find d <C-R>=expand("<cword>")<CR><CR>
+nmap <C-@> /
+
+if filereadable("cscope.out")
+  cs add cscope.out
+endif
 
 let g:ycm_disable_for_files_larger_than_kb = 0
 let g:ycm_max_num_identifier_candidates = 30

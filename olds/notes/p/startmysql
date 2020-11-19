@@ -1,5 +1,5 @@
 #/bin/bash
 
 
-/mysql/mysql-5.7.29-linux-glibc2.12-x86_64//bin/mysqld --defaults-group-suffix=.$1 --defaults-file=/home/wjm/dev/dbscale-chelianwang/dbscale-test/var/my.cnf --log-output=file --loose-debug-sync-timeout=600 --log-syslog=0 --core-file --loose-mysqlx-port=13009
+/mysql/mysql-5.7.29-linux-glibc2.12-x86_64//bin/mysqld --defaults-group-suffix=.$1 --defaults-file=/home/wjm/dev/dbscale-chelianwang/dbscale-test/var/my.cnf --log-output=file --loose-debug-sync-timeout=600 --log-syslog=0 --core-file --loose-mysqlx-port=13009 --gdb
 #/percona/bin/mysqld --defaults-group-suffix=.$1 --defaults-file=/home/wjm/dev/dbscale-chelianwang/dbscale-test8/var/my.cnf --log-output=file --loose-debug-sync-timeout=600 --core-file --loose-mysqlx-port=13009
