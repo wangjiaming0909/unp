@@ -31,3 +31,7 @@ sync_server
 **/core
 **/*.pb.*
 breaks
+**/*.out
+**/*.o
+**/*.yy.c
+**/*.tab.c
