@@ -25,6 +25,15 @@
 
 
 
-  --defaults-file=/home/wjm/loads/mysql8_data/8/my.cnf \
-  --datadir=/home/wjm/loads/mysql8_data/8 \
-  --gdb
+#  --defaults-file=/home/wjm/loads/mysql8_data/8/my.cnf \
+#  --datadir=/home/wjm/loads/mysql8_data/8 \
+#  --gdb
+
+
+
+sudo iptables -A INPUT -p tcp --dport 13000 -j DROP
+
+#sudo iptables -L #list
+#sudo iptables -F #clear
+
+#sudo tcpdump -vvv -X -i lo tcp port 13002

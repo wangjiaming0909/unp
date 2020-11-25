@@ -363,4 +363,5 @@
 #dbscale show connection pool;
 
 
-dbscale show dataservers;
+#dbscale show dataservers;
+select @@super_read_only as S;
