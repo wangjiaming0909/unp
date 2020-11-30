@@ -32,3 +32,4 @@ map v <ESC>iset<Space>var<Space>
 map J <ESC>ij<Space>
 map 8 i<Up><Home><Right>*<CR><ESC>
 map 9 ---------------------------------------------
+map 0 +++++++++++++++++++++++++++++++++++++++++++++

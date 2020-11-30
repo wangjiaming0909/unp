@@ -40,15 +40,15 @@ set cursorline
 set cursorlineopt=line,number
 "set nocursorcolumn
 set cursorcolumn
-hi CursorLine cterm=bold ctermbg=darkblue ctermfg=none term=none
-hi CursorColumn cterm=bold ctermbg=darkblue term=bold ctermfg=none guibg=darkgrey guifg=black
+hi CursorLine cterm=bold ctermbg=darkgrey ctermfg=none term=none
+hi CursorColumn cterm=bold ctermbg=darkgrey term=bold ctermfg=none guibg=darkgrey guifg=black
 "hi Cursor cterm=bold ctermbg=blue term=bold ctermfg=blue guibg=blue guifg=blue
 "hi CursorIM cterm=bold ctermbg=darkblue term=bold ctermfg=none guibg=blue guifg=black
 "hi ErrorMsg		guifg=#ffffff guibg=#287eff						ctermfg=black ctermbg=lightblue
 hi SignColumn		guifg=#ffffff guibg=#287eff						ctermfg=white ctermbg=white
 
 hi CursorLineNr cterm=bold gui=bold  term=bold ctermbg=darkblue ctermfg=yellow guifg=yellow
-hi LineNr cterm=bold guifg=green guibg=darkgrey gui=none ctermfg=darkgrey ctermbg=None term=none
+hi LineNr cterm=bold guifg=green guibg=darkgrey gui=none ctermfg=white ctermbg=None term=none
 "hi LineNrAbove cterm=bold ctermbg=black ctermfg=none guibg=black guifg=lightblue
 "hi LineNrBelow cterm=bold ctermbg=green ctermfg=none guibg=black guifg=lightblue
 hi StatusLine	guifg=blue guibg=darkgrey gui=none		ctermfg=darkgrey ctermbg=yellow term=none
@@ -195,6 +195,7 @@ let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_complete_in_comments = 1
 let g:ycm_clangd_args = ["-limit-results=100", "--pch-storage=disk"]
+let g:ycm_auto_hover = 'CursorHold'
 highlight YcmErrorLine guibg=#3f0000
 
 let g:indentLine_color_term = 2

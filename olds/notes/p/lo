@@ -11,5 +11,5 @@ elif [ $# -eq 2 ];
 then
   $cmd $option --sigint-ignore=FALSE -uroot -h127.0.0.1 -P$1 $2
 else
-  $cmd $option --sigint-ignore -uroot -h127.0.0.1 mysql
+  $cmd $option --sigint-ignore -h127.0.0.1 ${@:1}
 fi

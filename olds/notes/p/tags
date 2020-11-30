@@ -1,0 +1,5 @@
+#!/bin/bash
+
+
+ctags -R --languages=c++ --c++-kinds=+p --fields=+iaSln --extra=+q $1
+#ctags -R --languages=go -fields=+iaS --extra=+q $1

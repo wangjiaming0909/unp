@@ -8,7 +8,7 @@ gtests/*.out
 nbproject/**
 .vscode/**/*.ipch
 .vscode/**/*.bin
-**/tags
+./tags
 *.files
 *.includes
 *.creator
