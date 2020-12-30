@@ -10,10 +10,10 @@ TESTDEFINES = $(patsubst %, -D%, $(TESTDEFS))
 LIBS = /usr/local/lib
 
 LDFLAGS = -pthread \
-		/boost_1_72_0/stage/lib/libboost_system.so.1.72.0 \
-		/boost_1_72_0/stage/lib/libboost_timer.so.1.72.0 \
-		/boost_1_72_0/stage/lib/libboost_chrono.so.1.72.0 \
-		/boost_1_72_0/stage/lib/libboost_filesystem.so.1.72.0 \
+		-lboost_system\
+		-lboost_timer\
+		-lboost_chrono\
+		-lboost_filesystem \
 		-lssl \
 		-lcrypto \
 		-lprotobuf \
@@ -22,10 +22,10 @@ LDFLAGS = -pthread \
 		
 
 TESTLDFLAG = -pthread \
-		/boost_1_72_0/stage/lib/libboost_system.so.1.72.0 \
-		/boost_1_72_0/stage/lib/libboost_timer.so.1.72.0 \
-		/boost_1_72_0/stage/lib/libboost_chrono.so.1.72.0 \
-		/boost_1_72_0/stage/lib/libboost_filesystem.so.1.72.0 \
+		-lboost_system\
+		-lboost_timer\
+		-lboost_chrono\
+		-lboost_filesystem \
 		-lgtest\
 		-lgmock\
 		-lssl \
@@ -42,7 +42,7 @@ UNP_OBJ_DIR = $(BUILDDIR)/unp
 MKDIR = mkdir -p
 RM = rm -rf
 
-INCLUDES = $(UNP_SOURCEDIR) -I /usr/local/include -I /boost_1_72_0/ -I /usr/include
+INCLUDES = $(UNP_SOURCEDIR) -I /usr/local/include -I /boost_1_72_0/ -I /usr/include -I /usr/src/googletest/googlemock/include
 
 UNP_SOURCES = $(shell ./scripts/protoc.sh && find $(UNP_SOURCEDIR) -type f -name '*.cpp')
 UNP_HEADERS = $(shell find $(UNP_SOURCEDIR) -type -f -name '*.h')
