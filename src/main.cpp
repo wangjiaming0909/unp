@@ -20,6 +20,7 @@
 #include <boost/heap/priority_queue.hpp>
 #include "http/HttpClient.h"
 //#include "examples/Downloader.h"
+#include "examples/fund/Fund.h"
 
 // INITIALIZE_NULL_EASYLOGGINGPP
 INITIALIZE_EASYLOGGINGPP
@@ -171,6 +172,8 @@ void test_plus()
 }
 int fund()
 {
+  examples::FundDaliyWorker worker{};
+  worker.init_for_first_run();
   LOG(INFO) << "Fund";
   return 0;
 }

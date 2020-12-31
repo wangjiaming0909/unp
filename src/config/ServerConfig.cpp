@@ -44,9 +44,8 @@ bool ServerConfig::parseConfigFile(){
 int ServerConfig::readConfigFile(){
   LOG(INFO) << "class ServerConfig: reading the config file";
   util::FileUtil fileUtil(*m_configFilePath);
-  size_t size_of_buffer = 512;
   this->m_options_str = new string();
-  int err = fileUtil.readToString(static_cast<int>(size_of_buffer), m_options_str);
+  int err = fileUtil.readToString(10240, m_options_str);
   return err;
 }
 
