@@ -24,6 +24,7 @@ MYSQLConnection::MYSQLConnection(
     LOG(ERROR) << "connect to " << host << "  error cause: " << mysql_error(mysql_);
   }
 }
+
 MYSQLConnection::~MYSQLConnection()
 {
   if (inited()) {
@@ -33,6 +34,7 @@ MYSQLConnection::~MYSQLConnection()
 
 int MYSQLConnection::execute(const char* sql)
 {
+  LOG(INFO) << "executing sql: " << sql;
   TRY_EXECUTE_SQL(sql);
   if (mysql_field_count(mysql_)) {
     LOG(ERROR) << "execute sql: " << sql << " shouldn't have results";
@@ -40,6 +42,7 @@ int MYSQLConnection::execute(const char* sql)
   }
   return 0;
 }
+
 int MYSQLConnection::query_one_value(const char* sql, string& t)
 {
   TRY_EXECUTE_SQL(sql);

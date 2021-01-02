@@ -173,8 +173,10 @@ void test_plus()
 int fund()
 {
   examples::FundDaliyWorker worker{};
-  worker.init_for_first_run();
-  LOG(INFO) << "Fund";
+  worker.start();
+  auto fund = worker.get_fund("000001");
+  LOG(INFO) << fund->name_chinese_;
+  LOG(INFO) << fund->name_chinese_.size();
   return 0;
 }
 

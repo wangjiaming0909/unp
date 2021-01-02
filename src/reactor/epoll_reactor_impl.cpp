@@ -62,7 +62,7 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
   } else if(n < 0) {
     if(n == -2) {
       LOG(INFO) << "no events to wait, exiting...";
-      return -1;
+      return -2;
     }
     LOG(WARNING) << "Epoll_wait returned 0 or -1" << strerror(errno);
     return -1;

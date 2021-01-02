@@ -46,7 +46,7 @@ public:
   void set_method(HTTPMethod m);
   void set_host(string_piece::const_string_piece host);
   int send_request();
-protected:
+
   virtual int on_connected() {return 0;}
   virtual int on_closed() {return 0;}
 
@@ -55,7 +55,6 @@ protected:
   Http1xCodec* codec_;
   bool should_close_ = false;
 };
-
 
 class HttpClient
 {
@@ -91,6 +90,9 @@ public:
     }
     auto ret = client_->start();
     client_->closeConnection(*con, 1s);
+    if (ret == -2) {
+      ret = 0;
+    }
     return ret;
   }
 private:

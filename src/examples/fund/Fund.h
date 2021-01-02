@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <vector>
 #include "db/sql_connection.h"
+#include "http/HttpClient.h"
 
 
 namespace examples
@@ -12,17 +13,42 @@ namespace examples
 
 struct Fund
 {
-  int code;
-
+  Fund(){}
+  Fund(const Fund&f) = default;
+  Fund(Fund&& f)
+  {
+    code = std::move(f.code);
+    name_abbr = std::move(f.name_abbr);
+    name_chinese_ = std::move(f.name_chinese_);
+    type = std::move(f.type);
+    name_pinyin_ = std::move(f.name_pinyin_);
+  }
+  std::string code;
+  std::string name_abbr;
+  std::string name_chinese_;
+  std::string type;
+  std::string name_pinyin_;
+  static int decode_from(const char* data, size_t len, Fund& f);
   static std::unordered_map<int, Fund*> all_funds;
 };
 
+class HttpBodyHandler : public http::HttpHandler
+{
+public:
+  HttpBodyHandler(reactor::Reactor& react, bool is_ssl, std::string& body)
+    : HttpHandler(react, is_ssl), body_(body) {}
+  virtual int onBody(const char* d, size_t len) override;
+  virtual int onMessageComplete() override;
 
+private:
+  std::string& body_;
+};
 
 struct FundFetcher
 {
+  FundFetcher();
   int fetch_all_fund_companies();
-  int fetch_all_funds_info();
+  int fetch_all_funds_info(std::string& all_funds_body);
 
   int fetch_fund_data(int code);
   int fetch_fund_data(std::vector<int>& codes);
@@ -30,6 +56,8 @@ struct FundFetcher
 
   std::unordered_map<int, Fund*> funds_fetched;
 
+private:
+  std::shared_ptr<http::HttpClient> client_;
 };
 
 //FundDaliyWorker is a worker to fetch fund data daily
@@ -45,6 +73,20 @@ public:
   int init_for_first_run();
   int init_tables();
   int init_funds_table();
+  int init_fund_company_table();
+  const std::string& get_all_funds_body() const {return all_funds_body_;}
+  const Fund* get_fund(const std::string& code) const {
+    auto it = all_funds_map_.find(code);
+    if (it != all_funds_map_.end()) {
+      return &it->second;
+    }
+    return nullptr;
+  }
+
+
+protected:
+  int decode_all_funds();
+  int replace_all_funds();
 private:
   unsigned int fetch_hour_ = 0;
   unsigned int fetch_miniute_ = 0;
@@ -53,6 +95,9 @@ private:
 
   std::shared_ptr<db::SQLConenction> sql_conn_;
   std::string fund_table_name_;
+  std::string fund_company_table_name_;
+  std::string all_funds_body_;
+  std::unordered_map<std::string, Fund> all_funds_map_;
 };
 
 }
