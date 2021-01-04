@@ -11,6 +11,23 @@
 namespace examples
 {
 
+struct FundInfo
+{
+  std::string code;
+  double original_rate;
+  double current_rate;
+  double minimal_purchase;
+  std::vector<std::string> stocks;
+  std::vector<double> growth;//index means day
+  std::unordered_map<unsigned long, double> growth_map;
+  std::string fund_manager;
+
+  static int decode_from_string(const std::string& fund_info_str, FundInfo& fund);
+  static int decode_stocks(const char* start, const char* end, FundInfo& fund);
+  static int decode_trend(const char* start, const char* end, FundInfo& fund);
+};
+
+
 struct Fund
 {
   Fund(){}
@@ -30,6 +47,7 @@ struct Fund
   std::string name_pinyin_;
   static int decode_from(const char* data, size_t len, Fund& f);
   static std::unordered_map<int, Fund*> all_funds;
+  FundInfo info;
 };
 
 class HttpBodyHandler : public http::HttpHandler
@@ -50,8 +68,8 @@ struct FundFetcher
   int fetch_all_fund_companies();
   int fetch_all_funds_info(std::string& all_funds_body);
 
-  int fetch_fund_data(int code);
-  int fetch_fund_data(std::vector<int>& codes);
+  int fetch_fund_data(const std::string& code, std::string& fund_body);
+  int fetch_fund_data(std::vector<std::string>& codes);
   int fetch_fund_realtime_data(int code);
 
   std::unordered_map<int, Fund*> funds_fetched;
@@ -83,10 +101,15 @@ public:
     return nullptr;
   }
 
+  bool fetch_all_fund_names = false;
+  bool fetch_all_company = false;
+  bool fetch_fund_info = true;
 
 protected:
   int decode_all_funds();
   int replace_all_funds();
+  int decode_fund_info(const std::string& fund_info_str, FundInfo& fund);
+  int replace_fund_info(FundInfo& f);
 private:
   unsigned int fetch_hour_ = 0;
   unsigned int fetch_miniute_ = 0;

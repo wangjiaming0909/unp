@@ -1,4 +1,5 @@
 #include "Fund.h"
+#include <algorithm>
 #include <boost/format.hpp>
 #include "config/ServerConfig.h"
 #include "util/easylogging++.h"
@@ -6,7 +7,61 @@
 
 namespace examples
 {
+using namespace std;
 
+
+int FundInfo::decode_from_string(const std::string& fund_info_str, FundInfo& fund)
+{
+  const char* fund_sourceRate = "fund_sourceRate";
+  const char* fund_Rate = "fund_Rate";
+  const char* fund_minsg = "fund_minsg";
+  const char* stockCodes = "stockCodes";
+  const char* Data_netWorthTrend = "Data_netWorthTrend";
+  auto t_end = fund_info_str.end();
+  auto it = std::search(fund_info_str.begin(), t_end, fund_sourceRate, fund_sourceRate + strlen(fund_sourceRate) - 1);
+  if (it != t_end) {
+    it = std::find(it, t_end, '"');
+    auto end = std::find(it+1, t_end, '"');
+    string s = std::string(it+1, end);
+    fund.original_rate = atof(s.c_str());
+
+    it = std::search(end, t_end, fund_Rate, fund_Rate + strlen(fund_Rate) - 1);
+    it = std::find(it, t_end, '"');
+    end = std::find(it+1, t_end, '"');
+    s = std::string(it+1, end);
+    fund.current_rate = atof(s.c_str());
+
+    it = std::search(end, t_end, fund_minsg, fund_minsg + strlen(fund_minsg) - 1);
+    it = std::find(it, t_end, '"');
+    end = std::find(it + 1, t_end, '"');
+    s = std::string(it+1, end);
+    fund.minimal_purchase = atof(s.c_str());
+
+    it = std::search(end, t_end, stockCodes, stockCodes + strlen(stockCodes) - 1);
+    decode_stocks(&*it, &*t_end, fund);
+
+    it = std::search(it, t_end, Data_netWorthTrend, Data_netWorthTrend + strlen(Data_netWorthTrend) - 1);
+    decode_trend(&*it, &*t_end, fund);
+  }
+}
+
+int FundInfo::decode_trend(const char* start, const char* end, FundInfo& fund)
+{
+  auto it = std::find(start, )
+}
+
+int FundInfo::decode_stocks(const char* start, const char* end, FundInfo& fund)
+{
+  char c = '"';
+  auto it = std::find(start, end, c);
+  auto it2 = std::find(start, end, ']');
+  while(it != end && it < it2) {
+    auto stock_code_end = std::find(it+1, it2, c);
+    fund.stocks.emplace_back(it+1, stock_code_end);
+    it = std::find(stock_code_end+1, it2, c);
+  }
+  return 0;
+}
 
 //"920921","ZJAXHBLHPZHHC","中金安心回报灵活配置混合C","混合型","ZHONGJINANXINHUIBAOLINGHUOPEIZHIHUNHEC"
 int Fund::decode_from(const char* data, size_t len, Fund& f)
@@ -62,7 +117,35 @@ void FundDaliyWorker::start(bool fetch_now)
   init_for_first_run();
   fetcher_->fetch_all_funds_info(all_funds_body_);
   decode_all_funds();
-  replace_all_funds();
+  if (fetch_all_fund_names) {
+    replace_all_funds();
+  }
+  if (fetch_all_company) {
+    fetcher_->fetch_all_fund_companies();
+  }
+
+  if (fetch_fund_info) {
+    for (auto f : all_funds_map_) {
+      string fund_info;
+      FundInfo info;
+      info.code = f.first;
+      fetcher_->fetch_fund_data(info.code, fund_info);
+      decode_fund_info(fund_info, info);
+      replace_fund_info(info);
+    }
+  }
+}
+
+int FundDaliyWorker::decode_fund_info(const std::string& fund_info_str, FundInfo& fund)
+{
+  if (!FundInfo::decode_from_string(fund_info_str, fund)) {
+    LOG(ERROR) << "decode fund info error";
+    return -1;
+  }
+  return 0;
+}
+int FundDaliyWorker::replace_fund_info(FundInfo& f)
+{
 }
 
 int FundDaliyWorker::replace_all_funds()
@@ -133,6 +216,7 @@ int FundDaliyWorker::init_tables()
 
 int FundDaliyWorker::init_funds_table()
 {
+
 }
 
 FundFetcher::FundFetcher()
@@ -155,11 +239,20 @@ int FundFetcher::fetch_all_funds_info(string& all_funds_body)
   return 0;
 }
 
-int FundFetcher::fetch_fund_data(int code)
+int FundFetcher::fetch_fund_data(const string& code, string& fund_body)
 {
-
+  string fund_info_url_prefix, fund_info_url_postfix;
+  config::ServerConfig::instance()->get_string_option("fund_info_url_prefix", &fund_info_url_prefix);
+  config::ServerConfig::instance()->get_string_option("fund_info_url_postfix", &fund_info_url_postfix);
+  string url = fund_info_url_prefix + code + fund_info_url_postfix;
+  if (client_->get<HttpBodyHandler>(url.c_str(), fund_body)) {
+    LOG(ERROR) << "fetch fund info for: " << code << " error";
+    return -1;
+  }
+  return 0;
 }
-int FundFetcher::fetch_fund_data(std::vector<int>& codes)
+
+int FundFetcher::fetch_fund_data(std::vector<string>& codes)
 {
 
 }

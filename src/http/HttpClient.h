@@ -66,6 +66,7 @@ public:
   template <typename Handler, typename ...Args>
   int get(const char* url, Args&&... args)
   {
+    LOG(INFO) << "url: " << url;
     url_parser_->reset(url);
     if (!url_parser_->valid()) {
       LOG(ERROR) << "url parse error";
