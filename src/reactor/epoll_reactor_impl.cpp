@@ -61,7 +61,7 @@ int epoll_reactor_impl::handle_events(std::chrono::microseconds *timeout)
     return dispatch_timeout_events();
   } else if(n < 0) {
     if(n == -2) {
-      LOG(INFO) << "no events to wait, exiting...";
+      //LOG(INFO) << "no events to wait, exiting...";
       return -2;
     }
     LOG(WARNING) << "Epoll_wait returned 0 or -1" << strerror(errno);
@@ -299,7 +299,7 @@ int epoll_reactor_impl::dispatch_io_epoll_sets(int active_handles, int handles_d
     }
     bool isHasHandle = demux_table_.hasHandle(current_fd);
     if(!isHasHandle && (handler != nullptr)) {
-      LOG(INFO) << "closing handle: " << current_fd;
+      //LOG(INFO) << "closing handle: " << current_fd;
       handler->handle_close(current_fd);
     }
   }

@@ -15,6 +15,15 @@
   "mysql_server_password": "",
   "mysql_server_db": "fund",
   "fund_table_name": "funds",
+  "fund_info_table_name": "fund_info",
+  "fund_stock_table_name": "fund_stock",
+  "fund_growth_table_name": "fund_growth",
   "fund_company_table_name": "fund_companies",
-  "stock_table_name": "stocks"
+  "stock_table_name": "stocks",
+  "fetch_all_fund_names": false,
+  "http_fetch_thread_num": 2,
+  "mysql_thread_num": 30,
+  "days_to_fetch": 10,
+  "fetch_one_fake": "000001",
+  "retry_times": 10
 }

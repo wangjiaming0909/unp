@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <thread>
 #include "db/sql_connection.h"
 #include "http/HttpClient.h"
 
@@ -100,6 +101,8 @@ public:
     }
     return nullptr;
   }
+  void fetch_one(const std::string& code);
+  void fetch_days(unsigned int days_till_today);
 
   bool fetch_all_fund_names = false;
   bool fetch_all_company = false;
@@ -109,7 +112,9 @@ protected:
   int decode_all_funds();
   int replace_all_funds();
   int decode_fund_info(const std::string& fund_info_str, FundInfo& fund);
-  int replace_fund_info(FundInfo& f);
+  int replace_fund_info(FundInfo& f, std::shared_ptr<db::SQLConenction> sql_conn);
+  void working_routine();
+  std::string get_one_code();
 private:
   unsigned int fetch_hour_ = 0;
   unsigned int fetch_miniute_ = 0;
@@ -119,8 +124,20 @@ private:
   std::shared_ptr<db::SQLConenction> sql_conn_;
   std::string fund_table_name_;
   std::string fund_company_table_name_;
+  std::string fund_info_table_name_;
+  std::string fund_stock_table_name_;
+  std::string fund_growth_table_name_;
   std::string all_funds_body_;
   std::unordered_map<std::string, Fund> all_funds_map_;
+
+  std::vector<std::shared_ptr<std::thread>> working_threads_;
+  std::mutex funds_mutex_;
+
+  std::string db_host_;
+  std::string db_user_;
+  std::string db_passwd_;
+  unsigned int db_port_;
+  std::string db_;
 };
 
 }

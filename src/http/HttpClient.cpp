@@ -98,7 +98,7 @@ int HttpHandler::send_request()
   mess_->addHeader(http::HttpHeaderCode::HTTP_HEADER_DNT, "1");
 
   auto mess_str = mess_->buildRequestMessage();
-  LOG(INFO) << *mess_str;
+  //LOG(INFO) << *mess_str;
   auto s = write(mess_str->c_str(), mess_str->size(), true);
   if (s <= 0) return -1;
 

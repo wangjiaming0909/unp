@@ -34,7 +34,7 @@ MYSQLConnection::~MYSQLConnection()
 
 int MYSQLConnection::execute(const char* sql)
 {
-  LOG(INFO) << "executing sql: " << sql;
+  //LOG(INFO) << "executing sql: " << sql;
   TRY_EXECUTE_SQL(sql);
   if (mysql_field_count(mysql_)) {
     LOG(ERROR) << "execute sql: " << sql << " shouldn't have results";

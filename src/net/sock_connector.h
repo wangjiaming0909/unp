@@ -26,7 +26,7 @@ public:
     new_stream.setNonBolcking(); //non-blocking connect
     auto addr_str = remote_addr.get_address_string();
     auto port = remote_addr.get_port_number();
-    LOG(INFO) << "trying to connect to: " << addr_str << ":" << port;
+    //LOG(INFO) << "trying to connect to: " << addr_str << ":" << port;
     int ret = ::connect(new_stream.get_handle(),
         reinterpret_cast<sockaddr *>(remote_addr.get_sockaddr_in_ptr().get()),
         remote_addr.get_size());

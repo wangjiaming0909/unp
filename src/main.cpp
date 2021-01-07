@@ -173,10 +173,13 @@ void test_plus()
 int fund()
 {
   examples::FundDaliyWorker worker{};
-  worker.start();
-  auto fund = worker.get_fund("000001");
-  LOG(INFO) << fund->name_chinese_;
-  LOG(INFO) << fund->name_chinese_.size();
+  std::string code;
+  config::ServerConfig::instance()->get_string_option("fetch_one", &code);
+  if (!code.empty()) {
+    worker.fetch_one(code);
+  } else {
+    worker.start();
+  }
   return 0;
 }
 

@@ -35,6 +35,6 @@ protected:
   int try_execute_sql(const char* sql);
 
 protected:
-  MYSQL* mysql_;
+  MYSQL* mysql_ = nullptr;
 };
 }
