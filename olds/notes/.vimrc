@@ -1,4 +1,5 @@
 syntax on
+set pythonthreedll=/usr/local/lib/libpython3.7m.so
 set nu
 set sw=2
 set ts=2
@@ -13,6 +14,7 @@ set noswapfile
 set nocompatible
 set backspace=indent,eol,start
 set history=1000
+set sm!
 filetype off
 "set tags+=~/.vim/tags/cpp_tags
 "set tags+=~/.vim/tags/protobuf_tags
@@ -40,19 +42,19 @@ set cursorline
 set cursorlineopt=line,number
 "set nocursorcolumn
 set cursorcolumn
-hi CursorLine cterm=bold ctermbg=darkgrey ctermfg=none term=none
-hi CursorColumn cterm=bold ctermbg=darkgrey term=bold ctermfg=none guibg=darkgrey guifg=black
+hi CursorLine cterm=bold,nocombine ctermbg=blue ctermfg=none term=none
+hi CursorColumn cterm=bold,nocombine ctermbg=blue term=bold,nocombine ctermfg=none guibg=blue guifg=black
 "hi Cursor cterm=bold ctermbg=blue term=bold ctermfg=blue guibg=blue guifg=blue
 "hi CursorIM cterm=bold ctermbg=darkblue term=bold ctermfg=none guibg=blue guifg=black
 "hi ErrorMsg		guifg=#ffffff guibg=#287eff						ctermfg=black ctermbg=lightblue
 hi SignColumn		guifg=#ffffff guibg=#287eff						ctermfg=white ctermbg=white
 
-hi CursorLineNr cterm=bold gui=bold  term=bold ctermbg=darkblue ctermfg=yellow guifg=yellow
+hi CursorLineNr cterm=bold gui=bold  term=bold ctermbg=blue ctermfg=yellow guifg=yellow
 hi LineNr cterm=bold guifg=green guibg=darkgrey gui=none ctermfg=white ctermbg=None term=none
 "hi LineNrAbove cterm=bold ctermbg=black ctermfg=none guibg=black guifg=lightblue
 "hi LineNrBelow cterm=bold ctermbg=green ctermfg=none guibg=black guifg=lightblue
 hi StatusLine	guifg=blue guibg=darkgrey gui=none		ctermfg=darkgrey ctermbg=yellow term=none
-hi StatusLineNC	guifg=black guibg=yellow gui=none		ctermfg=darkgrey ctermbg=darkgrey term=none
+hi StatusLineNC	guifg=black guibg=yellow gui=none		ctermfg=darkgrey ctermbg=blue term=none
 set fdm=marker "marker for code fold
 set hlsearch
 set is "incremental search
@@ -62,7 +64,7 @@ set is "incremental search
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'kien/ctrlp.vim'
-Plugin 'scrooloose/nerdtree'
+"Plugin 'scrooloose/nerdtree'
 Plugin 'taglist.vim'
 Plugin 'mhinz/vim-grepper'
 Plugin 'valloric/youcompleteme'
@@ -76,7 +78,9 @@ call vundle#end()
 
 filetype plugin indent on
 filetype on
-let g:mapleader="m"
+  let g:mapleader=" "
+
+
 map <F3> :NERDTree<CR>
 "ctrlp
 let g:ctrlp_custom_ignore={
@@ -118,6 +122,38 @@ let g:cpp_posix_standard = 1
 let g:cpp_experimental_simple_template_highlight = 1
 let g:cpp_experimental_template_highlight = 1
 let g:cpp_concepts_highlight = 1
+let g:ycm_add_preview_to_completeopt = 1
+let g:ycm_max_diagnostics_to_display = 5
+let g:ycm_key_invoke_completion = '<C-Space>'
+
+"let g:ycm_extra_conf_globlist = ['~/']
+
+
+"let s:ycm_hover_popup = 1
+let g:ycm_auto_hover = -1
+let s:ycm_hover_popup = -1
+function s:Hover()
+  let response = youcompleteme#GetCommandResponse( 'GetDoc' )
+  if response == ''
+    return
+  endif
+
+  call popup_hide( s:ycm_hover_popup )
+  let s:ycm_hover_popup = popup_atcursor( balloon_split( response ), {} )
+endfunction
+
+" CursorHold triggers in normal mode after a delay
+"autocmd CursorHold * call s:Hover()
+nnoremap <silent> <leader>d :call <SID>Hover()<CR>
+
+"augroup MyYCMCustom
+"  autocmd!
+"  autocmd FileType c,cpp let b:ycm_hover = {
+"    \ 'command': 'GetDoc',
+"    \ 'syntax': &filetype
+"    \ }
+"augroup END
+
 "highlight
 
 map ss :w<CR>
@@ -143,6 +179,8 @@ nnoremap <F12> <C-]>
 nnoremap <leader>a :pop<CR>
 nnoremap <C-j> :ts <C-R><C-w><CR>
 nnoremap <C-k> <C-]>
+nnoremap <leader>j :YcmC GoToReferences<CR>
+nnoremap <leader>k :tab YcmC GoTo<CR>
 nnoremap <F5> :bufdo e<CR>
 nnoremap f *
 nnoremap F #
@@ -167,9 +205,7 @@ nnoremap qw <C-w><C-W>:q<CR>
 nnoremap <c-o> :call CurtineIncSw()<CR>
 nnoremap <leader>c :csc find s <C-R><C-W><CR>
 nnoremap <leader>f :csc find t <C-R><C-W><CR>
-nnoremap <leader>d :csc find c <C-R><C-W><CR>
-nnoremap <leader><Space>:csc find 
-nmap <C-@> /
+"nnoremap <leader>d :csc find c <C-R><C-W><CR>
 
 
 
@@ -187,21 +223,29 @@ if filereadable("cscope.out")
 endif
 
 let g:ycm_disable_for_files_larger_than_kb = 0
-let g:ycm_max_num_identifier_candidates = 30
-let g:ycm_max_num_candidates = 30
+let g:ycm_max_num_identifier_candidates = 100
+let g:ycm_max_num_candidates = 100
 "let g:ycm_collect_identifiers_from_tags_files = 1
 let g:ycm_add_preview_to_completeopt = 1
 let g:ycm_autoclose_preview_window_after_completion = 1
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_complete_in_comments = 1
-let g:ycm_clangd_args = ["-limit-results=100", "--pch-storage=disk"]
-let g:ycm_auto_hover = 'CursorHold'
+let g:ycm_clangd_binary_path = '/home/wjm/Downloads/clangd_snapshot_20210124/bin/clangd'
+let g:ycm_clangd_args = ["-limit-results=30"]
+let g:ycm_log_level = 'error'
 highlight YcmErrorLine guibg=#3f0000
+"let g:ycm_auto_hover = 'CursorHold'
+let g:ycm_goto_buffer_command = 'split'
+let g:ycm_clangd_uses_ycmd_caching = 0
+let g:ycm_collect_identifiers_from_tags_files = 1
 
+"let g:indentLine_setColors = 0
 let g:indentLine_color_term = 2
-let g:indentLine_color_tty_light = 4 " (default: 4)
-let g:indentLine_color_dark = 2 " (default: 2)
+"let g:indentLine_color_tty_light = 4 " (default: 4)
+"let g:indentLine_color_dark = 2 " (default: 2)
 let g:indentLine_char_list = ['¦']
+let g:indentLine_bgcolor_term = 100
+let g:indentLine_bgcolor_gui = '#FF5F00'
 
 
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif

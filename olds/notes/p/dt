@@ -1,7 +1,13 @@
 #!/bin/bash
 
 #echo $*
-dtr8 --skip-test-list=$1 --testcase-timeout=9999 --force-restart
+#dtr8 --skip-test-list=$1 --testcase-timeout=9999 --force-restart
 
 #> ~/tmp/1 
 #tail ~/tmp/1
+
+cd ~/dev/dbscale-chelianwang/dbscale-test
+dtr57 t/my.test  --testcase-timeout=300 ${@:1}
+
+#dtr57 t/table_recycle_bin.test
+#${@:1}

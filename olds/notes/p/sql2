@@ -1,1 +1,18 @@
-dbscale show status;
+#dbscale show status;
+#dbscale show processlist cluster 1 user 691;
+#
+
+create table t1 (c1 int primary key, c2 int);
+insert into t1 values(1, 1);
+insert into t1 values(2, 1);
+insert into t1 values(3, 1);
+insert into t1 values(4, 1);
+insert into t1 values(101, 1);
+insert into t1 values(102, 1);
+insert into t1 values(103, 1);
+insert into t1 values(104, 1);
+insert into t1 values(105, 1);
+insert into t1 values(106, 1);
+insert into t1 values(198, 1);
+insert into t1 values(199, 1);
+

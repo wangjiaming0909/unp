@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+cd /home/wjm/dev/dbscale-chelianwang/dbscale-test/var/run \
+  && \
+  arr=(`ls -v .`)
+  for var in ${arr[@]}; do
+    echo -n $var
+    echo -en '\t\t'
+    echo `cat $var`
+  done

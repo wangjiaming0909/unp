@@ -2,4 +2,8 @@
 
 cd ~/dev/dbscale-chelianwang/build &&\
 #cmake -DCMAKE_BUILD_TYPE=DEBUG -DDOWNLOAD_DEPS=NO -Wno-dev .. &&
-make dbscale -j10
+make dbscale -j8
+
+
+kd
+dt ${@:1}

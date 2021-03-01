@@ -1,3 +1,42 @@
 #!/bin/bash
 
-vi ~/tmp/1
+#vi ~/tmp/1
+
+
+
+#sshpass -p'123' scp /home/wjm/dev/dbscale-chelianwang/extra/dbscale-backup-tool/backup.py jiaming@172.16.70.111:/home/jiaming/codes/backup/
+#sshpass -p'123' scp /home/wjm/dev/dbscale-chelianwang/extra/dbscale-backup-tool/recovery.py jiaming@172.16.70.111:/home/jiaming/codes/backup/
+#sshpass -p'123' scp /home/wjm/dev/dbscale-chelianwang/extra/dbscale-backup-tool/client.py jiaming@172.16.70.111:/home/jiaming/codes/backup/
+#sshpass -p'123' scp /home/wjm/dev/dbscale-chelianwang/extra/dbscale-backup-tool/client_agent_type.py jiaming@172.16.70.111:/home/jiaming/codes/backup/
+#sshpass -p'123' scp /home/wjm/dev/dbscale-chelianwang/extra/dbscale-backup-tool/Conn.py jiaming@172.16.70.111:/home/jiaming/codes/backup/
+
+
+#sshpass -p'tpc' scp /home/wjm/dev/dbscale-chelianwang/extra/dbscale-backup-tool/backup.py sitong@172.16.70.239:/home/sitong/codes/backup/
+#sshpass -p'tpc' scp /home/wjm/dev/dbscale-chelianwang/extra/dbscale-backup-tool/recovery.py sitong@172.16.70.239:/home/sitong/codes/backup/
+#sshpass -p'tpc' scp /home/wjm/dev/dbscale-chelianwang/extra/dbscale-backup-tool/client.py sitong@172.16.70.239:/home/sitong/codes/backup/
+#sshpass -p'tpc' scp /home/wjm/dev/dbscale-chelianwang/extra/dbscale-backup-tool/client_agent_type.py sitong@172.16.70.239:/home/sitong/codes/backup/
+#sshpass -p'tpc' scp /home/wjm/dev/dbscale-chelianwang/extra/dbscale-backup-tool/Conn.py sitong@172.16.70.239:/home/sitong/codes/backup/
+
+
+
+
+
+#~/dev/dbscale-chelianwang/build/driver/mysql/dbscale_pit_recover_tool --dbscale-conf-file=/home/wjm/tmp/dbscale.conf --ds-info-file=/home/wjm/tmp/ds_info --execute
+
+
+
+mkdir -p ~/dev/codes/dbscale-chelianwang/extra/dbscale-backup-tool/backup
+cd ~/dev/codes/dbscale-chelianwang/extra/dbscale-backup-tool/backup
+rm -rf ./*
+pyinstaller -F ../backup.py
+mkdir -p ~/dev/codes/dbscale-chelianwang/extra/dbscale-backup-tool/recovery
+cd ~/dev/codes/dbscale-chelianwang/extra/dbscale-backup-tool/recovery
+rm -rf ./*
+pyinstaller -F ../recovery.py
+cd ~/dev/codes/dbscale-chelianwang/extra/dbscale-backup-tool/
+tar -cvf backup.tar.gz backup/dist/backup recovery/dist/recovery
+#
+sshpass -p abc123 scp ./backup.tar.gz  root@172.16.50.16:/root/backup
+#sshpass -p Passw@rd1222 scp ./backup/dist/backup root@210.82.30.237:/tmp/backup
+#sshpass -p Passw@rd1222 scp ./recovery/dist/recovery root@210.82.30.237:/tmp/recovery
+#

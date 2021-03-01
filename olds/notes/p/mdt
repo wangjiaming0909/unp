@@ -1,0 +1,4 @@
+#!/bin/bash
+cd ~/dev/dbscale-chelianwang/dbscale-test/
+
+dtr57 t/mul_my.test --testcase-timeout=300 ${@:1}

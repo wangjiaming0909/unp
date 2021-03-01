@@ -8,3 +8,5 @@
 #/percona/bin/mysql --plugin-dir=$MYSQL57_BASEDIR/lib/plugin --default-auth=qa_auth_interface -uroot -P3307 -h127.0.0.1 -e "SELECT DATABASE()"
 #/percona/bin/mysql -udbscale1 -P3307 -h127.0.0.1 -pabc -e "SELECT DATABASE()"
 #ls ~/codes/unp/build/
+
+

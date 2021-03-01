@@ -24,26 +24,6 @@
 #select * from t2;
 #commit;
 #
-#CREATE TABLE t11 (c1 INT PRIMARY KEY AUTO_INCREMENT, c2 VARCHAR(20));
-#
-#INSERT INTO t11 VALUES(0,'a');
-#INSERT INTO t11 VALUES(0,'b');
-#INSERT INTO t11 VALUES(0,'c');
-#INSERT INTO t11 VALUES(0,'d');
-#INSERT INTO t11 VALUES(0,'e');
-#INSERT INTO t11 VALUES(0,'f');
-#INSERT INTO t11 VALUES(0,'g');
-#INSERT INTO t11 VALUES(0,'h');
-#
-#create table t2 (c1 int, c2 varchar(20));
-#insert into t2 values(1,'a');
-#insert into t2 values(2,'b');
-#insert into t2 values(3,'c');
-#insert into t2 values(4,'d');
-#insert into t2 values(5,'e');
-#insert into t2 values(2,'f');
-#insert into t2 values(1,'g');
-#insert into t2 values(8,'h');
 
 # CREATE TABLE tas_net_ll_utp_ms
 #(`DATA_DATE` decimal(10,0) DEFAULT NULL,
@@ -364,4 +344,149 @@
 
 
 #dbscale show dataservers;
-select @@super_read_only as S;
+#select @@super_read_only as S;
+#dbscale show sequence status for test.s1;
+#select s1.nextval;
+#create table t1 (c1 int, primary key(c1));
+#create sequence s1 cache 1000 random 100;
+#create sequence s2 cache 100 random 20;
+#create sequence s3 cache 3000 random 2000;
+#dbscale show status;
+#dbscale show user status;
+#dbscale show processlist cluster 1 user 128;
+#
+#CREATE TABLE t11 (c1 INT PRIMARY KEY AUTO_INCREMENT, c2 VARCHAR(20));
+#
+#INSERT INTO t11 VALUES(0,'a');
+#INSERT INTO t11 VALUES(0,'b');
+#INSERT INTO t11 VALUES(0,'c');
+#INSERT INTO t11 VALUES(0,'d');
+#INSERT INTO t11 VALUES(0,'e');
+#INSERT INTO t11 VALUES(0,'f');
+#INSERT INTO t11 VALUES(0,'g');
+#INSERT INTO t11 VALUES(0,'h');
+##
+#create table t2 (c1 int, c2 varchar(20));
+#insert into t2 values(1,'a');
+#insert into t2 values(2,'b');
+#insert into t2 values(3,'c');
+#insert into t2 values(4,'d');
+#insert into t2 values(5,'e');
+#insert into t2 values(2,'f');
+#insert into t2 values(1,'g');
+#insert into t2 values(8,'h');
+#insert into j values(1);
+#insert into j values(2);
+#insert into j values(3);
+#insert into j values(4);
+#insert into j values(5);
+#insert into j values(101);
+#insert into j values(102);
+#insert into j values(103);
+#insert into j values(104);
+#insert into j values(105);
+#insert into j values(106);
+#insert into j values(107);
+#insert into j values(108);
+#insert into j values(109);
+#insert into j values(111);
+#insert into j values(112);
+#insert into j values(113);
+#insert into j values(114);
+#insert into j values(115);
+#insert into j values(116);
+#insert into j values(117);
+#insert into j values(118);
+#insert into j values(119);
+#update
+#delete
+#load data
+#migrate
+#
+
+#select
+#  b.trx_mysql_thread_id as '被阻塞线程',
+#  b.trx_query as '被阻塞SQL',
+#  c.trx_mysql_thread_id as '阻塞线程',
+#  c.trx_query as '阻塞SQL',
+#  (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(c.trx_started)) as '阻塞时间'
+#from information_schema.innodb_lock_waits a join information_schema.innodb_trx b
+#  on a.requesting_trx_id=b.trx_id
+#    join information_schema.innodb_trx c
+#    on a.blocking_trx_id=c.trx_id
+#where (UNIX_TIMESTAMP() - UNIX_TIMESTAMP(c.trx_started))> 1;
+#
+#flush tables;
+#select 1;
+
+
+#select count(*) from t1;
+#drop table t1;
+#select count(*) from t1;
+#select * from dbscale.table_recycle_bin;
+#dbscale restore table t1;
+#select count(*) from t1;
+#select * from dbscale.table_recycle_bin;
+#truncate table t1;
+#select count(*) from t1;
+#dbscale restore table t1;
+#select * from dbscale.table_recycle_bin;
+#select count(*) from t1;
+#
+#
+#select count(*) from t2;
+#drop table t2;
+#select count(*) from t2;
+#select * from dbscale.table_recycle_bin;
+#dbscale restore table t2;
+#select count(*) from t2;
+#select * from dbscale.table_recycle_bin;
+#truncate table t2;
+#select count(*) from t2;
+#dbscale restore table t2;
+#select * from dbscale.table_recycle_bin;
+#select count(*) from t2;
+#
+#
+#select count(*) from t3;
+#drop table t3;
+#select count(*) from t3;
+#select * from dbscale.table_recycle_bin;
+#dbscale restore table t3;
+#select count(*) from t3;
+#select * from dbscale.table_recycle_bin;
+#truncate table t3;
+#select count(*) from t3;
+#dbscale restore table t3;
+#select * from dbscale.table_recycle_bin;
+#select count(*) from t3;
+#
+#
+#select count(*) from t4;
+#drop table t4;
+#select count(*) from t4;
+#select * from dbscale.table_recycle_bin;
+#dbscale restore table t4;
+#select count(*) from t4;
+#select * from dbscale.table_recycle_bin;
+#truncate table t4;
+#select count(*) from t4;
+#dbscale restore table t4;
+#select * from dbscale.table_recycle_bin;
+#select count(*) from t4;
+#
+
+
+#show tables like 'tj%';
+#show slave status\G
+
+#insert into fund.fund_repo values('jiaming', '519772', 30100.51, 3.876);
+#insert into fund.fund_repo values('jiaming', '519736', 25448.15, 5.204);
+#insert into fund.fund_repo values('jiaming', '000690', 23008.15, 2.092);
+#insert into fund.fund_repo values('jiaming', '161903', 17431.34, 2.4411);
+#insert into fund.fund_repo values('jiaming', '008633', 13720.60, 1.2486);
+#insert into fund.fund_repo values('jiaming', '540010', 13207.96, 3.3784);
+#insert into fund.fund_repo values('jiaming', '519773', 10234.96, 2.337);
+#insert into fund.fund_repo values('jiaming', '519698', 7236.29, 2.8673);
+#insert into fund.fund_repo values('jiaming', '004851', 5366.82, 4.0965);
+#flush binary logs;

@@ -240,7 +240,7 @@ int FundDaliyWorker::replace_fund_info(FundInfo& f, std::shared_ptr<db::SQLConen
 
   for (auto& p : f.growth_map) {
     auto growth_sql = boost::format(sql) % fund_growth_table_name_
-      % (boost::format("'%s', from_unixtime(%s), %s") % f.code % (p.first/1000) % p.second);
+      % (boost::format("'%s', from_unixtime(%s), %s") % f.code % 0 % (p.first/1000) % p.second);
     if (sql_conn->execute(growth_sql.str().c_str())) {
       return -1;
     }
@@ -325,7 +325,7 @@ int FundDaliyWorker::init_tables()
     return -1;
   }
   formater = boost::format(sql_format) % fund_growth_table_name_
-    % "(code varchar(16), day datetime, growth float, primary key(code, day))";
+    % "(code varchar(16), day datetime, growth float, value float, primary key(code, day))";
   if (sql_conn_->execute(formater.str().c_str())) {
     return -1;
   }

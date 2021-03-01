@@ -1,8 +1,9 @@
 #!/bin/bash
 
-args=`getopt -o h -l help -- "$@"`
-echo $args
+#args=`getopt -o h -l help -- "$@"`
+#echo $args
 
 
-#$XTRA_BACKUP --user=root --port=$1 --host=127.0.0.1 --backup --history --target-dir=$2
+##$XTRA_BACKUP --user=root --port=$1 --host=127.0.0.1 --backup --history --target-dir=$2
+$XTRA_BACKUP
 

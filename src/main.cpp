@@ -221,6 +221,10 @@ static std::map<string, std::function<int ()>> funcs
 
 int main(int argc, char** argv)
 {
+  const char* p1 = "asdasd";
+  const char* p2 = "asdasd";
+  cout << &p1 << endl << &p2;
+  return 0;
   server_scoped_helper s_h{argc, argv};
   auto* cf = config::ServerConfig::instance();
   string func;

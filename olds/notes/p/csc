@@ -1,4 +1,5 @@
 #!/bin/bash
 
-find . -name '*.cc' -o -name '*.h' > ./cscope.files
-cscope -b
+find . -name '*.cc' -o -name '*.h' -o -name '*.y' -o -name '*.l' -o -name '*.hpp'  > ./cscope.files
+cscope -vb
+rm ./cscope.files
