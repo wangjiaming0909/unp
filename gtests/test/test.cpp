@@ -10,7 +10,6 @@
 #include "util/easylogging++.h"
 #include "util/timer.h"
 #include "util/min_heap.h"
-#include <uv.h>
 #include <istream>
 #include <ostream>
 #include <sstream>
@@ -203,18 +202,6 @@ TEST(al, mul_merge_sort)
   {
     //LOG(DEBUG) << result[i];
   }
-}
-
-TEST(uv, t1)
-{
-  uv_loop_t *loop = uv_default_loop();
-  if (!loop)
-    LOG(ERROR) << "uv_defualt_loop returned null";
-  uv_fs_event_t *e = new uv_fs_event_t();
-  uv_fs_event_init(loop, e);
-  auto ret = uv_run(loop, uv_run_mode::UV_RUN_ONCE);
-  LOG(DEBUG) << "uv_run returned: " << ret;
-  uv_loop_close(loop);
 }
 
 TEST(rand, 1)

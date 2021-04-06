@@ -31,7 +31,6 @@ TESTLDFLAG = -pthread \
 		-lssl \
 		-lcrypto\
 		-lprotobuf\
-		-luv \
 		-lmysqlclient
 	
 
@@ -59,36 +58,8 @@ TEST_SOURCE = $(shell find $(TEST_DIR) -type f -name '*.cpp')
 TEST_OBJS = $(patsubst $(TEST_DIR)/%.cpp, $(TEST_OBJ_DIR)/%.o, $(TEST_SOURCE) )
 TEST_TARGET = $(BUILDDIR)/test.out
 
-SYNC_CLIENT_DIR = ./examples/syncclient
-SYNC_CLIENT_OBJ_DIR = $(BUILDDIR)/examples/sync_client
-SYNC_CLIENT_SOURCE = $(shell find $(SYNC_CLIENT_DIR) -type f -name '*.cpp')
-SYNC_CLIENT_OBJS = $(patsubst $(SYNC_CLIENT_DIR)/%.cpp, $(SYNC_CLIENT_OBJ_DIR)/%.o, $(SYNC_CLIENT_SOURCE))
-SYNC_CLIENT_MAIN_OBJ = ./build/examples/sync_client/main.o
-SYNC_CLIENT_MAIN_SOURCE = $(SYNC_CLIENT_DIR)/main.cpp
-SYNC_CLIENT_CORE_OBJS = $(filter-out $(SYNC_CLIENT_MAIN_OBJ), $(SYNC_CLIENT_OBJS))
-SYNC_CLIENT_CORE = $(BUILDDIR)/sync_client_core.so
-SYNC_CLIENT_TARGET = $(BUILDDIR)/sync_client
 
-SYNC_SERVER_DIR = ./examples/syncserver
-SYNC_SERVER_OBJ_DIR = $(BUILDDIR)/examples/sync_server
-SYNC_SERVER_SOURCE = $(shell find $(SYNC_SERVER_DIR) -type f -name '*.cpp')
-SYNC_SERVER_OBJS = $(patsubst $(SYNC_SERVER_DIR)/%.cpp, $(SYNC_SERVER_OBJ_DIR)/%.o, $(SYNC_SERVER_SOURCE))
-SYNC_SERVER_MAIN_OBJ = ./build/examples/sync_server/main.o
-SYNC_SERVER_CORE_OBJS = $(filter-out $(SYNC_SERVER_MAIN_OBJ), $(SYNC_SERVER_OBJS))
-SYNC_SERVER_CORE = $(BUILDDIR)/sync_server_core.so
-SYNC_SERVER_TARGET = $(BUILDDIR)/sync_server
-
-all: $(MAIN) $(SYNC_CLIENT_TARGET) $(SYNC_SERVER_TARGET) $(TEST_TARGET)
-
-examples: $(SYNC_CLIENT_TARGET) $(SYNC_SERVER_TARGET)
-
-sync_client: $(SYNC_CLIENT_TARGET)
-
-sync_server: $(SYNC_SERVER_TARGET)
-
-sync_server_core: $(SYNC_SERVER_CORE)
-
-sync_client_core: $(SYNC_CLIENT_CORE)
+all: $(MAIN) $(TEST_TARGET)
 
 unp_core: $(UNP_CORE)
 
@@ -96,39 +67,13 @@ unp: $(MAIN)
 
 test: $(TEST_TARGET)
 
-sync_client_main: $(SYNC_CLIENT_MAIN_OBJ)
+$(TEST_TARGET): $(TEST_OBJS) $(UNP_CORE) $(SYNC_CLIENT_CORE)
+	$(CC) $(TEST_OBJS) $(UNP_CORE) -L $(LIBS) $(TESTLDFLAG) -o $@
+
 
 $(MAIN): $(UNP_CORE)
 	$(CC) $(FLAGS) $(DEFINES) $< ./build/unp/main.o -L $(LIBS) $(LDFLAGS) -o $@
 
-$(TEST_TARGET): $(TEST_OBJS) $(UNP_CORE) $(SYNC_CLIENT_CORE)
-	$(CC) $(TEST_OBJS) $(UNP_CORE) $(SYNC_CLIENT_CORE) -L $(LIBS) $(TESTLDFLAG) -o $@
-
-$(SYNC_CLIENT_TARGET): $(UNP_CORE) $(SYNC_CLIENT_CORE) $(SYNC_CLIENT_MAIN_OBJ)
-	$(CC) $(FLAGS)  $(SYNC_CLIENT_MAIN_OBJ) $(SYNC_CLIENT_CORE) $(UNP_CORE) -L $(LIBS) $(LDFLAGS) -o $@
-
-$(SYNC_CLIENT_CORE): $(SYNC_CLIENT_CORE_OBJS)
-	$(CC) -shared $(SYNC_CLIENT_CORE_OBJS) -o $@
-
-$(SYNC_CLIENT_CORE_OBJS): $(SYNC_CLIENT_OBJ_DIR)/%.o : $(SYNC_CLIENT_DIR)/%.cpp
-	@$(MKDIR) $(dir $(SYNC_CLIENT_CORE_OBJS))
-	$(CC) $(DEFINES) $(BUILD_FLAGS) $< -I $(INCLUDES) -I examples -o $@
-
-#$(SYNC_CLIENT_MAIN_OBJ): $(SYNC_CLIENT_MAIN_SOURCE)
-#$(CC) $(DEFINES) $(BUILD_FLAGS) $< -I $(INCLUDES) -I examples -o $@
-
-$(SYNC_SERVER_TARGET): $(UNP_CORE) $(SYNC_SERVER_CORE) $(SYNC_SERVER_MAIN_OBJ)
-	$(CC) $(FLAGS) $(SYNC_SERVER_MAIN_OBJ) $(SYNC_SERVER_CORE) $(UNP_CORE) -L $(LIBS) $(LDFLAGS) -o $@
-
-$(SYNC_SERVER_CORE): $(SYNC_SERVER_CORE_OBJS)
-	$(CC) -shared $(SYNC_SERVER_CORE_OBJS) -o $@
-
-$(SYNC_SERVER_CORE_OBJS): $(SYNC_SERVER_OBJ_DIR)/%.o : $(SYNC_SERVER_DIR)/%.cpp
-	@$(MKDIR) $(dir $(SYNC_SERVER_CORE_OBJS))
-	$(CC) $(DEFINES) $(BUILD_FLAGS) $< -I $(INCLUDES) -I examples -o $@
-
-#$(SYNC_SERVER_MAIN_OBJ): $(SYNC_SERVER_DIR)/main.cpp
-#$(CC) $(DEFINES) $(BUILD_FLAGS) $< -I $(INCLUDES) -I examples -o $@
 
 $(UNP_CORE): $(UNP_CORE_OBJECTS)
 	$(CC) -shared $(UNP_CORE_OBJECTS) -o $@
@@ -151,24 +96,6 @@ clean: FORCE
 	$(RM) $(TEST_TARGET)
 	@$(RM) $(TEST_OBJS)
 	@echo "clean test objects"
-	@$(RM) $(SYNC_CLIENT_OBJS)
-	@echo "clean sync_client objects"
-	$(RM) $(SYNC_CLIENT_TARGET)
-	$(RM) $(SYNC_CLIENT_CORE)
-	@$(RM) $(SYNC_SERVER_OBJS)
-	@echo "clean sync_server objects"
-	$(RM) $(SYNC_SERVER_CORE)
-	$(RM) $(SYNC_SERVER_TARGET)
-
-examples_clean: FORCE
-	@$(RM) $(SYNC_CLIENT_OBJS)
-	@echo "clean sync_client objects"
-	$(RM) $(SYNC_CLIENT_TARGET)
-	$(RM) $(SYNC_CLIENT_CORE)
-	@$(RM) $(SYNC_SERVER_OBJS)
-	@echo "clean sync_server objects"
-	$(RM) $(SYNC_SERVER_CORE)
-	$(RM) $(SYNC_SERVER_TARGET)
 
 unp_clean: FORCE
 	@$(RM) $(UNP_CORE_OBJECTS)
